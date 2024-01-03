@@ -748,6 +748,17 @@ class GameSaveManager(tk.Tk):
             return
         self.backupProgressText.config(state="normal")
         text = text.replace("_", ": ").replace("^", "?")
+
+        if settings["language"] == "zh_CN":
+            with open(resource_path("game_names.json"), "r", encoding="utf-8") as file:
+                translations = json.load(file)
+
+            for game in translations["games"]:
+                textGameName = text.strip().replace(_("Backed up "), "").replace(_("Restored "), "")
+                if game["en_US"] == textGameName:
+                    text = text.replace(game["en_US"], game["zh_CN"])
+                    break
+
         self.backupProgressText.insert(tk.END, text)
         self.backupProgressText.see("end")
         self.backupProgressText.config(state="disabled")
