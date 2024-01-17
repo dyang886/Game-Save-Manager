@@ -1,0 +1,212 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Game Save Manager\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: en_US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 3.4.2\n"
+
+msgid "Select a .gsm file for restore"
+msgstr "Select a .gsm file for restore"
+
+msgid "Options"
+msgstr "Options"
+
+msgid "Settings"
+msgstr "Settings"
+
+msgid "Manage Custom Games"
+msgstr "Manage Custom Games"
+
+msgid "About"
+msgstr "About"
+
+msgid "Version: "
+msgstr "Version: "
+
+msgid "Game Name"
+msgstr "Game Name"
+
+msgid "Save Path"
+msgstr "Save Path"
+
+msgid "Save"
+msgstr "Save"
+
+msgid "Success"
+msgstr "Success"
+
+msgid "Custom games saved successfully."
+msgstr "Custom games saved successfully."
+
+msgid "Failed to save custom games: "
+msgstr "Failed to save custom games: "
+
+msgid "Backup"
+msgstr "Backup"
+
+msgid "Export"
+msgstr "Export"
+
+msgid "Restore from machine"
+msgstr "Restore from machine"
+
+msgid "Restore from .gsm file"
+msgstr "Restore from .gsm file"
+
+msgid "Language:"
+msgstr "Language:"
+
+msgid "Apply"
+msgstr "Apply"
+
+msgid "Attention"
+msgstr "Attention"
+
+msgid "Please restart the application to apply settings"
+msgstr "Please restart the application to apply settings"
+
+msgid "Change backup path"
+msgstr "Change backup path"
+
+msgid "Migrating existing backups...\n"
+msgstr "Migrating existing backups...\n"
+
+msgid "Please choose a new path."
+msgstr "Please choose a new path."
+
+msgid "Confirmation"
+msgstr "Confirmation"
+
+msgid ""
+"\n"
+"Below are custom games:\n"
+msgstr ""
+"\n"
+"Below are custom games:\n"
+
+msgid "Back up path is empty: "
+msgstr "Back up path is empty: "
+
+msgid "Back up path is invalid: "
+msgstr "Back up path is invalid: "
+
+msgid "Restore failed: "
+msgstr "Restore failed: "
+
+msgid "An error occurred while restoring {game_name}: "
+msgstr "An error occurred while restoring {game_name}: "
+
+msgid "Restore path is invalid: "
+msgstr "Restore path is invalid: "
+
+msgid "No entry found in custom game list: "
+msgstr "No entry found in custom game list: "
+
+msgid "Backup already exists, would you like to override?"
+msgstr "Backup already exists, would you like to override?"
+
+msgid "An error occurred while removing existing backup: "
+msgstr "An error occurred while removing existing backup: "
+
+msgid "Backup migration aborted!\n"
+msgstr "Backup migration aborted!\n"
+
+msgid "Error"
+msgstr "Error"
+
+msgid "An error occurred, backup migration failed: "
+msgstr "An error occurred, backup migration failed: "
+
+msgid "Migration complete!\n"
+msgstr "Migration complete!\n"
+
+msgid "New backup path not specified!\n"
+msgstr "New backup path not specified!\n"
+
+msgid ""
+"Could not find Steam installation path\n"
+"Games saved under Steam directory will not be processed"
+msgstr ""
+"Could not find Steam installation path\n"
+"Games saved under Steam directory will not be processed"
+
+msgid ""
+"Could not find Ubisoft installation path\n"
+"Games saved under Ubisoft directory will not be processed"
+msgstr ""
+"Could not find Ubisoft installation path\n"
+"Games saved under Ubisoft directory will not be processed"
+
+msgid "Filed to delete temporary files: "
+msgstr "Filed to delete temporary files: "
+
+msgid ""
+"Save conflict detected for {game_display}:\n"
+"Save data on machine (last modified on {destination_mtime})\n"
+"is newer than backup (last modified on {source_mtime}).\n"
+"\n"
+"Do you want to overwrite local save data with backup?"
+msgstr ""
+"Save conflict detected for {game_display}:\n"
+"Save data on machine (last modified on {destination_mtime})\n"
+"is newer than backup (last modified on {source_mtime}).\n"
+"\n"
+"Do you want to overwrite local save data with backup?"
+
+msgid "No backup found!"
+msgstr "No backup found!"
+
+msgid "Please select a directory to export your file."
+msgstr "Please select a directory to export your file."
+
+msgid "Export path not specified!"
+msgstr "Export path not specified!"
+
+msgid "A file named {file_name} already exists. Do you want to overwrite it?"
+msgstr "A file named {file_name} already exists. Do you want to overwrite it?"
+
+msgid "Export aborted!"
+msgstr "Export aborted!"
+
+msgid "Export in progress...\n"
+msgstr "Export in progress...\n"
+
+msgid "Export successful!"
+msgstr "Export successful!"
+
+msgid "Backup aborted!\n"
+msgstr "Backup aborted!\n"
+
+msgid "Backed up "
+msgstr "Backed up "
+
+msgid "Back up completed!"
+msgstr "Back up completed!"
+
+msgid "Restored "
+msgstr "Restored "
+
+msgid "An error occurred."
+msgstr "An error occurred."
+
+msgid "Restore completed!"
+msgstr "Restore completed!"
+
+msgid "Invalid file path!"
+msgstr "Invalid file path!"
+
+msgid "Unable to clear temporary files from last session, please restart your computer."
+msgstr "Unable to clear temporary files from last session, please restart your computer."
+
+msgid "Decompressing file...\n"
+msgstr "Decompressing file...\n"
+
+msgid "An error occurred while extracting file: "
+msgstr "An error occurred while extracting file: "

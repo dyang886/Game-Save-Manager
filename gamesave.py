@@ -12,6 +12,9 @@ import time
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 import zipfile
+import locale
+from customtkinter import CTkScrollableFrame
+from PIL import Image, ImageTk
 
 import polib
 import sv_ttk
@@ -29,22 +32,35 @@ def apply_settings(settings):
     with open(SETTINGS_FILE, "w") as f:
         json.dump(settings, f)
 
-
+    
 def load_settings():
+    system_locale = locale.getlocale()[0]
+    locale_mapping = {
+        "en_US": "English_United States",
+        "zh_CN": "Chinese (Simplified)_China",
+        "zh_HK": "Chinese (Simplified)_Hong Kong SAR",
+        "zh_MO": "Chinese (Simplified)_Macao SAR"
+    }
+    app_locale = locale_mapping.get(system_locale, 'en_US')
+
+    default_settings = {
+        "gsmBackupPath": os.path.join(os.environ["APPDATA"], "GSM Backups"),
+        "language": app_locale
+    }
+
     try:
         with open(SETTINGS_FILE, "r") as f:
-            return json.load(f)
+            settings = json.load(f)
     except FileNotFoundError:
-        # If the settings file doesn't exist, create it with default settings
-        default_path = os.path.join(os.environ["APPDATA"], "GSM Backups")
-        default_settings = {
-            "gsmBackupPath": default_path,
-            "language": "en_US"
-        }
-        os.makedirs(default_path, exist_ok=True)
-        with open(SETTINGS_FILE, "w") as f:
-            json.dump(default_settings, f)
-        return default_settings
+        settings = default_settings
+    else:
+        for key, value in default_settings.items():
+            settings.setdefault(key, value)
+
+    with open(SETTINGS_FILE, "w") as f:
+        json.dump(settings, f)
+
+    return settings
 
 
 def get_translator():
@@ -89,24 +105,46 @@ class GameSaveManager(tk.Tk):
     def __init__(self):
         super().__init__()
 
+        # Single instance check, set base program directory and basic UI setup
         try:
             self.single_instance_checker = singleton.SingleInstance()
         except singleton.SingleInstanceException:
             sys.exit(1)
+        self.title("Game Save Manager")
+        self.iconbitmap(resource_path("assets/logo.ico"))
+        sv_ttk.set_theme("dark")
+
+        # Version, user prompts, and links
+        self.appVersion = "1.0.0"
+        self.githubLink = "https://github.com/dyang886/Game-Save-Manager"
+        self.gsmPathTextPrompt = _("Select a .gsm file for restore")
+
+        # Paths and variable management
         if getattr(sys, 'frozen', False):
             dir_path = os.path.dirname(sys.executable)
         else:
             dir_path = os.path.dirname(os.path.abspath(__file__))
         os.chdir(dir_path)
-
-        self.title("Game Save Manager")
-        self.iconbitmap(resource_path("assets/logo.ico"))
-        sv_ttk.set_theme("dark")
-        self.gsmPathTextPrompt = _("Select a .gsm file for restore")
         self.gsmPath = sys.argv[1] if len(sys.argv) > 1 else ""
         self.gsmBackupPath = settings["gsmBackupPath"]
+        self.customGameJson = os.path.join(os.environ["APPDATA"], "GSM Settings/", "custom_games.json")
+
         self.entryLength = 40
+        self.duplicate_symbol = "#"  # additional symbols: "_" -> ": ", "^" -> "?"
+        self.user_name = os.getlogin()
+        self.steamUserID = []
+        self.ubisoftUserID = []
+        self.systemPath = {
+            "Windows": -1,
+            "Registry": -1,
+            "Steam": None,
+            "Ubisoft": None
+        }
+
+        # Window references
         self.settings_window = None
+        self.addCustom_window = None
+        self.about_window = None
 
         # Menu bar
         self.menuBar = tk.Frame(self, background="#2e2e2e")
@@ -115,6 +153,10 @@ class GameSaveManager(tk.Tk):
         self.settingsMenu = tk.Menu(self.settingMenuBtn, tearoff=0)
         self.settingsMenu.add_command(
             label=_("Settings"), command=self.open_settings)
+        self.settingsMenu.add_command(
+            label=_("Manage Custom Games"), command=self.manage_custom_games)
+        self.settingsMenu.add_command(
+            label=_("About"), command=self.open_about)
         self.settingMenuBtn.config(menu=self.settingsMenu)
         self.settingMenuBtn.pack(side="left")
         self.menuBar.grid(row=0, column=0, sticky="ew")
@@ -123,6 +165,9 @@ class GameSaveManager(tk.Tk):
         self.frame = ttk.Frame(self, padding="20")
         self.frame.grid(row=1, column=0)
 
+        # ===========================================================================
+        # UI setup
+        # ===========================================================================
         # top buttons
         self.backUpButton = ttk.Button(
             self.frame, text=_("Backup"), width=20, command=self.create_backup_thread)
@@ -185,17 +230,6 @@ class GameSaveManager(tk.Tk):
 
         self.gsmPathText.bind('<FocusIn>', self.on_entry_click)
         self.gsmPathText.bind('<FocusOut>', self.on_focusout)
-
-        self.duplicate_symbol = "#"  # additional symbols: "_" -> ": ", "^" -> "?"
-        self.user_name = os.getlogin()
-        self.steamUserID = []
-        self.ubisoftUserID = []
-        self.systemPath = {
-            "Windows": -1,
-            "Registry": -1,
-            "Steam": None,
-            "Ubisoft": None
-        }
 
         # games where saves are under their install location; or special patterns
         # key names should match with game names in self.gameSaveDirectory
@@ -614,180 +648,9 @@ class GameSaveManager(tk.Tk):
         self.eval('tk::PlaceWindow . center')
         self.mainloop()
 
-    def open_settings(self):
-        if self.settings_window is None or not self.settings_window.winfo_exists():
-            self.settings_window = tk.Toplevel(self)
-            self.settings_window.title(_("Settings"))
-            self.settings_window.iconbitmap(
-                resource_path("assets/setting.ico"))
-            self.settings_window.columnconfigure(0, weight=1)
-            self.settings_window.rowconfigure(0, weight=1)
-
-            window_width, window_height = 300, 200
-            self.settings_window.geometry(f"{window_width}x{window_height}")
-            self.settings_window.resizable(False, False)
-
-            # Center the settings window to be inside of main app window
-            main_x = self.winfo_x()
-            main_y = self.winfo_y()
-            main_width = self.winfo_width()
-            main_height = self.winfo_height()
-            center_x = int(main_x + (main_width - window_width) / 2)
-            center_y = int(main_y + (main_height - window_height) / 2)
-            self.settings_window.geometry(f"+{center_x}+{center_y}")
-
-            # languages frame
-            self.languages_frame = ttk.Frame(self.settings_window)
-
-            # languages label
-            self.languages_label = ttk.Label(
-                self.languages_frame, text=_("Language:"))
-            self.languages_label.pack(anchor="w")
-
-            # languages combobox
-            self.languages_var = tk.StringVar()
-            for key, value in language_options.items():
-                if value == settings["language"]:
-                    self.languages_var.set(key)
-
-            self.languages_combobox = ttk.Combobox(
-                self.languages_frame, textvariable=self.languages_var, values=list(language_options.keys()), state="readonly", width=20)
-            self.languages_combobox.pack(side=tk.LEFT)
-
-            # apply button
-            apply_button = ttk.Button(
-                self.settings_window, text=_("Apply"), command=self.apply_settings_page)
-
-            self.languages_frame.grid(row=0, column=0, pady=(20, 0))
-            apply_button.grid(row=2, column=0, padx=(
-                0, 20), pady=(20, 20), sticky=tk.E)
-
-    def apply_settings_page(self):
-        settings["language"] = language_options[self.languages_var.get()]
-        apply_settings(settings)
-        messagebox.showinfo(_("Attention"), _(
-            "Please restart the application to apply settings"))
-
-    def change_path(self, event=None):
-        self.disable_widgets()
-        self.delete_all_text()
-        folder = filedialog.askdirectory(title=_("Change backup path"))
-        if folder:
-            self.insert_text(_("Migrating existing backups...\n"))
-            try:
-                dst = os.path.join(folder, "GSM Backups")
-                if os.path.exists(dst):
-                    command = messagebox.askyesno(
-                        _("Confirmation"), _("Backup already exists, would you like to override?"))
-                    if command:
-                        shutil.rmtree(dst)
-                        shutil.copytree(self.gsmBackupPath, dst)
-                    else:
-                        self.insert_text(_("Backup migration aborted!\n"))
-                        return
-                else:
-                    shutil.copytree(self.gsmBackupPath, dst)
-            except Exception as e:
-                messagebox.showerror(_("Error"), _(
-                    "An error occurred, backup migration failed: ") + str(e))
-                return
-
-            shutil.rmtree(self.gsmBackupPath)
-            self.gsmBackupPath = dst
-            settings["gsmBackupPath"] = self.gsmBackupPath
-            apply_settings(settings)
-            self.insert_text(_("Migration complete!\n"))
-            self.backupPathText.set(os.path.normpath(dst))
-        else:
-            self.insert_text(_("New backup path not specified!\n"))
-
-        self.enable_widgets()
-
-    def on_entry_click(self, event):
-        if self.gsmPathText.get() == self.gsmPathTextPrompt:
-            self.gsmPathText.delete(0, tk.END)
-            self.gsmPathText.insert(0, "")
-            self.gsmPathText.config(foreground="white")
-
-    def on_focusout(self, event):
-        if self.gsmPathText.get() == "":
-            self.gsmPathText.insert(0, self.gsmPathTextPrompt)
-            self.gsmPathText.config(foreground="grey")
-
-    def open_file(self):
-        gsm_file = filedialog.askopenfilename(
-            title=self.gsmPathTextPrompt,
-            filetypes=(("gsm files", "*.gsm"),))
-        if gsm_file:
-            self.gsmPathText.delete(0, "end")
-            self.gsmPathText.insert(0, gsm_file)
-            self.gsmPathText.config(foreground="white")
-
-    def create_migration_thread(self):
-        migration_thread = threading.Thread(target=self.change_path)
-        migration_thread.start()
-
-    def create_backup_thread(self):
-        backup_thread = threading.Thread(target=self.backup)
-        backup_thread.start()
-
-    def create_export_thread(self):
-        export_thread = threading.Thread(target=self.export)
-        export_thread.start()
-
-    def create_restore_thread_1(self):
-        restore_thread = threading.Thread(target=self.restore1)
-        restore_thread.start()
-
-    def create_restore_thread_2(self):
-        restore_thread = threading.Thread(target=self.restore2)
-        restore_thread.start()
-
-    def insert_text(self, text):
-        if self.duplicate_symbol in text:
-            return
-        self.backupProgressText.config(state="normal")
-        text = text.replace("_", ": ").replace("^", "?")
-
-        if settings["language"] == "zh_CN":
-            with open(resource_path("game_names.json"), "r", encoding="utf-8") as file:
-                translations = json.load(file)
-
-            for game in translations["games"]:
-                textGameName = text.strip().replace(_("Backed up "), "").replace(_("Restored "), "")
-                if game["en_US"] == textGameName:
-                    text = text.replace(game["en_US"], game["zh_CN"])
-                    break
-
-        self.backupProgressText.insert(tk.END, text)
-        self.backupProgressText.see("end")
-        self.backupProgressText.config(state="disabled")
-
-    def delete_all_text(self):
-        self.backupProgressText.config(state="normal")
-        self.backupProgressText.delete(1.0, tk.END)
-        self.backupProgressText.config(state="disabled")
-
-    def disable_widgets(self):
-        self.backUpButton["state"] = "disabled"
-        self.exportButton["state"] = "disabled"
-        self.backupDialogButton["state"] = "disabled"
-        self.restoreButton1["state"] = "disabled"
-        self.restoreButton2["state"] = "disabled"
-        self.gsmPathText["state"] = "disabled"
-        self.fileDialogButton["state"] = "disabled"
-
-    def enable_widgets(self):
-        self.backUpButton["state"] = "enabled"
-        self.exportButton["state"] = "enabled"
-        self.backupDialogButton["state"] = "enabled"
-        self.restoreButton1["state"] = "enabled"
-        self.restoreButton2["state"] = "enabled"
-        self.gsmPathText["state"] = "enabled"
-        self.fileDialogButton["state"] = "enabled"
-
-    # ==================================================================
-    # Start of game specific save logic functions
+    # ===========================================================================
+    # game specific save logic functions
+    # ===========================================================================
     def geometrydash(self):
         root = f"C:/Users/{self.user_name}/AppData/Local/GeometryDash"
         result = [root]
@@ -852,11 +715,360 @@ class GameSaveManager(tk.Tk):
             if dirname.startswith("Vampire_Survivors"):
                 result.append(dirname)
         return result
-    # End of game specific save logic functions
-    # ==================================================================
 
-    # ==================================================================
-    # Start of helper functions
+    # ===========================================================================
+    # menu bar windows
+    # ===========================================================================
+    def center_window(self, window):
+        window.update()
+        main_x = self.winfo_x()
+        main_y = self.winfo_y()
+        main_width = self.winfo_width()
+        main_height = self.winfo_height()
+        window_width = window.winfo_width()
+        window_height = window.winfo_height()
+        center_x = int(main_x + (main_width - window_width) / 2)
+        center_y = int(main_y + (main_height - window_height) / 2)
+        window.geometry(f"+{center_x}+{center_y}")
+
+    def apply_settings_page(self):
+        settings["language"] = language_options[self.languages_var.get()]
+        apply_settings(settings)
+        messagebox.showinfo(_("Attention"), _(
+            "Please restart the application to apply settings"))
+
+    def open_settings(self):
+        if self.settings_window is None or not self.settings_window.winfo_exists():
+            self.settings_window = tk.Toplevel(self)
+            self.settings_window.title(_("Settings"))
+            self.settings_window.iconbitmap(
+                resource_path("assets/setting.ico"))
+            self.settings_window.transient(self)
+
+            settings_frame = ttk.Frame(self.settings_window)
+            settings_frame.grid(row=0, column=0, sticky='nsew',
+                                padx=(80, 80), pady=(30, 20))
+
+            # ===========================================================================
+            # languages frame
+            languages_frame = ttk.Frame(settings_frame)
+            languages_frame.grid(row=0, column=0, pady=(20, 0), sticky="we")
+
+            languages_label = ttk.Label(languages_frame, text=_("Language:"))
+            languages_label.pack(anchor="w")
+
+            self.languages_var = tk.StringVar()
+            for key, value in language_options.items():
+                if value == settings["language"]:
+                    self.languages_var.set(key)
+
+            languages_combobox = ttk.Combobox(
+                languages_frame,
+                textvariable=self.languages_var,
+                values=list(language_options.keys()),
+                state="readonly", width=20
+            )
+            languages_combobox.pack(side=tk.LEFT)
+
+            # ===========================================================================
+            # apply button
+            apply_button = ttk.Button(
+                self.settings_window, text=_("Apply"),
+                command=self.apply_settings_page
+            )
+            apply_button.grid(row=1, column=0, padx=(
+                0, 20), pady=(20, 20), sticky="e")
+
+            self.center_window(self.settings_window)
+        else:
+            self.settings_window.lift()
+            self.settings_window.focus_force()
+        
+    def manage_custom_games(self):
+        if self.addCustom_window is None or not self.addCustom_window.winfo_exists():
+            self.addCustom_window = tk.Toplevel(self)
+            self.addCustom_window.title(_("Manage Custom Games"))
+            self.addCustom_window.iconbitmap(resource_path("assets/logo.ico"))
+            self.addCustom_window.transient(self)
+            self.addCustom_window.grid_columnconfigure(0, weight=1)
+            
+            self.content_frame = CTkScrollableFrame(self.addCustom_window, fg_color="transparent", width=490, height=300)
+            self.content_frame.grid(row=0, column=0, sticky='nsew', padx=(20, 15), pady=(20, 0))
+            
+            # Set up the table headers
+            ttk.Label(self.content_frame, text=_("Game Name")).grid(row=0, column=0)
+            ttk.Label(self.content_frame, text=_("Save Path")).grid(row=0, column=1)
+            
+            # Apply button
+            apply_button = ttk.Button(self.addCustom_window, text=_("Save"), command=self.save_custom_games)
+            apply_button.grid(row=1, column=0, padx=(0, 20), pady=(20, 20), sticky='e')
+            
+            # load saved custom games
+            self.custom_game_rows = []
+            if os.path.exists(self.customGameJson):
+                with open(self.customGameJson, "r") as file:
+                    custom_games = json.load(file)
+                    for game in custom_games.get("customGames", []):
+                        self.add_game_row(game["name"], game["path"])
+            self.add_game_row()
+            
+            self.center_window(self.addCustom_window)
+        else:
+            self.addCustom_window.lift()
+            self.addCustom_window.focus_force()
+        
+    def save_custom_games(self):
+        custom_games_dict = {"customGames": []}
+
+        for game_row in self.custom_game_rows:
+            game_name_entry, game_save_entry = game_row[0], game_row[1]
+            game_name = game_name_entry.get()
+            game_path = game_save_entry.get()
+
+            if game_name and game_path:
+                custom_games_dict["customGames"].append({"name": game_name, "path": game_path})
+
+        jsonPath = os.path.dirname(self.customGameJson)
+        if not os.path.exists(jsonPath):
+            os.makedirs(jsonPath)
+        
+        try:
+            with open(self.customGameJson, "w") as file:
+                json.dump(custom_games_dict, file, indent=4)
+
+            messagebox.showinfo(_("Success"), _("Custom games saved successfully."))
+        except Exception as e:
+            messagebox.showerror(_("Error"), _("Failed to save custom games: ") + str(e))
+
+    def add_game_row(self, game_name="", save_path=""):
+        row_number = len(self.custom_game_rows) + 1  # Start rows after the header
+
+        # Create entry widgets for game name and save path
+        game_name_entry = ttk.Entry(self.content_frame)
+        game_name_entry.insert(0, game_name)
+        game_name_entry.grid(row=row_number, column=0, padx=(0, 10), pady=(5, 5))
+
+        game_save_entry = ttk.Entry(self.content_frame)
+        game_save_entry.insert(0, save_path)
+        game_save_entry.grid(row=row_number, column=1, pady=(5, 5))
+
+        # Create path selection button
+        def select_path(entry_widget):
+            path = filedialog.askdirectory()
+            if path:
+                entry_widget.delete(0, tk.END)
+                entry_widget.insert(0, path)
+
+        path_button = ttk.Button(self.content_frame, text="...", width=1,
+                                command=lambda: select_path(game_save_entry))
+        path_button.grid(row=row_number, column=2, padx=(5, 0), pady=(5, 5))
+
+        # Button styles
+        green_plus_style = ttk.Style()
+        green_plus_style.configure("Green.TButton", font=('Helvetica', 13, 'bold'), foreground='green')
+
+        red_minus_style = ttk.Style()
+        red_minus_style.configure("Red.TButton", font=('Helvetica', 13, 'bold'), foreground='red')
+
+        # Create remove row button
+        remove_button = ttk.Button(self.content_frame, text="—", width=1, command=lambda: self.remove_game_row(row_number), style="Red.TButton")
+        remove_button.grid(row=row_number, column=3, padx=(5, 0), pady=(5, 5))
+
+        # Create add row button
+        add_button = ttk.Button(self.content_frame, text="+", width=1, command=self.add_game_row, style="Green.TButton")
+        add_button.grid(row=row_number, column=4, padx=(5, 0), pady=(5, 5))
+
+        self.custom_game_rows.append((game_name_entry, game_save_entry, path_button, remove_button, add_button))
+
+        if len(self.custom_game_rows) > 1:
+            # Hide the + button of the second-to-last row
+            self.custom_game_rows[-2][-1].grid_remove()
+
+        # Show last + button and disable first - button if only one row exists
+        self.custom_game_rows[-1][-1].grid()
+        if len(self.custom_game_rows) == 1:
+            self.custom_game_rows[0][3].config(state=tk.DISABLED)
+        else:
+            self.custom_game_rows[0][3].config(state=tk.NORMAL)
+
+        self.content_frame.after(10, self.content_frame._parent_canvas.yview_moveto, 1.0)
+
+    def remove_game_row(self, row_number):
+        for widget in self.custom_game_rows[row_number - 1]:
+            widget.destroy()
+        del self.custom_game_rows[row_number - 1]
+
+        # Update row indices for remove buttons in all remaining rows
+        for i, row in enumerate(self.custom_game_rows):
+            row[3].config(command=lambda idx=i: self.remove_game_row(idx + 1))
+
+            # Re-grid all widgets except the last + button
+            for j, widget in enumerate(row[:-1]):
+                widget.grid(row=i + 1, column=j)
+
+        # Hide all + buttons and show only on the last row
+        for row in self.custom_game_rows:
+            row[-1].grid_remove()
+        if self.custom_game_rows:
+            self.custom_game_rows[-1][-1].grid(row=len(self.custom_game_rows), column=4)
+        
+        # Disable first - button if only one row exists
+        if len(self.custom_game_rows) == 1:
+            self.custom_game_rows[0][3].config(state=tk.DISABLED)
+        else:
+            self.custom_game_rows[0][3].config(state=tk.NORMAL)
+
+    def open_about(self):
+        if self.about_window is None or not self.about_window.winfo_exists():
+            self.about_window = tk.Toplevel(self)
+            self.about_window.title(_("About"))
+            self.about_window.iconbitmap(
+                resource_path("assets/logo.ico"))
+            self.about_window.transient(self)
+
+            about_frame = ttk.Frame(self.about_window)
+            about_frame.grid(row=0, column=0, sticky='nsew',
+                             padx=(50, 50), pady=(30, 40))
+
+            # ===========================================================================
+            # app logo
+            original_image = Image.open(resource_path("assets/logo.png"))
+            resized_image = original_image.resize((100, 100))
+            logo_image = ImageTk.PhotoImage(resized_image)
+            logo_label = ttk.Label(about_frame, image=logo_image)
+            logo_label.image = logo_image  # Keep a reference
+            logo_label.grid(row=0, column=0)
+
+            # ===========================================================================
+            # app name and version
+            appInfo_frame = ttk.Frame(about_frame)
+            appInfo_frame.grid(row=0, column=1)
+
+            app_name_label = ttk.Label(
+                appInfo_frame, text="Game Save Manager", font=("TkDefaultFont", 16))
+            app_name_label.grid(row=0, column=0, pady=(0, 15))
+
+            app_version_label = ttk.Label(
+                appInfo_frame, text=_("Version: ") + self.appVersion)
+            app_version_label.grid(row=1, column=0)
+
+            # ===========================================================================
+            # links
+            def open_link(event, url):
+                import webbrowser
+                webbrowser.open_new(url)
+
+            links_frame = ttk.Frame(about_frame)
+            links_frame.grid(row=1, column=0, columnspan=2, pady=(20, 0))
+
+            github_label = ttk.Label(links_frame, text="GitHub: ")
+            github_label.pack(side=tk.LEFT)
+
+            github_link = ttk.Label(
+                links_frame, text=self.githubLink, cursor="hand2", foreground="#284fff")
+            github_link.pack(side=tk.LEFT)
+            github_link.bind(
+                "<Button-1>", lambda e: open_link(e, self.githubLink))
+
+            self.center_window(self.about_window)
+        else:
+            self.about_window.lift()
+            self.about_window.focus_force()
+
+    # ===========================================================================
+    # event functions
+    # ===========================================================================
+    def on_entry_click(self, event):
+        if self.gsmPathText.get() == self.gsmPathTextPrompt:
+            self.gsmPathText.delete(0, tk.END)
+            self.gsmPathText.insert(0, "")
+            self.gsmPathText.config(foreground="white")
+
+    def on_focusout(self, event):
+        if self.gsmPathText.get() == "":
+            self.gsmPathText.insert(0, self.gsmPathTextPrompt)
+            self.gsmPathText.config(foreground="grey")
+
+    def create_migration_thread(self):
+        migration_thread = threading.Thread(target=self.change_path)
+        migration_thread.start()
+    
+    def create_export_thread(self):
+        export_thread = threading.Thread(target=self.export)
+        export_thread.start()
+
+    def create_backup_thread(self):
+        backup_thread = threading.Thread(target=self.backup)
+        backup_thread.start()
+
+    def create_restore_thread_1(self):
+        restore_thread = threading.Thread(target=self.restore1)
+        restore_thread.start()
+
+    def create_restore_thread_2(self):
+        restore_thread = threading.Thread(target=self.restore2)
+        restore_thread.start()
+
+    # ===========================================================================
+    # core helper functions
+    # ===========================================================================
+    def enable_widgets(self):
+        self.backUpButton["state"] = "enabled"
+        self.exportButton["state"] = "enabled"
+        self.backupDialogButton["state"] = "enabled"
+        self.restoreButton1["state"] = "enabled"
+        self.restoreButton2["state"] = "enabled"
+        self.gsmPathText["state"] = "enabled"
+        self.fileDialogButton["state"] = "enabled"
+    
+    def disable_widgets(self):
+        self.backUpButton["state"] = "disabled"
+        self.exportButton["state"] = "disabled"
+        self.backupDialogButton["state"] = "disabled"
+        self.restoreButton1["state"] = "disabled"
+        self.restoreButton2["state"] = "disabled"
+        self.gsmPathText["state"] = "disabled"
+        self.fileDialogButton["state"] = "disabled"
+
+    def delete_all_text(self):
+        self.backupProgressText.config(state="normal")
+        self.backupProgressText.delete(1.0, tk.END)
+        self.backupProgressText.config(state="disabled")
+
+    def insert_text(self, text):
+        if self.duplicate_symbol in text:
+            return
+        self.backupProgressText.config(state="normal")
+        text = text.replace("_", ": ").replace("^", "?")
+
+        if settings["language"] == "zh_CN":
+            with open(resource_path("game_names.json"), "r", encoding="utf-8") as file:
+                translations = json.load(file)
+
+            for game in translations["games"]:
+                textGameName = text.strip().replace(
+                    _("Backed up "), "").replace(_("Restored "), "")
+                if game["en_US"] == textGameName:
+                    text = text.replace(game["en_US"], game["zh_CN"])
+                    break
+
+        self.backupProgressText.insert(tk.END, text)
+        self.backupProgressText.see("end")
+        self.backupProgressText.config(state="disabled")
+
+    def open_file(self):
+        gsm_file = filedialog.askopenfilename(
+            title=self.gsmPathTextPrompt,
+            filetypes=(("gsm files", "*.gsm"),))
+        if gsm_file:
+            self.gsmPathText.delete(0, "end")
+            self.gsmPathText.insert(0, gsm_file)
+            self.gsmPathText.config(foreground="white")
+    
+    # check if there are any files under all subdirectories of a path
+    def is_directory_empty(self, path):
+        return not any(files for _, _, files in os.walk(path))
+
     def find_steam_directory(self):
         try:
             registry_key = winreg.OpenKey(
@@ -965,10 +1177,6 @@ class GameSaveManager(tk.Tk):
             elif os.path.isdir(destination):
                 shutil.rmtree(destination)
 
-    # check if there are any files under all subdirectories of a path
-    def is_directory_empty(self, path):
-        return not any(files for _, _, files in os.walk(path))
-
     # add a folder deletion command to Windows RunOnce registry to run on startup
     def delete_temp_on_startup(self, path):
         key = "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce"
@@ -981,13 +1189,59 @@ class GameSaveManager(tk.Tk):
         except Exception as e:
             messagebox.showerror(
                 _("Error"), _("Filed to delete temporary files: ") + e.stderr)
-    # End of helper functions
-    # ==================================================================
 
-    # ==================================================================
-    # Start of main operation functions
+    # ===========================================================================
+    # core functions
+    # ===========================================================================
+    def change_path(self, event=None):
+        self.disable_widgets()
+        self.delete_all_text()
+        folder = filedialog.askdirectory(title=_("Change backup path"))
+        if folder:
+            self.insert_text(_("Migrating existing backups...\n"))
+            try:
+                dst = os.path.join(folder, "GSM Backups")
+
+                # Can't change to the same path
+                if self.backupPathText.get() == os.path.normpath(dst):
+                    messagebox.showerror(
+                        _("Error"), _("Please choose a new path."))
+                    self.insert_text(_("Backup migration aborted!\n"))
+                    self.enable_widgets()
+                    return
+                
+                if os.path.exists(dst):
+                    command = messagebox.askyesno(
+                        _("Confirmation"), _("Backup already exists, would you like to override?"))
+                    if command:
+                        shutil.rmtree(dst)
+                        shutil.copytree(self.gsmBackupPath, dst)
+                    else:
+                        self.insert_text(_("Backup migration aborted!\n"))
+                        self.enable_widgets()
+                        return
+                else:
+                    shutil.copytree(self.gsmBackupPath, dst)
+            except Exception as e:
+                messagebox.showerror(_("Error"), _(
+                    "An error occurred, backup migration failed: ") + str(e))
+                self.insert_text(_("Backup migration aborted!\n"))
+                self.enable_widgets()
+                return
+
+            shutil.rmtree(self.gsmBackupPath)
+            self.gsmBackupPath = dst
+            settings["gsmBackupPath"] = self.gsmBackupPath
+            apply_settings(settings)
+            self.insert_text(_("Migration complete!\n"))
+            self.backupPathText.set(os.path.normpath(dst))
+        else:
+            self.insert_text(_("New backup path not specified!\n"))
+
+        self.enable_widgets()
+
     def check_newer_save(self, game, source, destination):
-        # check if games saved under their install location don't exist anymore
+        # special check for games share the same installation path, make sure the shared installation path exists
         if "Half-Life 2" in game:
             gameDstCheck = game.replace(
                 "_Episode One", "").replace("_Episode Two", "")
@@ -1035,6 +1289,57 @@ class GameSaveManager(tk.Tk):
         # Default case: overwrite the destination
         self.remove_destination(source, destination)
         return True
+    
+    def backup_custom(self):
+        custom_path = os.path.join(self.gsmBackupPath, "0 Custom")
+
+        if os.path.exists(self.customGameJson):
+            with open(self.customGameJson, "r") as file:
+                custom_games = json.load(file).get("customGames", [])
+
+                if custom_games:
+                    self.insert_text(_("\nBelow are custom games:\n"))
+                    for game in custom_games:
+                        source = os.path.normpath(game["path"])
+                        if os.path.exists(source):
+                            if not self.is_directory_empty(source):
+                                destination = os.path.join(custom_path, game["name"])
+                                shutil.copytree(source, destination)
+                                self.insert_text(_("Backed up ") + game["name"] + "\n")
+                            else:
+                                self.insert_text(_("Back up path is empty: ") + game["name"] + "\n")
+                        else:
+                            self.insert_text(_("Back up path is invalid: ") + game["name"] + "\n")
+
+    def restore_custom(self):
+        custom_path = os.path.join(self.gsmBackupPath, "0 Custom")
+
+        if os.path.exists(custom_path):
+            self.insert_text(_("\nBelow are custom games:\n"))
+
+            if os.path.exists(self.customGameJson):
+                with open(self.customGameJson, "r") as file:
+                    custom_games = json.load(file).get("customGames", [])
+
+            for game_name in os.listdir(custom_path):
+                matching_game = next((game for game in custom_games if game["name"] == game_name), None)
+
+                if matching_game:
+                    source = os.path.join(custom_path, game_name)
+                    destination = os.path.normpath(matching_game["path"])
+
+                    if os.path.exists(destination):
+                        try:
+                            shutil.copytree(source, destination, dirs_exist_ok=True)
+                            self.insert_text(_("Restored ") + game_name + "\n")
+                        except Exception as e:
+                            self.insert_text(_("Restore failed: ") + game_name + "\n")
+                            error_text = _("An error occurred while restoring {game_name}: ").format(game_name=game_name)
+                            messagebox.showerror(_("Error"), error_text + str(e))
+                    else:
+                        self.insert_text(_("Restore path is invalid: ") + game_name + "\n")
+                else:
+                    self.insert_text(_("No entry found in custom game list: ") + game_name + "\n")
 
     def export(self):
         self.disable_widgets()
@@ -1083,7 +1388,12 @@ class GameSaveManager(tk.Tk):
             command = messagebox.askyesno(
                 _("Confirmation"), _("Backup already exists, would you like to override?"))
             if command:
-                shutil.rmtree(self.gsmBackupPath)
+                try:
+                    shutil.rmtree(self.gsmBackupPath)
+                except Exception as e:
+                    messagebox.showerror(_("Error"), _("An error occurred while cleaning previous bakcup: ") + str(e))
+                    self.insert_text(_("Backup aborted!\n"))
+                    START = False
             else:
                 self.insert_text(_("Backup aborted!\n"))
                 START = False
@@ -1169,6 +1479,7 @@ class GameSaveManager(tk.Tk):
                             return
                         self.insert_text(_("Backed up ") + game + "\n")
 
+            self.backup_custom()
             self.insert_text(_("Back up completed!"))
 
         self.enable_widgets()
@@ -1187,8 +1498,11 @@ class GameSaveManager(tk.Tk):
         if START:
             all_games = os.listdir(self.gsmBackupPath)
             for game in all_games:
-                path = self.systemPath[self.gameSaveDirectory[game][0]]
-                if path == None:
+                if game in self.gameSaveDirectory:
+                    path = self.systemPath[self.gameSaveDirectory[game][0]]
+                    if path == None:
+                        continue
+                else:
                     continue
 
                 source = os.path.join(self.gsmBackupPath, game)
@@ -1272,6 +1586,7 @@ class GameSaveManager(tk.Tk):
 
                         self.insert_text(_("Restored ") + game + "\n")
 
+            self.restore_custom()
             self.insert_text(_("Restore completed!"))
 
         self.enable_widgets()
@@ -1323,8 +1638,11 @@ class GameSaveManager(tk.Tk):
 
             all_games = os.listdir(temp_dir)
             for game in all_games:
-                path = self.systemPath[self.gameSaveDirectory[game][0]]
-                if path == None:
+                if game in self.gameSaveDirectory:
+                    path = self.systemPath[self.gameSaveDirectory[game][0]]
+                    if path == None:
+                        continue
+                else:
                     continue
 
                 source = f"{temp_dir}/{game}"
@@ -1412,11 +1730,10 @@ class GameSaveManager(tk.Tk):
                 shutil.rmtree(temp_dir)
             except Exception:
                 self.delete_temp_on_startup(temp_dir)
+            self.restore_custom()
             self.insert_text(_("Restore completed!"))
 
         self.enable_widgets()
-    # End of main operation functions
-    # ==================================================================
 
 
 if __name__ == "__main__":

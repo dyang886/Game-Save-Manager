@@ -1,0 +1,212 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Game Save Manager\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 3.4.2\n"
+
+msgid "Select a .gsm file for restore"
+msgstr "选择要还原的 .gsm 文件"
+
+msgid "Options"
+msgstr "选项"
+
+msgid "Settings"
+msgstr "设置"
+
+msgid "Manage Custom Games"
+msgstr "管理自定义游戏"
+
+msgid "About"
+msgstr "关于"
+
+msgid "Version: "
+msgstr "版本："
+
+msgid "Game Name"
+msgstr "游戏名称"
+
+msgid "Save Path"
+msgstr "存档路径"
+
+msgid "Save"
+msgstr "保存"
+
+msgid "Success"
+msgstr "成功"
+
+msgid "Custom games saved successfully."
+msgstr "已成功保存自定义游戏列表。"
+
+msgid "Failed to save custom games: "
+msgstr "无法保存自定义游戏列表："
+
+msgid "Backup"
+msgstr "备份"
+
+msgid "Export"
+msgstr "导出"
+
+msgid "Restore from machine"
+msgstr "从本地备份还原"
+
+msgid "Restore from .gsm file"
+msgstr "从 .gsm 文件还原"
+
+msgid "Language:"
+msgstr "语言："
+
+msgid "Apply"
+msgstr "应用"
+
+msgid "Attention"
+msgstr "警告"
+
+msgid "Please restart the application to apply settings"
+msgstr "请重新启动应用程序以应用设置"
+
+msgid "Change backup path"
+msgstr "更改备份路径"
+
+msgid "Migrating existing backups...\n"
+msgstr "正在迁移现有备份...\n"
+
+msgid "Please choose a new path."
+msgstr "请选择一个新路径。"
+
+msgid "Confirmation"
+msgstr "确认"
+
+msgid ""
+"\n"
+"Below are custom games:\n"
+msgstr ""
+"\n"
+"以下是自定义游戏：\n"
+
+msgid "Back up path is empty: "
+msgstr "备份路径为空："
+
+msgid "Back up path is invalid: "
+msgstr "备份路径无效："
+
+msgid "Restore failed: "
+msgstr "还原失败："
+
+msgid "An error occurred while restoring {game_name}: "
+msgstr "还原 {game_name} 时出错："
+
+msgid "Restore path is invalid: "
+msgstr "还原路径无效："
+
+msgid "No entry found in custom game list: "
+msgstr "在自定义游戏列表中找不到条目："
+
+msgid "Backup already exists, would you like to override?"
+msgstr "备份已存在，是否要覆盖？"
+
+msgid "An error occurred while removing existing backup: "
+msgstr "删除现有备份时出错："
+
+msgid "Backup migration aborted!\n"
+msgstr "备份迁移已中止！\n"
+
+msgid "Error"
+msgstr "错误"
+
+msgid "An error occurred, backup migration failed: "
+msgstr "发生错误，备份迁移失败："
+
+msgid "Migration complete!\n"
+msgstr "迁移完成！\n"
+
+msgid "New backup path not specified!\n"
+msgstr "未指定新的备份路径！\n"
+
+msgid ""
+"Could not find Steam installation path\n"
+"Games saved under Steam directory will not be processed"
+msgstr ""
+"找不到 Steam 安装路径\n"
+"保存在 Steam 目录下的游戏将不会被处理"
+
+msgid ""
+"Could not find Ubisoft installation path\n"
+"Games saved under Ubisoft directory will not be processed"
+msgstr ""
+"找不到育碧安装路径\n"
+"保存在育碧目录下的游戏将不会被处理"
+
+msgid "Filed to delete temporary files: "
+msgstr "无法删除临时文件："
+
+msgid ""
+"Save conflict detected for {game_display}:\n"
+"Save data on machine (last modified on {destination_mtime})\n"
+"is newer than backup (last modified on {source_mtime}).\n"
+"\n"
+"Do you want to overwrite local save data with backup?"
+msgstr ""
+"{game_display} 检测到存档冲突：\n"
+"本地存档（上次修改时间为 {destination_mtime}）\n"
+"比备份新（上次修改时间为 {source_mtime}）。\n"
+"\n"
+"是否要使用备份覆盖本地保存数据？"
+
+msgid "No backup found!"
+msgstr "未找到备份！"
+
+msgid "Please select a directory to export your file."
+msgstr "请选择文件导出路径。"
+
+msgid "Export path not specified!"
+msgstr "未指定导出路径！"
+
+msgid "A file named {file_name} already exists. Do you want to overwrite it?"
+msgstr "名为 {file_name} 的文件已存在。是否要覆盖它？"
+
+msgid "Export aborted!"
+msgstr "导出已中止！"
+
+msgid "Export in progress...\n"
+msgstr "正在导出...\n"
+
+msgid "Export successful!"
+msgstr "导出成功！"
+
+msgid "Backup aborted!\n"
+msgstr "备份已中止！\n"
+
+msgid "Backed up "
+msgstr "已备份 "
+
+msgid "Back up completed!"
+msgstr "备份完成！"
+
+msgid "Restored "
+msgstr "已还原 "
+
+msgid "An error occurred."
+msgstr "发生错误。"
+
+msgid "Restore completed!"
+msgstr "还原完成！"
+
+msgid "Invalid file path!"
+msgstr "文件路径无效！"
+
+msgid "Unable to clear temporary files from last session, please restart your computer."
+msgstr "无法清除上次会话中的临时文件，请重新启动计算机。"
+
+msgid "Decompressing file...\n"
+msgstr "正在解压文件...\n"
+
+msgid "An error occurred while extracting file: "
+msgstr "解压文件时出错："
