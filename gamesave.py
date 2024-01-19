@@ -1,6 +1,7 @@
 import datetime
 import gettext
 import json
+import locale
 import os
 import re
 import shutil
@@ -10,12 +11,11 @@ import tempfile
 import threading
 import time
 import tkinter as tk
-from tkinter import filedialog, messagebox, ttk
 import zipfile
-import locale
+from tkinter import filedialog, messagebox, ttk
+
 from customtkinter import CTkScrollableFrame
 from PIL import Image, ImageTk
-
 import polib
 import sv_ttk
 from tendo import singleton
@@ -819,14 +819,35 @@ class GameSaveManager(tk.Tk):
         
     def save_custom_games(self):
         custom_games_dict = {"customGames": []}
+        game_names = set()
+        duplicate_game_names = set()
+        duplicate_found = False
 
         for game_row in self.custom_game_rows:
+            game_row[0].config(foreground="white")
             game_name_entry, game_save_entry = game_row[0], game_row[1]
             game_name = game_name_entry.get()
             game_path = game_save_entry.get()
 
             if game_name and game_path:
-                custom_games_dict["customGames"].append({"name": game_name, "path": game_path})
+                if game_name in game_names:
+                    duplicate_game_names.add(game_name)
+                else:
+                    game_names.add(game_name)
+                    custom_games_dict["customGames"].append({"name": game_name, "path": game_path})
+
+        # Highlight all duplicates
+        if duplicate_game_names:
+            for row in self.custom_game_rows:
+                game_name_entry = row[0]
+                game_name = game_name_entry.get()
+                if game_name in duplicate_game_names:
+                    game_name_entry.config(foreground="red")
+                    duplicate_found = True
+
+        if duplicate_found:
+            messagebox.showwarning(_("Warning"), _("Please make sure to have no duplicate game names."))
+            return
 
         jsonPath = os.path.dirname(self.customGameJson)
         if not os.path.exists(jsonPath):
@@ -835,7 +856,6 @@ class GameSaveManager(tk.Tk):
         try:
             with open(self.customGameJson, "w") as file:
                 json.dump(custom_games_dict, file, indent=4)
-
             messagebox.showinfo(_("Success"), _("Custom games saved successfully."))
         except Exception as e:
             messagebox.showerror(_("Error"), _("Failed to save custom games: ") + str(e))
@@ -851,6 +871,7 @@ class GameSaveManager(tk.Tk):
         game_save_entry = ttk.Entry(self.content_frame)
         game_save_entry.insert(0, save_path)
         game_save_entry.grid(row=row_number, column=1, pady=(5, 5))
+        game_name_entry.bind("<KeyRelease>", lambda event, entry=game_name_entry: self.on_entry_change(entry))
 
         # Create path selection button
         def select_path(entry_widget):
@@ -988,6 +1009,9 @@ class GameSaveManager(tk.Tk):
         if self.gsmPathText.get() == "":
             self.gsmPathText.insert(0, self.gsmPathTextPrompt)
             self.gsmPathText.config(foreground="grey")
+
+    def on_entry_change(self, entry_widget):
+        entry_widget.config(foreground="white")
 
     def create_migration_thread(self):
         migration_thread = threading.Thread(target=self.change_path)
