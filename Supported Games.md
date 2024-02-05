@@ -270,6 +270,7 @@
 | There Is No Game: Wrong Dimension | Windows |
 | The Sims 4 | Windows |
 | The Stanley Parable: Ultra Deluxe | Windows |
+| The Survivalists | Windows |
 | The White Door | Windows |
 | The Witcher 3: Wild Hunt | Windows |
 | Titanfall 2 | Windows |

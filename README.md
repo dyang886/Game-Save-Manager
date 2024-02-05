@@ -18,7 +18,7 @@ Game Save Manager is a user-friendly application designed to help gamers easily 
 ## Usage
 
 1. **Backing Up Saves:** Click on the `Backup` button to back up your saves to a customized path to your preference.
-2. **Restoring Saves:** To restore directly from your machine, click `Restore from machine`; to restore from a `.gsm` file, click `Restore from .gsm file` and select your file; alternatively, simply double-click any `.gsm` file, and the path will be filled in the app.
+2. **Restoring Saves:** To restore directly from your machine, click `Restore from machine`; to restore from a `.gsm` file, select your file and click `Restore from .gsm file`; alternatively, simply double-click any `.gsm` file, and the path will be filled in the app.
 3. **Exporting Save:** After a backup, click on the `Export` button and choose the destination for the `.gsm` file.
 
 ## Support

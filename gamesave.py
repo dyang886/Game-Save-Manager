@@ -1,3 +1,4 @@
+import ctypes
 import datetime
 import gettext
 import json
@@ -11,15 +12,15 @@ import tempfile
 import threading
 import time
 import tkinter as tk
+from tkinter import filedialog, font, messagebox, ttk
+import winreg
 import zipfile
-from tkinter import filedialog, messagebox, ttk
 
-from customtkinter import CTkScrollableFrame
 from PIL import Image, ImageTk
 import polib
 import sv_ttk
+from customtkinter import CTkScrollableFrame
 from tendo import singleton
-import winreg
 
 
 def resource_path(relative_path):
@@ -32,14 +33,16 @@ def apply_settings(settings):
     with open(SETTINGS_FILE, "w") as f:
         json.dump(settings, f)
 
-    
+
 def load_settings():
+    locale.setlocale(locale.LC_ALL, '')
     system_locale = locale.getlocale()[0]
     locale_mapping = {
-        "en_US": "English_United States",
-        "zh_CN": "Chinese (Simplified)_China",
-        "zh_HK": "Chinese (Simplified)_Hong Kong SAR",
-        "zh_MO": "Chinese (Simplified)_Macao SAR"
+        "English_United States": "en_US",
+        "Chinese (Simplified)_China": "zh_CN",
+        "Chinese (Simplified)_Hong Kong SAR": "zh_CN",
+        "Chinese (Simplified)_Macao SAR": "zh_CN",
+        "Chinese (Simplified)_Singapore": "zh_CN"
     }
     app_locale = locale_mapping.get(system_locale, 'en_US')
 
@@ -91,13 +94,14 @@ setting_path = os.path.join(
 if not os.path.exists(setting_path):
     os.makedirs(setting_path)
 
-settings = load_settings()
-_ = get_translator()
-
 language_options = {
     "English (US)": "en_US",
     "简体中文": "zh_CN"
 }
+
+ctypes.windll.shcore.SetProcessDpiAwareness(1)
+settings = load_settings()
+_ = get_translator()
 
 
 class GameSaveManager(tk.Tk):
@@ -113,10 +117,12 @@ class GameSaveManager(tk.Tk):
         self.title("Game Save Manager")
         self.iconbitmap(resource_path("assets/logo.ico"))
         sv_ttk.set_theme("dark")
+        self.resizable(False, False)
 
         # Version, user prompts, and links
         self.appVersion = "1.0.0"
         self.githubLink = "https://github.com/dyang886/Game-Save-Manager"
+        self.updateLink = "https://api.github.com/repos/dyang886/Game-Save-Manager/releases/latest"
         self.gsmPathTextPrompt = _("Select a .gsm file for restore")
 
         # Paths and variable management
@@ -127,9 +133,9 @@ class GameSaveManager(tk.Tk):
         os.chdir(dir_path)
         self.gsmPath = sys.argv[1] if len(sys.argv) > 1 else ""
         self.gsmBackupPath = settings["gsmBackupPath"]
-        self.customGameJson = os.path.join(os.environ["APPDATA"], "GSM Settings/", "custom_games.json")
+        self.customGameJson = os.path.join(
+            os.environ["APPDATA"], "GSM Settings/", "custom_games.json")
 
-        self.entryLength = 40
         self.duplicate_symbol = "#"  # additional symbols: "_" -> ": ", "^" -> "?"
         self.user_name = os.getlogin()
         self.steamUserID = []
@@ -146,11 +152,39 @@ class GameSaveManager(tk.Tk):
         self.addCustom_window = None
         self.about_window = None
 
+        # Widget fonts and styles
+        font_config = {
+            "en_US": ("Noto Sans", "assets/NotoSans-Regular.ttf"),
+            "zh_CN": ("Noto Sans SC", "assets/NotoSansSC-Regular.ttf")
+        }
+
+        def is_font_installed(font_name):
+            return font_name in font.families()
+
+        font_name, font_path = font_config[settings["language"]]
+        if font_path and not is_font_installed(font_name):
+            ctypes.windll.gdi32.AddFontResourceW(resource_path(font_path))
+            # Broadcasts a system-wide message if a new font has been added
+            ctypes.windll.user32.SendMessageW(0xffff, 0x1D, 0, 0)
+
+        self.default_font = (font_name, 10)
+        self.menu_font = (font_name, 9)
+        self.title_font = (font_name, 20)
+        style = ttk.Style()
+        style.configure("TButton", font=self.default_font, padding=8)
+        style.configure("Green.TButton", font=(
+            self.default_font[0], 15, "bold"), padding=0, foreground="green")
+        style.configure("Red.TButton", font=(
+            self.default_font[0], 15, "bold"), padding=0, foreground="red")
+        style.configure("TEntry", padding=6)
+        style.configure("TCombobox", padding=6)
+
         # Menu bar
         self.menuBar = tk.Frame(self, background="#2e2e2e")
         self.settingMenuBtn = tk.Menubutton(
-            self.menuBar, text=_("Options"), background="#2e2e2e")
-        self.settingsMenu = tk.Menu(self.settingMenuBtn, tearoff=0)
+            self.menuBar, text=_("Options"), background="#2e2e2e", font=self.menu_font)
+        self.settingsMenu = tk.Menu(
+            self.settingMenuBtn, tearoff=0, font=self.menu_font)
         self.settingsMenu.add_command(
             label=_("Settings"), command=self.open_settings)
         self.settingsMenu.add_command(
@@ -162,52 +196,77 @@ class GameSaveManager(tk.Tk):
         self.menuBar.grid(row=0, column=0, sticky="ew")
 
         # Main frame
-        self.frame = ttk.Frame(self, padding="20")
-        self.frame.grid(row=1, column=0)
+        self.frame = ttk.Frame(self)
+        self.frame.grid(row=1, column=0, padx=50, pady=(30, 50))
 
         # ===========================================================================
         # UI setup
         # ===========================================================================
         # top buttons
         self.backUpButton = ttk.Button(
-            self.frame, text=_("Backup"), width=20, command=self.create_backup_thread)
-        self.backUpButton.grid(row=0, column=0, padx=(10, 10))
+            self.frame, text=_("Backup"),
+            command=self.create_backup_thread,
+            style="TButton"
+        )
+        self.backUpButton.grid(row=0, column=0, padx=(0, 10), sticky="we")
 
         self.exportButton = ttk.Button(
-            self.frame, text=_("Export"), width=20, command=self.create_export_thread)
-        self.exportButton.grid(row=0, column=1, padx=(10, 10))
+            self.frame, text=_("Export"),
+            command=self.create_export_thread,
+            style="TButton"
+        )
+        self.exportButton.grid(row=0, column=1, padx=(10, 0), sticky="we")
 
         # backup path
         self.changeBackupPath = ttk.Frame(self.frame)
-        self.changeBackupPath.grid(row=1, column=0, columnspan=2, pady=(20, 0))
+        self.changeBackupPath.grid(
+            row=1, column=0, columnspan=2, pady=(20, 0), sticky="we")
+        self.changeBackupPath.columnconfigure(0, weight=20)
+        self.changeBackupPath.columnconfigure(1, weight=1)
 
         self.backupPathText = tk.StringVar()
         self.backupPathText.set(os.path.normpath(self.gsmBackupPath))
         self.backupPathEntry = ttk.Entry(
-            self.changeBackupPath, font=("TkDefaultFont", 10), width=self.entryLength, state="readonly", textvariable=self.backupPathText)
-        self.backupPathEntry.pack(side=tk.LEFT, padx=(0, 15))
+            self.changeBackupPath, state="readonly",
+            textvariable=self.backupPathText,
+            style="TEntry", font=self.default_font)
+        self.backupPathEntry.grid(row=0, column=0, padx=(0, 15), sticky="we")
 
         self.backupDialogButton = ttk.Button(
-            self.changeBackupPath, text="...", width=2, command=self.create_migration_thread)
-        self.backupDialogButton.pack(side=tk.LEFT)
+            self.changeBackupPath, text="...",
+            command=self.create_migration_thread,
+            style="TButton"
+        )
+        self.backupDialogButton.grid(row=0, column=1, sticky="we")
 
         # prompt entry
-        self.scroll = ttk.Scrollbar(self.frame)
+        self.scroll = ttk.Scrollbar(self.frame, orient="vertical")
         self.scroll.grid(row=2, column=2, sticky='ns')
 
         self.backupProgressText = tk.Text(
-            self.frame, height=12, width=50, yscrollcommand=self.scroll.set)
-        self.backupProgressText.grid(row=2, column=0, padx=(
-            10, 0), pady=(20, 20), columnspan=2)
+            self.frame, height=12, width=55,
+            yscrollcommand=self.scroll.set,
+            font=self.default_font
+        )
+        self.backupProgressText.grid(
+            row=2, column=0, pady=(20, 20), columnspan=2)
         self.backupProgressText.config(state="disabled")
+
         self.scroll.config(command=self.backupProgressText.yview)
 
+        # gsm path
         self.filePathFrame = ttk.Frame(self.frame)
-        self.filePathFrame.grid(row=3, column=0, columnspan=2, pady=(0, 20))
+        self.filePathFrame.grid(
+            row=3, column=0, columnspan=2, pady=(0, 20), sticky="we")
+        self.filePathFrame.columnconfigure(0, weight=20)
+        self.filePathFrame.columnconfigure(1, weight=1)
 
         self.gsmPathText = ttk.Entry(
-            self.filePathFrame, font=("TkDefaultFont", 10), width=self.entryLength)
-        self.gsmPathText.pack(side=tk.LEFT, padx=(0, 15))
+            self.filePathFrame,
+            style="TEntry",
+            font=self.default_font
+        )
+        self.gsmPathText.grid(row=0, column=0, padx=(0, 15), sticky="we")
         self.gsmPathText.insert(0, self.gsmPathTextPrompt)
         self.gsmPathText.config(foreground="grey")
         if self.gsmPath != "":
@@ -216,17 +275,29 @@ class GameSaveManager(tk.Tk):
             self.gsmPathText.config(foreground="white")
 
         self.fileDialogButton = ttk.Button(
-            self.filePathFrame, text="...", width=2, command=self.open_file)
-        self.fileDialogButton.pack(side=tk.LEFT)
+            self.filePathFrame,
+            text="...",
+            command=self.open_file,
+            style="TButton"
+        )
+        self.fileDialogButton.grid(row=0, column=1, sticky="we")
 
         # restore buttons
         self.restoreButton1 = ttk.Button(
-            self.frame, text=_("Restore from machine"), width=20, command=self.create_restore_thread_1)
-        self.restoreButton1.grid(row=4, column=0, padx=(10, 10))
+            self.frame,
+            text=_("Restore from machine"),
+            command=self.create_restore_thread_1,
+            style="TButton"
+        )
+        self.restoreButton1.grid(row=4, column=0, padx=(0, 10), sticky="we")
 
         self.restoreButton2 = ttk.Button(
-            self.frame, text=_("Restore from .gsm file"), width=20, command=self.create_restore_thread_2)
-        self.restoreButton2.grid(row=4, column=1, padx=(10, 10))
+            self.frame,
+            text=_("Restore from .gsm file"),
+            command=self.create_restore_thread_2,
+            style="TButton"
+        )
+        self.restoreButton2.grid(row=4, column=1, padx=(10, 0), sticky="we")
 
         self.gsmPathText.bind('<FocusIn>', self.on_entry_click)
         self.gsmPathText.bind('<FocusOut>', self.on_focusout)
@@ -603,6 +674,7 @@ class GameSaveManager(tk.Tk):
             "There Is No Game_Wrong Dimension": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/DrawMeAPixel/Ting"),
             "The Sims 4": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/Electronic Arts/The Sims 4/saves"),
             "The Stanley Parable_Ultra Deluxe": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/Crows Crows Crows/The Stanley Parable_ Ultra Deluxe"),
+            "The Survivalists": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/Team17 Digital Ltd_/The Survivalists"),
             "The White Door": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/Rusty Lake/TheWhiteDoor"),
             "The Witcher 3_Wild Hunt": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/The Witcher 3"),
             "Titanfall 2": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/Respawn/Titanfall2/profile/savegames"),
@@ -744,18 +816,24 @@ class GameSaveManager(tk.Tk):
             self.settings_window.iconbitmap(
                 resource_path("assets/setting.ico"))
             self.settings_window.transient(self)
+            self.settings_window.resizable(False, False)
 
             settings_frame = ttk.Frame(self.settings_window)
             settings_frame.grid(row=0, column=0, sticky='nsew',
-                                padx=(80, 80), pady=(30, 20))
+                                padx=(80, 80), pady=(50, 20))
 
             # ===========================================================================
             # languages frame
             languages_frame = ttk.Frame(settings_frame)
-            languages_frame.grid(row=0, column=0, pady=(20, 0), sticky="we")
+            languages_frame.grid(row=0, column=0, sticky="we")
+            languages_frame.grid_columnconfigure(0, weight=1)
 
-            languages_label = ttk.Label(languages_frame, text=_("Language:"))
-            languages_label.pack(anchor="w")
+            languages_label = ttk.Label(
+                languages_frame,
+                text=_("Language:"),
+                font=self.default_font
+            )
+            languages_label.grid(row=0, column=0, sticky="w")
 
             self.languages_var = tk.StringVar()
             for key, value in language_options.items():
@@ -766,43 +844,61 @@ class GameSaveManager(tk.Tk):
                 languages_frame,
                 textvariable=self.languages_var,
                 values=list(language_options.keys()),
-                state="readonly", width=20
+                state="readonly",
+                font=self.default_font,
+                style="TCombobox"
             )
-            languages_combobox.pack(side=tk.LEFT)
+            languages_combobox.grid(row=1, column=0, sticky="we")
 
             # ===========================================================================
             # apply button
             apply_button = ttk.Button(
                 self.settings_window, text=_("Apply"),
-                command=self.apply_settings_page
+                command=self.apply_settings_page,
+                style="TButton",
+                width=10
             )
             apply_button.grid(row=1, column=0, padx=(
-                0, 20), pady=(20, 20), sticky="e")
+                0, 30), pady=(30, 30), sticky="e")
 
             self.center_window(self.settings_window)
         else:
             self.settings_window.lift()
             self.settings_window.focus_force()
-        
+
     def manage_custom_games(self):
         if self.addCustom_window is None or not self.addCustom_window.winfo_exists():
             self.addCustom_window = tk.Toplevel(self)
             self.addCustom_window.title(_("Manage Custom Games"))
             self.addCustom_window.iconbitmap(resource_path("assets/logo.ico"))
             self.addCustom_window.transient(self)
-            self.addCustom_window.grid_columnconfigure(0, weight=1)
-            
-            self.content_frame = CTkScrollableFrame(self.addCustom_window, fg_color="transparent", width=490, height=300)
-            self.content_frame.grid(row=0, column=0, sticky='nsew', padx=(20, 15), pady=(20, 0))
-            
+            self.addCustom_window.resizable(False, False)
+
+            self.content_frame = CTkScrollableFrame(
+                self.addCustom_window,
+                fg_color="transparent",
+                width=490, height=300
+            )
+            self.content_frame.grid(
+                row=0, column=0, sticky='nsew', padx=(20, 15), pady=(20, 0))
+            self.content_frame.columnconfigure(0, weight=1)
+            self.content_frame.columnconfigure(1, weight=1)
+
             # Set up the table headers
-            ttk.Label(self.content_frame, text=_("Game Name")).grid(row=0, column=0)
-            ttk.Label(self.content_frame, text=_("Save Path")).grid(row=0, column=1)
-            
+            ttk.Label(self.content_frame, text=_(
+                "Game Name"), font=self.default_font).grid(row=0, column=0)
+            ttk.Label(self.content_frame, text=_(
+                "Save Path"), font=self.default_font).grid(row=0, column=1)
+
             # Apply button
-            apply_button = ttk.Button(self.addCustom_window, text=_("Save"), command=self.save_custom_games)
-            apply_button.grid(row=1, column=0, padx=(0, 20), pady=(20, 20), sticky='e')
-            
+            apply_button = ttk.Button(
+                self.addCustom_window, text=_("Save"),
+                command=self.save_custom_games,
+                style="TButton", width=10
+            )
+            apply_button.grid(row=1, column=0, padx=(
+                0, 20), pady=(20, 20), sticky='e')
+
             # load saved custom games
             self.custom_game_rows = []
             if os.path.exists(self.customGameJson):
@@ -811,12 +907,12 @@ class GameSaveManager(tk.Tk):
                     for game in custom_games.get("customGames", []):
                         self.add_game_row(game["name"], game["path"])
             self.add_game_row()
-            
+
             self.center_window(self.addCustom_window)
         else:
             self.addCustom_window.lift()
             self.addCustom_window.focus_force()
-        
+
     def save_custom_games(self):
         custom_games_dict = {"customGames": []}
         game_names = set()
@@ -834,7 +930,8 @@ class GameSaveManager(tk.Tk):
                     duplicate_game_names.add(game_name)
                 else:
                     game_names.add(game_name)
-                    custom_games_dict["customGames"].append({"name": game_name, "path": game_path})
+                    custom_games_dict["customGames"].append(
+                        {"name": game_name, "path": game_path})
 
         # Highlight all duplicates
         if duplicate_game_names:
@@ -846,32 +943,47 @@ class GameSaveManager(tk.Tk):
                     duplicate_found = True
 
         if duplicate_found:
-            messagebox.showwarning(_("Warning"), _("Please make sure to have no duplicate game names."))
+            messagebox.showwarning(_("Warning"), _(
+                "Please make sure to have no duplicate game names."))
             return
 
         jsonPath = os.path.dirname(self.customGameJson)
         if not os.path.exists(jsonPath):
             os.makedirs(jsonPath)
-        
+
         try:
             with open(self.customGameJson, "w") as file:
                 json.dump(custom_games_dict, file, indent=4)
-            messagebox.showinfo(_("Success"), _("Custom games saved successfully."))
+            messagebox.showinfo(_("Success"), _(
+                "Custom games saved successfully."))
         except Exception as e:
-            messagebox.showerror(_("Error"), _("Failed to save custom games: ") + str(e))
+            messagebox.showerror(_("Error"), _(
+                "Failed to save custom games: ") + str(e))
 
     def add_game_row(self, game_name="", save_path=""):
-        row_number = len(self.custom_game_rows) + 1  # Start rows after the header
+        # Start rows after the header
+        row_number = len(self.custom_game_rows) + 1
 
         # Create entry widgets for game name and save path
-        game_name_entry = ttk.Entry(self.content_frame)
+        game_name_entry = ttk.Entry(
+            self.content_frame,
+            style="TEntry",
+            font=self.default_font
+        )
         game_name_entry.insert(0, game_name)
-        game_name_entry.grid(row=row_number, column=0, padx=(0, 10), pady=(5, 5))
+        game_name_entry.grid(row=row_number, column=0,
+                             padx=(0, 10), pady=(5, 5), sticky="we")
 
-        game_save_entry = ttk.Entry(self.content_frame)
+        game_save_entry = ttk.Entry(
+            self.content_frame,
+            style="TEntry",
+            font=self.default_font
+        )
         game_save_entry.insert(0, save_path)
-        game_save_entry.grid(row=row_number, column=1, pady=(5, 5))
-        game_name_entry.bind("<KeyRelease>", lambda event, entry=game_name_entry: self.on_entry_change(entry))
+        game_save_entry.grid(row=row_number, column=1,
+                             pady=(5, 5), sticky="we")
+        game_name_entry.bind("<KeyRelease>", lambda event,
+                             entry=game_name_entry: self.on_entry_change(entry))
 
         # Create path selection button
         def select_path(entry_widget):
@@ -880,26 +992,31 @@ class GameSaveManager(tk.Tk):
                 entry_widget.delete(0, tk.END)
                 entry_widget.insert(0, path)
 
-        path_button = ttk.Button(self.content_frame, text="...", width=1,
-                                command=lambda: select_path(game_save_entry))
+        path_button = ttk.Button(
+            self.content_frame, text="...", width=2,
+            command=lambda: select_path(game_save_entry),
+            style="TButton"
+        )
         path_button.grid(row=row_number, column=2, padx=(5, 0), pady=(5, 5))
 
-        # Button styles
-        green_plus_style = ttk.Style()
-        green_plus_style.configure("Green.TButton", font=('Helvetica', 13, 'bold'), foreground='green')
-
-        red_minus_style = ttk.Style()
-        red_minus_style.configure("Red.TButton", font=('Helvetica', 13, 'bold'), foreground='red')
-
         # Create remove row button
-        remove_button = ttk.Button(self.content_frame, text="—", width=1, command=lambda: self.remove_game_row(row_number), style="Red.TButton")
+        remove_button = ttk.Button(
+            self.content_frame, text="-", width=2,
+            command=lambda: self.remove_game_row(row_number),
+            style="Red.TButton"
+        )
         remove_button.grid(row=row_number, column=3, padx=(5, 0), pady=(5, 5))
 
         # Create add row button
-        add_button = ttk.Button(self.content_frame, text="+", width=1, command=self.add_game_row, style="Green.TButton")
-        add_button.grid(row=row_number, column=4, padx=(5, 0), pady=(5, 5))
+        add_button = ttk.Button(
+            self.content_frame, text="+", width=2,
+            command=self.add_game_row,
+            style="Green.TButton"
+        )
+        add_button.grid(row=row_number, column=4, padx=(5, 10), pady=(5, 5))
 
-        self.custom_game_rows.append((game_name_entry, game_save_entry, path_button, remove_button, add_button))
+        self.custom_game_rows.append(
+            (game_name_entry, game_save_entry, path_button, remove_button, add_button))
 
         if len(self.custom_game_rows) > 1:
             # Hide the + button of the second-to-last row
@@ -912,7 +1029,8 @@ class GameSaveManager(tk.Tk):
         else:
             self.custom_game_rows[0][3].config(state=tk.NORMAL)
 
-        self.content_frame.after(10, self.content_frame._parent_canvas.yview_moveto, 1.0)
+        self.content_frame.after(
+            10, self.content_frame._parent_canvas.yview_moveto, 1.0)
 
     def remove_game_row(self, row_number):
         for widget in self.custom_game_rows[row_number - 1]:
@@ -931,8 +1049,9 @@ class GameSaveManager(tk.Tk):
         for row in self.custom_game_rows:
             row[-1].grid_remove()
         if self.custom_game_rows:
-            self.custom_game_rows[-1][-1].grid(row=len(self.custom_game_rows), column=4)
-        
+            self.custom_game_rows[-1][-1].grid(
+                row=len(self.custom_game_rows), column=4)
+
         # Disable first - button if only one row exists
         if len(self.custom_game_rows) == 1:
             self.custom_game_rows[0][3].config(state=tk.DISABLED)
@@ -946,15 +1065,16 @@ class GameSaveManager(tk.Tk):
             self.about_window.iconbitmap(
                 resource_path("assets/logo.ico"))
             self.about_window.transient(self)
+            self.about_window.resizable(False, False)
 
             about_frame = ttk.Frame(self.about_window)
             about_frame.grid(row=0, column=0, sticky='nsew',
-                             padx=(50, 50), pady=(30, 40))
+                             padx=(70, 70), pady=(50, 70))
 
             # ===========================================================================
             # app logo
             original_image = Image.open(resource_path("assets/logo.png"))
-            resized_image = original_image.resize((100, 100))
+            resized_image = original_image.resize((150, 150))
             logo_image = ImageTk.PhotoImage(resized_image)
             logo_label = ttk.Label(about_frame, image=logo_image)
             logo_label.image = logo_image  # Keep a reference
@@ -966,11 +1086,11 @@ class GameSaveManager(tk.Tk):
             appInfo_frame.grid(row=0, column=1)
 
             app_name_label = ttk.Label(
-                appInfo_frame, text="Game Save Manager", font=("TkDefaultFont", 16))
-            app_name_label.grid(row=0, column=0, pady=(0, 15))
+                appInfo_frame, text="Game Save Manager", font=self.title_font)
+            app_name_label.grid(row=0, column=0, pady=(0, 20))
 
             app_version_label = ttk.Label(
-                appInfo_frame, text=_("Version: ") + self.appVersion)
+                appInfo_frame, text=_("Version: ") + self.appVersion, font=self.default_font)
             app_version_label.grid(row=1, column=0)
 
             # ===========================================================================
@@ -980,13 +1100,14 @@ class GameSaveManager(tk.Tk):
                 webbrowser.open_new(url)
 
             links_frame = ttk.Frame(about_frame)
-            links_frame.grid(row=1, column=0, columnspan=2, pady=(20, 0))
+            links_frame.grid(row=1, column=0, columnspan=2, pady=(40, 0))
 
-            github_label = ttk.Label(links_frame, text="GitHub: ")
+            github_label = ttk.Label(
+                links_frame, text="GitHub: ", font=self.default_font)
             github_label.pack(side=tk.LEFT)
 
             github_link = ttk.Label(
-                links_frame, text=self.githubLink, cursor="hand2", foreground="#284fff")
+                links_frame, text=self.githubLink, cursor="hand2", foreground="#284fff", font=self.default_font)
             github_link.pack(side=tk.LEFT)
             github_link.bind(
                 "<Button-1>", lambda e: open_link(e, self.githubLink))
@@ -1016,7 +1137,7 @@ class GameSaveManager(tk.Tk):
     def create_migration_thread(self):
         migration_thread = threading.Thread(target=self.change_path)
         migration_thread.start()
-    
+
     def create_export_thread(self):
         export_thread = threading.Thread(target=self.export)
         export_thread.start()
@@ -1044,7 +1165,7 @@ class GameSaveManager(tk.Tk):
         self.restoreButton2["state"] = "enabled"
         self.gsmPathText["state"] = "enabled"
         self.fileDialogButton["state"] = "enabled"
-    
+
     def disable_widgets(self):
         self.backUpButton["state"] = "disabled"
         self.exportButton["state"] = "disabled"
@@ -1088,7 +1209,7 @@ class GameSaveManager(tk.Tk):
             self.gsmPathText.delete(0, "end")
             self.gsmPathText.insert(0, gsm_file)
             self.gsmPathText.config(foreground="white")
-    
+
     # check if there are any files under all subdirectories of a path
     def is_directory_empty(self, path):
         return not any(files for _, _, files in os.walk(path))
@@ -1233,7 +1354,7 @@ class GameSaveManager(tk.Tk):
                     self.insert_text(_("Backup migration aborted!\n"))
                     self.enable_widgets()
                     return
-                
+
                 if os.path.exists(dst):
                     command = messagebox.askyesno(
                         _("Confirmation"), _("Backup already exists, would you like to override?"))
@@ -1313,7 +1434,7 @@ class GameSaveManager(tk.Tk):
         # Default case: overwrite the destination
         self.remove_destination(source, destination)
         return True
-    
+
     def backup_custom(self):
         custom_path = os.path.join(self.gsmBackupPath, "0 Custom")
 
@@ -1327,13 +1448,17 @@ class GameSaveManager(tk.Tk):
                         source = os.path.normpath(game["path"])
                         if os.path.exists(source):
                             if not self.is_directory_empty(source):
-                                destination = os.path.join(custom_path, game["name"])
+                                destination = os.path.join(
+                                    custom_path, game["name"])
                                 shutil.copytree(source, destination)
-                                self.insert_text(_("Backed up ") + game["name"] + "\n")
+                                self.insert_text(
+                                    _("Backed up ") + game["name"] + "\n")
                             else:
-                                self.insert_text(_("Back up path is empty: ") + game["name"] + "\n")
+                                self.insert_text(
+                                    _("Back up path is empty: ") + game["name"] + "\n")
                         else:
-                            self.insert_text(_("Back up path is invalid: ") + game["name"] + "\n")
+                            self.insert_text(
+                                _("Back up path is invalid: ") + game["name"] + "\n")
 
     def restore_custom(self):
         custom_path = os.path.join(self.gsmBackupPath, "0 Custom")
@@ -1346,7 +1471,8 @@ class GameSaveManager(tk.Tk):
                     custom_games = json.load(file).get("customGames", [])
 
             for game_name in os.listdir(custom_path):
-                matching_game = next((game for game in custom_games if game["name"] == game_name), None)
+                matching_game = next(
+                    (game for game in custom_games if game["name"] == game_name), None)
 
                 if matching_game:
                     source = os.path.join(custom_path, game_name)
@@ -1354,16 +1480,22 @@ class GameSaveManager(tk.Tk):
 
                     if os.path.exists(destination):
                         try:
-                            shutil.copytree(source, destination, dirs_exist_ok=True)
+                            shutil.copytree(source, destination,
+                                            dirs_exist_ok=True)
                             self.insert_text(_("Restored ") + game_name + "\n")
                         except Exception as e:
-                            self.insert_text(_("Restore failed: ") + game_name + "\n")
-                            error_text = _("An error occurred while restoring {game_name}: ").format(game_name=game_name)
-                            messagebox.showerror(_("Error"), error_text + str(e))
+                            self.insert_text(
+                                _("Restore failed: ") + game_name + "\n")
+                            error_text = _("An error occurred while restoring {game_name}: ").format(
+                                game_name=game_name)
+                            messagebox.showerror(
+                                _("Error"), error_text + str(e))
                     else:
-                        self.insert_text(_("Restore path is invalid: ") + game_name + "\n")
+                        self.insert_text(
+                            _("Restore path is invalid: ") + game_name + "\n")
                 else:
-                    self.insert_text(_("No entry found in custom game list: ") + game_name + "\n")
+                    self.insert_text(
+                        _("No entry found in custom game list: ") + game_name + "\n")
 
     def export(self):
         self.disable_widgets()
@@ -1415,7 +1547,8 @@ class GameSaveManager(tk.Tk):
                 try:
                     shutil.rmtree(self.gsmBackupPath)
                 except Exception as e:
-                    messagebox.showerror(_("Error"), _("An error occurred while cleaning previous bakcup: ") + str(e))
+                    messagebox.showerror(_("Error"), _(
+                        "An error occurred while cleaning previous backup: ") + str(e))
                     self.insert_text(_("Backup aborted!\n"))
                     START = False
             else:
@@ -1641,7 +1774,8 @@ class GameSaveManager(tk.Tk):
                     self.enable_widgets()
                     return
             os.mkdir(temp_dir)
-            zipGSM = f"{temp_dir}/{os.path.splitext(os.path.basename(gsmPath))[0]}.zip"
+            zipGSM = f"{
+                temp_dir}/{os.path.splitext(os.path.basename(gsmPath))[0]}.zip"
             self.insert_text(_("Decompressing file...\n"))
 
             try:
