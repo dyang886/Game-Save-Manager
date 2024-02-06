@@ -16,10 +16,10 @@ from tkinter import filedialog, font, messagebox, ttk
 import winreg
 import zipfile
 
+from customtkinter import CTkScrollableFrame
 from PIL import Image, ImageTk
 import polib
 import sv_ttk
-from customtkinter import CTkScrollableFrame
 from tendo import singleton
 
 
@@ -120,7 +120,7 @@ class GameSaveManager(tk.Tk):
         self.resizable(False, False)
 
         # Version, user prompts, and links
-        self.appVersion = "1.0.0"
+        self.appVersion = "1.1.0"
         self.githubLink = "https://github.com/dyang886/Game-Save-Manager"
         self.updateLink = "https://api.github.com/repos/dyang886/Game-Save-Manager/releases/latest"
         self.gsmPathTextPrompt = _("Select a .gsm file for restore")
@@ -1774,8 +1774,7 @@ class GameSaveManager(tk.Tk):
                     self.enable_widgets()
                     return
             os.mkdir(temp_dir)
-            zipGSM = f"{
-                temp_dir}/{os.path.splitext(os.path.basename(gsmPath))[0]}.zip"
+            zipGSM = f"{temp_dir}/{os.path.splitext(os.path.basename(gsmPath))[0]}.zip"
             self.insert_text(_("Decompressing file...\n"))
 
             try:
