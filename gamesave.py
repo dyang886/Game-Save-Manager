@@ -336,6 +336,7 @@ class GameSaveManager(tk.Tk):
             "Yomawari_Midnight Shadows": "",
         }
 
+        self.eval('tk::PlaceWindow . center')
         self.find_steam_directory()
         self.find_ubisoft_directory()
 
@@ -717,7 +718,6 @@ class GameSaveManager(tk.Tk):
             "Yomawari_Midnight Shadows": ("Windows", "Folder", f"{self.gamePath['Yomawari_Midnight Shadows']}/savedata"),
         }
 
-        self.eval('tk::PlaceWindow . center')
         self.mainloop()
 
     # ===========================================================================
@@ -736,9 +736,10 @@ class GameSaveManager(tk.Tk):
         root = os.path.join(path, "KaijuPrincess_Data")
         result = [root]
         pattern = re.compile(r"savefile\d+\.sf")
-        for dirname in os.listdir(root):
-            if pattern.match(dirname):
-                result.append(dirname)
+        if os.path.exists(root):
+            for dirname in os.listdir(root):
+                if pattern.match(dirname):
+                    result.append(dirname)
         return result
 
     def minecraft_legends(self):
@@ -1532,7 +1533,8 @@ class GameSaveManager(tk.Tk):
             os.replace(f"{gsmExported}.zip", f"{gsmExported}.gsm")
 
             self.insert_text(_("Export successful!"))
-            self.enable_widgets()
+        
+        self.enable_widgets()
 
     def backup(self):
         self.disable_widgets()
