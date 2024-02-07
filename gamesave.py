@@ -1231,9 +1231,10 @@ class GameSaveManager(tk.Tk):
             return False
 
         steamUserIDFolder = os.path.join(self.systemPath["Steam"], "userdata/")
-        all_items = os.listdir(steamUserIDFolder)
-        self.steamUserID = [item for item in all_items if os.path.isdir(
-            os.path.join(steamUserIDFolder, item))]
+        if os.path.exists(steamUserIDFolder):
+            all_items = os.listdir(steamUserIDFolder)
+            self.steamUserID = [item for item in all_items if os.path.isdir(
+                os.path.join(steamUserIDFolder, item))]
 
         return True
 
@@ -1254,9 +1255,10 @@ class GameSaveManager(tk.Tk):
 
         ubisoftUserIDFolder = os.path.join(
             self.systemPath["Ubisoft"], "savegames/")
-        all_items = os.listdir(ubisoftUserIDFolder)
-        self.ubisoftUserID = [item for item in all_items if os.path.isdir(
-            os.path.join(ubisoftUserIDFolder, item))]
+        if os.path.exists(ubisoftUserIDFolder):
+            all_items = os.listdir(ubisoftUserIDFolder)
+            self.ubisoftUserID = [item for item in all_items if os.path.isdir(
+                os.path.join(ubisoftUserIDFolder, item))]
 
         return True
 
@@ -1570,11 +1572,14 @@ class GameSaveManager(tk.Tk):
                     elif saveLocation == "Ubisoft":
                         folderID = self.ubisoftUserID
 
-                    for id in folderID:
-                        temp = directory
-                        temp = temp.replace("<user-id>", id)
-                        if os.path.exists(temp) and any(files for _, _, files in os.walk(temp)):
-                            source_folders.append((id, temp))
+                    if folderID:
+                        for id in folderID:
+                            temp = directory
+                            temp = temp.replace("<user-id>", id)
+                            if os.path.exists(temp) and any(files for _, _, files in os.walk(temp)):
+                                source_folders.append((id, temp))
+                    else:
+                        continue
 
                     if source_folders:
                         for (id, location) in source_folders:
