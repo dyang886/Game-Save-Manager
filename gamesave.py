@@ -1707,6 +1707,7 @@ class GameSaveManager(tk.Tk):
                         if self.gameSaveDirectory[game][1] == "File":
                             source_file = next(os.path.join(source, f)
                                                for f in os.listdir(source))
+                            os.makedirs(os.path.dirname(destination), exist_ok=True)
                             shutil.copy(source_file, destination)
                             shutil.copystat(source_file, destination)
                         else:
@@ -1847,6 +1848,7 @@ class GameSaveManager(tk.Tk):
                         if self.gameSaveDirectory[game][1] == "File":
                             source_file = next(os.path.join(source, f)
                                                for f in os.listdir(source))
+                            os.makedirs(os.path.dirname(destination), exist_ok=True)
                             shutil.copy(source_file, destination)
                             shutil.copystat(source_file, destination)
                         else:
