@@ -42,7 +42,10 @@ def load_settings():
         "Chinese (Simplified)_China": "zh_CN",
         "Chinese (Simplified)_Hong Kong SAR": "zh_CN",
         "Chinese (Simplified)_Macao SAR": "zh_CN",
-        "Chinese (Simplified)_Singapore": "zh_CN"
+        "Chinese (Simplified)_Singapore": "zh_CN",
+        "Chinese (Traditional)_Hong Kong SAR": "zh_TW",
+        "Chinese (Traditional)_Macao SAR": "zh_TW",
+        "Chinese (Traditional)_Taiwan": "zh_TW"
     }
     app_locale = locale_mapping.get(system_locale, 'en_US')
 
@@ -96,7 +99,8 @@ if not os.path.exists(setting_path):
 
 language_options = {
     "English (US)": "en_US",
-    "简体中文": "zh_CN"
+    "简体中文": "zh_CN",
+    "繁體中文": "zh_TW"
 }
 
 ctypes.windll.shcore.SetProcessDpiAwareness(1)
@@ -155,7 +159,8 @@ class GameSaveManager(tk.Tk):
         # Widget fonts and styles
         font_config = {
             "en_US": ("Noto Sans", "assets/NotoSans-Regular.ttf"),
-            "zh_CN": ("Noto Sans SC", "assets/NotoSansSC-Regular.ttf")
+            "zh_CN": ("Noto Sans SC", "assets/NotoSansSC-Regular.ttf"),
+            "zh_TW": ("Noto Sans TC", "assets/NotoSansTC-Regular.ttf")
         }
 
         def is_font_installed(font_name):
