@@ -784,9 +784,10 @@ class GameSaveManager(tk.Tk):
     def vampire_survivors(self):
         root = f"C:/Users/{self.user_name}/AppData/Roaming"
         result = [root]
-        for dirname in os.listdir(root):
-            if dirname.startswith("Vampire_Survivors"):
-                result.append(dirname)
+        if os.path.exists(root):
+            for dirname in os.listdir(root):
+                if dirname.startswith("Vampire_Survivors"):
+                    result.append(dirname)
         return result
 
     # ===========================================================================
