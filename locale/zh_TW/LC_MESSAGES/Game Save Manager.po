@@ -15,6 +15,12 @@ msgstr ""
 msgid "Select a .gsm file for restore"
 msgstr "選擇要還原的 .gsm 檔案"
 
+msgid "Folder"
+msgstr "資料夾"
+
+msgid "File"
+msgstr "檔案"
+
 msgid "Options"
 msgstr "選項"
 
@@ -38,6 +44,9 @@ msgstr "版本："
 
 msgid "Game Name"
 msgstr "遊戲名稱"
+
+msgid "File type"
+msgstr "檔案類型"
 
 msgid "Save Path"
 msgstr "儲存路徑"
@@ -109,8 +118,11 @@ msgstr "恢復失敗："
 msgid "An error occurred while restoring {game_name}: "
 msgstr "{game_name} 的恢復過程中發生錯誤："
 
-msgid "Restore path is invalid: "
-msgstr "恢復路徑無效："
+msgid "Backup failed: "
+msgstr "備份失敗："
+
+msgid "An error occurred while backing up {game_name}: "
+msgstr "{game_name} 的備份過程中發生錯誤："
 
 msgid "No entry found in custom game list: "
 msgstr "在自訂遊戲清單中找不到條目："

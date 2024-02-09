@@ -15,6 +15,12 @@ msgstr ""
 msgid "Select a .gsm file for restore"
 msgstr "Select a .gsm file for restore"
 
+msgid "Folder"
+msgstr "Folder"
+
+msgid "File"
+msgstr "File"
+
 msgid "Options"
 msgstr "Options"
 
@@ -38,6 +44,9 @@ msgstr "Version: "
 
 msgid "Game Name"
 msgstr "Game Name"
+
+msgid "File type"
+msgstr "File type"
 
 msgid "Save Path"
 msgstr "Save Path"
@@ -109,8 +118,11 @@ msgstr "Restore failed: "
 msgid "An error occurred while restoring {game_name}: "
 msgstr "An error occurred while restoring {game_name}: "
 
-msgid "Restore path is invalid: "
-msgstr "Restore path is invalid: "
+msgid "Backup failed: "
+msgstr "Backup failed: "
+
+msgid "An error occurred while backing up {game_name}: "
+msgstr "An error occurred while backing up {game_name}: "
 
 msgid "No entry found in custom game list: "
 msgstr "No entry found in custom game list: "
