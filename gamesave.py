@@ -150,6 +150,10 @@ class GameSaveManager(tk.Tk):
             "Steam": None,
             "Ubisoft": None
         }
+        self.file_types = {
+            _("Folder"): "folder",
+            _("File"): "file"
+        }
 
         # Window references
         self.settings_window = None
@@ -884,18 +888,20 @@ class GameSaveManager(tk.Tk):
             self.content_frame = CTkScrollableFrame(
                 self.addCustom_window,
                 fg_color="transparent",
-                width=490, height=300
+                width=550, height=350
             )
             self.content_frame.grid(
                 row=0, column=0, sticky='nsew', padx=(20, 15), pady=(20, 0))
             self.content_frame.columnconfigure(0, weight=1)
-            self.content_frame.columnconfigure(1, weight=1)
+            self.content_frame.columnconfigure(2, weight=1)
 
             # Set up the table headers
             ttk.Label(self.content_frame, text=_(
                 "Game Name"), font=self.default_font).grid(row=0, column=0)
             ttk.Label(self.content_frame, text=_(
-                "Save Path"), font=self.default_font).grid(row=0, column=1)
+                "File type"), font=self.default_font).grid(row=0, column=1)
+            ttk.Label(self.content_frame, text=_(
+                "Save Path"), font=self.default_font).grid(row=0, column=2)
 
             # Apply button
             apply_button = ttk.Button(
@@ -912,158 +918,14 @@ class GameSaveManager(tk.Tk):
                 with open(self.customGameJson, "r") as file:
                     custom_games = json.load(file)
                     for game in custom_games.get("customGames", []):
-                        self.add_game_row(game["name"], game["path"])
+                        self.add_game_row(
+                            game["name"], game["type"], game["path"])
             self.add_game_row()
 
             self.center_window(self.addCustom_window)
         else:
             self.addCustom_window.lift()
             self.addCustom_window.focus_force()
-
-    def save_custom_games(self):
-        custom_games_dict = {"customGames": []}
-        game_names = set()
-        duplicate_game_names = set()
-        duplicate_found = False
-
-        for game_row in self.custom_game_rows:
-            game_row[0].config(foreground="white")
-            game_name_entry, game_save_entry = game_row[0], game_row[1]
-            game_name = game_name_entry.get()
-            game_path = game_save_entry.get()
-
-            if game_name and game_path:
-                if game_name in game_names:
-                    duplicate_game_names.add(game_name)
-                else:
-                    game_names.add(game_name)
-                    custom_games_dict["customGames"].append(
-                        {"name": game_name, "path": game_path})
-
-        # Highlight all duplicates
-        if duplicate_game_names:
-            for row in self.custom_game_rows:
-                game_name_entry = row[0]
-                game_name = game_name_entry.get()
-                if game_name in duplicate_game_names:
-                    game_name_entry.config(foreground="red")
-                    duplicate_found = True
-
-        if duplicate_found:
-            messagebox.showwarning(_("Warning"), _(
-                "Please make sure to have no duplicate game names."))
-            return
-
-        jsonPath = os.path.dirname(self.customGameJson)
-        if not os.path.exists(jsonPath):
-            os.makedirs(jsonPath)
-
-        try:
-            with open(self.customGameJson, "w") as file:
-                json.dump(custom_games_dict, file, indent=4)
-            messagebox.showinfo(_("Success"), _(
-                "Custom games saved successfully."))
-        except Exception as e:
-            messagebox.showerror(_("Error"), _(
-                "Failed to save custom games: ") + str(e))
-
-    def add_game_row(self, game_name="", save_path=""):
-        # Start rows after the header
-        row_number = len(self.custom_game_rows) + 1
-
-        # Create entry widgets for game name and save path
-        game_name_entry = ttk.Entry(
-            self.content_frame,
-            style="TEntry",
-            font=self.default_font
-        )
-        game_name_entry.insert(0, game_name)
-        game_name_entry.grid(row=row_number, column=0,
-                             padx=(0, 10), pady=(5, 5), sticky="we")
-
-        game_save_entry = ttk.Entry(
-            self.content_frame,
-            style="TEntry",
-            font=self.default_font
-        )
-        game_save_entry.insert(0, save_path)
-        game_save_entry.grid(row=row_number, column=1,
-                             pady=(5, 5), sticky="we")
-        game_name_entry.bind("<KeyRelease>", lambda event,
-                             entry=game_name_entry: self.on_entry_change(entry))
-
-        # Create path selection button
-        def select_path(entry_widget):
-            path = filedialog.askdirectory()
-            if path:
-                entry_widget.delete(0, tk.END)
-                entry_widget.insert(0, path)
-
-        path_button = ttk.Button(
-            self.content_frame, text="...", width=2,
-            command=lambda: select_path(game_save_entry),
-            style="TButton"
-        )
-        path_button.grid(row=row_number, column=2, padx=(5, 0), pady=(5, 5))
-
-        # Create remove row button
-        remove_button = ttk.Button(
-            self.content_frame, text="-", width=2,
-            command=lambda: self.remove_game_row(row_number),
-            style="Red.TButton"
-        )
-        remove_button.grid(row=row_number, column=3, padx=(5, 0), pady=(5, 5))
-
-        # Create add row button
-        add_button = ttk.Button(
-            self.content_frame, text="+", width=2,
-            command=self.add_game_row,
-            style="Green.TButton"
-        )
-        add_button.grid(row=row_number, column=4, padx=(5, 10), pady=(5, 5))
-
-        self.custom_game_rows.append(
-            (game_name_entry, game_save_entry, path_button, remove_button, add_button))
-
-        if len(self.custom_game_rows) > 1:
-            # Hide the + button of the second-to-last row
-            self.custom_game_rows[-2][-1].grid_remove()
-
-        # Show last + button and disable first - button if only one row exists
-        self.custom_game_rows[-1][-1].grid()
-        if len(self.custom_game_rows) == 1:
-            self.custom_game_rows[0][3].config(state=tk.DISABLED)
-        else:
-            self.custom_game_rows[0][3].config(state=tk.NORMAL)
-
-        self.content_frame.after(
-            10, self.content_frame._parent_canvas.yview_moveto, 1.0)
-
-    def remove_game_row(self, row_number):
-        for widget in self.custom_game_rows[row_number - 1]:
-            widget.destroy()
-        del self.custom_game_rows[row_number - 1]
-
-        # Update row indices for remove buttons in all remaining rows
-        for i, row in enumerate(self.custom_game_rows):
-            row[3].config(command=lambda idx=i: self.remove_game_row(idx + 1))
-
-            # Re-grid all widgets except the last + button
-            for j, widget in enumerate(row[:-1]):
-                widget.grid(row=i + 1, column=j)
-
-        # Hide all + buttons and show only on the last row
-        for row in self.custom_game_rows:
-            row[-1].grid_remove()
-        if self.custom_game_rows:
-            self.custom_game_rows[-1][-1].grid(
-                row=len(self.custom_game_rows), column=4)
-
-        # Disable first - button if only one row exists
-        if len(self.custom_game_rows) == 1:
-            self.custom_game_rows[0][3].config(state=tk.DISABLED)
-        else:
-            self.custom_game_rows[0][3].config(state=tk.NORMAL)
 
     def open_about(self):
         if self.about_window is None or not self.about_window.winfo_exists():
@@ -1187,13 +1049,184 @@ class GameSaveManager(tk.Tk):
         self.backupProgressText.delete(1.0, tk.END)
         self.backupProgressText.config(state="disabled")
 
+    def select_path(self, entry_widget, file_type_combobox):
+        file_type = self.file_types[file_type_combobox.get()]
+        path = ""
+        if file_type == "folder":
+            path = filedialog.askdirectory()
+        elif file_type == "file":
+            path = filedialog.askopenfilename()
+
+        if path:
+            entry_widget.delete(0, tk.END)
+            entry_widget.insert(0, path)
+
+    def save_custom_games(self):
+        custom_games_dict = {"customGames": []}
+        game_names = set()
+        duplicate_game_names = set()
+        duplicate_found = False
+
+        for game_row in self.custom_game_rows:
+            game_row[0].config(foreground="white")
+            game_name_entry, file_type_combobox, game_save_entry = game_row[
+                0], game_row[1], game_row[2]
+            game_name = game_name_entry.get()
+            file_type = self.file_types[file_type_combobox.get()]
+            game_path = game_save_entry.get()
+
+            if game_name and game_path:
+                if game_name in game_names:
+                    duplicate_game_names.add(game_name)
+                else:
+                    game_names.add(game_name)
+                    custom_games_dict["customGames"].append(
+                        {"name": game_name, "type": file_type, "path": game_path})
+
+        # Highlight all duplicates
+        if duplicate_game_names:
+            for row in self.custom_game_rows:
+                game_name_entry = row[0]
+                game_name = game_name_entry.get()
+                if game_name in duplicate_game_names:
+                    game_name_entry.config(foreground="red")
+                    duplicate_found = True
+
+        if duplicate_found:
+            messagebox.showwarning(_("Warning"), _(
+                "Please make sure to have no duplicate game names."))
+            return
+
+        jsonPath = os.path.dirname(self.customGameJson)
+        if not os.path.exists(jsonPath):
+            os.makedirs(jsonPath)
+
+        try:
+            with open(self.customGameJson, "w") as file:
+                json.dump(custom_games_dict, file, indent=4)
+            messagebox.showinfo(_("Success"), _(
+                "Custom games saved successfully."))
+        except Exception as e:
+            messagebox.showerror(_("Error"), _(
+                "Failed to save custom games: ") + str(e))
+
+    def add_game_row(self, game_name="", file_type=_("Folder"), save_path=""):
+        # Start rows after the header
+        row_number = len(self.custom_game_rows) + 1
+
+        # Create entry widgets for game name and save path
+        game_name_entry = ttk.Entry(
+            self.content_frame,
+            style="TEntry",
+            font=self.default_font
+        )
+        game_name_entry.insert(0, game_name)
+        game_name_entry.grid(row=row_number, column=0,
+                             padx=(0, 10), pady=(5, 5), sticky="we")
+        game_name_entry.bind("<KeyRelease>", lambda event,
+                             entry=game_name_entry: self.on_entry_change(entry))
+
+        file_type_combobox = ttk.Combobox(
+            self.content_frame,
+            style="TCombobox",
+            state="readonly",
+            font=self.default_font,
+            values=list(self.file_types.keys()),
+            width=6
+        )
+        if file_type in self.file_types.values():
+            for key, value in self.file_types.items():
+                if value == file_type:
+                    file_type = key
+                    break
+        file_type_combobox.set(file_type)
+        file_type_combobox.grid(row=row_number, column=1,
+                                padx=(0, 10), pady=(5, 5), sticky="we")
+
+        game_save_entry = ttk.Entry(
+            self.content_frame,
+            style="TEntry",
+            font=self.default_font
+        )
+        game_save_entry.insert(0, save_path)
+        game_save_entry.grid(row=row_number, column=2,
+                             pady=(5, 5), sticky="we")
+
+        # Create path selection button
+        path_button = ttk.Button(
+            self.content_frame, text="...", width=2,
+            command=lambda: self.select_path(
+                game_save_entry, file_type_combobox),
+            style="TButton"
+        )
+        path_button.grid(row=row_number, column=3, padx=(5, 0), pady=(5, 5))
+
+        # Create remove row button
+        remove_button = ttk.Button(
+            self.content_frame, text="-", width=2,
+            command=lambda: self.remove_game_row(row_number),
+            style="Red.TButton"
+        )
+        remove_button.grid(row=row_number, column=4, padx=(5, 0), pady=(5, 5))
+
+        # Create add row button
+        add_button = ttk.Button(
+            self.content_frame, text="+", width=2,
+            command=self.add_game_row,
+            style="Green.TButton"
+        )
+        add_button.grid(row=row_number, column=5, padx=(5, 10), pady=(5, 5))
+
+        self.custom_game_rows.append(
+            (game_name_entry, file_type_combobox, game_save_entry, path_button, remove_button, add_button))
+
+        if len(self.custom_game_rows) > 1:
+            # Hide the + button of the second-to-last row
+            self.custom_game_rows[-2][-1].grid_remove()
+
+        # Show last + button and disable first - button if only one row exists
+        self.custom_game_rows[-1][-1].grid()
+        if len(self.custom_game_rows) == 1:
+            self.custom_game_rows[0][4].config(state=tk.DISABLED)
+        else:
+            self.custom_game_rows[0][4].config(state=tk.NORMAL)
+
+        self.content_frame.after(
+            10, self.content_frame._parent_canvas.yview_moveto, 1.0)
+
+    def remove_game_row(self, row_number):
+        for widget in self.custom_game_rows[row_number - 1]:
+            widget.destroy()
+        del self.custom_game_rows[row_number - 1]
+
+        # Update row indices for remove buttons in all remaining rows
+        for i, row in enumerate(self.custom_game_rows):
+            row[4].config(command=lambda idx=i: self.remove_game_row(idx + 1))
+
+            # Re-grid all widgets except the last + button
+            for j, widget in enumerate(row[:-1]):
+                widget.grid(row=i + 1, column=j)
+
+        # Hide all + buttons and show only on the last row
+        for row in self.custom_game_rows:
+            row[-1].grid_remove()
+        if self.custom_game_rows:
+            self.custom_game_rows[-1][-1].grid(
+                row=len(self.custom_game_rows), column=5)
+
+        # Disable first - button if only one row exists
+        if len(self.custom_game_rows) == 1:
+            self.custom_game_rows[0][4].config(state=tk.DISABLED)
+        else:
+            self.custom_game_rows[0][4].config(state=tk.NORMAL)
+
     def insert_text(self, text):
         if self.duplicate_symbol in text:
             return
         self.backupProgressText.config(state="normal")
         text = text.replace("_", ": ").replace("^", "?")
 
-        if settings["language"] == "zh_CN":
+        if settings["language"] == "zh_CN" or settings["language"] == "zh_TW":
             with open(resource_path("game_names.json"), "r", encoding="utf-8") as file:
                 translations = json.load(file)
 
@@ -1394,17 +1427,18 @@ class GameSaveManager(tk.Tk):
 
         self.enable_widgets()
 
-    def check_newer_save(self, game, source, destination):
-        # special check for games share the same installation path, make sure the shared installation path exists
-        if "Half-Life 2" in game:
-            gameDstCheck = game.replace(
-                "_Episode One", "").replace("_Episode Two", "")
-        else:
-            gameDstCheck = game
-        if gameDstCheck in self.gamePath:
-            dst = self.gamePath[gameDstCheck]
-            if dst == "" or (isinstance(dst, list) and len(dst) > 0 and dst[0] == ""):
-                return False
+    def check_newer_save(self, game, source, destination, isCustom=False):
+        if not isCustom:
+            # special check for games share the same installation path, make sure the shared installation path exists
+            if "Half-Life 2" in game:
+                gameDstCheck = game.replace(
+                    "_Episode One", "").replace("_Episode Two", "")
+            else:
+                gameDstCheck = game
+            if gameDstCheck in self.gamePath:
+                dst = self.gamePath[gameDstCheck]
+                if dst == "" or (isinstance(dst, list) and len(dst) > 0 and dst[0] == ""):
+                    return False
 
         # Get the modification time of destination
         if isinstance(destination, list) and destination[0]:
@@ -1455,16 +1489,35 @@ class GameSaveManager(tk.Tk):
                     self.insert_text(_("\nBelow are custom games:\n"))
                     for game in custom_games:
                         source = os.path.normpath(game["path"])
+                        destination = os.path.join(custom_path, game["name"])
                         if os.path.exists(source):
-                            if not self.is_directory_empty(source):
-                                destination = os.path.join(
-                                    custom_path, game["name"])
-                                shutil.copytree(source, destination)
+                            
+                            try:
+                                if game["type"] == "folder":
+                                    if not self.is_directory_empty(source):
+                                        shutil.copytree(source, destination)
+                                        self.insert_text(
+                                            _("Backed up ") + game["name"] + "\n")
+                                    else:
+                                        self.insert_text(
+                                            _("Back up path is empty: ") + game["name"] + "\n")
+                                        
+                                elif game["type"] == "file":
+                                    os.makedirs(destination, exist_ok=True)
+                                    shutil.copy(source, os.path.join(
+                                        destination, os.path.basename(source)))
+                                    shutil.copystat(source, os.path.join(
+                                        destination, os.path.basename(source)))
+                                    self.insert_text(
+                                        _("Backed up ") + game["name"] + "\n")
+                            
+                            except Exception as e:
                                 self.insert_text(
-                                    _("Backed up ") + game["name"] + "\n")
-                            else:
-                                self.insert_text(
-                                    _("Back up path is empty: ") + game["name"] + "\n")
+                                    _("Backup failed: ") + game["name"] + "\n")
+                                error_text = _("An error occurred while backing up {game_name}: ").format(
+                                    game_name=game["name"])
+                                messagebox.showerror(
+                                    _("Error"), error_text + str(e))
                         else:
                             self.insert_text(
                                 _("Back up path is invalid: ") + game["name"] + "\n")
@@ -1486,12 +1539,21 @@ class GameSaveManager(tk.Tk):
                 if matching_game:
                     source = os.path.join(custom_path, game_name)
                     destination = os.path.normpath(matching_game["path"])
+                    if not self.is_directory_empty(source) and self.check_newer_save(game_name, source, destination, True):
 
-                    if os.path.exists(destination):
                         try:
-                            shutil.copytree(source, destination,
-                                            dirs_exist_ok=True)
+                            if matching_game["type"] == "folder":
+                                shutil.copytree(source, destination,
+                                                dirs_exist_ok=True)
+                            
+                            elif matching_game["type"] == "file":
+                                source_file = next(os.path.join(source, f) for f in os.listdir(source))
+                                os.makedirs(os.path.dirname(destination), exist_ok=True)
+                                shutil.copy(source_file, destination)
+                                shutil.copystat(source_file, destination)
+
                             self.insert_text(_("Restored ") + game_name + "\n")
+
                         except Exception as e:
                             self.insert_text(
                                 _("Restore failed: ") + game_name + "\n")
@@ -1499,9 +1561,6 @@ class GameSaveManager(tk.Tk):
                                 game_name=game_name)
                             messagebox.showerror(
                                 _("Error"), error_text + str(e))
-                    else:
-                        self.insert_text(
-                            _("Restore path is invalid: ") + game_name + "\n")
                 else:
                     self.insert_text(
                         _("No entry found in custom game list: ") + game_name + "\n")
@@ -1541,7 +1600,7 @@ class GameSaveManager(tk.Tk):
             os.replace(f"{gsmExported}.zip", f"{gsmExported}.gsm")
 
             self.insert_text(_("Export successful!"))
-        
+
         self.enable_widgets()
 
     def backup(self):
@@ -1713,7 +1772,8 @@ class GameSaveManager(tk.Tk):
                         if self.gameSaveDirectory[game][1] == "File":
                             source_file = next(os.path.join(source, f)
                                                for f in os.listdir(source))
-                            os.makedirs(os.path.dirname(destination), exist_ok=True)
+                            os.makedirs(os.path.dirname(
+                                destination), exist_ok=True)
                             shutil.copy(source_file, destination)
                             shutil.copystat(source_file, destination)
                         else:
@@ -1788,7 +1848,8 @@ class GameSaveManager(tk.Tk):
                     self.enable_widgets()
                     return
             os.mkdir(temp_dir)
-            zipGSM = f"{temp_dir}/{os.path.splitext(os.path.basename(gsmPath))[0]}.zip"
+            zipGSM = f"{
+                temp_dir}/{os.path.splitext(os.path.basename(gsmPath))[0]}.zip"
             self.insert_text(_("Decompressing file...\n"))
 
             try:
@@ -1854,7 +1915,8 @@ class GameSaveManager(tk.Tk):
                         if self.gameSaveDirectory[game][1] == "File":
                             source_file = next(os.path.join(source, f)
                                                for f in os.listdir(source))
-                            os.makedirs(os.path.dirname(destination), exist_ok=True)
+                            os.makedirs(os.path.dirname(
+                                destination), exist_ok=True)
                             shutil.copy(source_file, destination)
                             shutil.copystat(source_file, destination)
                         else:
