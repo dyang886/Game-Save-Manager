@@ -37,11 +37,13 @@
 | Command & Conquer Remastered Collection | Steam |
 | Control | Steam |
 | Core Keeper | Windows |
+| Crash Bandicoot 4: It's About Time | Windows |
 | Creaks | Windows |
 | Creepy Tale | Windows |
 | Crypt of the NecroDancer | Steam |
 | Cube Escape Collection | Windows |
 | Cube Escape: Paradox | Windows |
+| Cult of the Lamb | Windows |
 | Cuphead | Windows |
 | Cyberpunk 2077 | Windows |
 | Dark Deception | Windows |
@@ -89,6 +91,7 @@
 | Five Nights at Freddy's 4 | Windows |
 | Five Nights at Freddy's: Sister Location | Windows |
 | Freddy Fazbear's Pizzeria Simulator | Windows |
+| Frostpunk | Steam |
 | Genital Jousting | Windows |
 | Geometry Dash | Windows |
 | Getting Over It with Bennett Foddy | Registry |
@@ -157,7 +160,9 @@
 | Melatonin | Windows |
 | Metro Exodus | Steam |
 | Microsoft Flight Simulator (2020) | Steam |
+| Minecraft: Bedrock Edition | Windows |
 | Minecraft Dungeons | Windows |
+| Minecraft: Java Edition | Windows |
 | Minecraft Legends | Windows |
 | Minecraft: Story Mode - A Telltale Games Series | Windows |
 | Mini Metro | Steam |
@@ -242,6 +247,7 @@
 | SpeedRunners | Steam |
 | SpongeBob SquarePants: Battle for Bikini Bottom - Rehydrated | Windows |
 | Stardew Valley | Windows |
+| Starfield | Steam |
 | Steep | Ubisoft |
 | Stray | Windows |
 | Super Bunny Man | Windows |
