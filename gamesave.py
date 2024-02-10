@@ -51,7 +51,8 @@ def load_settings():
 
     default_settings = {
         "gsmBackupPath": os.path.join(os.environ["APPDATA"], "GSM Backups"),
-        "language": app_locale
+        "language": app_locale,
+        "backupMC": False
     }
 
     try:
@@ -124,7 +125,7 @@ class GameSaveManager(tk.Tk):
         self.resizable(False, False)
 
         # Version, user prompts, and links
-        self.appVersion = "1.1.0"
+        self.appVersion = "1.1.1"
         self.githubLink = "https://github.com/dyang886/Game-Save-Manager"
         self.updateLink = "https://api.github.com/repos/dyang886/Game-Save-Manager/releases/latest"
         self.gsmPathTextPrompt = _("Select a .gsm file for restore")
@@ -154,6 +155,7 @@ class GameSaveManager(tk.Tk):
             _("Folder"): "folder",
             _("File"): "file"
         }
+        self.minecraft = ["Minecraft_Bedrock Edition", "Minecraft_Java Edition"]
 
         # Window references
         self.settings_window = None
@@ -444,11 +446,13 @@ class GameSaveManager(tk.Tk):
             "Command & Conquer Remastered Collection" + self.duplicate_symbol: ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/CnCRemastered/Save"),
             "Control": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/870780/remote"),
             "Core Keeper": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/Pugstorm/Core Keeper/Steam"),
+            "Crash Bandicoot 4_It's About Time": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Local/CrashBandicoot4/Saved/SaveGames"),
             "Creaks": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/Amanita Design/Creaks/save"),
             "Creepy Tale": ("Windows", "File", f"C:/Users/{self.user_name}/AppData/LocalLow/DeqafStudio/CreepyTale/playerData.deq"),
             "Crypt of the NecroDancer": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/247080/remote"),
             "Cube Escape Collection": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/Rusty Lake/CubeEscapeCollection"),
             "Cube Escape_Paradox": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/Rusty Lake/Paradox"),
+            "Cult of the Lamb": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/Massive Monster/Cult Of The Lamb/saves"),
             "Cuphead": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Roaming/Cuphead"),
             "Cyberpunk 2077": ("Windows", "Folder", f"C:/Users/{self.user_name}/Saved Games/CD Projekt Red/Cyberpunk 2077"),
             "Dark Deception": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Local/DDeception/Saved/SaveGames"),
@@ -496,6 +500,7 @@ class GameSaveManager(tk.Tk):
             "Five Nights at Freddy's 4": ("Windows", "File", f"C:/Users/{self.user_name}/AppData/Roaming/MMFApplications/fn4"),
             "Five Nights at Freddy's_Sister Location": ("Windows", "File", f"C:/Users/{self.user_name}/AppData/Roaming/MMFApplications/sl"),
             "Freddy Fazbear's Pizzeria Simulator": ("Windows", "File", f"C:/Users/{self.user_name}/AppData/Roaming/MMFApplications/FNAF6"),
+            "Frostpunk": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/323190/remote"),
             "Genital Jousting": ("Windows", "File", f"C:/Users/{self.user_name}/AppData/LocalLow/Free Lives/Genital Jousting/Profile.penis"),
             "Geometry Dash": ("Windows", "File", self.gamePath["Geometry Dash"]),
             "Getting Over It with Bennett Foddy": ("Registry", "None", "HKEY_CURRENT_USER\\Software\\Bennett Foddy\\Getting Over It"),
@@ -568,7 +573,9 @@ class GameSaveManager(tk.Tk):
             "Melatonin" + self.duplicate_symbol*3: ("Windows", "File", f"{self.gamePath['Melatonin']}/save.json"),
             "Metro Exodus": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/1449560/remote"),
             "Microsoft Flight Simulator (2020)": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/1250410/remote"),
+            "Minecraft_Bedrock Edition": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Local/Packages/Microsoft.MinecraftUWP_8wekyb3d8bbwe/LocalState/games/com.mojang"),
             "Minecraft Dungeons": ("Windows", "Folder", f"C:/Users/{self.user_name}/Saved Games/Mojang Studios/Dungeons"),
+            "Minecraft_Java Edition": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Roaming/.minecraft"),
             "Minecraft Legends": ("Windows", "Folder", self.gamePath["Minecraft Legends"]),
             "Minecraft_Story Mode - A Telltale Games Series": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/Telltale Games/Minecraft Story Mode"),
             "Mini Metro": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/287980/remote"),
@@ -654,6 +661,7 @@ class GameSaveManager(tk.Tk):
             "SpeedRunners": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/207140/remote"),
             "SpongeBob SquarePants_Battle for Bikini Bottom - Rehydrated": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Local/Pineapple/Saved/SaveGames"),
             "Stardew Valley": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Roaming/StardewValley/Saves"),
+            "Starfield": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/1716740/remote/Saves"),
             # "Starlink_Battle for Atlas": ("Ubisoft", "Folder", f""), # incomplete
             "Steep": ("Ubisoft", "Folder", f"{self.systemPath['Ubisoft']}/savegames/<user-id>/3280"),
             "Stray": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Local/Hk_project/Saved/SaveGames"),
@@ -816,6 +824,7 @@ class GameSaveManager(tk.Tk):
 
     def apply_settings_page(self):
         settings["language"] = language_options[self.languages_var.get()]
+        settings["backupMC"] = self.minecraft_var.get()
         apply_settings(settings)
         messagebox.showinfo(_("Attention"), _(
             "Please restart the application to apply settings"))
@@ -828,10 +837,13 @@ class GameSaveManager(tk.Tk):
                 resource_path("assets/setting.ico"))
             self.settings_window.transient(self)
             self.settings_window.resizable(False, False)
+            self.settings_window.grid_columnconfigure(0, weight=1)
+            self.settings_window.minsize(width=550, height=0)
 
             settings_frame = ttk.Frame(self.settings_window)
             settings_frame.grid(row=0, column=0, sticky='nsew',
                                 padx=(80, 80), pady=(50, 20))
+            settings_frame.grid_columnconfigure(0, weight=1)
 
             # ===========================================================================
             # languages frame
@@ -860,6 +872,28 @@ class GameSaveManager(tk.Tk):
                 style="TCombobox"
             )
             languages_combobox.grid(row=1, column=0, sticky="we")
+
+            # ===========================================================================
+            # minecraft frame
+            minecraft_frame = ttk.Frame(settings_frame)
+            minecraft_frame.grid(row=1, column=0, pady=(30, 0), sticky="we")
+            minecraft_frame.grid_columnconfigure(0, weight=1)
+
+            minecraft_label = ttk.Label(
+                minecraft_frame,
+                text=_("Backup Minecraft:"),
+                wraplength=400,
+                font=self.default_font
+            )
+            minecraft_label.grid(row=0, column=0, sticky="w")
+
+            self.minecraft_var = tk.BooleanVar()
+            self.minecraft_var.set(settings["backupMC"])
+            minecraft_checkbox = ttk.Checkbutton(
+                minecraft_frame,
+                variable=self.minecraft_var
+            )
+            minecraft_checkbox.grid(row=0, column=1, padx=(10, 0))
 
             # ===========================================================================
             # apply button
@@ -1631,6 +1665,9 @@ class GameSaveManager(tk.Tk):
                 folderID = None
                 destination = os.path.join(self.gsmBackupPath, game)
 
+                if game in self.minecraft and not settings["backupMC"]:
+                    continue
+
                 if saveLocation == "Steam" or saveLocation == "Ubisoft":
                     if saveLocation == "Steam":
                         folderID = self.steamUserID
@@ -1848,8 +1885,7 @@ class GameSaveManager(tk.Tk):
                     self.enable_widgets()
                     return
             os.mkdir(temp_dir)
-            zipGSM = f"{
-                temp_dir}/{os.path.splitext(os.path.basename(gsmPath))[0]}.zip"
+            zipGSM = f"{temp_dir}/{os.path.splitext(os.path.basename(gsmPath))[0]}.zip"
             self.insert_text(_("Decompressing file...\n"))
 
             try:
