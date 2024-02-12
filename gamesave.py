@@ -25,8 +25,18 @@ from tendo import singleton
 
 def resource_path(relative_path):
     if hasattr(sys, "_MEIPASS"):
-        return os.path.join(sys._MEIPASS, relative_path)
-    return os.path.join(os.path.abspath("."), relative_path)
+        full_path = os.path.join(sys._MEIPASS, relative_path)
+    else:
+        full_path = os.path.join(os.path.abspath("."), relative_path)
+
+    if not os.path.exists(full_path):
+        resource_name = os.path.basename(relative_path)
+        formatted_message = _("Couldn't find {missing_resource}. Please try reinstalling the application.").format(
+            missing_resource=resource_name)
+        messagebox.showerror(_("Missing resource file"), formatted_message)
+        sys.exit(1)
+
+    return full_path
 
 
 def apply_settings(settings):
@@ -125,7 +135,7 @@ class GameSaveManager(tk.Tk):
         self.resizable(False, False)
 
         # Version, user prompts, and links
-        self.appVersion = "1.1.1"
+        self.appVersion = "1.1.2"
         self.githubLink = "https://github.com/dyang886/Game-Save-Manager"
         self.updateLink = "https://api.github.com/repos/dyang886/Game-Save-Manager/releases/latest"
         self.gsmPathTextPrompt = _("Select a .gsm file for restore")
@@ -155,7 +165,8 @@ class GameSaveManager(tk.Tk):
             _("Folder"): "folder",
             _("File"): "file"
         }
-        self.minecraft = ["Minecraft_Bedrock Edition", "Minecraft_Java Edition"]
+        self.minecraft = ["Minecraft_Bedrock Edition",
+                          "Minecraft_Java Edition"]
 
         # Window references
         self.settings_window = None
@@ -1525,7 +1536,7 @@ class GameSaveManager(tk.Tk):
                         source = os.path.normpath(game["path"])
                         destination = os.path.join(custom_path, game["name"])
                         if os.path.exists(source):
-                            
+
                             try:
                                 if game["type"] == "folder":
                                     if not self.is_directory_empty(source):
@@ -1535,7 +1546,7 @@ class GameSaveManager(tk.Tk):
                                     else:
                                         self.insert_text(
                                             _("Back up path is empty: ") + game["name"] + "\n")
-                                        
+
                                 elif game["type"] == "file":
                                     os.makedirs(destination, exist_ok=True)
                                     shutil.copy(source, os.path.join(
@@ -1544,7 +1555,7 @@ class GameSaveManager(tk.Tk):
                                         destination, os.path.basename(source)))
                                     self.insert_text(
                                         _("Backed up ") + game["name"] + "\n")
-                            
+
                             except Exception as e:
                                 self.insert_text(
                                     _("Backup failed: ") + game["name"] + "\n")
@@ -1579,10 +1590,12 @@ class GameSaveManager(tk.Tk):
                             if matching_game["type"] == "folder":
                                 shutil.copytree(source, destination,
                                                 dirs_exist_ok=True)
-                            
+
                             elif matching_game["type"] == "file":
-                                source_file = next(os.path.join(source, f) for f in os.listdir(source))
-                                os.makedirs(os.path.dirname(destination), exist_ok=True)
+                                source_file = next(os.path.join(
+                                    source, f) for f in os.listdir(source))
+                                os.makedirs(os.path.dirname(
+                                    destination), exist_ok=True)
                                 shutil.copy(source_file, destination)
                                 shutil.copystat(source_file, destination)
 
@@ -1885,7 +1898,8 @@ class GameSaveManager(tk.Tk):
                     self.enable_widgets()
                     return
             os.mkdir(temp_dir)
-            zipGSM = f"{temp_dir}/{os.path.splitext(os.path.basename(gsmPath))[0]}.zip"
+            zipGSM = f"{
+                temp_dir}/{os.path.splitext(os.path.basename(gsmPath))[0]}.zip"
             self.insert_text(_("Decompressing file...\n"))
 
             try:
