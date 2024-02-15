@@ -129,6 +129,7 @@
 | Isoland | Windows |
 | Isoland 2: Ashes of Time | Windows |
 | Isoland 3: Dust of the Universe | Windows |
+| Isoland 4: The Anchor of Memory | Windows |
 | Isoland: The Amusement Park | Windows |
 | It Takes Two | Windows |
 | Journey | Steam |
