@@ -151,6 +151,12 @@ msgstr "删除现有备份时出错："
 msgid "Backup migration aborted!\n"
 msgstr "备份迁移已中止！\n"
 
+msgid "Manual Cleanup"
+msgstr "手动清理"
+
+msgid "Couldn't remove backup from the original path, you can remove them manually."
+msgstr "无法从原始路径中删除备份，您可以手动删除。"
+
 msgid "Error"
 msgstr "错误"
 

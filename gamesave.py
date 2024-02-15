@@ -134,7 +134,7 @@ class GameSaveManager(tk.Tk):
         self.resizable(False, False)
 
         # Version, user prompts, and links
-        self.appVersion = "1.1.2"
+        self.appVersion = "1.1.3"
         self.githubLink = "https://github.com/dyang886/Game-Save-Manager"
         self.updateLink = "https://api.github.com/repos/dyang886/Game-Save-Manager/releases/latest"
         self.gsmPathTextPrompt = _("Select a .gsm file for restore")
@@ -1462,6 +1462,7 @@ class GameSaveManager(tk.Tk):
     def change_path(self, event=None):
         self.disable_widgets()
         self.delete_all_text()
+
         folder = filedialog.askdirectory(title=_("Change backup path"))
         if folder:
             self.insert_text(_("Migrating existing backups...\n"))
@@ -1494,8 +1495,15 @@ class GameSaveManager(tk.Tk):
                 self.insert_text(_("Backup migration aborted!\n"))
                 self.enable_widgets()
                 return
+            
+            try:
+                shutil.rmtree(self.gsmBackupPath)
+            except Exception as e:
+                messagebox.showinfo(_("Manual Cleanup"), _(
+                    "Couldn't remove backup from the original path, you can remove them manually.") + f"\n\n{str(e)}")
+                if os.path.exists(self.gsmBackupPath):
+                    os.startfile(self.gsmBackupPath)
 
-            shutil.rmtree(self.gsmBackupPath)
             self.gsmBackupPath = dst
             settings["gsmBackupPath"] = self.gsmBackupPath
             apply_settings(settings)
