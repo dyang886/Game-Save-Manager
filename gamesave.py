@@ -62,7 +62,8 @@ def load_settings():
     default_settings = {
         "gsmBackupPath": os.path.join(os.environ["APPDATA"], "GSM Backups"),
         "language": app_locale,
-        "backupMC": False
+        "backupMC": False,
+        "backupGDMusic": False
     }
 
     try:
@@ -81,7 +82,6 @@ def load_settings():
 
 
 def get_translator():
-    # compile .po files to .mo files
     for root, dirs, files in os.walk(resource_path("locale/")):
         for file in files:
             if file.endswith(".po"):
@@ -89,7 +89,6 @@ def get_translator():
                 po.save_as_mofile(os.path.join(
                     root, os.path.splitext(file)[0] + ".mo"))
 
-    # read settings and apply languages
     lang = settings["language"]
     gettext.bindtextdomain("Game Save Manager",
                            resource_path("locale/"))
@@ -149,7 +148,7 @@ class GameSaveManager(tk.Tk):
         self.gsmPath = sys.argv[1] if len(sys.argv) > 1 else ""
         self.gsmBackupPath = settings["gsmBackupPath"]
         self.customGameJson = os.path.join(
-            os.environ["APPDATA"], "GSM Settings/", "custom_games.json")
+            self.gsmBackupPath, "0 Custom", "custom_games.json")
 
         self.duplicate_symbol = "#"  # additional symbols: "_" -> ": ", "^" -> "?"
         self.user_name = os.getlogin()
@@ -167,6 +166,7 @@ class GameSaveManager(tk.Tk):
         }
         self.minecraft = ["Minecraft_Bedrock Edition",
                           "Minecraft_Java Edition"]
+        self.gdMusic = ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Local/GeometryDash")
 
         # Window references
         self.settings_window = None
@@ -175,9 +175,9 @@ class GameSaveManager(tk.Tk):
 
         # Widget fonts and styles
         font_config = {
-            "en_US": ("Noto Sans", "assets/NotoSans-Regular.ttf"),
-            "zh_CN": ("Noto Sans SC", "assets/NotoSansSC-Regular.ttf"),
-            "zh_TW": ("Noto Sans TC", "assets/NotoSansTC-Regular.ttf")
+            "en_US": ("Noto Sans", resource_path("assets/NotoSans-Regular.ttf")),
+            "zh_CN": ("Noto Sans SC", resource_path("assets/NotoSansSC-Regular.ttf")),
+            "zh_TW": ("Noto Sans TC", resource_path("assets/NotoSansTC-Regular.ttf"))
         }
 
         def is_font_installed(font_name):
@@ -549,6 +549,7 @@ class GameSaveManager(tk.Tk):
             "Isoland": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/CottonGame/Isoland_Steam/savedatas"),
             "Isoland 2_Ashes of Time": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/CottonGame/Isoland2_Steam"),
             "Isoland 3_Dust of the Universe": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/CottonGame/Isoland3_Steam"),
+            "Isoland 4_The Anchor of Memory": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/CottonGame/Isoland4_Steam"),
             "Isoland_The Amusement Park": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/CottonGame/isoland0_Steam"),
             "It Takes Two": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Local/ItTakesTwo"),
             "Journey": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/638230/remote"),
@@ -746,6 +747,9 @@ class GameSaveManager(tk.Tk):
             "Yomawari_Midnight Shadows": ("Windows", "Folder", f"{self.gamePath['Yomawari_Midnight Shadows']}/savedata"),
         }
 
+        if settings["backupGDMusic"]:
+            self.gameSaveDirectory["Geometry Dash"] = self.gdMusic
+
         self.mainloop()
 
     # ===========================================================================
@@ -836,6 +840,7 @@ class GameSaveManager(tk.Tk):
     def apply_settings_page(self):
         settings["language"] = language_options[self.languages_var.get()]
         settings["backupMC"] = self.minecraft_var.get()
+        settings["backupGDMusic"] = self.gd_var.get()
         apply_settings(settings)
         messagebox.showinfo(_("Attention"), _(
             "Please restart the application to apply settings"))
@@ -905,6 +910,28 @@ class GameSaveManager(tk.Tk):
                 variable=self.minecraft_var
             )
             minecraft_checkbox.grid(row=0, column=1, padx=(10, 0))
+
+            # ===========================================================================
+            # geometry dash frame
+            gd_frame = ttk.Frame(settings_frame)
+            gd_frame.grid(row=2, column=0, pady=(30, 0), sticky="we")
+            gd_frame.grid_columnconfigure(0, weight=1)
+
+            gd_label = ttk.Label(
+                gd_frame,
+                text=_("Backup Geometry Dash Music:"),
+                wraplength=400,
+                font=self.default_font
+            )
+            gd_label.grid(row=0, column=0, sticky="w")
+
+            self.gd_var = tk.BooleanVar()
+            self.gd_var.set(settings["backupGDMusic"])
+            gd_checkbox = ttk.Checkbutton(
+                gd_frame,
+                variable=self.gd_var
+            )
+            gd_checkbox.grid(row=0, column=1, padx=(10, 0))
 
             # ===========================================================================
             # apply button
@@ -1093,6 +1120,15 @@ class GameSaveManager(tk.Tk):
         self.backupProgressText.config(state="normal")
         self.backupProgressText.delete(1.0, tk.END)
         self.backupProgressText.config(state="disabled")
+
+    def special_options_check(self):
+        gdBackupPath = os.path.join(self.gsmBackupPath, "Geometry Dash")
+        if os.path.exists(gdBackupPath):
+            for item in os.listdir(gdBackupPath):
+                item_path = os.path.join(gdBackupPath, item)
+                if os.path.isfile(item_path) and not item_path.endswith(".dat"):
+                    self.gameSaveDirectory["Geometry Dash"] = self.gdMusic
+                    break
 
     def select_path(self, entry_widget, file_type_combobox):
         file_type = self.file_types[file_type_combobox.get()]
@@ -1571,7 +1607,10 @@ class GameSaveManager(tk.Tk):
         custom_path = os.path.join(self.gsmBackupPath, "0 Custom")
 
         if os.path.exists(custom_path):
-            self.insert_text(_("\nBelow are custom games:\n"))
+            backups_present = any(os.path.isdir(os.path.join(
+                custom_path, item)) for item in os.listdir(custom_path))
+            if backups_present:
+                self.insert_text(_("\nBelow are custom games:\n"))
 
             if os.path.exists(self.customGameJson):
                 with open(self.customGameJson, "r") as file:
@@ -1584,9 +1623,10 @@ class GameSaveManager(tk.Tk):
                 if matching_game:
                     source = os.path.join(custom_path, game_name)
                     destination = os.path.normpath(matching_game["path"])
-                    if not self.is_directory_empty(source) and self.check_newer_save(game_name, source, destination, True):
 
-                        try:
+                    try:
+                        if not self.is_directory_empty(source) and self.check_newer_save(game_name, source, destination, True):
+                        
                             if matching_game["type"] == "folder":
                                 shutil.copytree(source, destination,
                                                 dirs_exist_ok=True)
@@ -1601,16 +1641,17 @@ class GameSaveManager(tk.Tk):
 
                             self.insert_text(_("Restored ") + game_name + "\n")
 
-                        except Exception as e:
-                            self.insert_text(
-                                _("Restore failed: ") + game_name + "\n")
-                            error_text = _("An error occurred while restoring {game_name}: ").format(
-                                game_name=game_name)
-                            messagebox.showerror(
-                                _("Error"), error_text + str(e))
+                    except Exception as e:
+                        self.insert_text(
+                            _("Restore failed: ") + game_name + "\n")
+                        error_text = _("An error occurred while restoring {game_name}: ").format(
+                            game_name=game_name)
+                        messagebox.showerror(
+                            _("Error"), error_text + str(e))
                 else:
-                    self.insert_text(
-                        _("No entry found in custom game list: ") + game_name + "\n")
+                    if game_name != "custom_games.json":
+                        self.insert_text(
+                            _("No entry found in custom game list: ") + game_name + "\n")
 
     def export(self):
         self.disable_widgets()
@@ -1661,12 +1702,25 @@ class GameSaveManager(tk.Tk):
                 _("Confirmation"), _("Backup already exists, would you like to override?"))
             if command:
                 try:
+                    custom_json = os.path.join(
+                        self.gsmBackupPath, "0 Custom", "custom_games.json")
+                    moved_json = os.path.join(setting_path, "custom_games.json")
+                    isMoved = False
+
+                    if os.path.exists(custom_json):
+                        shutil.move(custom_json, moved_json)
+                        isMoved = True
+
                     shutil.rmtree(self.gsmBackupPath)
                 except Exception as e:
                     messagebox.showerror(_("Error"), _(
                         "An error occurred while cleaning previous backup: ") + str(e))
                     self.insert_text(_("Backup aborted!\n"))
                     START = False
+
+                if isMoved:
+                    os.makedirs(os.path.join(self.gsmBackupPath, "0 Custom"), exist_ok=True)
+                    shutil.move(moved_json, custom_json)
             else:
                 self.insert_text(_("Backup aborted!\n"))
                 START = False
@@ -1767,6 +1821,7 @@ class GameSaveManager(tk.Tk):
     def restore1(self):
         self.disable_widgets()
         self.delete_all_text()
+        self.special_options_check()
 
         START = True
 
@@ -1876,6 +1931,7 @@ class GameSaveManager(tk.Tk):
     def restore2(self):
         self.disable_widgets()
         self.delete_all_text()
+        self.special_options_check()
 
         START = True
 
@@ -2014,6 +2070,7 @@ class GameSaveManager(tk.Tk):
                 shutil.rmtree(temp_dir)
             except Exception:
                 self.delete_temp_on_startup(temp_dir)
+
             self.restore_custom()
             self.insert_text(_("Restore completed!"))
 
