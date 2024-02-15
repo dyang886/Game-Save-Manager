@@ -1346,8 +1346,7 @@ class GameSaveManager(tk.Tk):
             self.systemPath["Steam"] = None
 
         if self.systemPath["Steam"] is None:
-            messagebox.showerror(
-                _("Error"), _("Could not find Steam installation path\nGames saved under Steam directory will not be processed"))
+            self.insert_text(_("Could not find Steam installation path\nGames saved under Steam directory will not be processed") + "\n\n")
             return False
 
         steamUserIDFolder = os.path.join(self.systemPath["Steam"], "userdata/")
@@ -1369,8 +1368,7 @@ class GameSaveManager(tk.Tk):
             self.systemPath["Ubisoft"] = None
 
         if self.systemPath["Ubisoft"] is None:
-            messagebox.showerror(
-                _("Error"), _("Could not find Ubisoft installation path\nGames saved under Ubisoft directory will not be processed"))
+            self.insert_text(_("Could not find Ubisoft installation path\nGames saved under Ubisoft directory will not be processed") + "\n\n")
             return False
 
         ubisoftUserIDFolder = os.path.join(
