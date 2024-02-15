@@ -1121,8 +1121,8 @@ class GameSaveManager(tk.Tk):
         self.backupProgressText.delete(1.0, tk.END)
         self.backupProgressText.config(state="disabled")
 
-    def special_options_check(self):
-        gdBackupPath = os.path.join(self.gsmBackupPath, "Geometry Dash")
+    def special_options_check(self, source):
+        gdBackupPath = os.path.join(source, "Geometry Dash")
         if os.path.exists(gdBackupPath):
             for item in os.listdir(gdBackupPath):
                 item_path = os.path.join(gdBackupPath, item)
@@ -1601,8 +1601,9 @@ class GameSaveManager(tk.Tk):
                             self.insert_text(
                                 _("Back up path is invalid: ") + game["name"] + "\n")
 
-    def restore_custom(self):
-        custom_path = os.path.join(self.gsmBackupPath, "0 Custom")
+    def restore_custom(self, source):
+        custom_path = os.path.join(source, "0 Custom")
+        custom_json = os.path.join(custom_path, "custom_games.json")
 
         if os.path.exists(custom_path):
             backups_present = any(os.path.isdir(os.path.join(
@@ -1610,8 +1611,8 @@ class GameSaveManager(tk.Tk):
             if backups_present:
                 self.insert_text(_("\nBelow are custom games:\n"))
 
-            if os.path.exists(self.customGameJson):
-                with open(self.customGameJson, "r") as file:
+            if os.path.exists(custom_json):
+                with open(custom_json, "r") as file:
                     custom_games = json.load(file).get("customGames", [])
 
             for game_name in os.listdir(custom_path):
@@ -1819,7 +1820,6 @@ class GameSaveManager(tk.Tk):
     def restore1(self):
         self.disable_widgets()
         self.delete_all_text()
-        self.special_options_check()
 
         START = True
 
@@ -1828,6 +1828,7 @@ class GameSaveManager(tk.Tk):
             START = False
 
         if START:
+            self.special_options_check(self.gsmBackupPath)
             all_games = os.listdir(self.gsmBackupPath)
             for game in all_games:
                 if game in self.gameSaveDirectory:
@@ -1920,7 +1921,7 @@ class GameSaveManager(tk.Tk):
 
                         self.insert_text(_("Restored ") + game + "\n")
 
-            self.restore_custom()
+            self.restore_custom(self.gsmBackupPath)
             self.insert_text(_("Restore completed!"))
 
         self.enable_widgets()
@@ -1929,7 +1930,6 @@ class GameSaveManager(tk.Tk):
     def restore2(self):
         self.disable_widgets()
         self.delete_all_text()
-        self.special_options_check()
 
         START = True
 
@@ -1941,6 +1941,8 @@ class GameSaveManager(tk.Tk):
         if START:
             temp_dir = os.path.join(
                 tempfile.gettempdir(), "GameSaveManagerTemp")
+            self.special_options_check(temp_dir)
+
             if os.path.exists(temp_dir):
                 try:
                     shutil.rmtree(temp_dir)
@@ -2064,12 +2066,13 @@ class GameSaveManager(tk.Tk):
 
                         self.insert_text(_("Restored ") + game + "\n")
 
+            self.restore_custom(temp_dir)
+
             try:
                 shutil.rmtree(temp_dir)
             except Exception:
                 self.delete_temp_on_startup(temp_dir)
 
-            self.restore_custom()
             self.insert_text(_("Restore completed!"))
 
         self.enable_widgets()
