@@ -134,7 +134,7 @@ class GameSaveManager(tk.Tk):
         self.resizable(False, False)
 
         # Version, user prompts, and links
-        self.appVersion = "1.1.3"
+        self.appVersion = "1.1.4"
         self.githubLink = "https://github.com/dyang886/Game-Save-Manager"
         self.updateLink = "https://api.github.com/repos/dyang886/Game-Save-Manager/releases/latest"
         self.gsmPathTextPrompt = _("Select a .gsm file for restore")
@@ -517,6 +517,7 @@ class GameSaveManager(tk.Tk):
             "Getting Over It with Bennett Foddy": ("Registry", "None", "HKEY_CURRENT_USER\\Software\\Bennett Foddy\\Getting Over It"),
             "Ghostrunner": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Local/Ghostrunner/Saved/SaveGames"),
             "Goat Simulator": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/265930/remote"),
+            "Goat Simulator 3": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Local/Goat2/Saved/SaveGames"),
             "God of War": ("Windows", "Folder", f"C:/Users/{self.user_name}/Saved Games/God of War"),
             "Gorogoa": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/Annapurna/Gorogoa"),
             "Grand Theft Auto V": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/Rockstar Games/GTA V/Profiles"),
@@ -1546,6 +1547,15 @@ class GameSaveManager(tk.Tk):
         if destination_mtime > source_mtime:
             game_display = game.replace('_', ': ').replace(
                 '^', '?').rstrip(self.duplicate_symbol)
+            
+            if settings["language"] == "zh_CN" or settings["language"] == "zh_TW":
+                with open(resource_path("game_names.json"), "r", encoding="utf-8") as file:
+                    translations = json.load(file)
+
+                for game in translations["games"]:
+                    if game["en_US"] == game_display:
+                        game_display = game_display.replace(game["en_US"], game["zh_CN"])
+                        break
 
             message_template = _("Save conflict detected for {game_display}:\n"
                                  "Save data on machine (last modified on {destination_mtime})\n"
