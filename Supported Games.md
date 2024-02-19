@@ -97,6 +97,7 @@
 | Getting Over It with Bennett Foddy | Registry |
 | Ghostrunner | Windows |
 | Goat Simulator | Steam |
+| Goat Simulator 3 | Windows |
 | God of War | Windows |
 | Gorogoa | Windows |
 | Grand Theft Auto V | Windows |
