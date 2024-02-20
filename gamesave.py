@@ -82,12 +82,13 @@ def load_settings():
 
 
 def get_translator():
-    for root, dirs, files in os.walk(resource_path("locale/")):
-        for file in files:
-            if file.endswith(".po"):
-                po = polib.pofile(os.path.join(root, file))
-                po.save_as_mofile(os.path.join(
-                    root, os.path.splitext(file)[0] + ".mo"))
+    if not hasattr(sys, 'frozen'):
+        for root, dirs, files in os.walk(resource_path("locale/")):
+            for file in files:
+                if file.endswith(".po"):
+                    po = polib.pofile(os.path.join(root, file))
+                    po.save_as_mofile(os.path.join(
+                        root, os.path.splitext(file)[0] + ".mo"))
 
     lang = settings["language"]
     gettext.bindtextdomain("Game Save Manager",
@@ -134,7 +135,7 @@ class GameSaveManager(tk.Tk):
         self.resizable(False, False)
 
         # Version, user prompts, and links
-        self.appVersion = "1.1.4"
+        self.appVersion = "1.1.3"
         self.githubLink = "https://github.com/dyang886/Game-Save-Manager"
         self.updateLink = "https://api.github.com/repos/dyang886/Game-Save-Manager/releases/latest"
         self.gsmPathTextPrompt = _("Select a .gsm file for restore")
