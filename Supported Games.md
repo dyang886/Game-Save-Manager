@@ -1,12 +1,14 @@
 | Game Name | Save Location |
 | ---------- | ------------- |
 | 64.0 | Windows |
-| Abzû | Windows |
 | A Dance of Fire and Ice | Windows |
+| A Way Out | Windows |
+| Abzû | Windows |
 | AI＊Shoujo | Windows |
 | Alba: A Wildlife Adventure | Windows |
 | Angry Birds Space | Steam |
 | Anno 1800 | Windows |
+| Arrow a Row | Windows |
 | Assassin's Creed Odyssey | Ubisoft |
 | Assassin's Creed Origins | Ubisoft |
 | Assassin's Creed Valhalla | Ubisoft |
@@ -14,12 +16,11 @@
 | Astroneer | Windows |
 | Atomic Heart | Windows |
 | Avicii Invector | Windows |
-| A Way Out | Windows |
-| Badland: Game of the Year Edition | Windows |
 | Bad North | Steam |
+| Badland: Game of the Year Edition | Windows |
 | Baldur's Gate 3 | Steam |
-| BattleBlock Theater | Steam |
 | Beat Hazard | Steam |
+| BattleBlock Theater | Steam |
 | Besiege | Windows |
 | Biomutant | Windows |
 | Biped | Windows |
@@ -66,8 +67,11 @@
 | Doom Eternal | Steam |
 | Dragon Age: Inquisition | Windows |
 | DREDGE | Windows |
+| Duck Game | Steam |
 | Dying Light | Steam |
 | Dying Light 2 Stay Human | Steam |
+| EA Sports FIFA 23 | Windows |
+| EA Sports PGA Tour | Windows |
 | Elden Ring | Windows |
 | Element TD 2 | Windows |
 | Emily Wants to Play | Windows |
@@ -80,7 +84,6 @@
 | Far Cry New Dawn | Ubisoft |
 | Feeding Frenzy 2 | Registry |
 | Feist | Steam |
-| FIFA 23 | Windows |
 | Final Fantasy VII Remake Intergrade | Windows |
 | Fireboy & Watergirl: Elements | Windows |
 | Fireboy & Watergirl: Fairy Tales | Windows |
@@ -90,6 +93,8 @@
 | Five Nights at Freddy's 3 | Windows |
 | Five Nights at Freddy's 4 | Windows |
 | Five Nights at Freddy's: Sister Location | Windows |
+| Forza Horizon 4 | Steam |
+| Forza Horizon 5 | Steam |
 | Freddy Fazbear's Pizzeria Simulator | Windows |
 | Frostpunk | Steam |
 | Genital Jousting | Windows |
@@ -179,8 +184,8 @@
 | My Time at Portia | Windows |
 | My Time at Sandrock | Steam |
 | Need for Speed Heat | Windows |
-| NieR Replicant | Windows |
 | NieR: Automata | Windows |
+| NieR Replicant | Windows |
 | No Man's Sky | Windows |
 | Noita | Windows |
 | Octopath Traveler | Windows |
@@ -248,6 +253,7 @@
 | South Park: The Stick of Truth | Windows |
 | SpeedRunners | Steam |
 | SpongeBob SquarePants: Battle for Bikini Bottom - Rehydrated | Windows |
+| Star Wars Battlefront II (2017) | Windows |
 | Stardew Valley | Windows |
 | Starfield | Steam |
 | Steep | Ubisoft |
@@ -275,12 +281,12 @@
 | The Medium | Windows |
 | The Outlast Trials | Windows |
 | The Past Within | Windows |
-| There Is No Game: Wrong Dimension | Windows |
 | The Sims 4 | Windows |
 | The Stanley Parable: Ultra Deluxe | Windows |
 | The Survivalists | Windows |
 | The White Door | Windows |
 | The Witcher 3: Wild Hunt | Windows |
+| There Is No Game: Wrong Dimension | Windows |
 | Titanfall 2 | Windows |
 | Tomb Raider (2013) | Steam |
 | Tom Clancy's Ghost Recon Wildlands | Ubisoft |

@@ -167,7 +167,8 @@ class GameSaveManager(tk.Tk):
         }
         self.minecraft = ["Minecraft_Bedrock Edition",
                           "Minecraft_Java Edition"]
-        self.gdMusic = ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Local/GeometryDash")
+        self.gdMusic = ("Windows", "Folder",
+                        f"C:/Users/{self.user_name}/AppData/Local/GeometryDash")
 
         # Window references
         self.settings_window = None
@@ -419,12 +420,14 @@ class GameSaveManager(tk.Tk):
         # If game has multiple save paths, create another entry appending "self.duplicate_symbol" at the end
         self.gameSaveDirectory = {
             "64.0": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/rebelrabbit/64_0"),
-            "Abzû": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Local/AbzuGame/Saved/SaveGames"),
             "A Dance of Fire and Ice": ("Windows", "Folder", f"{self.gamePath['A Dance of Fire and Ice']}/User"),
+            "A Way Out": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/My Games/A Way Out/Saves"),
+            "Abzû": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Local/AbzuGame/Saved/SaveGames"),
             "AI＊Shoujo": ("Windows", "Folder", f"{self.gamePath['AI＊Shoujo']}/UserData/save"),
             "Alba_A Wildlife Adventure": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/ustwo games/Alba/SaveFiles"),
             "Angry Birds Space": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/210550/remote"),
             "Anno 1800": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/Anno 1800/accounts"),
+            "Arrow a Row": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/Lonerangerix/Arrow a Row"),
             "Assassin's Creed Odyssey": ("Ubisoft", "Folder", f"{self.systemPath['Ubisoft']}/savegames/<user-id>/5092"),
             "Assassin's Creed Origins": ("Ubisoft", "Folder", f"{self.systemPath['Ubisoft']}/savegames/<user-id>/4923"),
             "Assassin's Creed Valhalla": ("Ubisoft", "Folder", f"{self.systemPath['Ubisoft']}/savegames/<user-id>/7013"),
@@ -432,13 +435,12 @@ class GameSaveManager(tk.Tk):
             "Astroneer": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Local/Astro/Saved/SaveGames"),
             "Atomic Heart": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Local/AtomicHeart/Saved/SaveGames"),
             "Avicii Invector": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/Hello There Games/AVICII Invector"),
-            "A Way Out": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/My Games/A Way Out/Saves"),
-            "Badland_Game of the Year Edition": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Roaming/BADLAND/data"),
             "Bad North": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/688420/remote"),
+            "Badland_Game of the Year Edition": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Roaming/BADLAND/data"),
             "Baldur's Gate 3": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/1086940/remote"),
             "Baldur's Gate 3" + self.duplicate_symbol: ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Local/Larian Studios/Baldur's Gate 3/PlayerProfiles/Public/Savegames/Story"),
-            "BattleBlock Theater": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/238460/remote"),
             "Beat Hazard": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/49600/remote"),
+            "BattleBlock Theater": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/238460/remote"),
             "Besiege": ("Windows", "File", f"{self.gamePath['Besiege']}/Besiege_Data/CompletedLevels.txt"),
             "Besiege" + self.duplicate_symbol: ("Windows", "Folder", f"{self.gamePath['Besiege']}/Besiege_Data/SavedMachines"),
             "Biomutant": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Local/Biomutant/Saved/SaveGames"),
@@ -487,8 +489,11 @@ class GameSaveManager(tk.Tk):
             "Doom Eternal": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/782330/remote"),
             "Dragon Age_Inquisition": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/BioWare/Dragon Age Inquisition/Save"),
             "DREDGE": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/Black Salt Games/DREDGE/saves"),
+            "Duck Game": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/312530/remote/"),
             "Dying Light": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/239140/remote/out"),
             "Dying Light 2 Stay Human": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/534380/remote/out"),
+            "EA Sports FIFA 23": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/FIFA 23/settings"),
+            "EA Sports PGA Tour": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/PGA TOUR/settings"),
             "Elden Ring": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Roaming/EldenRing"),
             "Element TD 2": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/Element Studios/Element TD 2"),
             "Emily Wants to Play": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Local/EmilyWantsToPlay/Saved/SaveGames"),
@@ -501,7 +506,6 @@ class GameSaveManager(tk.Tk):
             "Far Cry New Dawn": ("Ubisoft", "Folder", f"{self.systemPath['Ubisoft']}/savegames/<user-id>/5211"),
             "Feeding Frenzy 2": ("Registry", "None", "HKEY_CURRENT_USER\\Software\\GameHouse\\Feeding Frenzy 2"),
             "Feist": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/327060/remote"),
-            "FIFA 23": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/FIFA 23"),
             "Final Fantasy VII Remake Intergrade": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/My Games/FINAL FANTASY VII REMAKE/Steam"),
             "Fireboy & Watergirl_Elements": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Roaming/com.osloalbet.fb"),
             "Fireboy & Watergirl_Fairy Tales": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Roaming/com.osloalbet.fairies"),
@@ -511,6 +515,8 @@ class GameSaveManager(tk.Tk):
             "Five Nights at Freddy's 3": ("Windows", "File", f"C:/Users/{self.user_name}/AppData/Roaming/MMFApplications/freddy3"),
             "Five Nights at Freddy's 4": ("Windows", "File", f"C:/Users/{self.user_name}/AppData/Roaming/MMFApplications/fn4"),
             "Five Nights at Freddy's_Sister Location": ("Windows", "File", f"C:/Users/{self.user_name}/AppData/Roaming/MMFApplications/sl"),
+            "Forza Horizon 4": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/1293830/remote"),
+            "Forza Horizon 5": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/1551360/remote"),
             "Freddy Fazbear's Pizzeria Simulator": ("Windows", "File", f"C:/Users/{self.user_name}/AppData/Roaming/MMFApplications/FNAF6"),
             "Frostpunk": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/323190/remote"),
             "Genital Jousting": ("Windows", "File", f"C:/Users/{self.user_name}/AppData/LocalLow/Free Lives/Genital Jousting/Profile.penis"),
@@ -605,8 +611,8 @@ class GameSaveManager(tk.Tk):
             "My Time at Portia": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/Pathea Games/My Time at Portia"),
             "My Time at Sandrock": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/1084600/remote"),
             "Need for Speed Heat": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/Need for Speed Heat/SaveGame/savegame"),
-            "NieR Replicant": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/My Games/NieR Replicant ver.1.22474487139/Steam"),
             "NieR_Automata": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/My Games/NieR_Automata"),
+            "NieR Replicant": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/My Games/NieR Replicant ver.1.22474487139/Steam"),
             "No Man's Sky": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Roaming/HelloGames/NMS"),
             "Noita": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/Nolla_Games_Noita"),
             "Octopath Traveler": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/My Games/Octopath_Traveler"),
@@ -674,6 +680,7 @@ class GameSaveManager(tk.Tk):
             "South Park_The Stick of Truth": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/My Games/South Park - The Stick of Truth/save"),
             "SpeedRunners": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/207140/remote"),
             "SpongeBob SquarePants_Battle for Bikini Bottom - Rehydrated": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Local/Pineapple/Saved/SaveGames"),
+            "Star Wars Battlefront II (2017)": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/STAR WARS Battlefront II/settings"),
             "Stardew Valley": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Roaming/StardewValley/Saves"),
             "Starfield": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/1716740/remote/Saves"),
             # "Starlink_Battle for Atlas": ("Ubisoft", "Folder", f""), # incomplete
@@ -703,12 +710,12 @@ class GameSaveManager(tk.Tk):
             "The Medium": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Local/Medium/Saved/SaveGames"),
             "The Outlast Trials": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Local/OPP/Saved/SaveGames"),
             "The Past Within": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/RustyLake/The Past Within/Serialization/SaveFiles"),
-            "There Is No Game_Wrong Dimension": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/DrawMeAPixel/Ting"),
             "The Sims 4": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/Electronic Arts/The Sims 4/saves"),
             "The Stanley Parable_Ultra Deluxe": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/Crows Crows Crows/The Stanley Parable_ Ultra Deluxe"),
             "The Survivalists": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/Team17 Digital Ltd_/The Survivalists"),
             "The White Door": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/Rusty Lake/TheWhiteDoor"),
             "The Witcher 3_Wild Hunt": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/The Witcher 3"),
+            "There Is No Game_Wrong Dimension": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/DrawMeAPixel/Ting"),
             "Titanfall 2": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/Respawn/Titanfall2/profile/savegames"),
             "Tomb Raider (2013)": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/203160/remote"),
             "Tom Clancy's Ghost Recon Wildlands": ("Ubisoft", "Folder", f"{self.systemPath['Ubisoft']}/savegames/<user-id>/3559"),
@@ -1348,7 +1355,8 @@ class GameSaveManager(tk.Tk):
             self.systemPath["Steam"] = None
 
         if self.systemPath["Steam"] is None:
-            self.insert_text(_("Could not find Steam installation path\nGames saved under Steam directory will not be processed") + "\n\n")
+            self.insert_text(
+                _("Could not find Steam installation path\nGames saved under Steam directory will not be processed") + "\n\n")
             return False
 
         steamUserIDFolder = os.path.join(self.systemPath["Steam"], "userdata/")
@@ -1370,7 +1378,8 @@ class GameSaveManager(tk.Tk):
             self.systemPath["Ubisoft"] = None
 
         if self.systemPath["Ubisoft"] is None:
-            self.insert_text(_("Could not find Ubisoft installation path\nGames saved under Ubisoft directory will not be processed") + "\n\n")
+            self.insert_text(
+                _("Could not find Ubisoft installation path\nGames saved under Ubisoft directory will not be processed") + "\n\n")
             return False
 
         ubisoftUserIDFolder = os.path.join(
@@ -1497,7 +1506,7 @@ class GameSaveManager(tk.Tk):
                 self.insert_text(_("Backup migration aborted!\n"))
                 self.enable_widgets()
                 return
-            
+
             try:
                 shutil.rmtree(self.gsmBackupPath)
             except Exception as e:
@@ -1548,14 +1557,15 @@ class GameSaveManager(tk.Tk):
         if destination_mtime > source_mtime:
             game_display = game.replace('_', ': ').replace(
                 '^', '?').rstrip(self.duplicate_symbol)
-            
+
             if settings["language"] == "zh_CN" or settings["language"] == "zh_TW":
                 with open(resource_path("game_names.json"), "r", encoding="utf-8") as file:
                     translations = json.load(file)
 
                 for game in translations["games"]:
                     if game["en_US"] == game_display:
-                        game_display = game_display.replace(game["en_US"], game["zh_CN"])
+                        game_display = game_display.replace(
+                            game["en_US"], game["zh_CN"])
                         break
 
             message_template = _("Save conflict detected for {game_display}:\n"
@@ -1644,7 +1654,7 @@ class GameSaveManager(tk.Tk):
 
                     try:
                         if not self.is_directory_empty(source) and self.check_newer_save(game_name, source, destination, True):
-                        
+
                             if matching_game["type"] == "folder":
                                 shutil.copytree(source, destination,
                                                 dirs_exist_ok=True)
@@ -1722,7 +1732,8 @@ class GameSaveManager(tk.Tk):
                 try:
                     custom_json = os.path.join(
                         self.gsmBackupPath, "0 Custom", "custom_games.json")
-                    moved_json = os.path.join(setting_path, "custom_games.json")
+                    moved_json = os.path.join(
+                        setting_path, "custom_games.json")
                     isMoved = False
 
                     if os.path.exists(custom_json):
@@ -1737,7 +1748,8 @@ class GameSaveManager(tk.Tk):
                     START = False
 
                 if isMoved:
-                    os.makedirs(os.path.join(self.gsmBackupPath, "0 Custom"), exist_ok=True)
+                    os.makedirs(os.path.join(self.gsmBackupPath,
+                                "0 Custom"), exist_ok=True)
                     shutil.move(moved_json, custom_json)
             else:
                 self.insert_text(_("Backup aborted!\n"))
