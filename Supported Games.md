@@ -2,6 +2,7 @@
 | ---------- | ------------- |
 | 64.0 | Windows |
 | A Dance of Fire and Ice | Windows |
+| A Plague Tale: Innocence | Steam |
 | A Way Out | Windows |
 | Abzû | Windows |
 | AI＊Shoujo | Windows |
@@ -253,6 +254,7 @@
 | South Park: The Stick of Truth | Windows |
 | SpeedRunners | Steam |
 | SpongeBob SquarePants: Battle for Bikini Bottom - Rehydrated | Windows |
+| Spore | Windows |
 | Star Wars Battlefront II (2017) | Windows |
 | Stardew Valley | Windows |
 | Starfield | Steam |
@@ -281,12 +283,14 @@
 | The Medium | Windows |
 | The Outlast Trials | Windows |
 | The Past Within | Windows |
+| The Room | Steam |
 | The Sims 4 | Windows |
 | The Stanley Parable: Ultra Deluxe | Windows |
 | The Survivalists | Windows |
 | The White Door | Windows |
 | The Witcher 3: Wild Hunt | Windows |
 | There Is No Game: Wrong Dimension | Windows |
+| Titan Souls | Windows |
 | Titanfall 2 | Windows |
 | Tomb Raider (2013) | Steam |
 | Tom Clancy's Ghost Recon Wildlands | Ubisoft |
@@ -307,16 +311,21 @@
 | Unravel Two | Windows |
 | Untitled Goose Game | Windows |
 | Vampire Survivors | Windows |
+| Virtual Cottage | Windows |
 | Watch Dogs | Ubisoft |
 | Watch Dogs 2 | Ubisoft |
+| Weird RPG | Windows |
 | Watch Dogs: Legion | Ubisoft |
 | What the Golf? | Windows |
 | while True: learn() | Steam |
 | Wild Hearts | Windows |
+| Witch It | Windows |
 | Wizard of Legend | Windows |
 | Word Game | Windows |
+| World of Goo (2019) | Windows |
 | World War Z | Steam |
 | Worms W.M.D | Steam |
 | WWE 2K22 | Steam |
 | Yomawari: Lost in the Dark | Windows |
 | Yomawari: Midnight Shadows | Windows |
+| Zuma | Windows |
