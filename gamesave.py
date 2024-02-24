@@ -173,6 +173,7 @@ class GameSaveManager(tk.Tk):
         # Window references
         self.settings_window = None
         self.addCustom_window = None
+        self.supportedGames_window = None
         self.about_window = None
 
         # Widget fonts and styles
@@ -202,6 +203,9 @@ class GameSaveManager(tk.Tk):
             self.default_font[0], 15, "bold"), padding=0, foreground="red")
         style.configure("TEntry", padding=6)
         style.configure("TCombobox", padding=6)
+        style.configure("Treeview", font=self.default_font, rowheight=40)
+        style.configure("Treeview.Heading", font=(
+            self.default_font[0], 13, "bold"))
 
         # Menu bar
         self.menuBar = tk.Frame(self, background="#2e2e2e")
@@ -213,6 +217,8 @@ class GameSaveManager(tk.Tk):
             label=_("Settings"), command=self.open_settings)
         self.settingsMenu.add_command(
             label=_("Manage Custom Games"), command=self.manage_custom_games)
+        self.settingsMenu.add_command(
+            label=_("View Supported Games"), command=self.view_supported_games)
         self.settingsMenu.add_command(
             label=_("About"), command=self.open_about)
         self.settingMenuBtn.config(menu=self.settingsMenu)
@@ -353,6 +359,7 @@ class GameSaveManager(tk.Tk):
             "Saints Row": "",
             "Sanfu": "",
             "The Binding of Isaac": "",
+            "Titan Souls": "",
             "Touhou Makuka Sai ~ Fantasy Danmaku Festival": "",
             "Touhou Makuka Sai ~ Fantasy Danmaku Festival" + self.duplicate_symbol: [],
             "Vampire Survivors": "",
@@ -360,60 +367,37 @@ class GameSaveManager(tk.Tk):
             "Yomawari_Midnight Shadows": "",
         }
 
-        self.eval('tk::PlaceWindow . center')
         self.find_steam_directory()
         self.find_ubisoft_directory()
 
         # self.instal_loc_save_path parameters: (game name, steam app id, subfolder after "steamapps/common/")
-        self.gamePath["A Dance of Fire and Ice"] = self.instal_loc_save_path(
-            "A Dance of Fire and Ice", 977950, "A Dance of Fire and Ice")
-        self.gamePath["AI＊Shoujo"] = self.instal_loc_save_path(
-            "AI＊Shoujo", 1250650, "AI-Shoujo")
-        self.gamePath["Besiege"] = self.instal_loc_save_path(
-            "Besiege", 346010, "Besiege")
-        self.gamePath["Broforce"] = self.instal_loc_save_path(
-            "Broforce", 274190, "Broforce")
-        self.gamePath["Celeste"] = self.instal_loc_save_path(
-            "Celeste", 504230, "Celeste")
-        self.gamePath["Firework (2021)"] = self.instal_loc_save_path(
-            "Firework (2021)", 1288310, "Firework")
+        self.gamePath["A Dance of Fire and Ice"] = self.install_loc_save_path(977950, "A Dance of Fire and Ice")
+        self.gamePath["AI＊Shoujo"] = self.install_loc_save_path(1250650, "AI-Shoujo")
+        self.gamePath["Besiege"] = self.install_loc_save_path(346010, "Besiege")
+        self.gamePath["Broforce"] = self.install_loc_save_path(274190, "Broforce")
+        self.gamePath["Celeste"] = self.install_loc_save_path(504230, "Celeste")
+        self.gamePath["Firework (2021)"] = self.install_loc_save_path(1288310, "Firework")
         self.gamePath["Geometry Dash"] = self.geometrydash()
-        self.gamePath["Half-Life 2"] = self.instal_loc_save_path(
-            "Half-Life 2", 220, "Half-Life 2")
-        self.gamePath["Inscryption"] = self.instal_loc_save_path(
-            "Inscryption", 1092790, "Inscryption")
-        self.gamePath["Kaiju Princess"] = self.kaiju_princess(
-            self.instal_loc_save_path("Kaiju Princess", 1732180, "KaijuPrincess"))
-        self.gamePath["Lies of P"] = self.instal_loc_save_path(
-            "Lies of P", 1627720, "Lies of P")
-        self.gamePath["Little Nightmares"] = self.instal_loc_save_path(
-            "Little Nightmares", 424840, "Little Nightmares")
-        self.gamePath["Melatonin"] = self.instal_loc_save_path(
-            "Melatonin", 1585220, "Melatonin")
+        self.gamePath["Half-Life 2"] = self.install_loc_save_path(220, "Half-Life 2")
+        self.gamePath["Inscryption"] = self.install_loc_save_path(1092790, "Inscryption")
+        self.gamePath["Kaiju Princess"] = self.kaiju_princess(self.install_loc_save_path(1732180, "KaijuPrincess"))
+        self.gamePath["Lies of P"] = self.install_loc_save_path(1627720, "Lies of P")
+        self.gamePath["Little Nightmares"] = self.install_loc_save_path(424840, "Little Nightmares")
+        self.gamePath["Melatonin"] = self.install_loc_save_path(1585220, "Melatonin")
         self.gamePath["Minecraft Legends"] = self.minecraft_legends()
-        self.gamePath["Portal"] = self.instal_loc_save_path(
-            "Portal", 400, "Portal")
-        self.gamePath["Portal 2"] = self.instal_loc_save_path(
-            "Portal 2", 620, "Portal 2")
-        self.gamePath["Portal with RTX"] = self.instal_loc_save_path(
-            "Portal with RTX", 2012840, "PortalRTX")
-        self.gamePath["Rhythm Doctor"] = self.instal_loc_save_path(
-            "Rhythm Doctor", 774181, "Rhythm Doctor")
-        self.gamePath["Saints Row"] = self.instal_loc_save_path(
-            "Saints Row", 742420, "Saints Row")
+        self.gamePath["Portal"] = self.install_loc_save_path(400, "Portal")
+        self.gamePath["Portal 2"] = self.install_loc_save_path(620, "Portal 2")
+        self.gamePath["Portal with RTX"] = self.install_loc_save_path(2012840, "PortalRTX")
+        self.gamePath["Rhythm Doctor"] = self.install_loc_save_path(774181, "Rhythm Doctor")
+        self.gamePath["Saints Row"] = self.install_loc_save_path(742420, "Saints Row")
         self.gamePath["Sanfu"] = self.sanfu()
-        self.gamePath["The Binding of Isaac"] = self.instal_loc_save_path(
-            "The Binding of Isaac", 113200, "The Binding Of Isaac")
-        self.gamePath["Touhou Makuka Sai ~ Fantasy Danmaku Festival"] = self.instal_loc_save_path(
-            "Touhou Makuka Sai ~ Fantasy Danmaku Festival", 882710, "TouHou Makuka Sai ~ Fantastic Danmaku Festival")
-        self.gamePath["Touhou Makuka Sai ~ Fantasy Danmaku Festival" +
-                      self.duplicate_symbol] = self.tmsfdf()
-        self.gamePath["Vampire Survivors"] = self.instal_loc_save_path(
-            "Vampire Survivors", 1794680, "Vampire Survivors")
-        self.gamePath["Vampire Survivors" +
-                      self.duplicate_symbol] = self.vampire_survivors()
-        self.gamePath["Yomawari_Midnight Shadows"] = self.instal_loc_save_path(
-            "Yomawari_Midnight Shadows", 625980, "Yomawari Midnight Shadows")
+        self.gamePath["The Binding of Isaac"] = self.install_loc_save_path(113200, "The Binding Of Isaac")
+        self.gamePath["Titan Souls"] = self.install_loc_save_path(297130, "Titan Souls")
+        self.gamePath["Touhou Makuka Sai ~ Fantasy Danmaku Festival"] = self.install_loc_save_path(882710, "TouHou Makuka Sai ~ Fantastic Danmaku Festival")
+        self.gamePath["Touhou Makuka Sai ~ Fantasy Danmaku Festival" + self.duplicate_symbol] = self.tmsfdf()
+        self.gamePath["Vampire Survivors"] = self.install_loc_save_path(1794680, "Vampire Survivors")
+        self.gamePath["Vampire Survivors" + self.duplicate_symbol] = self.vampire_survivors()
+        self.gamePath["Yomawari_Midnight Shadows"] = self.install_loc_save_path(625980, "Yomawari Midnight Shadows")
 
         # Format: "Game Name": ("Save Location", "Save Data Type", "Save Path")
         # Template "": ("", "", f""),
@@ -421,6 +405,7 @@ class GameSaveManager(tk.Tk):
         self.gameSaveDirectory = {
             "64.0": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/rebelrabbit/64_0"),
             "A Dance of Fire and Ice": ("Windows", "Folder", f"{self.gamePath['A Dance of Fire and Ice']}/User"),
+            "A Plague Tale_Innocence": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/752590/remote"),
             "A Way Out": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/My Games/A Way Out/Saves"),
             "Abzû": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Local/AbzuGame/Saved/SaveGames"),
             "AI＊Shoujo": ("Windows", "Folder", f"{self.gamePath['AI＊Shoujo']}/UserData/save"),
@@ -680,6 +665,8 @@ class GameSaveManager(tk.Tk):
             "South Park_The Stick of Truth": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/My Games/South Park - The Stick of Truth/save"),
             "SpeedRunners": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/207140/remote"),
             "SpongeBob SquarePants_Battle for Bikini Bottom - Rehydrated": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Local/Pineapple/Saved/SaveGames"),
+            "Spore": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Roaming/Spore/Games"),
+            "Spore" + self.duplicate_symbol: ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/My Spore Creations"),
             "Star Wars Battlefront II (2017)": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/STAR WARS Battlefront II/settings"),
             "Stardew Valley": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Roaming/StardewValley/Saves"),
             "Starfield": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/1716740/remote/Saves"),
@@ -710,12 +697,14 @@ class GameSaveManager(tk.Tk):
             "The Medium": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Local/Medium/Saved/SaveGames"),
             "The Outlast Trials": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Local/OPP/Saved/SaveGames"),
             "The Past Within": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/RustyLake/The Past Within/Serialization/SaveFiles"),
+            "The Room": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/288160/remote"),
             "The Sims 4": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/Electronic Arts/The Sims 4/saves"),
             "The Stanley Parable_Ultra Deluxe": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/Crows Crows Crows/The Stanley Parable_ Ultra Deluxe"),
             "The Survivalists": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/Team17 Digital Ltd_/The Survivalists"),
             "The White Door": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/Rusty Lake/TheWhiteDoor"),
             "The Witcher 3_Wild Hunt": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/The Witcher 3"),
             "There Is No Game_Wrong Dimension": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/DrawMeAPixel/Ting"),
+            "Titan Souls": ("Windows", "Folder", f"{self.gamePath['Titan Souls']}/data/SAVE"),
             "Titanfall 2": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/Respawn/Titanfall2/profile/savegames"),
             "Tomb Raider (2013)": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/203160/remote"),
             "Tom Clancy's Ghost Recon Wildlands": ("Ubisoft", "Folder", f"{self.systemPath['Ubisoft']}/savegames/<user-id>/3559"),
@@ -741,24 +730,30 @@ class GameSaveManager(tk.Tk):
             "Vampire Survivors": ("Windows", "Folder", f"{self.gamePath['Vampire Survivors']}/resources/app/.webpack/renderer"),
             "Vampire Survivors" + self.duplicate_symbol: ("Windows", "Folder", self.gamePath["Vampire Survivors" + self.duplicate_symbol]),
             "Vampire Survivors" + self.duplicate_symbol*2: ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/1794680/remote"),
+            "Virtual Cottage": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Roaming/Godot/app_userdata/Virtual Cottage"),
             "Watch Dogs": ("Ubisoft", "Folder", f"{self.systemPath['Ubisoft']}/savegames/<user-id>/541"),
             "Watch Dogs 2": ("Ubisoft", "Folder", f"{self.systemPath['Ubisoft']}/savegames/<user-id>/3619"),
+            "Weird RPG": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/DefaultCompany/Second/GameAutoCloud"),
             "Watch Dogs_Legion": ("Ubisoft", "Folder", f"{self.systemPath['Ubisoft']}/savegames/<user-id>/7017"),
             "What the Golf^": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/Triband/WHAT THE GOLF_"),
             "while True_learn()": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/619150/remote"),
             "Wild Hearts": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/KoeiTecmo/WILD HEARTS"),
+            "Witch It": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Local/WitchIt/Saved/SaveGames"),
             "Wizard of Legend": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/Contingent99/Wizard of Legend"),
             "Word Game": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Roaming/文字遊戲"),
+            "World of Goo (2019)": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Local/2DBoy/WorldOfGoo"),
             "World War Z": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/699130/remote"),
             "Worms W.M.D": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/327030/remote"),
             "WWE 2K22": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/1255630/remote"),
             "Yomawari_Lost in the Dark": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Roaming/Nippon Ichi Software, Inc/Yomawari Lost In the Dark"),
             "Yomawari_Midnight Shadows": ("Windows", "Folder", f"{self.gamePath['Yomawari_Midnight Shadows']}/savedata"),
+            "Zuma": ("Windows", "Folder", f"C:/ProgramData/Steam/Zuma/userdata"),
         }
 
         if settings["backupGDMusic"]:
             self.gameSaveDirectory["Geometry Dash"] = self.gdMusic
 
+        self.eval('tk::PlaceWindow . center')
         self.mainloop()
 
     # ===========================================================================
@@ -1008,6 +1003,47 @@ class GameSaveManager(tk.Tk):
             self.addCustom_window.lift()
             self.addCustom_window.focus_force()
 
+    def view_supported_games(self):
+        if self.supportedGames_window is None or not self.supportedGames_window.winfo_exists():
+            self.supportedGames_window = tk.Toplevel(self)
+            self.supportedGames_window.title(_("View Supported Games"))
+            self.supportedGames_window.iconbitmap(
+                resource_path("assets/logo.ico"))
+            self.supportedGames_window.transient(self)
+            self.supportedGames_window.resizable(False, False)
+            self.supportedGames_window.minsize(width=650, height=700)
+
+            tree_frame = ttk.Frame(self.supportedGames_window)
+            tree_frame.pack(expand=True, fill=tk.BOTH)
+
+            scrollBar = ttk.Scrollbar(tree_frame, orient="vertical")
+
+            columns = ("game_name", "save_location")
+            game_treeview = ttk.Treeview(
+                tree_frame,
+                columns=columns, show="headings",
+                yscrollcommand=scrollBar.set,
+                style="Treeview"
+            )
+            game_treeview.heading("game_name", text=_("Game Name"))
+            game_treeview.heading("save_location", text=_("Save Location"))
+            game_treeview.column("save_location", width=100)
+            game_treeview.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
+
+            scrollBar.config(command=game_treeview.yview)
+            scrollBar.pack(side=tk.LEFT, fill=tk.Y)
+
+            for game, (location, fileType, path) in self.gameSaveDirectory.items():
+                if self.duplicate_symbol in game:
+                    continue
+                game_treeview.insert(
+                    '', tk.END, values=(self.transGame(game), location))
+
+            self.center_window(self.supportedGames_window)
+        else:
+            self.supportedGames_window.lift()
+            self.supportedGames_window.focus_force()
+
     def open_about(self):
         if self.about_window is None or not self.about_window.winfo_exists():
             self.about_window = tk.Toplevel(self)
@@ -1097,11 +1133,11 @@ class GameSaveManager(tk.Tk):
         backup_thread.start()
 
     def create_restore_thread_1(self):
-        restore_thread = threading.Thread(target=self.restore1)
+        restore_thread = threading.Thread(target=self.restoreFromMachine)
         restore_thread.start()
 
     def create_restore_thread_2(self):
-        restore_thread = threading.Thread(target=self.restore2)
+        restore_thread = threading.Thread(target=self.restoreFromGSM)
         restore_thread.start()
 
     # ===========================================================================
@@ -1310,22 +1346,28 @@ class GameSaveManager(tk.Tk):
         else:
             self.custom_game_rows[0][4].config(state=tk.NORMAL)
 
-    def insert_text(self, text):
-        if self.duplicate_symbol in text:
-            return
-        self.backupProgressText.config(state="normal")
-        text = text.replace("_", ": ").replace("^", "?")
+    def transGame(self, gameName):
+        gameName = gameName.replace("_", ": ").replace(
+            "^", "?").rstrip(self.duplicate_symbol)
 
         if settings["language"] == "zh_CN" or settings["language"] == "zh_TW":
             with open(resource_path("game_names.json"), "r", encoding="utf-8") as file:
                 translations = json.load(file)
 
             for game in translations["games"]:
-                textGameName = text.strip().replace(
-                    _("Backed up "), "").replace(_("Restored "), "")
-                if game["en_US"] == textGameName:
-                    text = text.replace(game["en_US"], game["zh_CN"])
-                    break
+                if game["en_US"] == gameName:
+                    return game["zh_CN"]
+
+        return gameName
+
+    def insert_text(self, text):
+        if self.duplicate_symbol in text:
+            return
+        self.backupProgressText.config(state="normal")
+
+        textGameName = text.strip().replace(
+            _("Backed up "), "").replace(_("Restored "), "")
+        text = text.replace(textGameName, self.transGame(textGameName))
 
         self.backupProgressText.insert(tk.END, text)
         self.backupProgressText.see("end")
@@ -1364,6 +1406,7 @@ class GameSaveManager(tk.Tk):
             all_items = os.listdir(steamUserIDFolder)
             self.steamUserID = [item for item in all_items if os.path.isdir(
                 os.path.join(steamUserIDFolder, item))]
+            print("Steam user ids: ", self.steamUserID)
 
         return True
 
@@ -1388,10 +1431,11 @@ class GameSaveManager(tk.Tk):
             all_items = os.listdir(ubisoftUserIDFolder)
             self.ubisoftUserID = [item for item in all_items if os.path.isdir(
                 os.path.join(ubisoftUserIDFolder, item))]
+            print("Ubisoft user ids: ", self.ubisoftUserID)
 
         return True
 
-    def instal_loc_save_path(self, game_name, steam_app_id, subfolder):
+    def install_loc_save_path(self, steam_app_id, subfolder):
         install_path = os.path.join(self.find_game_root_path(
             steam_app_id), f"steamapps/common/{subfolder}")
         if os.path.exists(install_path):
@@ -1555,18 +1599,7 @@ class GameSaveManager(tk.Tk):
 
         # Compare times and prompt the user if necessary
         if destination_mtime > source_mtime:
-            game_display = game.replace('_', ': ').replace(
-                '^', '?').rstrip(self.duplicate_symbol)
-
-            if settings["language"] == "zh_CN" or settings["language"] == "zh_TW":
-                with open(resource_path("game_names.json"), "r", encoding="utf-8") as file:
-                    translations = json.load(file)
-
-                for game in translations["games"]:
-                    if game["en_US"] == game_display:
-                        game_display = game_display.replace(
-                            game["en_US"], game["zh_CN"])
-                        break
+            game_display = self.transGame(game.rstrip(self.duplicate_symbol))
 
             message_template = _("Save conflict detected for {game_display}:\n"
                                  "Save data on machine (last modified on {destination_mtime})\n"
@@ -1765,90 +1798,180 @@ class GameSaveManager(tk.Tk):
                 if game in self.minecraft and not settings["backupMC"]:
                     continue
 
-                if saveLocation == "Steam" or saveLocation == "Ubisoft":
-                    if saveLocation == "Steam":
-                        folderID = self.steamUserID
-                    elif saveLocation == "Ubisoft":
-                        folderID = self.ubisoftUserID
+                try:
+                    if saveLocation == "Steam" or saveLocation == "Ubisoft":
+                        if saveLocation == "Steam":
+                            folderID = self.steamUserID
+                        elif saveLocation == "Ubisoft":
+                            folderID = self.ubisoftUserID
 
-                    if folderID:
-                        for id in folderID:
-                            temp = directory
-                            temp = temp.replace("<user-id>", id)
-                            if os.path.exists(temp) and any(files for _, _, files in os.walk(temp)):
-                                source_folders.append((id, temp))
-                    else:
-                        continue
+                        if folderID:
+                            for id in folderID:
+                                idSource = directory.replace("<user-id>", id)
+                                if os.path.exists(idSource) and not self.is_directory_empty(idSource):
+                                    source_folders.append((id, idSource))
+                        else:
+                            continue
 
-                    if source_folders:
-                        for (id, location) in source_folders:
-                            destination = os.path.join(destination, id)
-                            shutil.copytree(location, destination)
+                        if source_folders:
+                            for (id, source) in source_folders:
+                                shutil.copytree(
+                                    source, os.path.join(destination, id))
                             self.insert_text(_("Backed up ") + game + "\n")
 
-                elif saveLocation == "Windows":
-                    if isinstance(source, list):
-                        if not source[0] or len(source) <= 1:
+                    elif saveLocation == "Windows":
+                        if isinstance(source, list):
+                            if not source[0] or len(source) <= 1:
+                                continue
+                            for path in source[1:]:
+                                src = os.path.join(source[0], path)
+                                dst = os.path.join(destination, path)
+                                if os.path.isdir(src):
+                                    if self.is_directory_empty(src):
+                                        continue
+                                    shutil.copytree(src, dst)
+                                elif os.path.isfile(src):
+                                    os.makedirs(destination, exist_ok=True)
+                                    shutil.copy(src, dst)
+                                    shutil.copystat(src, dst)
+                        elif os.path.isfile(source):
+                            os.makedirs(destination, exist_ok=True)
+                            shutil.copy(source, os.path.join(
+                                destination, os.path.basename(source)))
+                            shutil.copystat(source, os.path.join(
+                                destination, os.path.basename(source)))
+                        elif os.path.exists(source):
+                            if self.is_directory_empty(source):
+                                continue
+                            shutil.copytree(source, destination)
+                        else:
                             continue
-                        for path in source[1:]:
-                            src = os.path.join(source[0], path)
-                            dst = os.path.join(destination, path)
-                            if os.path.isdir(src):
-                                if self.is_directory_empty(src):
-                                    continue
-                                shutil.copytree(src, dst)
-                            elif os.path.isfile(src):
-                                os.makedirs(destination, exist_ok=True)
-                                shutil.copy(src, dst)
-                                shutil.copystat(src, dst)
-                    elif os.path.isfile(source):
-                        os.makedirs(destination, exist_ok=True)
-                        shutil.copy(source, os.path.join(
-                            destination, os.path.basename(source)))
-                        shutil.copystat(source, os.path.join(
-                            destination, os.path.basename(source)))
-                    elif os.path.exists(source):
-                        if self.is_directory_empty(source):
-                            continue
-                        shutil.copytree(source, destination)
-                    else:
-                        continue
 
-                    self.insert_text(_("Backed up ") + game + "\n")
-
-                elif saveLocation == "Registry":
-                    command = ["reg", "query", directory]
-                    status = False
-                    try:
-                        subprocess.run(
-                            command, creationflags=subprocess.CREATE_NO_WINDOW, check=True)
-                        status = True
-                    except Exception:
-                        status = False
-
-                    if status:
-                        if not os.path.exists(destination):
-                            os.makedirs(destination)
-                        backup_file = os.path.join(destination, f"{game}.reg")
-                        command = ["reg", "export",
-                                   directory, backup_file, "/y"]
-                        try:
-                            process = subprocess.run(
-                                command, creationflags=subprocess.CREATE_NO_WINDOW, stderr=subprocess.PIPE, text=True)
-                            process.check_returncode()
-                        except Exception:
-                            self.insert_text("An error occurred.")
-                            messagebox.showerror("Error", process.stderr)
-                            return
                         self.insert_text(_("Backed up ") + game + "\n")
+
+                    elif saveLocation == "Registry":
+                        command = ["reg", "query", directory]
+                        status = False
+                        try:
+                            subprocess.run(
+                                command, creationflags=subprocess.CREATE_NO_WINDOW, check=True)
+                            status = True
+                        except Exception:
+                            status = False
+
+                        if status:
+                            if not os.path.exists(destination):
+                                os.makedirs(destination)
+                            backup_file = os.path.join(
+                                destination, f"{game}.reg")
+                            command = ["reg", "export",
+                                       directory, backup_file, "/y"]
+                            try:
+                                process = subprocess.run(
+                                    command, creationflags=subprocess.CREATE_NO_WINDOW, stderr=subprocess.PIPE, text=True)
+                                process.check_returncode()
+                            except Exception:
+                                self.insert_text(
+                                    _("Backup failed: ") + self.transGame(game) + "\n")
+                                error_text = _("An error occurred while backing up {game_name}: ").format(
+                                    game_name=self.transGame(game))
+                                messagebox.showerror(
+                                    _("Error"), error_text + process.stderr)
+                                return
+                            self.insert_text(_("Backed up ") + game + "\n")
+
+                except Exception as e:
+                    self.insert_text(_("Backup failed: ") +
+                                     self.transGame(game) + "\n")
+                    error_text = _("An error occurred while backing up {game_name}: ").format(
+                        game_name=self.transGame(game))
+                    messagebox.showerror(_("Error"), error_text + str(e))
 
             self.backup_custom()
             self.insert_text(_("Back up completed!"))
 
         self.enable_widgets()
 
-    # restore backup from machine
-    def restore1(self):
+    def restore(self, game, saveLocation, source, destination):
+        try:
+            if saveLocation == "Steam" or saveLocation == "Ubisoft":
+                folderID = os.listdir(source)
+
+                for id in folderID:
+                    idDestination = destination.replace("<user-id>", id)
+                    idSource = os.path.join(source, id)
+                    if self.check_newer_save(game, idSource, idDestination):
+                        shutil.copytree(idSource, idDestination,
+                                        dirs_exist_ok=True)
+                self.insert_text(_("Restored ") + game + "\n")
+
+            elif saveLocation == "Windows":
+                if isinstance(destination, list):
+                    if destination[0] and self.check_newer_save(game, source, destination):
+                        for path in os.listdir(source):
+                            src = os.path.join(source, path)
+                            dst = os.path.join(destination[0], path)
+                            if os.path.isfile(src):
+                                os.makedirs(destination[0], exist_ok=True)
+                                shutil.copy(src, dst)
+                                shutil.copystat(src, dst)
+                            else:
+                                shutil.copytree(
+                                    src, dst, dirs_exist_ok=True)
+
+                        self.insert_text(_("Restored ") + game + "\n")
+
+                elif self.check_newer_save(game, source, destination):
+                    if self.gameSaveDirectory[game][1] == "File":
+                        source_file = next(os.path.join(source, f)
+                                           for f in os.listdir(source))
+                        os.makedirs(os.path.dirname(
+                            destination), exist_ok=True)
+                        shutil.copy(source_file, destination)
+                        shutil.copystat(source_file, destination)
+                    else:
+                        shutil.copytree(
+                            source, destination, dirs_exist_ok=True)
+
+                    self.insert_text(_("Restored ") + game + "\n")
+
+            elif saveLocation == "Registry":
+                command = ["reg", "query", destination]
+                status = False
+                try:
+                    subprocess.run(
+                        command, creationflags=subprocess.CREATE_NO_WINDOW, check=True)
+                    status = True
+                except Exception:
+                    status = False
+
+                if status:
+                    delete_command = ["reg", "delete", destination, "/f"]
+                    try:
+                        process = subprocess.run(
+                            delete_command, creationflags=subprocess.CREATE_NO_WINDOW, stderr=subprocess.PIPE, text=True)
+                        process.check_returncode()
+                    except Exception:
+                        return process.stderr
+
+                backup_file = os.path.join(source, f"{game}.reg")
+                if os.path.exists(backup_file):
+                    command = ["reg", "import", backup_file]
+                    try:
+                        process = subprocess.run(
+                            command, creationflags=subprocess.CREATE_NO_WINDOW, stderr=subprocess.PIPE, text=True)
+                        process.check_returncode()
+                    except Exception:
+                        return process.stderr
+
+                    self.insert_text(_("Restored ") + game + "\n")
+
+        except Exception as e:
+            return str(e)
+
+        return 0
+
+    def restoreFromMachine(self):
         self.disable_widgets()
         self.delete_all_text()
 
@@ -1875,90 +1998,20 @@ class GameSaveManager(tk.Tk):
                     continue
                 saveLocation = self.gameSaveDirectory[game][0]
 
-                if saveLocation == "Steam" or saveLocation == "Ubisoft":
-                    folderID = os.listdir(source)
-
-                    for id in folderID:
-                        temp = destination
-                        temp = temp.replace("<user-id>", id)
-                        idSource_folder = os.path.join(source, id)
-                        if self.check_newer_save(game, idSource_folder, temp):
-                            shutil.copytree(idSource_folder,
-                                            temp, dirs_exist_ok=True)
-                            self.insert_text(_("Restored ") + game + "\n")
-
-                elif saveLocation == "Windows":
-                    if isinstance(destination, list):
-                        if destination[0] and self.check_newer_save(game, source, destination):
-                            for path in os.listdir(source):
-                                src = os.path.join(source, path)
-                                dst = os.path.join(destination[0], path)
-                                if os.path.isfile(src):
-                                    os.makedirs(destination[0], exist_ok=True)
-                                    shutil.copy(src, dst)
-                                    shutil.copystat(src, dst)
-                                else:
-                                    shutil.copytree(
-                                        src, dst, dirs_exist_ok=True)
-
-                            self.insert_text(_("Restored ") + game + "\n")
-
-                    elif self.check_newer_save(game, source, destination):
-                        if self.gameSaveDirectory[game][1] == "File":
-                            source_file = next(os.path.join(source, f)
-                                               for f in os.listdir(source))
-                            os.makedirs(os.path.dirname(
-                                destination), exist_ok=True)
-                            shutil.copy(source_file, destination)
-                            shutil.copystat(source_file, destination)
-                        else:
-                            shutil.copytree(
-                                source, destination, dirs_exist_ok=True)
-
-                        self.insert_text(_("Restored ") + game + "\n")
-
-                elif saveLocation == "Registry":
-                    command = ["reg", "query", destination]
-                    status = False
-                    try:
-                        subprocess.run(
-                            command, creationflags=subprocess.CREATE_NO_WINDOW, check=True)
-                        status = True
-                    except Exception:
-                        status = False
-
-                    if status:
-                        delete_command = ["reg", "delete", destination, "/f"]
-                        try:
-                            process = subprocess.run(
-                                delete_command, creationflags=subprocess.CREATE_NO_WINDOW, stderr=subprocess.PIPE, text=True)
-                            process.check_returncode()
-                        except Exception:
-                            self.insert_text(_("An error occurred."))
-                            messagebox.showerror(_("Error"), process.stderr)
-                            return
-
-                    backup_file = os.path.join(source, f"{game}.reg")
-                    if os.path.exists(backup_file):
-                        command = ["reg", "import", backup_file]
-                        try:
-                            process = subprocess.run(
-                                command, creationflags=subprocess.CREATE_NO_WINDOW, stderr=subprocess.PIPE, text=True)
-                            process.check_returncode()
-                        except Exception:
-                            self.insert_text(_("An error occurred."))
-                            messagebox.showerror(_("Error"), process.stderr)
-                            return
-
-                        self.insert_text(_("Restored ") + game + "\n")
+                error = self.restore(game, saveLocation, source, destination)
+                if error:
+                    self.insert_text(_("Restore failed: ") +
+                                     self.transGame(game) + "\n")
+                    error_text = _("An error occurred while restoring {game_name}: ").format(
+                        game_name=self.transGame(game))
+                    messagebox.showerror(_("Error"), error_text + error)
 
             self.restore_custom(self.gsmBackupPath)
             self.insert_text(_("Restore completed!"))
 
         self.enable_widgets()
 
-    # restore backup from .gsm file
-    def restore2(self):
+    def restoreFromGSM(self):
         self.disable_widgets()
         self.delete_all_text()
 
@@ -1985,8 +2038,8 @@ class GameSaveManager(tk.Tk):
                     self.enable_widgets()
                     return
             os.mkdir(temp_dir)
-            zipGSM = f"{
-                temp_dir}/{os.path.splitext(os.path.basename(gsmPath))[0]}.zip"
+            zipGSM = os.path.join(
+                temp_dir, f"{os.path.splitext(os.path.basename(gsmPath))[0]}.zip")
             self.insert_text(_("Decompressing file...\n"))
 
             try:
@@ -2014,88 +2067,19 @@ class GameSaveManager(tk.Tk):
                 else:
                     continue
 
-                source = f"{temp_dir}/{game}"
+                source = os.path.join(temp_dir, game)
                 destination = self.gameSaveDirectory[game][2]
                 if not destination:
                     continue
                 saveLocation = self.gameSaveDirectory[game][0]
 
-                if saveLocation == "Steam" or saveLocation == "Ubisoft":
-                    folderID = os.listdir(source)
-
-                    for id in folderID:
-                        temp = destination
-                        temp = temp.replace("<user-id>", id)
-                        idSource_folder = os.path.join(source, id)
-                        if self.check_newer_save(game, idSource_folder, temp) and os.path.exists:
-                            shutil.copytree(idSource_folder,
-                                            temp, dirs_exist_ok=True)
-                            self.insert_text(_("Restored ") + game + "\n")
-
-                elif saveLocation == "Windows":
-                    if isinstance(destination, list):
-                        if destination[0] and self.check_newer_save(game, source, destination):
-                            for path in os.listdir(source):
-                                src = os.path.join(source, path)
-                                dst = os.path.join(destination[0], path)
-                                if os.path.isfile(src):
-                                    os.makedirs(destination[0], exist_ok=True)
-                                    shutil.copy(src, dst)
-                                    shutil.copystat(src, dst)
-                                else:
-                                    shutil.copytree(
-                                        src, dst, dirs_exist_ok=True)
-
-                            self.insert_text(_("Restored ") + game + "\n")
-
-                    elif self.check_newer_save(game, source, destination):
-                        if self.gameSaveDirectory[game][1] == "File":
-                            source_file = next(os.path.join(source, f)
-                                               for f in os.listdir(source))
-                            os.makedirs(os.path.dirname(
-                                destination), exist_ok=True)
-                            shutil.copy(source_file, destination)
-                            shutil.copystat(source_file, destination)
-                        else:
-                            shutil.copytree(
-                                source, destination, dirs_exist_ok=True)
-
-                        self.insert_text(_("Restored ") + game + "\n")
-
-                elif saveLocation == "Registry":
-                    command = ["reg", "query", destination]
-                    status = False
-                    try:
-                        subprocess.run(
-                            command, creationflags=subprocess.CREATE_NO_WINDOW, check=True)
-                        status = True
-                    except Exception:
-                        status = False
-
-                    if status:
-                        delete_command = ["reg", "delete", destination, "/f"]
-                        try:
-                            process = subprocess.run(
-                                delete_command, creationflags=subprocess.CREATE_NO_WINDOW, stderr=subprocess.PIPE, text=True)
-                            process.check_returncode()
-                        except Exception:
-                            self.insert_text(_("An error occurred."))
-                            messagebox.showerror(_("Error"), process.stderr)
-                            return
-
-                    backup_file = os.path.join(source, f"{game}.reg")
-                    if os.path.exists(backup_file):
-                        command = ["reg", "import", backup_file]
-                        try:
-                            process = subprocess.run(
-                                command, creationflags=subprocess.CREATE_NO_WINDOW, stderr=subprocess.PIPE, text=True)
-                            process.check_returncode()
-                        except Exception:
-                            self.insert_text(_("An error occurred."))
-                            messagebox.showerror(_("Error"), process.stderr)
-                            return
-
-                        self.insert_text(_("Restored ") + game + "\n")
+                error = self.restore(game, saveLocation, source, destination)
+                if error:
+                    self.insert_text(_("Restore failed: ") +
+                                     self.transGame(game) + "\n")
+                    error_text = _("An error occurred while restoring {game_name}: ").format(
+                        game_name=self.transGame(game))
+                    messagebox.showerror(_("Error"), error_text + error)
 
             self.restore_custom(temp_dir)
 
