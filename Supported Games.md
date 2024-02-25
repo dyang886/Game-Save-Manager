@@ -121,7 +121,9 @@
 | Hidden Folks | Windows |
 | Hi-Fi RUSH | Windows |
 | High on Life | Windows |
-| Hitman World of Assassination | Steam |
+| Hitman | Steam |
+| Hitman 2 | Steam |
+| Hitman 3 | Steam |
 | Hogwarts Legacy | Windows |
 | Hollow Knight | Windows |
 | Horizon Zero Dawn | Windows |
@@ -198,6 +200,7 @@
 | Outlast 2 | Steam |
 | Overcooked | Windows |
 | Overcooked! 2 | Windows |
+| Oxygen Not Included | Windows |
 | Overcooked! All You Can Eat | Windows |
 | Pacify | Windows |
 | Patrick's Parabox | Windows |
@@ -230,6 +233,8 @@
 | Riders Republic | Ubisoft |
 | Rise of the Tomb Raider | Steam |
 | Risk of Rain 2 | Steam |
+| Rolling Sky | Windows |
+| Rolling Sky 2 | Registry |
 | Rusty Lake Hotel | Windows |
 | Rusty Lake Paradise | Windows |
 | Rusty Lake: Roots | Windows |
@@ -284,6 +289,9 @@
 | The Outlast Trials | Windows |
 | The Past Within | Windows |
 | The Room | Steam |
+| The Room Two | Windows |
+| The Room Three | Windows |
+| The Room 4: Old Sins | Windows |
 | The Sims 4 | Windows |
 | The Stanley Parable: Ultra Deluxe | Windows |
 | The Survivalists | Windows |
@@ -314,8 +322,8 @@
 | Virtual Cottage | Windows |
 | Watch Dogs | Ubisoft |
 | Watch Dogs 2 | Ubisoft |
-| Weird RPG | Windows |
 | Watch Dogs: Legion | Ubisoft |
+| Weird RPG | Windows |
 | What the Golf? | Windows |
 | while True: learn() | Steam |
 | Wild Hearts | Windows |

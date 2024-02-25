@@ -135,7 +135,7 @@ class GameSaveManager(tk.Tk):
         self.resizable(False, False)
 
         # Version, user prompts, and links
-        self.appVersion = "1.1.3"
+        self.appVersion = "1.1.4"
         self.githubLink = "https://github.com/dyang886/Game-Save-Manager"
         self.updateLink = "https://api.github.com/repos/dyang886/Game-Save-Manager/releases/latest"
         self.gsmPathTextPrompt = _("Select a .gsm file for restore")
@@ -371,33 +371,55 @@ class GameSaveManager(tk.Tk):
         self.find_ubisoft_directory()
 
         # self.instal_loc_save_path parameters: (game name, steam app id, subfolder after "steamapps/common/")
-        self.gamePath["A Dance of Fire and Ice"] = self.install_loc_save_path(977950, "A Dance of Fire and Ice")
-        self.gamePath["AI＊Shoujo"] = self.install_loc_save_path(1250650, "AI-Shoujo")
-        self.gamePath["Besiege"] = self.install_loc_save_path(346010, "Besiege")
-        self.gamePath["Broforce"] = self.install_loc_save_path(274190, "Broforce")
-        self.gamePath["Celeste"] = self.install_loc_save_path(504230, "Celeste")
-        self.gamePath["Firework (2021)"] = self.install_loc_save_path(1288310, "Firework")
+        self.gamePath["A Dance of Fire and Ice"] = self.install_loc_save_path(
+            977950, "A Dance of Fire and Ice")
+        self.gamePath["AI＊Shoujo"] = self.install_loc_save_path(
+            1250650, "AI-Shoujo")
+        self.gamePath["Besiege"] = self.install_loc_save_path(
+            346010, "Besiege")
+        self.gamePath["Broforce"] = self.install_loc_save_path(
+            274190, "Broforce")
+        self.gamePath["Celeste"] = self.install_loc_save_path(
+            504230, "Celeste")
+        self.gamePath["Firework (2021)"] = self.install_loc_save_path(
+            1288310, "Firework")
         self.gamePath["Geometry Dash"] = self.geometrydash()
-        self.gamePath["Half-Life 2"] = self.install_loc_save_path(220, "Half-Life 2")
-        self.gamePath["Inscryption"] = self.install_loc_save_path(1092790, "Inscryption")
-        self.gamePath["Kaiju Princess"] = self.kaiju_princess(self.install_loc_save_path(1732180, "KaijuPrincess"))
-        self.gamePath["Lies of P"] = self.install_loc_save_path(1627720, "Lies of P")
-        self.gamePath["Little Nightmares"] = self.install_loc_save_path(424840, "Little Nightmares")
-        self.gamePath["Melatonin"] = self.install_loc_save_path(1585220, "Melatonin")
+        self.gamePath["Half-Life 2"] = self.install_loc_save_path(
+            220, "Half-Life 2")
+        self.gamePath["Inscryption"] = self.install_loc_save_path(
+            1092790, "Inscryption")
+        self.gamePath["Kaiju Princess"] = self.kaiju_princess(
+            self.install_loc_save_path(1732180, "KaijuPrincess"))
+        self.gamePath["Lies of P"] = self.install_loc_save_path(
+            1627720, "Lies of P")
+        self.gamePath["Little Nightmares"] = self.install_loc_save_path(
+            424840, "Little Nightmares")
+        self.gamePath["Melatonin"] = self.install_loc_save_path(
+            1585220, "Melatonin")
         self.gamePath["Minecraft Legends"] = self.minecraft_legends()
         self.gamePath["Portal"] = self.install_loc_save_path(400, "Portal")
         self.gamePath["Portal 2"] = self.install_loc_save_path(620, "Portal 2")
-        self.gamePath["Portal with RTX"] = self.install_loc_save_path(2012840, "PortalRTX")
-        self.gamePath["Rhythm Doctor"] = self.install_loc_save_path(774181, "Rhythm Doctor")
-        self.gamePath["Saints Row"] = self.install_loc_save_path(742420, "Saints Row")
+        self.gamePath["Portal with RTX"] = self.install_loc_save_path(
+            2012840, "PortalRTX")
+        self.gamePath["Rhythm Doctor"] = self.install_loc_save_path(
+            774181, "Rhythm Doctor")
+        self.gamePath["Saints Row"] = self.install_loc_save_path(
+            742420, "Saints Row")
         self.gamePath["Sanfu"] = self.sanfu()
-        self.gamePath["The Binding of Isaac"] = self.install_loc_save_path(113200, "The Binding Of Isaac")
-        self.gamePath["Titan Souls"] = self.install_loc_save_path(297130, "Titan Souls")
-        self.gamePath["Touhou Makuka Sai ~ Fantasy Danmaku Festival"] = self.install_loc_save_path(882710, "TouHou Makuka Sai ~ Fantastic Danmaku Festival")
-        self.gamePath["Touhou Makuka Sai ~ Fantasy Danmaku Festival" + self.duplicate_symbol] = self.tmsfdf()
-        self.gamePath["Vampire Survivors"] = self.install_loc_save_path(1794680, "Vampire Survivors")
-        self.gamePath["Vampire Survivors" + self.duplicate_symbol] = self.vampire_survivors()
-        self.gamePath["Yomawari_Midnight Shadows"] = self.install_loc_save_path(625980, "Yomawari Midnight Shadows")
+        self.gamePath["The Binding of Isaac"] = self.install_loc_save_path(
+            113200, "The Binding Of Isaac")
+        self.gamePath["Titan Souls"] = self.install_loc_save_path(
+            297130, "Titan Souls")
+        self.gamePath["Touhou Makuka Sai ~ Fantasy Danmaku Festival"] = self.install_loc_save_path(
+            882710, "TouHou Makuka Sai ~ Fantastic Danmaku Festival")
+        self.gamePath["Touhou Makuka Sai ~ Fantasy Danmaku Festival" +
+                      self.duplicate_symbol] = self.tmsfdf()
+        self.gamePath["Vampire Survivors"] = self.install_loc_save_path(
+            1794680, "Vampire Survivors")
+        self.gamePath["Vampire Survivors" +
+                      self.duplicate_symbol] = self.vampire_survivors()
+        self.gamePath["Yomawari_Midnight Shadows"] = self.install_loc_save_path(
+            625980, "Yomawari Midnight Shadows")
 
         # Format: "Game Name": ("Save Location", "Save Data Type", "Save Path")
         # Template "": ("", "", f""),
@@ -465,7 +487,7 @@ class GameSaveManager(tk.Tk):
             "Death Stranding_Director's Cut": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Local/KojimaProductions/DeathStrandingDC"),
             "Deathloop": ("Windows", "Folder", f"C:/Users/{self.user_name}/Saved Games/Arkane Studios/Deathloop/base/savegame"),
             "Death's Door": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/Acid Nerve/DeathsDoor/SAVEDATA"),
-            "Deiland": ("Registry", "None", f"HKEY_CURRENT_USER\\Software\\Chibig\\Deiland"),
+            "Deiland": ("Registry", "None", "HKEY_CURRENT_USER\\Software\\Chibig\\Deiland"),
             "Demon Slayer -Kimetsu no Yaiba- The Hinokami Chronicles": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Local/APK/Saved/SaveGames"),
             "Detroit_Become Human": ("Windows", "Folder", f"C:/Users/{self.user_name}/Saved Games/Quantic Dream/Detroit Become Human"),
             "Deus Ex_Mankind Divided": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/337000/remote"),
@@ -527,7 +549,9 @@ class GameSaveManager(tk.Tk):
             "Hidden Folks": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/Adriaan de Jongh/Hidden Folks"),
             "Hi-Fi RUSH": ("Windows", "Folder", f"C:/Users/{self.user_name}/Saved Games/TangoGameworks/Hi-Fi RUSH (STEAM)/Saved/SaveGames"),
             "High on Life": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Local/Oregon/Saved/SaveGames"),
-            "Hitman World of Assassination": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/1659040/remote"),
+            "Hitman": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/236870/remote"),
+            "Hitman 2": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/863550/remote"),
+            "Hitman 3": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/1659040/remote"),
             "Hogwarts Legacy": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Local/Hogwarts Legacy/Saved/SaveGames"),
             "Hollow Knight": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/Team Cherry/Hollow Knight"),
             "Horizon Zero Dawn": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/Horizon Zero Dawn/Saved Game"),
@@ -591,7 +615,7 @@ class GameSaveManager(tk.Tk):
             "Monument Valley_Panoramic Edition": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/ustwo games/Monument Valley"),
             "Monument Valley 2_Panoramic Edition": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/ustwo games/Monument Valley 2"),
             "Muse Dash": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Local/Steam/MuseDash"),
-            "Mushroom 11": ("Registry", "None", f"HKEY_CURRENT_USER\\Software\\Untame\\Mushroom 11"),
+            "Mushroom 11": ("Registry", "None", "HKEY_CURRENT_USER\\Software\\Untame\\Mushroom 11"),
             "Mushroom 11" + self.duplicate_symbol: ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/243160/remote"),
             "My Time at Portia": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/Pathea Games/My Time at Portia"),
             "My Time at Sandrock": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/1084600/remote"),
@@ -609,6 +633,7 @@ class GameSaveManager(tk.Tk):
             "Outlast 2": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/414700/remote"),
             "Overcooked": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/Ghost Town Games/Overcooked"),
             "Overcooked! 2": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/Team17/Overcooked2"),
+            "Oxygen Not Included": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/Klei/OxygenNotIncluded"),
             "Overcooked! All You Can Eat": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/Team17/Overcooked All You Can Eat"),
             "Pacify": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Local/Pacify/Saved/SaveGames"),
             "Patrick's Parabox": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/Patrick Traynor/Patrick's Parabox"),
@@ -641,6 +666,8 @@ class GameSaveManager(tk.Tk):
             "Riders Republic": ("Ubisoft", "Folder", f"{self.systemPath['Ubisoft']}/savegames/<user-id>/5780"),
             "Rise of the Tomb Raider": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/391220/remote"),
             "Risk of Rain 2": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/632360/remote/UserProfiles"),
+            "Rolling Sky": ("Windows", "File", f"C:/Users/{self.user_name}/AppData/LocalLow/Cheetah Mobile Inc/Rolling Sky/saveData.txt"),
+            "Rolling Sky 2": ("Registry", "None", "HKEY_CURRENT_USER\\Software\\Cheetah Mobile Inc.\\RollingSky2"),
             "Rusty Lake Hotel": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/Rusty Lake/Hotel"),
             "Rusty Lake Paradise": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/Rusty Lake/Paradise"),
             "Rusty Lake_Roots": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Roaming/com.RustyLake.RustyLakeRoots/Local Store/#SharedObjects/RustyLakeRoots.swf"),
@@ -698,6 +725,9 @@ class GameSaveManager(tk.Tk):
             "The Outlast Trials": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Local/OPP/Saved/SaveGames"),
             "The Past Within": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/RustyLake/The Past Within/Serialization/SaveFiles"),
             "The Room": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/288160/remote"),
+            "The Room Two": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/Fireproof Games/The Room Two"),
+            "The Room Three": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/Fireproof Games/The Room Three"),
+            "The Room 4_Old Sins": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/Fireproof Studios/Old Sins"),
             "The Sims 4": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/Electronic Arts/The Sims 4/saves"),
             "The Stanley Parable_Ultra Deluxe": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/Crows Crows Crows/The Stanley Parable_ Ultra Deluxe"),
             "The Survivalists": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/Team17 Digital Ltd_/The Survivalists"),
@@ -733,8 +763,8 @@ class GameSaveManager(tk.Tk):
             "Virtual Cottage": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Roaming/Godot/app_userdata/Virtual Cottage"),
             "Watch Dogs": ("Ubisoft", "Folder", f"{self.systemPath['Ubisoft']}/savegames/<user-id>/541"),
             "Watch Dogs 2": ("Ubisoft", "Folder", f"{self.systemPath['Ubisoft']}/savegames/<user-id>/3619"),
-            "Weird RPG": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/DefaultCompany/Second/GameAutoCloud"),
             "Watch Dogs_Legion": ("Ubisoft", "Folder", f"{self.systemPath['Ubisoft']}/savegames/<user-id>/7017"),
+            "Weird RPG": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/DefaultCompany/Second/GameAutoCloud"),
             "What the Golf^": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/Triband/WHAT THE GOLF_"),
             "while True_learn()": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/619150/remote"),
             "Wild Hearts": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/KoeiTecmo/WILD HEARTS"),
