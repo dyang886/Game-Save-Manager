@@ -425,9 +425,11 @@ class GameSaveManager(tk.Tk):
         # Template "": ("", "", f""),
         # If game has multiple save paths, create another entry appending "self.duplicate_symbol" at the end
         self.gameSaveDirectory = {
+            "20 Small Mazes": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Roaming/Godot/app_userdata/20 Small Mazes/Saves"),
             "64.0": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/rebelrabbit/64_0"),
             "A Dance of Fire and Ice": ("Windows", "Folder", f"{self.gamePath['A Dance of Fire and Ice']}/User"),
             "A Plague Tale_Innocence": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/752590/remote"),
+            "A Plague Tale_Requiem": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/1182900/remote"),
             "A Way Out": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/My Games/A Way Out/Saves"),
             "Abzû": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Local/AbzuGame/Saved/SaveGames"),
             "AI＊Shoujo": ("Windows", "Folder", f"{self.gamePath['AI＊Shoujo']}/UserData/save"),
@@ -442,6 +444,7 @@ class GameSaveManager(tk.Tk):
             "Astroneer": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Local/Astro/Saved/SaveGames"),
             "Atomic Heart": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Local/AtomicHeart/Saved/SaveGames"),
             "Avicii Invector": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/Hello There Games/AVICII Invector"),
+            "Baba Is You": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Roaming/Baba_Is_You"),
             "Bad North": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/688420/remote"),
             "Badland_Game of the Year Edition": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Roaming/BADLAND/data"),
             "Baldur's Gate 3": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/1086940/remote"),
@@ -648,6 +651,7 @@ class GameSaveManager(tk.Tk):
             "Plants vs. Zombies": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/3590/remote"),
             "Poly Bridge": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/367450/remote"),
             "Poly Bridge 2": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/Dry Cactus/Poly Bridge 2"),
+            "Poly Bridge 3": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/Dry Cactus/Poly Bridge 3"),
             "Polyball": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/368180/remote"),
             "Portal": ("Windows", "Folder", f"{self.gamePath['Portal']}/portal/save"),
             "Portal 2": ("Windows", "Folder", f"{self.gamePath['Portal 2']}/portal2/SAVE"),
@@ -691,6 +695,7 @@ class GameSaveManager(tk.Tk):
             "Sonic Frontiers": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Roaming/SEGA/SonicFrontiers/steam"),
             "South Park_The Stick of Truth": ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/My Games/South Park - The Stick of Truth/save"),
             "SpeedRunners": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/207140/remote"),
+            "Spin Rhythm XD": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/Super Spin Digital/Spin Rhythm XD"),
             "SpongeBob SquarePants_Battle for Bikini Bottom - Rehydrated": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Local/Pineapple/Saved/SaveGames"),
             "Spore": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Roaming/Spore/Games"),
             "Spore" + self.duplicate_symbol: ("Windows", "Folder", f"C:/Users/{self.user_name}/Documents/My Spore Creations"),
@@ -775,6 +780,7 @@ class GameSaveManager(tk.Tk):
             "World War Z": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/699130/remote"),
             "Worms W.M.D": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/327030/remote"),
             "WWE 2K22": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/1255630/remote"),
+            "Yakuza_Like a Dragon": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Roaming/SEGA/YakuzaLikeADragon"),
             "Yomawari_Lost in the Dark": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Roaming/Nippon Ichi Software, Inc/Yomawari Lost In the Dark"),
             "Yomawari_Midnight Shadows": ("Windows", "Folder", f"{self.gamePath['Yomawari_Midnight Shadows']}/savedata"),
             "Zuma": ("Windows", "Folder", f"C:/ProgramData/Steam/Zuma/userdata"),
@@ -1005,7 +1011,7 @@ class GameSaveManager(tk.Tk):
             ttk.Label(self.content_frame, text=_(
                 "Game Name"), font=self.default_font).grid(row=0, column=0)
             ttk.Label(self.content_frame, text=_(
-                "File type"), font=self.default_font).grid(row=0, column=1)
+                "Save type"), font=self.default_font).grid(row=0, column=1)
             ttk.Label(self.content_frame, text=_(
                 "Save Path"), font=self.default_font).grid(row=0, column=2)
 
@@ -2067,7 +2073,7 @@ class GameSaveManager(tk.Tk):
                         _("Error"), _("Unable to clear temporary files from last session, please restart your computer."))
                     self.enable_widgets()
                     return
-            os.mkdir(temp_dir)
+            os.makedirs(temp_dir, exist_ok=True)
             zipGSM = os.path.join(
                 temp_dir, f"{os.path.splitext(os.path.basename(gsmPath))[0]}.zip")
             self.insert_text(_("Decompressing file...\n"))
@@ -2085,6 +2091,7 @@ class GameSaveManager(tk.Tk):
             except Exception as e:
                 messagebox.showerror(_("Error"), _(
                     "An error occurred while extracting file: ") + str(e))
+                self.enable_widgets()
                 return
             os.remove(zipGSM)
 
