@@ -1,8 +1,10 @@
 | Game Name | Save Location |
 | ---------- | ------------- |
+| 20 Small Mazes | Windows |
 | 64.0 | Windows |
 | A Dance of Fire and Ice | Windows |
 | A Plague Tale: Innocence | Steam |
+| A Plague Tale: Requiem | Steam |
 | A Way Out | Windows |
 | Abzû | Windows |
 | AI＊Shoujo | Windows |
@@ -17,6 +19,7 @@
 | Astroneer | Windows |
 | Atomic Heart | Windows |
 | Avicii Invector | Windows |
+| Baba Is You | Windows |
 | Bad North | Steam |
 | Badland: Game of the Year Edition | Windows |
 | Baldur's Gate 3 | Steam |
@@ -215,6 +218,7 @@
 | Plants vs. Zombies | Steam |
 | Poly Bridge | Steam |
 | Poly Bridge 2 | Windows |
+| Poly Bridge 3 | Windows |
 | Polyball | Steam |
 | Portal | Windows |
 | Portal 2 | Windows |
@@ -258,6 +262,7 @@
 | Sonic Frontiers | Windows |
 | South Park: The Stick of Truth | Windows |
 | SpeedRunners | Steam |
+| Spin Rhythm XD | Windows |
 | SpongeBob SquarePants: Battle for Bikini Bottom - Rehydrated | Windows |
 | Spore | Windows |
 | Star Wars Battlefront II (2017) | Windows |
@@ -334,6 +339,7 @@
 | World War Z | Steam |
 | Worms W.M.D | Steam |
 | WWE 2K22 | Steam |
+| Yakuza: Like a Dragon | Windows |
 | Yomawari: Lost in the Dark | Windows |
 | Yomawari: Midnight Shadows | Windows |
 | Zuma | Windows |
