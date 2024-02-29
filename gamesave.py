@@ -6,6 +6,7 @@ import locale
 import os
 import re
 import shutil
+import stat
 import subprocess
 import sys
 import tempfile
@@ -1530,14 +1531,22 @@ class GameSaveManager(tk.Tk):
                 full_path = os.path.join(destination[0], path)
                 if os.path.exists(full_path):
                     if os.path.isfile(full_path):
+                        os.chmod(full_path, stat.S_IWRITE)
                         os.remove(full_path)
                     else:
-                        shutil.rmtree(full_path)
+                        shutil.rmtree(full_path, onerror=lambda func, path, exc_info: (
+                            os.chmod(path, stat.S_IWRITE),
+                            func(path)
+                        ))
         else:
             if os.path.isfile(destination):
+                os.chmod(destination, stat.S_IWRITE)
                 os.remove(destination)
             elif os.path.isdir(destination):
-                shutil.rmtree(destination)
+                shutil.rmtree(destination, onerror=lambda func, path, exc_info: (
+                    os.chmod(path, stat.S_IWRITE),
+                    func(path)
+                ))
 
     # add a folder deletion command to Windows RunOnce registry to run on startup
     def delete_temp_on_startup(self, path):
@@ -1550,7 +1559,7 @@ class GameSaveManager(tk.Tk):
                            creationflags=subprocess.CREATE_NO_WINDOW, capture_output=True)
         except Exception as e:
             messagebox.showerror(
-                _("Error"), _("Filed to delete temporary files: ") + e.stderr)
+                _("Error"), _("Filed to delete temporary files: ") + str(e))
 
     # ===========================================================================
     # core functions
@@ -1814,7 +1823,10 @@ class GameSaveManager(tk.Tk):
                         shutil.move(custom_json, moved_json)
                         isMoved = True
 
-                    shutil.rmtree(self.gsmBackupPath)
+                    shutil.rmtree(self.gsmBackupPath, onerror=lambda func, path, exc_info: (
+                        os.chmod(path, stat.S_IWRITE),
+                        func(path)
+                    ))
                 except Exception as e:
                     messagebox.showerror(_("Error"), _(
                         "An error occurred while cleaning previous backup: ") + str(e))
@@ -1830,7 +1842,7 @@ class GameSaveManager(tk.Tk):
                 START = False
 
         if START:
-            for game, (saveLocation, DataType, directory) in self.gameSaveDirectory.items():
+            for game, (saveLocation, saveType, directory) in self.gameSaveDirectory.items():
                 source = directory
                 source_folders = []
                 folderID = None
@@ -1961,6 +1973,8 @@ class GameSaveManager(tk.Tk):
                                     src, dst, dirs_exist_ok=True)
 
                         self.insert_text(_("Restored ") + game + "\n")
+                    else:
+                        self.insert_text(_("Restore failed: ") + self.transGame(game) + "\n")
 
                 elif self.check_newer_save(game, source, destination):
                     if self.gameSaveDirectory[game][1] == "File":
@@ -1975,6 +1989,8 @@ class GameSaveManager(tk.Tk):
                             source, destination, dirs_exist_ok=True)
 
                     self.insert_text(_("Restored ") + game + "\n")
+                else:
+                    self.insert_text(_("Restore failed: ") + self.transGame(game) + "\n")
 
             elif saveLocation == "Registry":
                 command = ["reg", "query", destination]
@@ -2029,15 +2045,19 @@ class GameSaveManager(tk.Tk):
                 if game in self.gameSaveDirectory:
                     path = self.systemPath[self.gameSaveDirectory[game][0]]
                     if path == None:
+                        self.insert_text(_("Restore failed: ") + self.transGame(game) + "\n")
                         continue
                 else:
                     continue
-
+                
+                saveLocation = self.gameSaveDirectory[game][0]
                 source = os.path.join(self.gsmBackupPath, game)
                 destination = self.gameSaveDirectory[game][2]
-                if not destination:
-                    continue
-                saveLocation = self.gameSaveDirectory[game][0]
+
+                if saveLocation != "Registry":
+                    if not isinstance(destination, list) and (not destination or not os.path.isabs(destination)):
+                        self.insert_text(_("Restore failed: ") + self.transGame(game) + "\n")
+                        continue
 
                 error = self.restore(game, saveLocation, source, destination)
                 if error:
@@ -2105,15 +2125,19 @@ class GameSaveManager(tk.Tk):
                 if game in self.gameSaveDirectory:
                     path = self.systemPath[self.gameSaveDirectory[game][0]]
                     if path == None:
+                        self.insert_text(_("Restore failed: ") + self.transGame(game) + "\n")
                         continue
                 else:
                     continue
-
+                
+                saveLocation = self.gameSaveDirectory[game][0]
                 source = os.path.join(temp_dir, game)
                 destination = self.gameSaveDirectory[game][2]
-                if not destination:
-                    continue
-                saveLocation = self.gameSaveDirectory[game][0]
+
+                if saveLocation != "Registry":
+                    if not isinstance(destination, list) and (not destination or not os.path.isabs(destination)):
+                        self.insert_text(_("Restore failed: ") + self.transGame(game) + "\n")
+                        continue
 
                 error = self.restore(game, saveLocation, source, destination)
                 if error:
