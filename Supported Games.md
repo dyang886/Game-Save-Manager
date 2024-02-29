@@ -163,6 +163,7 @@
 | Limbo | Steam |
 | Little Nightmares | Windows |
 | Little Nightmares II | Windows |
+| Lobotomy Corporation | Windows |
 | Lost in Random | Windows |
 | Love Is All Around | Windows |
 | Machinarium | Steam |
