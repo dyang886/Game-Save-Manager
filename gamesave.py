@@ -592,6 +592,7 @@ class GameSaveManager(tk.Tk):
             "Limbo": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/48000/remote"),
             "Little Nightmares": ("Windows", "Folder", f"{self.gamePath['Little Nightmares']}/Atlas/Saved/SaveGames"),
             "Little Nightmares II": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/Local/Helios/Saved/SaveGames"),
+            "Lobotomy Corporation": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/Project_Moon/Lobotomy"),
             "Lost in Random": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/Zoink Games/Lost In Random"),
             "Love Is All Around": ("Windows", "Folder", f"C:/Users/{self.user_name}/AppData/LocalLow/yoogames-hd1-steam/LoveIsAllAround/SavesDir"),
             "Machinarium": ("Steam", "Folder", f"{self.systemPath['Steam']}/userdata/<user-id>/40700/remote"),
@@ -1220,6 +1221,10 @@ class GameSaveManager(tk.Tk):
             path = filedialog.askopenfilename()
 
         if path:
+            path = os.path.normpath(path)
+            username_prefix = f"C:\\Users\\{self.user_name}"
+            if path.startswith(username_prefix):
+                path = path.replace(username_prefix, "C:\\Users\\{usr}")
             entry_widget.delete(0, tk.END)
             entry_widget.insert(0, path)
 
@@ -1665,7 +1670,7 @@ class GameSaveManager(tk.Tk):
                 if custom_games:
                     self.insert_text(_("\nBelow are custom games:\n"))
                     for game in custom_games:
-                        source = os.path.normpath(game["path"])
+                        source = os.path.normpath(game["path"]).format(usr=self.user_name)
                         destination = os.path.join(custom_path, game["name"])
                         if os.path.exists(source):
 
@@ -1719,7 +1724,7 @@ class GameSaveManager(tk.Tk):
 
                 if matching_game:
                     source = os.path.join(custom_path, game_name)
-                    destination = os.path.normpath(matching_game["path"])
+                    destination = os.path.normpath(matching_game["path"]).format(usr=self.user_name)
 
                     try:
                         if not self.is_directory_empty(source) and self.check_newer_save(game_name, source, destination, True):
