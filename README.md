@@ -5,16 +5,16 @@ Game Save Manager is a user-friendly application designed to help gamers easily 
 
 ## Features
 
-- **Backup**: Securely backup your game saves with just a click.
-- **Restore**: Quickly restore your game saves to a previous state from either a `.gsm` file or directly from the machine.
-- **Export**: Export your game saves to a `.gsm` file for easy sharing or backup.
-- **Custom Backup Path**: Set a custom path for your backups according to your storage preferences.
+- **Backup:** Securely backup your game saves with just a click.
+- **Restore:** Quickly restore your game saves to a previous state from either a `.gsm` file or directly from the machine.
+- **Export:** Export your game saves to a `.gsm` file for easy sharing or backup.
+- **Custom Backup Path:** Set a custom path for your backups according to your storage preferences.
 
 ## Installation
 
-1. **Download the Installer**: Navigate to the [latest release](https://github.com/dyang886/Game-Save-Manager/releases) and download the installer for Windows.
-2. **Run the Installer**: Execute the downloaded file and follow the on-screen instructions to install Game Save Manager.
-3. **Launch the Application**: Open Game Save Manager from your applications folder or start menu.
+1. **Download the Installer:** Navigate to the [latest release](https://github.com/dyang886/Game-Save-Manager/releases) and download the installer for Windows.
+2. **Run the Installer:** Execute the downloaded file and follow the on-screen instructions to install Game Save Manager.
+3. **Launch the Application:** Open Game Save Manager from your applications folder or start menu.
 
 ## Usage
 
