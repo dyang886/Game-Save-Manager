@@ -1,5 +1,6 @@
 # 游戏存档管理器
-[English](./README.md)| 中文
+
+[English](./README.md) | 简体中文
 
 游戏存档管理器是一款简单易用的应用程序，旨在帮助游戏玩家轻松备份、还原和导出游戏保存文件。直观的界面确保您可以安全轻松地保存存档文件，并跨多设备传输存档文件。
 
@@ -12,8 +13,8 @@
 
 ## 安装
 
-1. **下载安装程序**: 前往 [latest release](https://github.com/dyang886/Game-Save-Manager/releases)并下载适用于 Windows 的安装程序。
-2. 运行安装程序: 运行安装程序，并按照说明来安装游戏存档管理器。
+1. **下载安装程序**: 前往 [latest release](https://github.com/dyang886/Game-Save-Manager/releases) 并下载适用于 Windows 的安装程序。
+2. **运行安装程序:** 运行安装程序，并按照说明来安装游戏存档管理器。
 3. **启动应用程序**: 从应用程序文件夹或开始菜单中打开游戏存档管理器。
 
 ## 使用
@@ -24,4 +25,4 @@
 
 ## 支持
 
-如遇问题、功能请求或参与，请访问[GitHub repository](https://github.com/dyang886/Game-Save-Manager).
+如遇问题、功能请求或参与，请访问 [GitHub repository](https://github.com/dyang886/Game-Save-Manager).
