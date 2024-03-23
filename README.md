@@ -1,5 +1,5 @@
 # Game Save Manager
-English | [简体中文](./README_zh-CN.md) | [繁體中文(港）](./README_zh-HK.md)| [繁體中文(台)](./README_zh-TW.md) 
+English | [简体中文](./README_CN.md) | [繁體中文(港）](./README_HK.md)| [繁體中文(台)](./README_TW.md) 
 
 Game Save Manager is a user-friendly application designed to help gamers easily back up, restore, and export their game save files. The intuitive interface ensures you can keep your progress safe and transfer it between machines with ease.
 
