@@ -1500,8 +1500,12 @@ class GameSaveManager(tk.Tk):
         else:
             return ""
 
-        with open(steamVDF, 'r') as file:
-            file_content = file.read()
+        if os.path.exists(steamVDF):
+            with open(steamVDF, 'r') as file:
+                file_content = file.read()
+        else:
+            return ""
+        
         lines = file_content.splitlines()
         current_path = None
         game_dict = {}
