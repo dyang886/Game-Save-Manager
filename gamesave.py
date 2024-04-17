@@ -56,7 +56,8 @@ def load_settings():
         "Chinese (Simplified)_Singapore": "zh_CN",
         "Chinese (Traditional)_Hong Kong SAR": "zh_TW",
         "Chinese (Traditional)_Macao SAR": "zh_TW",
-        "Chinese (Traditional)_Taiwan": "zh_TW"
+        "Chinese (Traditional)_Taiwan": "zh_TW",
+        "Japanese_Japan": "ja_JP",
     }
     app_locale = locale_mapping.get(system_locale, 'en_US')
 
@@ -112,7 +113,8 @@ if not os.path.exists(setting_path):
 language_options = {
     "English (US)": "en_US",
     "简体中文": "zh_CN",
-    "繁體中文": "zh_TW"
+    "繁體中文": "zh_TW",
+    "日本語": "ja_JP",
 }
 
 ctypes.windll.shcore.SetProcessDpiAwareness(1)
@@ -136,7 +138,7 @@ class GameSaveManager(tk.Tk):
         self.resizable(False, False)
 
         # Version, user prompts, and links
-        self.appVersion = "1.1.4"
+        self.appVersion = "1.1.6"
         self.githubLink = "https://github.com/dyang886/Game-Save-Manager"
         self.updateLink = "https://api.github.com/repos/dyang886/Game-Save-Manager/releases/latest"
         self.gsmPathTextPrompt = _("Select a .gsm file for restore")
@@ -181,7 +183,8 @@ class GameSaveManager(tk.Tk):
         font_config = {
             "en_US": ("Noto Sans", resource_path("assets/NotoSans-Regular.ttf")),
             "zh_CN": ("Noto Sans SC", resource_path("assets/NotoSansSC-Regular.ttf")),
-            "zh_TW": ("Noto Sans TC", resource_path("assets/NotoSansTC-Regular.ttf"))
+            "zh_TW": ("Noto Sans TC", resource_path("assets/NotoSansTC-Regular.ttf")),
+            "ja_JP": ("Noto Sans JP", resource_path("assets/NotoSansJP-Regular.ttf")),
         }
 
         def is_font_installed(font_name):
