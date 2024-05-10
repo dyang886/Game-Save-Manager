@@ -24,8 +24,13 @@
 | Badland: Game of the Year Edition | Windows |
 | Baldur's Gate 3 | Steam |
 | Beat Hazard | Steam |
+| Bejeweled | Windows |
+| Bejeweled 2 | Windows |
+| Bejeweled 3 | Windows |
+| Bejeweled Twist | Windows |
 | BattleBlock Theater | Steam |
 | Besiege | Windows |
+| Big Money! | Windows |
 | Biomutant | Windows |
 | Biped | Windows |
 | Blasphemous | Windows |
@@ -38,9 +43,11 @@
 | Candleman: The Complete Journey | Steam |
 | Celeste | Windows |
 | Child of Light | Ubisoft |
+| Chuzzle | Windows |
 | Cocoon | Windows |
 | Command & Conquer Remastered Collection | Steam |
 | Control | Steam |
+| Cookie Clicker | Steam |
 | Core Keeper | Windows |
 | Crash Bandicoot 4: It's About Time | Windows |
 | Creaks | Windows |
@@ -133,11 +140,13 @@
 | Hot Wheels Unleashed | Windows |
 | Human: Fall Flat | Steam |
 | Immortals Fenyx Rising | Ubisoft |
+| Imprisoned Queen | Windows |
 | Influent | Registry |
 | Insaniquarium | Windows |
 | Inscryption | Windows |
 | Inside | Steam |
 | Invisigun Reloaded | Windows |
+| Isekai Frontline | Windows |
 | Isoland | Windows |
 | Isoland 2: Ashes of Time | Windows |
 | Isoland 3: Dust of the Universe | Windows |
@@ -194,6 +203,7 @@
 | NieR: Automata | Windows |
 | NieR Replicant | Windows |
 | No Man's Sky | Windows |
+| No Rest for the Wicked | Windows |
 | Noita | Windows |
 | Octopath Traveler | Windows |
 | Operation: Tango | Windows |
@@ -209,6 +219,9 @@
 | Pacify | Windows |
 | Patrick's Parabox | Windows |
 | Payday 2 | Steam |
+| Peggle | Windows |
+| Peggle Extreme | Windows |
+| Peggle Nights | Windows |
 | Persona 5 Royal | Windows |
 | PGA Tour 2K21 | Windows |
 | PGA Tour 2K23 | Windows |
@@ -248,6 +261,7 @@
 | Samorost 3 | Windows |
 | Samsara Room | Windows |
 | Sanfu | Windows |
+| Scarlet Maiden | Windows |
 | Scorn | Windows |
 | Sea of Stars | Windows |
 | Sekiro: Shadows Die Twice | Windows |
@@ -278,6 +292,7 @@
 | Superhot: Mind Control Delete | Windows |
 | Superliminal | Windows |
 | Tales of Arise | Windows |
+| Talismania | Registry |
 | Teardown | Windows |
 | Terraria | Windows |
 | tERRORbane | Windows |
@@ -344,3 +359,4 @@
 | Yomawari: Lost in the Dark | Windows |
 | Yomawari: Midnight Shadows | Windows |
 | Zuma | Windows |
+| Zuma's Revenge! | Windows |
