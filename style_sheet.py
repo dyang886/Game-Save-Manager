@@ -1,17 +1,277 @@
 white = """
-    QPushButton {{
-        padding: 6px;
-    }}
-
-    QComboBox {{
-        padding: 4px;
-    }}
-
-    QLineEdit {{
-        padding: 5px;
+    QMainWindow {{
+        background-color: #f3f3f3;
     }}
 
     QStatusBar::item {{
+        border: none;
+    }}
+
+    QMenuBar {{
+        background-color: #fbfbfd;
+    }}
+
+    QMenuBar::item {{
+        background-color: #fbfbfd;
+        color: #000000;
+        padding: 5px;
+    }}
+
+    QMenuBar::item:selected {{
+        background-color: #e2e2e2;
+    }}
+
+    QMenu {{
+        background-color: #f3f3f3;
+        border: 2px solid #000000;
+        border-radius: 5px;
+    }}
+
+    QMenu::item {{
+        background-color: #f3f3f3;
+        color: #000000;
+    }}
+
+    QMenu::item:selected {{
+        background-color: #e2e2e2;
+    }}
+
+    QStatusBar {{
+        color: black;
+    }}
+
+    QCheckBox {{
+        color: black;
+    }}
+
+    QCheckBox::indicator:unchecked {{
+        background-color: #fbfbfd;
+        border: 1px solid #5e5e5e;
+        border-radius: 5px;
+    }}
+
+    QPushButton {{
+        padding: 7px;
+        border-radius: 3px;
+        border: 1px solid #e5e5e5;
+        background-color: #fbfbfd;
+        color: #000000;
+        outline: none;
+    }}
+
+    QPushButton:hover {{
+        background-color: #f6f6f6;
+    }}
+
+    QPushButton:pressed {{
+        background-color: #eaeaea;
+    }}
+
+    QComboBox {{
+        padding: 7px;
+        border-radius: 3px;
+        border: 1px solid #e5e5e5;
+        background-color: #fbfbfd;
+        color: #000000;
+    }}
+
+    QComboBox::drop-down {{
+        border: 0px;
+        padding-right: 10px;
+    }}
+
+    QComboBox::down-arrow {{
+        image: url({drop_down_arrow});
+        width: 10px;
+    }}
+
+    QComboBox QAbstractItemView {{
+        background-color: #fbfbfd;
+        color: #000000;
+        border: 1px solid #e5e5e5;
+    }}
+
+    QDialog {{
+        background-color: #f3f3f3;
+    }}
+
+    QLabel {{
+        color: #000000;
+    }}
+
+    QTabWidget::pane {{
+        border-top: 2px solid #a2a2a2;
+    }}
+
+    QTabBar::tab {{
+        background-color: #fbfbfd;
+        color: #000000;
+        padding: 10px;
+        border-radius: 3px;
+    }}
+
+    QTabBar::tab:hover {{
+        background-color: #f6f6f6;
+    }}
+
+    QTableWidget::item:selected {{
+        background-color: transparent;
+    }}
+
+    QTableWidget::item:hover {{
+        background-color: transparent;
+    }}
+
+    QLineEdit, QSpinBox {{
+        background-color: #fbfbfd;
+        color: #000000;
+        border: 1px solid #e5e5e5;
+        border-radius: 3px;
+        padding: 6px;
+    }}
+
+    QSpinBox::up-button {{
+        image: url({spin_box_up});
+        width: 13px;
+    }}
+
+    QSpinBox::down-button {{
+        image: url({spin_box_down});
+        width: 13px;
+    }}
+
+    QLineEdit:focus, QSpinBox:focus {{
+        border-bottom: 2px solid #0057b7;
+    }}
+
+    QListWidget {{
+        border: 1px solid #8c8c8c;
+        border-radius: 3px;
+        background-color: #fbfbfd;
+        color: #000000;
+    }}
+
+    QScrollBar:vertical {{
+        background-color: #f2f2f2;
+        width: 15px;
+        margin: 15px 0 15px 0;
+    }}
+
+    QScrollBar::handle:vertical {{
+        background-color: #bfbfbf;
+        min-height: 20px;
+        border-radius: 3px;
+        margin: 0 4px 0 4px;
+    }}
+
+    QScrollBar::handle:vertical:hover {{
+        background-color: #c6c6c6;
+    }}
+
+    QScrollBar::handle:vertical:pressed {{
+        background-color: #b1b1b1;
+    }}
+
+    QScrollBar::sub-line:vertical {{
+        image: url({scroll_bar_top});
+        background-color: #f2f2f2;
+        height: 15px;
+        border-top-left-radius: 7px;
+        border-top-right-radius: 7px;
+        subcontrol-position: top;
+        subcontrol-origin: margin;
+    }}
+
+    QScrollBar::add-line:vertical {{
+        image: url({scroll_bar_bottom});
+        background-color: #f2f2f2;
+        height: 15px;
+        border-bottom-left-radius: 7px;
+        border-bottom-right-radius: 7px;
+        subcontrol-position: bottom;
+        subcontrol-origin: margin;
+    }}
+
+    QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {{
+        background: none;
+    }}
+
+    QScrollBar:horizontal {{
+        background-color: #f2f2f2;
+        height: 15px;
+        margin: 0 15px 0 15px;
+    }}
+
+    QScrollBar::handle:horizontal {{
+        background-color: #bfbfbf;
+        min-width: 20px;
+        border-radius: 3px;
+        margin: 4px 0 4px 0;
+    }}
+
+    QScrollBar::handle:horizontal:hover {{
+        background-color: #c6c6c6;
+    }}
+
+    QScrollBar::handle:horizontal:pressed {{
+        background-color: #b1b1b1;
+    }}
+
+    QScrollBar::sub-line:horizontal {{
+        image: url({scroll_bar_left});
+        background-color: #f2f2f2;
+        width: 15px;
+        border-top-left-radius: 7px;
+        border-bottom-left-radius: 7px;
+        subcontrol-position: left;
+        subcontrol-origin: margin;
+    }}
+
+    QScrollBar::add-line:horizontal {{
+        image: url({scroll_bar_right});
+        background-color: #f2f2f2;
+        width: 15px;
+        border-top-right-radius: 7px;
+        border-bottom-right-radius: 7px;
+        subcontrol-position: right;
+        subcontrol-origin: margin;
+    }}
+
+    QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {{
+        background: none;
+    }}
+
+    QTableWidget {{
+        border: 1px solid #555;
+        border-radius: 3px;
+        color: #ffffff;
+        background-color: #2a2a2a;
+    }}
+    
+    QTableWidget::item:selected {{
+        background-color: #3a3a3a;
+    }}
+
+    QHeaderView {{
+        background-color: #2e2e2e;
+    }}
+
+    QHeaderView::section {{
+        background-color: #2e2e2e;
+        color: #ffffff;
+        padding: 5px;
+        border-left: 1px solid #555;
+        border-right: none;
+        border-top: none;
+        border-bottom: none;
+    }}
+
+    QTableCornerButton::section {{
+        background-color: #2e2e2e;
+        border: none;
+    }}
+
+    QHeaderView::section:vertical {{
         border: none;
     }}
 """
@@ -42,6 +302,7 @@ black = """
     QMenu {{
         background-color: #1c1c1c;
         border: 2px solid #ffffff;
+        border-radius: 5px;
     }}
 
     QMenu::item {{
@@ -61,9 +322,16 @@ black = """
         color: white;
     }}
 
+    QCheckBox::indicator:unchecked {{
+        background-color: #2a2a2a;
+        border: 1px solid #5e5e5e;
+        border-radius: 5px;
+    }}
+
     QPushButton {{
-        padding: 9px;
+        padding: 7px;
         border-radius: 3px;
+        border: 1px solid #555555;
         background-color: #2a2a2a;
         color: #FFFFFF;
         outline: none;
@@ -80,6 +348,7 @@ black = """
     QComboBox {{
         padding: 7px;
         border-radius: 3px;
+        border: 1px solid #555555;
         background-color: #2a2a2a;
         color: #FFFFFF;
     }}
@@ -97,6 +366,7 @@ black = """
     QComboBox QAbstractItemView {{
         background-color: #2a2a2a;
         color: #FFFFFF;
+        border: 1px solid #555555;
     }}
 
     QDialog {{
@@ -126,7 +396,7 @@ black = """
         background-color: #232323;
     }}
 
-    QLineEdit {{
+    QLineEdit, QSpinBox {{
         background-color: #2a2a2a;
         color: #FFFFFF;
         border: 1px solid #555555;
@@ -134,7 +404,17 @@ black = """
         padding: 6px;
     }}
 
-    QLineEdit:focus {{
+    QSpinBox::up-button {{
+        image: url({spin_box_up});
+        width: 13px;
+    }}
+
+    QSpinBox::down-button {{
+        image: url({spin_box_down});
+        width: 13px;
+    }}
+
+    QLineEdit:focus, QSpinBox:focus {{
         border-bottom: 2px solid #007ad9;
     }}
 
@@ -243,7 +523,11 @@ black = """
     }}
     
     QTableWidget::item:selected {{
-        background-color: #3a3a3a;
+        background-color: transparent;
+    }}
+
+    QTableWidget::item:hover {{
+        background-color: transparent;
     }}
 
     QHeaderView {{

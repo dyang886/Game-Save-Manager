@@ -39,7 +39,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/752590/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/752590/remote",
                 "files": "all"
             }
         ]
@@ -50,7 +50,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/1182900/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/1182900/remote",
                 "files": "all"
             }
         ]
@@ -106,7 +106,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/210550/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/210550/remote",
                 "files": "all"
             }
         ]
@@ -139,7 +139,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Ubisoft",
-                "root_path": "{ubisoft_path}/savegames/{user_id}/5092",
+                "root_path": "{ubisoft_path}/savegames/<user_id>/5092",
                 "files": "all"
             }
         ]
@@ -150,7 +150,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Ubisoft",
-                "root_path": "{ubisoft_path}/savegames/{user_id}/4923",
+                "root_path": "{ubisoft_path}/savegames/<user_id>/4923",
                 "files": "all"
             }
         ]
@@ -161,7 +161,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Ubisoft",
-                "root_path": "{ubisoft_path}/savegames/{user_id}/7013",
+                "root_path": "{ubisoft_path}/savegames/<user_id>/7013",
                 "files": "all"
             }
         ]
@@ -200,6 +200,17 @@ games = [
         ]
     },
     {
+        "en_US": "Avatar: Frontiers of Pandora",
+        "zh_CN": "阿凡达：潘多拉边境",
+        "save_paths": [
+            {
+                "save_loc": "Ubisoft",
+                "root_path": "{ubisoft_path}/savegames/<user_id>/5093",
+                "files": "all"
+            }
+        ]
+    },
+    {
         "en_US": "Avicii Invector",
         "zh_CN": "Avicii Invector",
         "save_paths": [
@@ -227,7 +238,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/688420/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/688420/remote",
                 "files": "all"
             }
         ]
@@ -249,7 +260,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/1086940/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/1086940/remote",
                 "files": "all"
             },
             {
@@ -260,12 +271,23 @@ games = [
         ]
     },
     {
+        "en_US": "Banana",
+        "zh_CN": "Banana",
+        "save_paths": [
+            {
+                "save_loc": "Steam",
+                "root_path": "{steam_path}/userdata/<user_id>/2923300/remote",
+                "files": "all"
+            }
+        ]
+    },
+    {
         "en_US": "Beat Hazard",
         "zh_CN": "危险节奏",
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/49600/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/49600/remote",
                 "files": "all"
             }
         ]
@@ -320,7 +342,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/238460/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/238460/remote",
                 "files": "all"
             }
         ]
@@ -333,13 +355,8 @@ games = [
             {
                 "save_loc": "Windows",
                 "root_path": "{steam_library_path}/Besiege/Besiege_Data",
-                "files": ["CompletedLevels.txt"]
+                "files": ["CompletedLevels.txt", "SavedMachines"]
             },
-            {
-                "save_loc": "Windows",
-                "root_path": "{steam_library_path}/Besiege/Besiege_Data/SavedMachines",
-                "files": "all"
-            }
         ]
     },
     {
@@ -404,7 +421,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/960090",
+                "root_path": "{steam_path}/userdata/<user_id>/960090",
                 "files": "all"
             }
         ]
@@ -460,7 +477,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/591630/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/591630/remote",
                 "files": "all"
             }
         ]
@@ -483,7 +500,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Ubisoft",
-                "root_path": "{ubisoft_path}/savegames/{user_id}/611",
+                "root_path": "{ubisoft_path}/savegames/<user_id>/611",
                 "files": "all"
             }
         ]
@@ -517,7 +534,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/1213210/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/1213210/remote",
                 "files": "all"
             },
             {
@@ -533,7 +550,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/870780/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/870780/remote",
                 "files": "all"
             }
         ]
@@ -544,7 +561,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/1454400/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/1454400/remote",
                 "files": "all"
             }
         ]
@@ -588,8 +605,8 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Windows",
-                "root_path": "C:/Users/{user_name}/AppData/LocalLow/DeqafStudio/CreepyTale/playerData.deq",
-                "files": "special files"
+                "root_path": "C:/Users/{user_name}/AppData/LocalLow/DeqafStudio/CreepyTale",
+                "files": ["playerData.deq"]
             }
         ]
     },
@@ -599,7 +616,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/247080/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/247080/remote",
                 "files": "all"
             }
         ]
@@ -720,7 +737,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/588650/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/588650/remote",
                 "files": "all"
             }
         ]
@@ -819,7 +836,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/337000/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/337000/remote",
                 "files": "all"
             }
         ]
@@ -830,7 +847,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/601150/remote/win64_save",
+                "root_path": "{steam_path}/userdata/<user_id>/601150/remote/win64_save",
                 "files": "all"
             }
         ]
@@ -852,7 +869,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/782330/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/782330/remote",
                 "files": "all"
             }
         ]
@@ -885,7 +902,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/312530/remote/",
+                "root_path": "{steam_path}/userdata/<user_id>/312530/remote/",
                 "files": "all"
             }
         ]
@@ -896,7 +913,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/239140/remote/out",
+                "root_path": "{steam_path}/userdata/<user_id>/239140/remote/out",
                 "files": "all"
             }
         ]
@@ -907,7 +924,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/534380/remote/out",
+                "root_path": "{steam_path}/userdata/<user_id>/534380/remote/out",
                 "files": "all"
             }
         ]
@@ -995,7 +1012,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/1692250/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/1692250/remote",
                 "files": "all"
             }
         ]
@@ -1006,7 +1023,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Ubisoft",
-                "root_path": "{ubisoft_path}/savegames/{user_id}/856",
+                "root_path": "{ubisoft_path}/savegames/<user_id>/856",
                 "files": "all"
             }
         ]
@@ -1017,7 +1034,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Ubisoft",
-                "root_path": "{ubisoft_path}/savegames/{user_id}/4311",
+                "root_path": "{ubisoft_path}/savegames/<user_id>/4311",
                 "files": "all"
             }
         ]
@@ -1028,7 +1045,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Ubisoft",
-                "root_path": "{ubisoft_path}/savegames/{user_id}/920",
+                "root_path": "{ubisoft_path}/savegames/<user_id>/920",
                 "files": "all"
             }
         ]
@@ -1039,7 +1056,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Ubisoft",
-                "root_path": "{ubisoft_path}/savegames/{user_id}/5211",
+                "root_path": "{ubisoft_path}/savegames/<user_id>/5211",
                 "files": "all"
             }
         ]
@@ -1061,7 +1078,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/327060/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/327060/remote",
                 "files": "all"
             }
         ]
@@ -1167,12 +1184,23 @@ games = [
         ]
     },
     {
+        "en_US": "Fork Road",
+        "zh_CN": "Fork Road",
+        "save_paths": [
+            {
+                "save_loc": "Windows",
+                "root_path": "C:/Users/{user_name}/AppData/Local/Fork_Road/Saved/SaveGames",
+                "files": "all"
+            }
+        ]
+    },
+    {
         "en_US": "Forza Horizon 4",
         "zh_CN": "极限竞速：地平线4",
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/1293830/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/1293830/remote",
                 "files": "all"
             }
         ]
@@ -1183,7 +1211,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/1551360/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/1551360/remote",
                 "files": "all"
             }
         ]
@@ -1205,7 +1233,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/323190/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/323190/remote",
                 "files": "all"
             }
         ]
@@ -1260,7 +1288,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/265930/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/265930/remote",
                 "files": "all"
             }
         ]
@@ -1294,6 +1322,17 @@ games = [
             {
                 "save_loc": "Windows",
                 "root_path": "C:/Users/{user_name}/AppData/LocalLow/Annapurna/Gorogoa",
+                "files": "all"
+            }
+        ]
+    },
+    {
+        "en_US": "Granblue Fantasy: Relink",
+        "zh_CN": "碧蓝幻想 Relink",
+        "save_paths": [
+            {
+                "save_loc": "Windows",
+                "root_path": "C:/Users/{user_name}/AppData/Local/GBFR/Saved/SaveGames",
                 "files": "all"
             }
         ]
@@ -1384,7 +1423,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/1240440/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/1240440/remote",
                 "files": "all"
             }
         ]
@@ -1395,7 +1434,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/1442670/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/1442670/remote",
                 "files": "all"
             }
         ]
@@ -1472,7 +1511,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/236870/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/236870/remote",
                 "files": "all"
             }
         ]
@@ -1483,7 +1522,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/863550/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/863550/remote",
                 "files": "all"
             }
         ]
@@ -1494,7 +1533,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/1659040/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/1659040/remote",
                 "files": "all"
             }
         ]
@@ -1517,6 +1556,17 @@ games = [
             {
                 "save_loc": "Windows",
                 "root_path": "C:/Users/{user_name}/AppData/LocalLow/Team Cherry/Hollow Knight",
+                "files": "all"
+            }
+        ]
+    },
+    {
+        "en_US": "Horizon Forbidden West",
+        "zh_CN": "地平线 西之绝境",
+        "save_paths": [
+            {
+                "save_loc": "Windows",
+                "root_path": "C:/Users/{user_name}/Documents/Horizon Forbidden West Complete Edition",
                 "files": "all"
             }
         ]
@@ -1549,7 +1599,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/477160/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/477160/remote",
                 "files": "all"
             }
         ]
@@ -1560,7 +1610,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Ubisoft",
-                "root_path": "{ubisoft_path}/savegames/{user_id}/62326",
+                "root_path": "{ubisoft_path}/savegames/<user_id>/62326",
                 "files": "all"
             }
         ]
@@ -1616,7 +1666,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/304430/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/304430/remote",
                 "files": "all"
             }
         ]
@@ -1715,7 +1765,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/638230/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/638230/remote",
                 "files": "all"
             }
         ]
@@ -1759,7 +1809,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/517630/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/517630/remote",
                 "files": "all"
             }
         ]
@@ -1781,7 +1831,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/531510/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/531510/remote",
                 "files": "all"
             }
         ]
@@ -1859,7 +1909,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/355630/local",
+                "root_path": "{steam_path}/userdata/<user_id>/355630/local",
                 "files": "all"
             }
         ]
@@ -1887,7 +1937,7 @@ games = [
             },
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/319630/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/319630/remote",
                 "files": "all"
             }
         ]
@@ -1898,7 +1948,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/48000/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/48000/remote",
                 "files": "all"
             }
         ]
@@ -1965,7 +2015,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/40700/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/40700/remote",
                 "files": "all"
             }
         ]
@@ -1976,7 +2026,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/234140/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/234140/remote",
                 "files": "all"
             }
         ]
@@ -1998,7 +2048,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/1088850/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/1088850/remote",
                 "files": "all"
             }
         ]
@@ -2032,7 +2082,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/1449560/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/1449560/remote",
                 "files": "all"
             }
         ]
@@ -2043,7 +2093,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/1250410/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/1250410/remote",
                 "files": "all"
             }
         ]
@@ -2088,7 +2138,7 @@ games = [
             {
                 "save_loc": "Windows",
                 "root_path": "C:/Users/{user_name}/AppData/Roaming/Minecraft Legends",
-                "files": "special"
+                "files": "all"
             }
         ]
     },
@@ -2109,7 +2159,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/287980/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/287980/remote",
                 "files": "all"
             }
         ]
@@ -2131,7 +2181,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/1446780/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/1446780/remote",
                 "files": "all"
             }
         ]
@@ -2142,7 +2192,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/1277400/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/1277400/remote",
                 "files": "all"
             }
         ]
@@ -2153,7 +2203,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/582010/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/582010/remote",
                 "files": "all"
             }
         ]
@@ -2202,7 +2252,7 @@ games = [
             },
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/243160/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/243160/remote",
                 "files": "all"
             }
         ]
@@ -2224,7 +2274,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/1084600/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/1084600/remote",
                 "files": "all"
             }
         ]
@@ -2356,7 +2406,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/238320/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/238320/remote",
                 "files": "all"
             }
         ]
@@ -2367,7 +2417,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/414700/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/414700/remote",
                 "files": "all"
             }
         ]
@@ -2444,7 +2494,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/218620/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/218620/remote",
                 "files": "all"
             }
         ]
@@ -2521,7 +2571,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/850320/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/850320/remote",
                 "files": "all"
             }
         ]
@@ -2532,7 +2582,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/572890/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/572890/remote",
                 "files": "all"
             }
         ]
@@ -2554,7 +2604,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/246620/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/246620/remote",
                 "files": "all"
             }
         ]
@@ -2565,7 +2615,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/3590/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/3590/remote",
                 "files": "all"
             }
         ]
@@ -2576,7 +2626,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/367450/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/367450/remote",
                 "files": "all"
             }
         ]
@@ -2609,7 +2659,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/368180/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/368180/remote",
                 "files": "all"
             }
         ]
@@ -2711,7 +2761,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/2050650/remote/win64_save",
+                "root_path": "{steam_path}/userdata/<user_id>/2050650/remote/win64_save",
                 "files": "all"
             }
         ]
@@ -2722,7 +2772,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/418370/remote/win64_save",
+                "root_path": "{steam_path}/userdata/<user_id>/418370/remote/win64_save",
                 "files": "all"
             }
         ]
@@ -2733,7 +2783,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/1196590/remote/win64_save",
+                "root_path": "{steam_path}/userdata/<user_id>/1196590/remote/win64_save",
                 "files": "all"
             }
         ]
@@ -2778,7 +2828,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Ubisoft",
-                "root_path": "{ubisoft_path}/savegames/{user_id}/5780",
+                "root_path": "{ubisoft_path}/savegames/<user_id>/5780",
                 "files": "all"
             }
         ]
@@ -2789,7 +2839,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/391220/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/391220/remote",
                 "files": "all"
             }
         ]
@@ -2800,7 +2850,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/632360/remote/UserProfiles",
+                "root_path": "{steam_path}/userdata/<user_id>/632360/remote/UserProfiles",
                 "files": "all"
             }
         ]
@@ -2989,7 +3039,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/359840/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/359840/remote",
                 "files": "all"
             }
         ]
@@ -3088,7 +3138,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/207140/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/207140/remote",
                 "files": "all"
             }
         ]
@@ -3159,7 +3209,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/1716740/remote/Saves",
+                "root_path": "{steam_path}/userdata/<user_id>/1716740/remote/Saves",
                 "files": "all"
             }
         ]
@@ -3170,7 +3220,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Ubisoft",
-                "root_path": "{ubisoft_path}/savegames/{user_id}/3280",
+                "root_path": "{ubisoft_path}/savegames/<user_id>/3280",
                 "files": "all"
             }
         ]
@@ -3264,6 +3314,17 @@ games = [
         ]
     },
     {
+        "en_US": "Tales of Kenzera: ZAU",
+        "zh_CN": "肯泽拉传说：扎乌",
+        "save_paths": [
+            {
+                "save_loc": "Windows",
+                "root_path": "C:/Users/{user_name}/AppData/Local/Zau/Saved/SaveGames",
+                "files": "all"
+            }
+        ]
+    },
+    {
         "en_US": "Talismania",
         "zh_CN": "Talismania",
         "save_paths": [
@@ -3296,7 +3357,7 @@ games = [
             },
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/105600/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/105600/remote",
                 "files": "all"
             }
         ]
@@ -3329,7 +3390,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/267550/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/267550/remote",
                 "files": "all"
             }
         ]
@@ -3363,7 +3424,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/250900/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/250900/remote",
                 "files": "all"
             }
         ]
@@ -3374,7 +3435,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/242760/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/242760/remote",
                 "files": "all"
             }
         ]
@@ -3462,7 +3523,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/288160/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/288160/remote",
                 "files": "all"
             }
         ]
@@ -3595,7 +3656,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/203160/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/203160/remote",
                 "files": "all"
             }
         ]
@@ -3606,8 +3667,30 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Ubisoft",
-                "root_path": "{ubisoft_path}/savegames/{user_id}/3559",
+                "root_path": "{ubisoft_path}/savegames/<user_id>/3559",
                 "files": "all"
+            }
+        ]
+    },
+    {
+        "en_US": "Tom Clancy's Rainbow Six Siege",
+        "zh_CN": "彩虹六号：围攻",
+        "save_paths": [
+            {
+                "save_loc": "Ubisoft",
+                "root_path": "{ubisoft_path}/savegames/<user_id>/1844",
+                "files": "all"
+            }
+        ]
+    },
+    {
+        "en_US": "Total War: Warhammer III",
+        "zh_CN": "全面战争：战锤3",
+        "save_paths": [
+            {
+                "save_loc": "Windows",
+                "root_path": "C:/Users/{user_name}/AppData/Roaming/The Creative Assembly/Warhammer3",
+                "files": ["save_games", "save_games_multiplayer"]
             }
         ]
     },
@@ -3661,7 +3744,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/690640/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/690640/remote",
                 "files": "all"
             }
         ]
@@ -3672,7 +3755,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/1436700/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/1436700/remote",
                 "files": "all"
             }
         ]
@@ -3760,7 +3843,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/1135690/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/1135690/remote",
                 "files": "all"
             }
         ]
@@ -3805,7 +3888,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/1794680/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/1794680/remote",
                 "files": "all"
             },
             {
@@ -3837,7 +3920,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Ubisoft",
-                "root_path": "{ubisoft_path}/savegames/{user_id}/541",
+                "root_path": "{ubisoft_path}/savegames/<user_id>/541",
                 "files": "all"
             }
         ]
@@ -3848,7 +3931,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Ubisoft",
-                "root_path": "{ubisoft_path}/savegames/{user_id}/3619",
+                "root_path": "{ubisoft_path}/savegames/<user_id>/3619",
                 "files": "all"
             }
         ]
@@ -3859,7 +3942,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Ubisoft",
-                "root_path": "{ubisoft_path}/savegames/{user_id}/7017",
+                "root_path": "{ubisoft_path}/savegames/<user_id>/7017",
                 "files": "all"
             }
         ]
@@ -3892,7 +3975,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/619150/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/619150/remote",
                 "files": "all"
             }
         ]
@@ -3958,7 +4041,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/699130/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/699130/remote",
                 "files": "all"
             }
         ]
@@ -3969,7 +4052,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/327030/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/327030/remote",
                 "files": "all"
             }
         ]
@@ -3980,7 +4063,7 @@ games = [
         "save_paths": [
             {
                 "save_loc": "Steam",
-                "root_path": "{steam_path}/userdata/{user_id}/1255630/remote",
+                "root_path": "{steam_path}/userdata/<user_id>/1255630/remote",
                 "files": "all"
             }
         ]
