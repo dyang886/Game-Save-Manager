@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Save Manager</title>
+    <link href="./components/styles.css" rel="stylesheet">
+    <link href="../node_modules/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <script src="./components/BackupTab.js"></script>
+</head>
+
+<body class="bg-white dark:bg-gray-900 p-8 pt-2">
+
+    <div class="mb-4 border-b border-gray-200 dark:border-gray-700">
+        <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="main-tab"
+            data-tabs-toggle="#main-tab-content" role="tablist">
+            <li class="me-2" role="presentation">
+                <button
+                    class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
+                    id="backup-tab" data-tabs-target="#backup" type="button" role="tab" aria-controls="backup"
+                    aria-selected="false">
+                    <i class="fa-solid fa-cloud-arrow-up mr-2"></i>
+                    Backup
+                </button>
+            </li>
+            <li class="me-2" role="presentation">
+                <button
+                    class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
+                    id="restore-tab" data-tabs-target="#restore" type="button" role="tab" aria-controls="restore"
+                    aria-selected="false">
+                    <i class="fa-solid fa-cloud-arrow-down mr-2"></i>
+                    Restore
+                </button>
+            </li>
+            <li role="presentation">
+                <button
+                    class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
+                    id="custom-tab" data-tabs-target="#custom" type="button" role="tab" aria-controls="custom"
+                    aria-selected="false">
+                    <i class="fa-solid fa-file-circle-plus mr-2"></i>
+                    Custom Games
+                </button>
+            </li>
+        </ul>
+    </div>
+
+    <div id="default-tab-content">
+        <!-- Tab 1: Backup -->
+        <div class="hidden" id="backup" role="tabpanel" aria-labelledby="backup-tab">
+            <div class="relative overflow-x-auto shadow-md overflow-y-hidden">
+                <div class="pb-4 bg-white dark:bg-gray-900 sticky top-0">
+                    <label for="table-search" class="sr-only">Search</label>
+                    <div class="relative mt-1">
+                        <div
+                            class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
+                            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                            </svg>
+                        </div>
+                        <input type="text" id="backup-search"
+                            class="block py-2 pt-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                            placeholder="Search for items">
+                    </div>
+                </div>
+                <div class="max-h-96 rounded-lg overflow-y-auto scrollbar scrollbar-w-2 scrollbar-h-2 scrollbar-track-rounded-full scrollbar-thumb-rounded-full scrollbar-track-gray-800 scrollbar-thumb-slate-600">
+                    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                        <thead
+                            class="sticky top-0 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                            <tr>
+                                <th scope="col" class="p-4">
+                                    <div class="flex items-center">
+                                        <input id="checkbox-all-search" type="checkbox"
+                                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:outline-none dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600">
+                                        <label for="checkbox-all-search" class="sr-only">checkbox</label>
+                                    </div>
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    Game Name
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    Supported Platforms
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    Backup Size
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    Last Backup Date
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    More
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Backup table content -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 2: Restore -->
+        <div class="hidden" id="restore" role="tabpanel" aria-labelledby="restore-tab">
+            <div class="relative overflow-x-auto shadow-md overflow-y-hidden">
+                <div class="pb-4 bg-white dark:bg-gray-900 sticky top-0">
+                    <label for="table-search" class="sr-only">Search</label>
+                    <div class="relative mt-1">
+                        <div
+                            class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
+                            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                            </svg>
+                        </div>
+                        <input type="text" id="restore-search"
+                            class="block py-2 pt-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                            placeholder="Search for items">
+                    </div>
+                </div>
+                <div class="max-h-96 rounded-lg overflow-y-auto scrollbar scrollbar-w-2 scrollbar-h-2 scrollbar-track-rounded-full scrollbar-thumb-rounded-full scrollbar-track-gray-800 scrollbar-thumb-slate-600">
+                    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                        <thead
+                            class="sticky top-0 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                            <tr>
+                                <th scope="col" class="p-4">
+                                    <div class="flex items-center">
+                                        <input id="checkbox-all-search" type="checkbox"
+                                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:outline-none dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600">
+                                        <label for="checkbox-all-search" class="sr-only">checkbox</label>
+                                    </div>
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    Game Name
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    Supported Platforms
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    Backup Size
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    Last Backup Date
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    More
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Restore table content -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 3: Custom Games -->
+        <div class="hidden rounded-lg" id="custom" role="tabpanel" aria-labelledby="custom-tab">
+            <p class="text-sm text-gray-500 dark:text-gray-400">This is some placeholder content the <strong
+                    class="font-medium text-gray-800 dark:text-white">Settings tab's associated content</strong>.
+                Clicking another tab will toggle the visibility of this one for the next. The tab JavaScript swaps
+                classes to control the content visibility and styling.</p>
+        </div>
+    </div>
+
+
+    <div class="mt-4">
+        <button type="button"
+            class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700">
+            <i class="fa-solid fa-arrow-right-long mr-1"></i>
+            Backup Selected Games
+        </button>
+
+        <button disabled type="button"
+            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex items-center">
+            <svg aria-hidden="true" role="status" class="inline w-4 h-4 me-3 text-white animate-spin"
+                viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                    fill="#E5E7EB" />
+                <path
+                    d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                    fill="currentColor" />
+            </svg>
+            Backup in Progress...
+        </button>
+    </div>
+</body>
+
+</html>
