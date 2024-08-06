@@ -29,7 +29,7 @@ class DatabaseFetcher:
         cnt = 0
         for category in RELEVANT_CATEGORIES:
             continue_param = {}
-            continue_param = {'cmcontinue': 'page|4f4c4420454447452049|134399', 'continue': '-||'}
+            continue_param = {'cmcontinue': 'page|5249444521204341524e4956414c205459434f4f4e|41348', 'continue': '-||'}
 
             while True:
                 members = []
