@@ -1,0 +1,36 @@
+{
+  "name": "game-save-manager",
+  "version": "1.0.0",
+  "description": "Easily backup and restore your game saves anytime",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "concurrently -k \"npm:tailwind:build\" \"npm:electron:start\"",
+    "tailwind:build": "tailwindcss -i ./src/style_config.css -o ./src/components/styles.css --watch",
+    "electron:start": "wait-on ./src/components/styles.css && electron .",
+    "build": "electron-builder --dir",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "build": {
+    "extends": null,
+    "icon": "assets/logo.ico",
+    "appId": "com.dyang.game-save-manager"
+  },
+  "author": "Yongcan Yang",
+  "license": "ISC",
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.6.0",
+    "autoprefixer": "^10.4.19",
+    "i18next": "^23.12.2",
+    "i18next-browser-languagedetector": "^8.0.0",
+    "i18next-fs-backend": "^2.3.2",
+    "postcss": "^8.4.40",
+    "tailwindcss": "^3.4.7"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "electron": "^31.3.1",
+    "electron-builder": "^24.13.3",
+    "tailwind-scrollbar": "^3.1.0",
+    "wait-on": "^7.2.0"
+  }
+}
