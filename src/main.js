@@ -37,7 +37,6 @@ const createWindow = async () => {
         icon: path.join(__dirname, "assets/logo.ico"),
         webPreferences: {
             preload: path.join(__dirname, "preload.js"),
-            enableRemoteModule: true,
         },
     });
 
