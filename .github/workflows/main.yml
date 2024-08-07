@@ -2,7 +2,7 @@ name: Update database
 
 on:
   schedule:
-    - cron: '0 0 */3 * *'
+    - cron: '0 0 1 * *'
   workflow_dispatch:
 
 jobs:
@@ -12,6 +12,8 @@ jobs:
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v3
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Set up Python
       uses: actions/setup-python@v3
@@ -26,3 +28,27 @@ jobs:
     - name: Run Script
       run: |
         python ./database/database_fetcher.py
+
+    - name: Configure Git
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+    - name: Commit and Push changes
+      run: |
+        git add ./database/database_fetcher.log
+        git add ./database/database.db
+        git commit -m 'Update database and log files'
+        git push origin HEAD:${{ github.ref }}
+
+    - name: Upload Log File
+      uses: actions/upload-artifact@v3
+      with:
+        name: database-fetcher-log
+        path: ./database/database_fetcher.log
+
+    - name: Upload Database File
+      uses: actions/upload-artifact@v3
+      with:
+        name: database-file
+        path: ./database/database.db
