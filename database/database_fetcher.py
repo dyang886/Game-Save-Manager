@@ -245,7 +245,7 @@ class DatabaseFetcher:
                                 system = "Registry"
 
                                 if str(node).startswith("Registry: "):
-                                    print(f"Anomaly game: {entry['steam_id']}")
+                                    logging.warning(f"Anomaly game: {entry['steam_id']}")
                                     node = str(node).replace("Registry: ", "")
                             
                             # Some special cases
