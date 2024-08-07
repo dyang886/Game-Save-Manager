@@ -10,14 +10,14 @@ permissions:
 
 jobs:
   run-script:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout Repository
-      uses: actions/checkout
+      uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python
+      uses: actions/setup-python@v4
       with:
         python-version: '3.12'
 
@@ -45,13 +45,13 @@ jobs:
         git push origin HEAD:${{ github.ref }}
 
     - name: Upload Log File
-      uses: actions/upload-artifact
+      uses: actions/upload-artifact@v4
       with:
         name: database-fetcher-log
         path: ./database/database_fetcher.log
 
     - name: Upload Database File
-      uses: actions/upload-artifact
+      uses: actions/upload-artifact@v4
       with:
         name: database-file
         path: ./database/database.db
