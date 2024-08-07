@@ -14,12 +14,10 @@ jobs:
 
     steps:
     - name: Checkout Repository
-      uses: actions/checkout@v3
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+      uses: actions/checkout
 
     - name: Set up Python
-      uses: actions/setup-python@v3
+      uses: actions/setup-python
       with:
         python-version: '3.12'
 
@@ -47,13 +45,13 @@ jobs:
         git push origin HEAD:${{ github.ref }}
 
     - name: Upload Log File
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact
       with:
         name: database-fetcher-log
         path: ./database/database_fetcher.log
 
     - name: Upload Database File
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact
       with:
         name: database-file
         path: ./database/database.db
