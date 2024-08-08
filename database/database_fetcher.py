@@ -2,14 +2,18 @@ import json
 import logging
 import os
 import sqlite3
+import sys
+from datetime import datetime, timedelta
 
 import gevent.timeout
-import mwparserfromhell
 import requests
+import gevent
 from steam.client import SteamClient
+import mwparserfromhell
 
 WIKI_API_URL = "https://www.pcgamingwiki.com/w/api.php"
 RELEVANT_CATEGORIES = ["Category:Games", "Category:Emulators"]
+game_processed = 0
 
 open('./database/database_fetcher.log', 'w').close()
 logging.basicConfig(
@@ -19,6 +23,7 @@ logging.basicConfig(
     encoding='utf-8'
 )
 
+
 class DatabaseFetcher:
     def __init__(self):
         self.conn = sqlite3.connect('./database/database.db')
@@ -26,7 +31,6 @@ class DatabaseFetcher:
         self.client = requests.Session()
     
     def fetch_all_category_members(self):
-        cnt = 0
         for category in RELEVANT_CATEGORIES:
             continue_param = {}
 
@@ -42,89 +46,92 @@ class DatabaseFetcher:
                 if continue_param:
                     params.update(continue_param)
                 
-                try:
-                    # Query game entries
-                    retry = 0
-                    max_retry = 10
-                    while retry < max_retry:
-                        try:
-                            response = self.client.get(WIKI_API_URL, params=params).json()
-                            members.extend(response.get("query", {}).get("categorymembers", []))
-                            break
-                        except Exception as e:
-                            retry += 1
-                            logging.warning(f"Failed to query game entries (attempt {retry}/{max_retry}): {str(e)}")
-                            if retry >= max_retry:
-                                raise
+                # Query game entries
+                retry = 0
+                max_retry = 10
+                while retry < max_retry:
+                    try:
+                        response = self.client.get(WIKI_API_URL, params=params).json()
+                        members.extend(response.get("query", {}).get("categorymembers", []))
+                        break
+                    except Exception as e:
+                        retry += 1
+                        logging.warning(f"Failed to query game entries (attempt {retry}/{max_retry}): {str(e)}")
+                        if retry >= max_retry:
+                            raise
 
-                    steam_ids = []
-                    for member in members:
-                        title = member["title"]
-                        wiki_page_id = member["pageid"]
-                        game_entry = {
-                            'title': title,
-                            'wiki_page_id': wiki_page_id,
-                            'install_folder': None
-                        }
-
-                        # Process wikitext
-                        retry = 0
-                        max_retry = 10
-                        while retry < max_retry:
-                            try:
-                                wikitext = self.fetch_wikitext(wiki_page_id)
-                                parsed_entry = self.parse_wikitext(wikitext)
-                                game_entry.update(parsed_entry)
-                                break
-                            except Exception as e:
-                                retry += 1
-                                logging.warning(f"Failed to process wikitext for {title} (attempt {retry}/{max_retry}): {str(e)}")
-                                if retry >= max_retry:
-                                    raise
-
-                        if not any(save_paths for save_paths in game_entry['save_location'].values()):
-                            logging.info(f"No save locations found: {title}")
-                            continue
-                        if game_entry['steam_id']:
-                            steam_ids.append(int(game_entry['steam_id']))
-                        self.save_entry(game_entry)
-
-                        cnt += 1
-                        logging.info(f"{cnt}. Saved in database: {title}")
-                    
-                    logging.info("Finding game installation folders...")
-
-                    # Process steam database
-                    retry = 0
-                    max_retry = 10
-                    while retry < max_retry:
-                        try:
-                            self.find_install_folder_name(steam_ids)
-                            break
-                        except (gevent.timeout.Timeout, Exception) as e:
-                            retry += 1
-                            logging.warning(f"Failed to fetch steam database (attempt {retry}/{max_retry}): {str(e)}")
-                            if retry >= max_retry:
-                                raise
-
-                except (gevent.timeout.Timeout, Exception) as e:
-                    logging.error(f"Error processing game entry for {title}: {str(e)}", exc_info=True)
+                self.process_games(members)
                 
                 if "continue" in response:
                     continue_param = response["continue"]
                     logging.info("Continue parameter: %s", continue_param)
                 else:
-                    logging.info("All games fetched!")
+                    logging.info(f"All entries fetched for {category}!")
                     break
 
-        return members
+    def process_games(self, entry_members):
+        global game_processed
+        steam_ids = []
+        try:
+            for member in entry_members:
+                title = member["title"]
+                wiki_page_id = member["pageid"]
+                game_entry = {
+                    'title': title,
+                    'wiki_page_id': wiki_page_id,
+                    'install_folder': None
+                }
+
+                # Process wikitext
+                retry = 0
+                max_retry = 10
+                while retry < max_retry:
+                    try:
+                        wikitext = self.fetch_wikitext(wiki_page_id)
+                        parsed_entry = self.parse_wikitext(wikitext)
+                        game_entry.update(parsed_entry)
+                        break
+                    except Exception as e:
+                        retry += 1
+                        logging.warning(f"Failed to process wikitext for {title} (attempt {retry}/{max_retry}): {str(e)}")
+                        if retry >= max_retry:
+                            raise
+
+                if not any(save_paths for save_paths in game_entry['save_location'].values()):
+                    logging.info(f"No save locations found: {title}")
+                    continue
+                if game_entry['steam_id']:
+                    steam_ids.append(int(game_entry['steam_id']))
+                self.save_entry(game_entry)
+
+                game_processed += 1
+                logging.info(f"{game_processed}. Saved in database: {title}")
+            
+            logging.info("Finding game installation folders...")
+
+            # Process steam database
+            retry = 0
+            max_retry = 10
+            while retry < max_retry:
+                try:
+                    self.find_install_folder_name(steam_ids)
+                    break
+                except (gevent.timeout.Timeout, Exception) as e:
+                    retry += 1
+                    logging.warning(f"Failed to fetch steam database (attempt {retry}/{max_retry}): {str(e)}")
+                    if retry >= max_retry:
+                        raise
+
+        except (gevent.timeout.Timeout, Exception) as e:
+            logging.error(f"Error processing game entry for {title}: {str(e)}", exc_info=True)
 
     def fetch_wikitext(self, page_id):
         params = {
             "action": "parse",
             "pageid": page_id,
             "prop": "wikitext",
-            "format": "json"
+            "format": "json",
+            "redirects": "1"
         }
         response = self.client.get(WIKI_API_URL, params=params).json()
         return response.get("parse", {}).get("wikitext", {}).get("*", "")
@@ -244,14 +251,11 @@ class DatabaseFetcher:
                             elif any(key in str(node).lower().strip() for key in ["hkey_current_user", "hkey_local_machine"]):
                                 system = "Registry"
 
-                                if str(node).startswith("Registry: "):
-                                    logging.warning(f"Anomaly game: {entry['steam_id']}")
-                                    node = str(node).replace("Registry: ", "")
-                            
-                            # Some special cases
                             node_str = str(node).strip()
                             if '<ref>' in node_str and '</ref>' in node_str:
                                 node = node_str.split('<ref>')[0] + node_str.split('</ref>')[1]
+                            if '<!--' in node_str and '-->' in node_str:
+                                node = node_str.split('<!--')[0] + node_str.split('-->')[1]
 
                             cleaned_path_nodes.append(str(node))
                         cleaned_path = "".join(cleaned_path_nodes).strip()
@@ -306,13 +310,75 @@ class DatabaseFetcher:
 
                 # Update "install_folder" in database
                 if install_folder_name:
-                    entry = self.find_entry_by_steam_id(steam_id)
+                    entry = self.find_entry_by_key("steam_id", steam_id)
                     if entry:
                         entry['install_folder'] = install_folder_name
                         self.save_entry(entry)
                         logging.info(f"Found installation folder for steam_id {steam_id}")
                     else:
                         logging.error(f"No entry found in database for steam_id {steam_id}")
+
+    def fetch_recent_changes(self):
+        last_recent_change_time = self.get_last_recent_change_time()
+        start = last_recent_change_time - timedelta(minutes=1)
+        end = datetime.now()
+        logging.info(f"Fetching recent changes from {start} to {end}")
+
+        recent_changes = []
+        params = {
+            "action": "query",
+            "list": "recentchanges",
+            "rcdir": "newer",
+            "rcstart": start.isoformat() + "Z",
+            "rcend": end.isoformat() + "Z",
+            "rclimit": "500",
+            "rcnamespace": "0",
+            "format": "json"
+        }
+
+        retry = 0
+        max_retry = 10
+        while retry < max_retry:
+            try:
+                response = self.client.get(WIKI_API_URL, params=params).json()
+                recent_changes.extend(response.get("query", {}).get("recentchanges", []))
+                break
+            except Exception as e:
+                retry += 1
+                logging.warning(f"Failed to query recent changes (attempt {retry}/{max_retry}): {str(e)}")
+                if retry >= max_retry:
+                    raise
+
+        members = []
+        distinct_page_ids = set()
+        for change in recent_changes:
+            page_id = change.get("pageid")
+            title = change.get("title")
+            
+            if page_id not in distinct_page_ids:
+                members.append({"title": title, "pageid": page_id})
+                distinct_page_ids.add(page_id)
+        
+        self.process_games(members)
+        self.update_last_recent_change_time(end)
+        logging.info("All recent changes fetched!")
+
+    def get_last_recent_change_time(self):
+        cursor = self.conn.cursor()
+        cursor.execute("SELECT value FROM metadata WHERE key='last_recent_change_time'")
+        row = cursor.fetchone()
+        cursor.close()
+        if row:
+            return datetime.fromisoformat(row[0])
+        else:
+            return datetime.now() - timedelta(days=1)
+
+    def update_last_recent_change_time(self, timestamp):
+        with self.conn:
+            self.conn.execute("""
+                INSERT OR REPLACE INTO metadata (key, value)
+                VALUES ('last_recent_change_time', ?)
+            """, (timestamp.isoformat(),))
 
     def create_tables(self):
         with self.conn:
@@ -325,6 +391,12 @@ class DatabaseFetcher:
                     gog_id INTEGER,
                     save_location TEXT,
                     platform TEXT
+                )
+            """)
+            self.conn.execute("""
+                CREATE TABLE IF NOT EXISTS metadata (
+                    key TEXT PRIMARY KEY,
+                    value TEXT
                 )
             """)
 
@@ -344,9 +416,9 @@ class DatabaseFetcher:
                 json.dumps(entry.get('platform'))
             ))
     
-    def find_entry_by_steam_id(self, steam_id):
+    def find_entry_by_key(self, type, value):
         cursor = self.conn.cursor()
-        cursor.execute("SELECT * FROM games WHERE steam_id = ?", (steam_id,))
+        cursor.execute(f"SELECT * FROM games WHERE {type} = ?", (value,))
         row = cursor.fetchone()
         cursor.close()
         if row:
@@ -361,10 +433,15 @@ class DatabaseFetcher:
             }
         return None
 
-
 def main():
+    '''
+    System argument: empty argument defaults to fetch all entries; "recent" for fetching recent changes
+    '''
     fetcher = DatabaseFetcher()
-    fetcher.fetch_all_category_members()
+    if len(sys.argv) > 1 and sys.argv[1] == 'recent':
+        fetcher.fetch_recent_changes()
+    else:
+        fetcher.fetch_all_category_members()
 
 if __name__ == "__main__":
     main()

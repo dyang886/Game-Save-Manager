@@ -129,7 +129,7 @@ ipcMain.on("save-settings", async (event, key, value) => {
     const userDataPath = app.getPath("userData");
     const settingsPath = path.join(
         userDataPath,
-        "AutoClaimer Settings",
+        "GSM Settings",
         "settings.json"
     );
 

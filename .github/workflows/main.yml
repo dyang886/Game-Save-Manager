@@ -28,7 +28,7 @@ jobs:
 
     - name: Run Script
       run: |
-        python ./database/database_fetcher.py
+        python ./database/database_fetcher.py recent
 
     - name: Configure Git
       run: |
