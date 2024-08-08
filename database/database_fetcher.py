@@ -385,7 +385,7 @@ class DatabaseFetcher:
             self.conn.execute("""
                 CREATE TABLE IF NOT EXISTS games (
                     title TEXT PRIMARY KEY,
-                    wiki_page_id INTEGER,
+                    wiki_page_id INTEGER UNIQUE,
                     install_folder TEXT,
                     steam_id INTEGER,
                     gog_id INTEGER,
