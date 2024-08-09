@@ -15,20 +15,21 @@ WIKI_API_URL = "https://www.pcgamingwiki.com/w/api.php"
 RELEVANT_CATEGORIES = ["Category:Games", "Category:Emulators"]
 game_processed = 0
 
-open('./database/database_fetcher.log', 'w').close()
-logging.basicConfig(
-    filename='./database/database_fetcher.log',
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    encoding='utf-8'
-)
-
 
 class DatabaseFetcher:
     def __init__(self):
         self.conn = sqlite3.connect('./database/database.db')
         self.create_tables()
         self.client = requests.Session()
+    
+    def initialize_log_file(self, operation):
+        open(f'./database/fetch_{operation}.log', 'w').close()
+        logging.basicConfig(
+            filename=f'./database/fetch_{operation}.log',
+            level=logging.INFO,
+            format='%(asctime)s - %(levelname)s - %(message)s',
+            encoding='utf-8'
+        )
     
     def fetch_all_category_members(self):
         for category in RELEVANT_CATEGORIES:
@@ -439,8 +440,10 @@ def main():
     '''
     fetcher = DatabaseFetcher()
     if len(sys.argv) > 1 and sys.argv[1] == 'recent':
+        fetcher.initialize_log_file("recent")
         fetcher.fetch_recent_changes()
     else:
+        fetcher.initialize_log_file("full")
         fetcher.fetch_all_category_members()
 
 if __name__ == "__main__":
