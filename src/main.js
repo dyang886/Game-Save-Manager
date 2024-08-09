@@ -4,8 +4,6 @@ const {
     Menu,
     BrowserWindow,
     ipcMain,
-    session,
-    powerSaveBlocker,
     Notification,
 } = require("electron");
 
@@ -18,8 +16,6 @@ const LanguageDetector = require("i18next-browser-languagedetector");
 // {{p|userprofile\\documents}} {{p|userprofile\\Documents}}
 // {{p|userprofile\\appdata\\locallow}}
 // %userprofile%
-
-// Special check for {{p|game}} since it contains the game's whole installation content
 
 let win;
 let settingsWin;
@@ -106,7 +102,7 @@ const menuTemplate = [
 
                         settingsWin.webContents.openDevTools();
                         settingsWin.setMenuBarVisibility(false);
-                        settingsWin.loadFile(path.join(__dirname, "html/settings.html"));
+                        settingsWin.loadFile(path.join(__dirname, "components/settings.html"));
 
                         settingsWin.on("closed", () => {
                             settingsWin = null;
@@ -125,13 +121,9 @@ Menu.setApplicationMenu(menu);
 // ======================================================================
 // Settings module
 // ======================================================================
-ipcMain.on("save-settings", async (event, key, value) => {
-    const userDataPath = app.getPath("userData");
-    const settingsPath = path.join(
-        userDataPath,
-        "GSM Settings",
-        "settings.json"
-    );
+ipcMain.on('save-settings', async (event, key, value) => {
+    const userDataPath = app.getPath('userData');
+    const settingsPath = path.join(userDataPath, 'GSM Settings', 'settings.json');
 
     fs.mkdirSync(path.dirname(settingsPath), { recursive: true });
 
@@ -145,30 +137,61 @@ ipcMain.on("save-settings", async (event, key, value) => {
 
         fs.writeFile(settingsPath, JSON.stringify(settings), (writeErr) => {
             if (writeErr) {
-                console.error("Error saving settings:", writeErr);
+                console.error('Error saving settings:', writeErr);
             } else {
-                console.log("Settings updated successfully");
+                console.log('Settings updated successfully');
+
+                if (key === 'theme') {
+                    win.webContents.send('apply-theme', value);
+                }
+
+                if (key === 'language') {
+                    i18next.changeLanguage(value);
+                }
             }
         });
     });
 });
 
+
 ipcMain.on("load-settings", (event, key) => {
     const userDataPath = app.getPath("userData");
-    const settingsPath = path.join(
-        userDataPath,
-        "AutoClaimer Settings",
-        "settings.json"
-    );
+    const appDataPath = app.getPath("appData");
+    const settingsPath = path.join(userDataPath, "GSM Settings", "settings.json");
+
+    // Default settings
+    const defaultSettings = {
+        theme: "light",
+        language: "en",
+        backupPath: path.join(appDataPath, "GSM", "Backups"),
+        maxBackups: 5
+    };
+
+    fs.mkdirSync(path.dirname(settingsPath), { recursive: true });
 
     fs.readFile(settingsPath, (err, data) => {
+        let settings;
+
         if (err) {
-            console.error("Error loading settings:", err);
-            event.reply("settings-value", null);
+            console.error("Error loading settings, using defaults:", err);
+            settings = defaultSettings;
+            fs.writeFileSync(settingsPath, JSON.stringify(settings), 'utf8');
         } else {
-            const settings = JSON.parse(data);
-            const value = settings[key];
-            event.reply("settings-value", value);
+            try {
+                settings = JSON.parse(data);
+                // Merge with default settings to fill any missing keys
+                settings = { ...defaultSettings, ...settings };
+            } catch (parseErr) {
+                console.error("Error parsing settings file, using defaults:", parseErr);
+                settings = defaultSettings;
+
+                // Save the default settings if the file is corrupt or another error occurs
+                fs.writeFileSync(settingsPath, JSON.stringify(settings), 'utf8');
+                console.log("Corrupted settings file replaced with default values.");
+            }
         }
+
+        const value = key === 'all' ? settings : settings[key];
+        event.reply("settings-value", value);
     });
 });
