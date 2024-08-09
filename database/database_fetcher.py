@@ -1,15 +1,15 @@
+from datetime import datetime, timedelta
 import json
 import logging
 import os
 import sqlite3
 import sys
-from datetime import datetime, timedelta
 
-import gevent.timeout
-import requests
 import gevent
-from steam.client import SteamClient
+import gevent.timeout
 import mwparserfromhell
+import requests
+from steam.client import SteamClient
 
 WIKI_API_URL = "https://www.pcgamingwiki.com/w/api.php"
 RELEVANT_CATEGORIES = ["Category:Games", "Category:Emulators"]
@@ -89,7 +89,7 @@ class DatabaseFetcher:
                 while retry < max_retry:
                     try:
                         wikitext = self.fetch_wikitext(wiki_page_id)
-                        parsed_entry = self.parse_wikitext(wikitext)
+                        parsed_entry = self.parse_wikitext(wikitext, title)
                         game_entry.update(parsed_entry)
                         break
                     except Exception as e:
@@ -137,7 +137,7 @@ class DatabaseFetcher:
         response = self.client.get(WIKI_API_URL, params=params).json()
         return response.get("parse", {}).get("wikitext", {}).get("*", "")
 
-    def parse_wikitext(self, wikitext):
+    def parse_wikitext(self, wikitext, title):
         entry = {
             'steam_id': None,
             'gog_id': None,
@@ -262,7 +262,8 @@ class DatabaseFetcher:
                         cleaned_path = "".join(cleaned_path_nodes).strip()
 
                         # Only keep the most general path, any subdirectories should not be separate paths
-                        if cleaned_path:
+                        cleaned_path_check = os.path.normpath(cleaned_path).lower()
+                        if cleaned_path and cleaned_path_check != "{{p|game}}":
                             save_location_key = system_map[system]
                             relative_paths = {p for p in entry['save_location'][save_location_key] if not os.path.isabs(p)}
                             absolute_paths = {p for p in entry['save_location'][save_location_key] if os.path.isabs(p)}
@@ -289,6 +290,9 @@ class DatabaseFetcher:
 
                             if should_add_path:
                                 entry['save_location'][save_location_key].add(cleaned_path_normalized)
+
+                        elif cleaned_path_check == "{{p|game}}":
+                            logging.info(f"Path not specified for game install: {title}")
 
                 if system not in system_map:
                     logging.warning(f"Unknown system: {system}")

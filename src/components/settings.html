@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings</title>
+    <link href="../node_modules/tailwindcss/dist/tailwind.min.css" rel="stylesheet">
+    <script defer src="../renderer/settings.js"></script>
+</head>
+
+<body class="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 p-6">
+    <h1 class="text-xl font-bold mb-4">Settings</h1>
+
+    <div class="mb-4">
+        <label for="theme" class="block text-sm font-medium">Theme</label>
+        <select id="theme" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none dark:bg-gray-700 dark:text-gray-300">
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+        </select>
+    </div>
+
+    <div class="mb-4">
+        <label for="language" class="block text-sm font-medium">Language</label>
+        <select id="language" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none dark:bg-gray-700 dark:text-gray-300">
+            <option value="en">English</option>
+            <option value="zh">Chinese</option>
+            <!-- Add more language options here -->
+        </select>
+    </div>
+
+    <div class="mb-4">
+        <label for="backup-path" class="block text-sm font-medium">Backup Save Path</label>
+        <input type="text" id="backup-path" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none dark:bg-gray-700 dark:text-gray-300">
+    </div>
+
+    <div class="mb-4">
+        <label for="max-backups" class="block text-sm font-medium">Maximum Backups Per Game</label>
+        <input type="number" id="max-backups" min="1" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none dark:bg-gray-700 dark:text-gray-300">
+    </div>
+</body>
+
+</html>

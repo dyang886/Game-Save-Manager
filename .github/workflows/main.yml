@@ -39,7 +39,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        git add ./database/database_fetcher.log
+        git add ./database/fetch_recent.log
         git add ./database/database.db
         git commit -m 'Database update'
         git push origin HEAD:${{ github.ref }}
@@ -48,7 +48,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: database-fetcher-log
-        path: ./database/database_fetcher.log
+        path: ./database/fetch_recent.log
 
     - name: Upload Database File
       uses: actions/upload-artifact@v4
