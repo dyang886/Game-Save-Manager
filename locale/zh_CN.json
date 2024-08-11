@@ -1,0 +1,22 @@
+{
+    "settings": {
+        "settings": "设置",
+        "theme": "主题",
+        "language": "语言",
+        "backupPath": "备份存储路径",
+        "maxBackups": "每个游戏最大备份数"
+    },
+
+    "main": {
+        "title": "游戏存档管理器",
+        "backup": "备份",
+        "restore": "还原",
+        "custom": "自定义游戏",
+        "game_name": "游戏名",
+        "supported_plats": "支持的平台",
+        "backup_size": "备份大小",
+        "last_backup_date": "上次备份日期",
+        "more": "更多",
+        "backup_selected": "备份选中的游戏"
+    }
+}

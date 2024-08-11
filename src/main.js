@@ -11,7 +11,6 @@ const fs = require("fs");
 const path = require("path");
 const i18next = require("i18next");
 const Backend = require("i18next-fs-backend");
-const LanguageDetector = require("i18next-browser-languagedetector");
 
 // {{p|userprofile\\documents}} {{p|userprofile\\Documents}}
 // {{p|userprofile\\appdata\\locallow}}
@@ -30,7 +29,7 @@ const createWindow = async () => {
     win = new BrowserWindow({
         width: dimensions.width * 0.4,
         height: dimensions.height * 0.5,
-        icon: path.join(__dirname, "assets/logo.ico"),
+        icon: path.join(__dirname, "../assets/logo.ico"),
         webPreferences: {
             preload: path.join(__dirname, "preload.js"),
         },
@@ -52,7 +51,10 @@ const createWindow = async () => {
     });
 };
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
+    const lang = loadSettings().language;
+    await initializeI18next(lang);
+
     createWindow();
 
     app.on("activate", () => {
@@ -61,21 +63,17 @@ app.whenReady().then(() => {
 });
 
 // Language settings
-i18next
-    .use(Backend)
-    .use(LanguageDetector)
-    .init({
-        fallbackLng: "en",
-        backend: {
-            loadPath: path.join(__dirname, "locale/{{lng}}.json"),
-        },
-    });
-
-ipcMain.handle("change-language", async (event, lng) => {
-    await i18next.changeLanguage(lng);
-    console.log(`Language changed to ${i18next.language}`);
-    return;
-});
+const initializeI18next = (language) => {
+    return i18next
+        .use(Backend)
+        .init({
+            lng: language,
+            fallbackLng: "en_US",
+            backend: {
+                loadPath: path.join(__dirname, "../locale/{{lng}}.json"),
+            },
+        });
+};
 
 ipcMain.handle("translate", async (event, key) => {
     return i18next.t(key);
@@ -94,7 +92,7 @@ const menuTemplate = [
                         settingsWin = new BrowserWindow({
                             width: 300,
                             height: 200,
-                            icon: path.join(__dirname, "assets/setting.ico"),
+                            icon: path.join(__dirname, "../assets/setting.ico"),
                             webPreferences: {
                                 preload: path.join(__dirname, "preload.js"),
                             },
@@ -121,77 +119,77 @@ Menu.setApplicationMenu(menu);
 // ======================================================================
 // Settings module
 // ======================================================================
-ipcMain.on('save-settings', async (event, key, value) => {
-    const userDataPath = app.getPath('userData');
-    const settingsPath = path.join(userDataPath, 'GSM Settings', 'settings.json');
-
-    fs.mkdirSync(path.dirname(settingsPath), { recursive: true });
-
-    fs.readFile(settingsPath, (readErr, data) => {
-        let settings = {};
-
-        if (!readErr) {
-            settings = JSON.parse(data);
-        }
-        settings[key] = value;
-
-        fs.writeFile(settingsPath, JSON.stringify(settings), (writeErr) => {
-            if (writeErr) {
-                console.error('Error saving settings:', writeErr);
-            } else {
-                console.log('Settings updated successfully');
-
-                if (key === 'theme') {
-                    win.webContents.send('apply-theme', value);
-                }
-
-                if (key === 'language') {
-                    i18next.changeLanguage(value);
-                }
-            }
-        });
-    });
-});
-
-
-ipcMain.on("load-settings", (event, key) => {
+const loadSettings = () => {
     const userDataPath = app.getPath("userData");
     const appDataPath = app.getPath("appData");
     const settingsPath = path.join(userDataPath, "GSM Settings", "settings.json");
 
+    const locale_mapping = {
+        'en-US': 'en_US',
+        'zh-Hans-CN': 'zh_CN',
+        'zh-Hant-HK': 'zh_CN',
+        'zh-Hant-MO': 'zh_CN',
+        'zh-Hant-TW': 'zh_CN',
+    };
+
+    const systemLocale = app.getLocale();
+    console.log(app.getPreferredSystemLanguages());
+    const detectedLanguage = locale_mapping[systemLocale] || 'en_US';
+
     // Default settings
     const defaultSettings = {
-        theme: "light",
-        language: "en",
-        backupPath: path.join(appDataPath, "GSM", "Backups"),
+        theme: "dark",
+        language: detectedLanguage,
+        backupPath: path.join(appDataPath, "GSM Backups"),
         maxBackups: 5
     };
 
     fs.mkdirSync(path.dirname(settingsPath), { recursive: true });
 
-    fs.readFile(settingsPath, (err, data) => {
-        let settings;
+    try {
+        const data = fs.readFileSync(settingsPath, 'utf8');
+        const settings = JSON.parse(data);
 
-        if (err) {
-            console.error("Error loading settings, using defaults:", err);
-            settings = defaultSettings;
-            fs.writeFileSync(settingsPath, JSON.stringify(settings), 'utf8');
+        // Merge with default settings to fill any missing keys
+        return { ...defaultSettings, ...settings };
+    } catch (err) {
+        console.error("Error loading settings, using defaults:", err);
+        fs.writeFileSync(settingsPath, JSON.stringify(defaultSettings), 'utf8');
+        return defaultSettings;
+    }
+};
+
+ipcMain.on("load-settings", (event) => {
+    const settings = loadSettings();
+    event.reply("settings-value", settings);
+});
+
+ipcMain.on('save-settings', async (event, key, value) => {
+    const userDataPath = app.getPath('userData');
+    const settingsPath = path.join(userDataPath, 'GSM Settings', 'settings.json');
+
+    const settings = loadSettings();
+    settings[key] = value;
+
+    fs.writeFile(settingsPath, JSON.stringify(settings), (writeErr) => {
+        if (writeErr) {
+            console.error('Error saving settings:', writeErr);
         } else {
-            try {
-                settings = JSON.parse(data);
-                // Merge with default settings to fill any missing keys
-                settings = { ...defaultSettings, ...settings };
-            } catch (parseErr) {
-                console.error("Error parsing settings file, using defaults:", parseErr);
-                settings = defaultSettings;
+            console.log('Settings updated successfully');
 
-                // Save the default settings if the file is corrupt or another error occurs
-                fs.writeFileSync(settingsPath, JSON.stringify(settings), 'utf8');
-                console.log("Corrupted settings file replaced with default values.");
+            if (key === 'theme') {
+                BrowserWindow.getAllWindows().forEach((window) => {
+                    window.webContents.send('apply-theme', value);
+                });
+            }
+
+            if (key === 'language') {
+                i18next.changeLanguage(value).then(() => {
+                    BrowserWindow.getAllWindows().forEach((window) => {
+                        window.webContents.send('apply-language');
+                    });
+                });
             }
         }
-
-        const value = key === 'all' ? settings : settings[key];
-        event.reply("settings-value", value);
     });
 });
