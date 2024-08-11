@@ -4,10 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Save Manager</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; connect-src 'self'">
+    <title data-i18n="main.title">Game Save Manager</title>
     <link href="./components/styles.css" rel="stylesheet">
     <link href="../node_modules/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
-    <script src="./components/common.js"></script>
+    <script defer src="./components/utility.js"></script>
+    <script src="./components/commonTabs.js"></script>
 </head>
 
 <body class="bg-white dark:bg-gray-900 p-8 pt-2">
@@ -19,7 +21,8 @@
                 <button
                     class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
                     id="backup-tab" data-tabs-target="#backup" type="button" role="tab" aria-controls="backup"
-                    aria-selected="false">
+                    aria-selected="false"
+                    data-i18n="main.backup">
                     <i class="fa-solid fa-cloud-arrow-up mr-2"></i>
                     Backup
                 </button>
@@ -28,7 +31,8 @@
                 <button
                     class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
                     id="restore-tab" data-tabs-target="#restore" type="button" role="tab" aria-controls="restore"
-                    aria-selected="false">
+                    aria-selected="false"
+                    data-i18n="main.restore">
                     <i class="fa-solid fa-cloud-arrow-down mr-2"></i>
                     Restore
                 </button>
@@ -37,7 +41,8 @@
                 <button
                     class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
                     id="custom-tab" data-tabs-target="#custom" type="button" role="tab" aria-controls="custom"
-                    aria-selected="false">
+                    aria-selected="false"
+                    data-i18n="main.custom">
                     <i class="fa-solid fa-file-circle-plus mr-2"></i>
                     Custom Games
                 </button>
@@ -77,19 +82,19 @@
                                         <label for="checkbox-all-search" class="sr-only">checkbox</label>
                                     </div>
                                 </th>
-                                <th scope="col" class="px-6 py-3">
+                                <th scope="col" class="px-6 py-3" data-i18n="main.game_name">
                                     Game Name
                                 </th>
-                                <th scope="col" class="px-6 py-3">
+                                <th scope="col" class="px-6 py-3" data-i18n="main.supported_plats">
                                     Supported Platforms
                                 </th>
-                                <th scope="col" class="px-6 py-3">
+                                <th scope="col" class="px-6 py-3" data-i18n="main.backup_size">
                                     Backup Size
                                 </th>
-                                <th scope="col" class="px-6 py-3">
+                                <th scope="col" class="px-6 py-3" data-i18n="main.last_backup_date">
                                     Last Backup Date
                                 </th>
-                                <th scope="col" class="px-6 py-3">
+                                <th scope="col" class="px-6 py-3" data-i18n="main.more">
                                     More
                                 </th>
                             </tr>
@@ -133,19 +138,19 @@
                                         <label for="checkbox-all-search" class="sr-only">checkbox</label>
                                     </div>
                                 </th>
-                                <th scope="col" class="px-6 py-3">
+                                <th scope="col" class="px-6 py-3" data-i18n="main.game_name">
                                     Game Name
                                 </th>
-                                <th scope="col" class="px-6 py-3">
+                                <th scope="col" class="px-6 py-3" data-i18n="main.supported_plats">
                                     Supported Platforms
                                 </th>
-                                <th scope="col" class="px-6 py-3">
+                                <th scope="col" class="px-6 py-3" data-i18n="main.backup_size">
                                     Backup Size
                                 </th>
-                                <th scope="col" class="px-6 py-3">
+                                <th scope="col" class="px-6 py-3" data-i18n="main.last_backup_date">
                                     Last Backup Date
                                 </th>
-                                <th scope="col" class="px-6 py-3">
+                                <th scope="col" class="px-6 py-3" data-i18n="main.more">
                                     More
                                 </th>
                             </tr>
@@ -170,7 +175,8 @@
 
     <div class="mt-4">
         <button type="button"
-            class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700">
+            class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700"
+            data-i18n="main.backup_selected">
             <i class="fa-solid fa-arrow-right-long mr-1"></i>
             Backup Selected Games
         </button>

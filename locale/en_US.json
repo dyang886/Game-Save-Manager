@@ -1,0 +1,22 @@
+{
+    "settings": {
+        "title": "Settings",
+        "theme": "Theme",
+        "language": "Language",
+        "backupPath": "Backup Save Path",
+        "maxBackups": "Maximum Backups Per Game"
+    },
+
+    "main": {
+        "title": "Game Save Manager",
+        "backup": "Backup",
+        "restore": "Restore",
+        "custom": "Custom Games",
+        "game_name": "Game Name",
+        "supported_plats": "Supported Platforms",
+        "backup_size": "Backup Size",
+        "last_backup_date": "Last Backup Date",
+        "more": "More",
+        "backup_selected": "Backup Selected Games"
+    }
+}
