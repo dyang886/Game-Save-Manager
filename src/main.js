@@ -4,7 +4,7 @@ const {
     Menu,
     BrowserWindow,
     ipcMain,
-    Notification,
+    dialog,
 } = require("electron");
 
 const fs = require("fs");
@@ -90,15 +90,17 @@ const menuTemplate = [
                     // Check if settingsWin is already open
                     if (!settingsWin || settingsWin.isDestroyed()) {
                         settingsWin = new BrowserWindow({
-                            width: 300,
-                            height: 200,
+                            width: 700,
+                            height: 500,
                             icon: path.join(__dirname, "../assets/setting.ico"),
+                            parent: win,
+                            modal: true,
                             webPreferences: {
                                 preload: path.join(__dirname, "preload.js"),
                             },
                         });
 
-                        settingsWin.webContents.openDevTools();
+                        // settingsWin.webContents.openDevTools();
                         settingsWin.setMenuBarVisibility(false);
                         settingsWin.loadFile(path.join(__dirname, "components/settings.html"));
 
@@ -138,7 +140,7 @@ const loadSettings = () => {
 
     // Default settings
     const defaultSettings = {
-        theme: "dark",
+        theme: 'dark',
         language: detectedLanguage,
         backupPath: path.join(appDataPath, "GSM Backups"),
         maxBackups: 5
@@ -158,6 +160,11 @@ const loadSettings = () => {
         return defaultSettings;
     }
 };
+
+ipcMain.on("load-theme", (event) => {
+    const settings = loadSettings();
+    event.reply("apply-theme", settings['theme']);
+});
 
 ipcMain.on("load-settings", (event) => {
     const settings = loadSettings();
@@ -192,4 +199,16 @@ ipcMain.on('save-settings', async (event, key, value) => {
             }
         }
     });
+});
+
+ipcMain.handle('open-dialog', async (event) => {
+    const focusedWindow = BrowserWindow.getFocusedWindow();
+
+    const result = await dialog.showOpenDialog(focusedWindow, {
+        title: 'Select Backup Save Path',
+        properties: ['openDirectory'],
+        modal: true
+    });
+
+    return result;
 });

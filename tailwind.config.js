@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ['./src/**/*.html', './src/**/*.js'],
+  darkMode: 'selector',
   theme: {
     extend: {},
   },
@@ -8,4 +9,3 @@ module.exports = {
     require('tailwind-scrollbar')({ nocompatible: true, preferredStrategy: 'pseudoelements' }),
   ],
 }
-

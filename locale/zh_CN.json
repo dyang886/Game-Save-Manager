@@ -1,7 +1,9 @@
 {
     "settings": {
-        "settings": "设置",
+        "title": "设置",
         "theme": "主题",
+        "dark": "黑色",
+        "light": "白色",
         "language": "语言",
         "backupPath": "备份存储路径",
         "maxBackups": "每个游戏最大备份数"

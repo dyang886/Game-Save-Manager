@@ -1,5 +1,6 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener('DOMContentLoaded', () => {
     updateTranslations();
+
     const tabsElement = document.getElementById('main-tab');
 
     const tabElements = [

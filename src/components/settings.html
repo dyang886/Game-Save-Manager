@@ -4,42 +4,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; connect-src 'self'">
-    <title data-i18n="settings.title">Settings</title>
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; connect-src 'self'">
+    <title class="text-content" data-i18n="settings.title">Settings</title>
     <link href="styles.css" rel="stylesheet">
     <link href="../../node_modules/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
     <script defer src="utility.js"></script>
     <script defer src="settings.js"></script>
 </head>
 
-<body class="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 p-6">
-    <h1 class="text-xl font-bold mb-4" data-i18n="settings.title">Settings</h1>
+<body class="bg-white dark:bg-gray-900 p-8">
 
-    <div class="mb-4">
-        <label for="theme" class="block text-sm font-medium" data-i18n="settings.theme">Theme</label>
-        <select id="theme" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none dark:bg-gray-700 dark:text-gray-300">
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
+    <form class="max-w-sm mx-auto">
+        <!-- Theme selection -->
+        <label for="theme" data-i18n="settings.theme"
+            class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
+            <span class="text-content">Theme</span>
+        </label>
+        <select id="theme"
+            class="mb-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+            <option class="text-content" data-i18n="settings.dark" value="dark">Dark</option>
+            <option class="text-content" data-i18n="settings.light" value="light">Light</option>
         </select>
-    </div>
 
-    <div class="mb-4">
-        <label for="language" class="block text-sm font-medium" data-i18n="settings.language">Language</label>
-        <select id="language" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none dark:bg-gray-700 dark:text-gray-300">
-            <option value="en_US">English</option>
-            <option value="zh_CN">Chinese</option>
-            <!-- Add more language options here -->
+        <!-- Language selection -->
+        <label for="language" data-i18n="settings.language"
+            class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
+            <span class="text-content">Language</span>
+        </label>
+        <select id="language"
+            class="mb-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+            <option value="en_US">English (US)</option>
+            <option value="zh_CN">简体中文</option>
         </select>
-    </div>
+
+        <!-- Backup save path selection -->
+        <label for="backup-path" data-i18n="settings.backupPath" class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
+            <span class="text-content">Backup Save Path</span>
+        </label>
+        <div class="flex">
+            <input type="text" id="backup-path" readonly
+                class="flex-grow bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-l-lg p-2.5 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" />
+            <button type="button" id="select-path"
+                class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-r-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700">
+                ...
+            </button>
+        </div>
+    </form>
 
     <div class="mb-4">
-        <label for="backup-path" class="block text-sm font-medium" data-i18n="settings.backupPath">Backup Save Path</label>
-        <input type="text" id="backup-path" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none dark:bg-gray-700 dark:text-gray-300">
-    </div>
-
-    <div class="mb-4">
-        <label for="max-backups" class="block text-sm font-medium" data-i18n="settings.maxBackups">Maximum Backups Per Game</label>
-        <input type="number" id="max-backups" min="1" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none dark:bg-gray-700 dark:text-gray-300">
+        <label for="max-backups" class="block text-sm font-medium" data-i18n="settings.maxBackups">Maximum Backups Per
+            Game</label>
+        <input type="number" id="max-backups" min="1"
+            class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none dark:bg-gray-700 dark:text-gray-300">
     </div>
 </body>
 

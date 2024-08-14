@@ -1,8 +1,8 @@
-window.addEventListener('DOMContentLoaded', () => {
-    updateTranslations();
+document.addEventListener('DOMContentLoaded', () => {
     const themeSelect = document.getElementById('theme');
     const languageSelect = document.getElementById('language');
     const backupPathInput = document.getElementById('backup-path');
+    const backupPathButton = document.getElementById('select-path');
     const maxBackupsInput = document.getElementById('max-backups');
 
     window.api.receive('settings-value', (value) => {
@@ -12,6 +12,7 @@ window.addEventListener('DOMContentLoaded', () => {
             backupPathInput.value = value.backupPath;
             maxBackupsInput.value = value.maxBackups;
         }
+        updateTranslations();
     });
 
     window.api.send('load-settings');
@@ -25,8 +26,12 @@ window.addEventListener('DOMContentLoaded', () => {
         window.api.send('save-settings', 'language', event.target.value);
     });
 
-    backupPathInput.addEventListener('input', (event) => {
-        window.api.send('save-settings', 'backupPath', event.target.value);
+    backupPathButton.addEventListener('click', async () => {
+        const result = await window.api.invoke('open-dialog');
+        if (result.filePaths && result.filePaths.length > 0) {
+            backupPathInput.value = result.filePaths[0];
+            window.api.send('save-settings', 'backupPath', backupPathInput.value);
+        }
     });
 
     maxBackupsInput.addEventListener('input', (event) => {
