@@ -11,6 +11,10 @@ const fs = require("fs");
 const path = require("path");
 const i18next = require("i18next");
 const Backend = require("i18next-fs-backend");
+const GameData = require('./GameData');
+
+app.commandLine.appendSwitch("lang", "en");
+// to change language for specific browser window: append '?lang=zh' to url
 
 // {{p|userprofile\\documents}} {{p|userprofile\\Documents}}
 // {{p|userprofile\\appdata\\locallow}}
@@ -18,8 +22,10 @@ const Backend = require("i18next-fs-backend");
 
 let win;
 let settingsWin;
-app.commandLine.appendSwitch("lang", "en");
-// to change language for specific browser window: append '?lang=zh' to url
+
+let settings;
+let gameData = new GameData();
+let writeQueue = Promise.resolve();
 
 // Main window
 const createWindow = async () => {
@@ -52,8 +58,14 @@ const createWindow = async () => {
 };
 
 app.whenReady().then(async () => {
-    const lang = loadSettings().language;
-    await initializeI18next(lang);
+    settings = loadSettings();
+    await initializeI18next(settings['language']);
+    await gameData.initialize();
+
+    if (settings['gameInstalls'] === 'uninitialized') {
+        await gameData.detectGamePaths();
+        saveSettings('gameInstalls', gameData.detectedGamePaths);
+    }
 
     createWindow();
 
@@ -87,11 +99,14 @@ const menuTemplate = [
             {
                 label: "Settings",
                 click() {
+                    let settings_window_size = [650, 700];
                     // Check if settingsWin is already open
                     if (!settingsWin || settingsWin.isDestroyed()) {
                         settingsWin = new BrowserWindow({
-                            width: 700,
-                            height: 500,
+                            width: settings_window_size[0],
+                            height: settings_window_size[1],
+                            minWidth: settings_window_size[0],
+                            minHeight: settings_window_size[1],
                             icon: path.join(__dirname, "../assets/setting.ico"),
                             parent: win,
                             modal: true,
@@ -135,7 +150,7 @@ const loadSettings = () => {
     };
 
     const systemLocale = app.getLocale();
-    console.log(app.getPreferredSystemLanguages());
+    // console.log(app.getPreferredSystemLanguages());
     const detectedLanguage = locale_mapping[systemLocale] || 'en_US';
 
     // Default settings
@@ -143,7 +158,8 @@ const loadSettings = () => {
         theme: 'dark',
         language: detectedLanguage,
         backupPath: path.join(appDataPath, "GSM Backups"),
-        maxBackups: 5
+        maxBackups: 5,
+        gameInstalls: 'uninitialized'
     };
 
     fs.mkdirSync(path.dirname(settingsPath), { recursive: true });
@@ -161,44 +177,61 @@ const loadSettings = () => {
     }
 };
 
-ipcMain.on("load-theme", (event) => {
-    const settings = loadSettings();
-    event.reply("apply-theme", settings['theme']);
-});
-
-ipcMain.on("load-settings", (event) => {
-    const settings = loadSettings();
-    event.reply("settings-value", settings);
-});
-
-ipcMain.on('save-settings', async (event, key, value) => {
+function saveSettings(key, value) {
     const userDataPath = app.getPath('userData');
     const settingsPath = path.join(userDataPath, 'GSM Settings', 'settings.json');
 
-    const settings = loadSettings();
     settings[key] = value;
 
-    fs.writeFile(settingsPath, JSON.stringify(settings), (writeErr) => {
-        if (writeErr) {
-            console.error('Error saving settings:', writeErr);
-        } else {
-            console.log('Settings updated successfully');
+    // Queue the write operation to prevent simultaneous writes
+    writeQueue = writeQueue.then(() => {
+        return new Promise((resolve, reject) => {
+            fs.writeFile(settingsPath, JSON.stringify(settings), (writeErr) => {
+                if (writeErr) {
+                    console.error('Error saving settings:', writeErr);
+                    reject(writeErr);
+                } else {
+                    console.log(`Settings updated successfully: ${key}: ${value}`);
 
-            if (key === 'theme') {
-                BrowserWindow.getAllWindows().forEach((window) => {
-                    window.webContents.send('apply-theme', value);
-                });
-            }
+                    if (key === 'theme') {
+                        BrowserWindow.getAllWindows().forEach((window) => {
+                            window.webContents.send('apply-theme', value);
+                        });
+                    }
 
-            if (key === 'language') {
-                i18next.changeLanguage(value).then(() => {
-                    BrowserWindow.getAllWindows().forEach((window) => {
-                        window.webContents.send('apply-language');
-                    });
-                });
-            }
-        }
+                    if (key === 'language') {
+                        i18next.changeLanguage(value).then(() => {
+                            BrowserWindow.getAllWindows().forEach((window) => {
+                                window.webContents.send('apply-language');
+                            });
+                            resolve();
+                        }).catch(reject);
+                    } else {
+                        resolve();
+                    }
+                }
+            });
+        });
+    }).catch((err) => {
+        console.error('Error in write queue:', err);
     });
+}
+
+ipcMain.on('save-settings', async (event, key, value) => {
+    saveSettings(key, value);
+});
+
+ipcMain.on("load-theme", (event) => {
+    event.reply("apply-theme", settings['theme']);
+});
+
+ipcMain.handle("get-settings", (event) => {
+    return settings;
+});
+
+ipcMain.handle("get-detected-game-paths", async (event) => {
+    await gameData.detectGamePaths();
+    return gameData.detectedGamePaths;
 });
 
 ipcMain.handle('open-dialog', async (event) => {
@@ -209,6 +242,9 @@ ipcMain.handle('open-dialog', async (event) => {
         properties: ['openDirectory'],
         modal: true
     });
-
     return result;
 });
+
+// ======================================================================
+// Core functions
+// ======================================================================

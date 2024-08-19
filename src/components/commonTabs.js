@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     updateTranslations();
+    showAlert('success', 'welcome')
 
     const tabsElement = document.getElementById('main-tab');
 

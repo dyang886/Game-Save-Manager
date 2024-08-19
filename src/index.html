@@ -7,13 +7,15 @@
     <meta http-equiv="Content-Security-Policy"
         content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; connect-src 'self'">
     <title class="text-content" data-i18n="main.title">Game Save Manager</title>
-    <link href="./components/styles.css" rel="stylesheet">
     <link href="../node_modules/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="./components/styles.css" rel="stylesheet">
+    <link href="./components/styles_addition.css" rel="stylesheet">
     <script defer src="./components/utility.js"></script>
     <script src="./components/commonTabs.js"></script>
 </head>
 
 <body class="bg-white dark:bg-gray-900 p-8 pt-2 overflow-hidden">
+    <div id="alert-container" class="fixed top-5 right-5 z-50 space-y-3"></div>
 
     <div class="mb-4 border-b border-gray-200 dark:border-gray-700">
         <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="main-tab"
@@ -55,8 +57,8 @@
                 <label for="table-search" class="sr-only">Search</label>
                 <div class="relative mt-1">
                     <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
-                        <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" fill="none"
+                            viewBox="0 0 20 20">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                         </svg>
@@ -67,7 +69,7 @@
                 </div>
             </div>
             <div
-                class="max-h-96 shadow-md rounded-lg overflow-y-auto scrollbar scrollbar-w-2 scrollbar-h-2 scrollbar-track-rounded-full scrollbar-thumb-rounded-full scrollbar-track-gray-800 scrollbar-thumb-slate-600">
+                class="table-height shadow-md rounded-lg overflow-y-auto scrollbar scrollbar-w-2 scrollbar-h-2 scrollbar-track-rounded-full scrollbar-thumb-rounded-full scrollbar-track-white scrollbar-thumb-slate-300 dark:scrollbar-track-gray-800 dark:scrollbar-thumb-slate-600">
                 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead
                         class="sticky top-0 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -109,8 +111,8 @@
                 <label for="table-search" class="sr-only">Search</label>
                 <div class="relative mt-1">
                     <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
-                        <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" fill="none"
+                            viewBox="0 0 20 20">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                         </svg>
@@ -121,7 +123,7 @@
                 </div>
             </div>
             <div
-                class="max-h-96 shadow-md rounded-lg overflow-y-auto scrollbar scrollbar-w-2 scrollbar-h-2 scrollbar-track-rounded-full scrollbar-thumb-rounded-full scrollbar-track-gray-800 scrollbar-thumb-slate-600">
+                class="table-height shadow-md rounded-lg overflow-y-auto scrollbar scrollbar-w-2 scrollbar-h-2 scrollbar-track-rounded-full scrollbar-thumb-rounded-full scrollbar-track-white scrollbar-thumb-slate-300 dark:scrollbar-track-gray-800 dark:scrollbar-thumb-slate-600">
                 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead
                         class="sticky top-0 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -168,9 +170,8 @@
 
 
     <div class="mt-4">
-        <button type="button"
-            class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700"
-            data-i18n="main.backup_selected">
+        <button type="button" data-i18n="main.backup_selected"
+            class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700">
             <i class="fa-solid fa-arrow-right-long mr-1"></i>
             <span class="text-content">Backup Selected Games</span>
         </button>
@@ -189,6 +190,7 @@
             Backup in Progress...
         </button>
     </div>
+
 </body>
 
 </html>

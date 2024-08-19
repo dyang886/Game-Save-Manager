@@ -6,7 +6,12 @@
         "light": "白色",
         "language": "语言",
         "backupPath": "备份存储路径",
-        "maxBackups": "每个游戏最大备份数"
+        "maxBackups": "每个游戏最大备份数",
+        "installLocs": "游戏安装路径",
+        "autoDetect": "自动检测",
+        "addPath": "添加一个新路径",
+        "noPathsDetected": "未检测到游戏安装路径",
+        "gameInstallExists": "游戏安装路径已存在"
     },
 
     "main": {

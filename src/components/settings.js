@@ -4,18 +4,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const backupPathInput = document.getElementById('backup-path');
     const backupPathButton = document.getElementById('select-path');
     const maxBackupsInput = document.getElementById('max-backups');
+    const autoDetectButton = document.getElementById('auto-detect-paths');
+    const gamePathsContainer = document.getElementById('game-paths-container');
+    const addNewPathButton = document.getElementById('add-new-path');
 
-    window.api.receive('settings-value', (value) => {
+    window.api.invoke('get-settings').then((value) => {
         if (value) {
             themeSelect.value = value.theme;
             languageSelect.value = value.language;
             backupPathInput.value = value.backupPath;
             maxBackupsInput.value = value.maxBackups;
+
+            if (value.gameInstalls && value.gameInstalls.length > 0) {
+                value.gameInstalls.forEach((installPath) => {
+                    addGameInstallPath(installPath);
+                });
+            }
         }
         updateTranslations();
     });
-
-    window.api.send('load-settings');
 
     // Event listeners for changes
     themeSelect.addEventListener('change', (event) => {
@@ -34,7 +41,103 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    maxBackupsInput.addEventListener('input', (event) => {
-        window.api.send('save-settings', 'maxBackups', event.target.value);
+    maxBackupsInput.addEventListener('input', function () {
+        const value = parseInt(this.value, 10);
+        if (isNaN(value) || value < 1) {
+            this.value = 1;
+        } else if (value > 1000) {
+            this.value = 1000;
+        }
     });
+
+    window.addEventListener('beforeunload', () => {
+        const gameInstallPaths = [];
+        document.querySelectorAll('.game-path-item .display-path').forEach((input) => {
+            const path = input.value.trim();
+            if (path) {
+                gameInstallPaths.push(path);
+            }
+        });
+
+        window.api.send('save-settings', 'maxBackups', maxBackupsInput.value);
+        window.api.send('save-settings', 'gameInstalls', gameInstallPaths);
+    });
+
+    autoDetectButton.addEventListener('click', () => {
+        window.api.invoke('get-detected-game-paths').then((value) => {
+            if (value && value.length > 0) {
+                value.forEach(path => {
+                    if (!duplicatePathCheck(path)) {
+                        addGameInstallPath(path);
+                    }
+                });
+            } else {
+                showAlert('warning', 'settings.noPathsDetected');
+            }
+        });
+    });
+
+    addNewPathButton.addEventListener('click', () => {
+        addGameInstallPath('');
+    });
+
+    function addGameInstallPath(installPath = '') {
+        const newPath = document.createElement('div');
+        newPath.className = 'flex mb-2 game-path-item';
+        newPath.innerHTML = `
+            <input type="text" readonly value="${installPath}"
+                class="display-path flex-grow bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-l-lg p-2.5 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" />
+            <button type="button" class="select-path text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-r-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700">
+                <i class="fa-solid fa-ellipsis"></i>
+            </button>
+            <button type="button" class="remove-path rounded-lg text-white bg-red-600 hover:bg-red-700 focus:outline-none font-medium text-sm px-4 py-2 ms-2 dark:bg-red-500 dark:hover:bg-red-600">
+                <i class="fa-solid fa-trash"></i>
+            </button>
+        `;
+        gamePathsContainer.appendChild(newPath);
+
+        const selectPathButton = newPath.querySelector('.select-path');
+        const pathInput = newPath.querySelector('.display-path');
+        const removePathButton = newPath.querySelector('.remove-path');
+
+        selectPathButton.addEventListener('click', async () => {
+            const result = await window.api.invoke('open-dialog');
+            if (result.filePaths && result.filePaths.length > 0) {
+                if (!duplicatePathCheck(result.filePaths[0], pathInput)) {
+                    pathInput.value = result.filePaths[0];
+                } else {
+                    showAlert('warning', 'settings.gameInstallExists');
+                }
+            }
+        });
+
+        removePathButton.addEventListener('click', () => {
+            newPath.remove();
+        });
+    }
+
+    // Attach event listeners to any existing path selection buttons
+    document.querySelectorAll('.game-path-item .select-path').forEach((button) => {
+        button.addEventListener('click', async (event) => {
+            const pathInput = event.currentTarget.parentElement.querySelector('.display-path');
+            const result = await window.api.invoke('open-dialog');
+            if (result.filePaths && result.filePaths.length > 0) {
+                if (!duplicatePathCheck(result.filePaths[0], pathInput)) {
+                    pathInput.value = result.filePaths[0];
+                } else {
+                    showAlert('warning', 'settings.gameInstallExists');
+                }
+            }
+        });
+    });
+
+    function duplicatePathCheck(newPath, currentInput) {
+        let isDuplicate = false;
+        document.querySelectorAll('.game-path-item .display-path').forEach((input) => {
+            if (input !== currentInput && input.value.trim() === newPath.trim()) {
+                isDuplicate = true;
+            }
+        });
+        return isDuplicate;
+    }
 });

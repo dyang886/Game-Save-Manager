@@ -7,15 +7,18 @@
     <meta http-equiv="Content-Security-Policy"
         content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; connect-src 'self'">
     <title class="text-content" data-i18n="settings.title">Settings</title>
-    <link href="styles.css" rel="stylesheet">
     <link href="../../node_modules/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+    <link href="styles_addition.css" rel="stylesheet">
     <script defer src="utility.js"></script>
     <script defer src="settings.js"></script>
 </head>
 
-<body class="bg-white dark:bg-gray-900 p-8">
+<body
+    class="bg-white dark:bg-gray-900 p-8 pt-5 flex items-center min-h-screen scrollbar scrollbar-w-2 scrollbar-h-2 scrollbar-track-rounded-full scrollbar-thumb-rounded-full scrollbar-track-white scrollbar-thumb-slate-300 dark:scrollbar-track-gray-800 dark:scrollbar-thumb-slate-600">
+    <div id="alert-container" class="fixed top-5 right-5 z-50 space-y-2"></div>
 
-    <form class="max-w-sm mx-auto">
+    <form class="max-w-sm mx-auto w-full">
         <!-- Theme selection -->
         <label for="theme" data-i18n="settings.theme"
             class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
@@ -39,25 +42,52 @@
         </select>
 
         <!-- Backup save path selection -->
-        <label for="backup-path" data-i18n="settings.backupPath" class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
+        <label for="backup-path" data-i18n="settings.backupPath"
+            class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
             <span class="text-content">Backup Save Path</span>
         </label>
-        <div class="flex">
+        <div class="flex mb-4">
             <input type="text" id="backup-path" readonly
                 class="flex-grow bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-l-lg p-2.5 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" />
             <button type="button" id="select-path"
                 class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-r-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700">
-                ...
+                <i class="fa-solid fa-ellipsis"></i>
             </button>
         </div>
+
+        <!-- Max number of backups per game -->
+        <label for="max-backups" data-i18n="settings.maxBackups"
+            class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
+            <span class="text-content">Maximum Backups Per Game</span>
+        </label>
+        <input type="number" id="max-backups" aria-describedby="helper-text-explanation"
+            class="mb-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-none block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+            min="1" max="1000" />
+
+        <!-- Game Install Locations -->
+        <fieldset class="border border-gray-300 dark:border-gray-600 rounded-lg p-4">
+            <legend data-i18n="settings.installLocs" class="text-sm font-medium text-gray-900 dark:text-white">
+                <span class="text-content">Game Install Locations</span>
+            </legend>
+
+            <button type="button" id="auto-detect-paths" data-i18n="settings.autoDetect"
+                class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-5 dark:bg-blue-600 dark:hover:bg-blue-700">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <span class="text-content">Auto Detect</span>
+            </button>
+
+            <div id="game-paths-container"></div>
+
+            <div class="flex justify-end mt-3">
+                <button type="button" id="add-new-path" data-i18n="settings.addPath"
+                    class="text-white bg-green-600 hover:bg-green-700 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-green-500 dark:hover:bg-green-600">
+                    <i class="fa-solid fa-plus"></i>
+                    <span class="text-content">Add Another Path</span>
+                </button>
+            </div>
+        </fieldset>
     </form>
 
-    <div class="mb-4">
-        <label for="max-backups" class="block text-sm font-medium" data-i18n="settings.maxBackups">Maximum Backups Per
-            Game</label>
-        <input type="number" id="max-backups" min="1"
-            class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none dark:bg-gray-700 dark:text-gray-300">
-    </div>
 </body>
 
 </html>
