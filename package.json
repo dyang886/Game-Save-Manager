@@ -24,7 +24,9 @@
     "i18next-browser-languagedetector": "^8.0.0",
     "i18next-fs-backend": "^2.3.2",
     "postcss": "^8.4.40",
-    "tailwindcss": "^3.4.7"
+    "tailwindcss": "^3.4.7",
+    "vdf-parser": "^1.2.1",
+    "winreg": "^1.2.5"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",
