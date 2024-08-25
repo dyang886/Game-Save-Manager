@@ -7,7 +7,8 @@ class GameData {
     constructor() {
         this.steamPath = null;
         this.ubisoftPath = null;
-        this.steamVdfPath = null;
+        this.battleNetPath = null;
+
         this.detectedGamePaths = [];
         this.detectedSteamGameIds = [];
     }
@@ -45,10 +46,12 @@ class GameData {
             'InstallDir'
         );
 
-        // Parse steam vdf file
-        if (this.steamPath) {
-            this.steamVdfPath = path.join(this.steamPath, 'config', 'libraryfolders.vdf');
-        }
+        // Query Battle.net install path
+        this.battleNetPath = await this.getRegistryValue(
+            WinReg.HKLM,
+            '\\SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Battle.net',
+            'InstallLocation'
+        );
     }
 
     async detectGamePaths() {
@@ -56,9 +59,10 @@ class GameData {
         this.detectedGamePaths = [];
         this.detectedSteamGameIds = [];
 
-        // Detect steam game installation folders
-        if (fs.existsSync(this.steamVdfPath)) {
-            const vdfContent = fs.readFileSync(this.steamVdfPath, 'utf-8');
+        // Detect Steam game installation folders
+        const steamVdfPath = path.join(this.steamPath, 'config', 'libraryfolders.vdf');
+        if (fs.existsSync(steamVdfPath)) {
+            const vdfContent = fs.readFileSync(steamVdfPath, 'utf-8');
             const parsedData = vdf.parse(vdfContent);
 
             for (const key in parsedData.libraryfolders) {
@@ -67,7 +71,7 @@ class GameData {
                     
                     // Add the "path" to detectedGamePaths
                     if (folder.path) {
-                        const normalizedPath = path.normalize(folder.path);
+                        const normalizedPath = path.normalize(path.join(folder.path, 'steamapps', 'common'));
                         this.detectedGamePaths.push(normalizedPath);
                     }
 
@@ -79,7 +83,19 @@ class GameData {
                 }
             }
         } else {
-            console.log(`VDF file not found at: ${this.steamVdfPath}`);
+            console.log(`VDF file not found at: ${steamVdfPath}`);
+        }
+
+        // Detect Ubisoft game installation folders
+        const ubisoftGames = path.join(this.ubisoftPath, 'games');
+        if (fs.existsSync(ubisoftGames)) {
+            this.detectedGamePaths.push(path.normalize(ubisoftGames));
+        }
+
+        // Detect Battle.net game installation folders
+        const battleNetGames = path.join(this.battleNetPath, 'games');
+        if (fs.existsSync(battleNetGames)) {
+            this.detectedGamePaths.push(path.normalize(battleNetGames));
         }
     }
 }

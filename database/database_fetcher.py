@@ -1,3 +1,4 @@
+import concurrent.futures
 from datetime import datetime, timedelta
 import json
 import logging
@@ -11,6 +12,8 @@ import mwparserfromhell
 import requests
 from steam.client import SteamClient
 
+from trans_additions import additions
+
 WIKI_API_URL = "https://www.pcgamingwiki.com/w/api.php"
 RELEVANT_CATEGORIES = ["Category:Games", "Category:Emulators"]
 game_processed = 0
@@ -21,6 +24,10 @@ class DatabaseFetcher:
         self.conn = sqlite3.connect('./database/database.db')
         self.create_tables()
         self.client = requests.Session()
+        self.translations = []
+        self.headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
+        }
     
     def initialize_log_file(self, operation):
         open(f'./database/fetch_{operation}.log', 'w').close()
@@ -30,6 +37,78 @@ class DatabaseFetcher:
             format='%(asctime)s - %(levelname)s - %(message)s',
             encoding='utf-8'
         )
+
+    def fetch_translations(self):
+        index_page = "https://dl.fucnm.com/datafile/xgqdetail/index.txt"
+        retry = 0
+        max_retry = 10
+
+        while retry < max_retry:
+            try:
+                response = self.client.get(index_page, headers=self.headers)
+                response.raise_for_status()
+
+                data = response.json()
+                total_pages = data.get("page", "")
+                logging.info(f"Total game translations fetched: {data.get('total', 'null')}")
+
+                if not total_pages:
+                    raise ValueError("Total pages not found in the response")
+
+                all_data = self.fetch_all_pages(total_pages)
+                all_data.extend(additions)
+                self.translations = all_data
+                game_names_file = './database/game_names.json'
+                with open(game_names_file, 'w', encoding='utf-8') as file:
+                    json.dump(all_data, file, ensure_ascii=False, indent=4)
+                logging.info(f"Game translations successfully saved to {game_names_file}")
+                break
+
+            except Exception as e:
+                retry += 1
+                logging.warning(f"Failed to query game translations (attempt {retry}/{max_retry}): {str(e)}")
+                if retry >= max_retry:
+                    raise
+    
+    def fetch_all_pages(self, total_pages):
+        all_data = []
+        error = False
+
+        with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+            futures = [executor.submit(self.fetch_page, page) for page in range(1, total_pages + 1)]
+            
+            for future in concurrent.futures.as_completed(futures):
+                result = future.result()
+                if result:
+                    all_data.extend(result)
+                else:
+                    error = True
+        
+        if error:
+            raise Exception("Error occurred while fetching pages")
+        
+        return all_data
+
+    def fetch_page(self, page_number):
+        trainer_detail_page = f"https://dl.fucnm.com/datafile/xgqdetail/list_{page_number}.txt"
+        try:
+            response = self.client.get(trainer_detail_page, headers=self.headers)
+            response.raise_for_status()
+
+            data = response.json()
+            filtered_data = [
+                {
+                    "steam_id": entry.get("steam_appid"),
+                    "en_US": entry.get("en_name"),
+                    "zh_CN": entry.get("keyw")
+                }
+                for entry in data
+                if entry.get("steam_appid") and entry.get("en_name") and entry.get("keyw")
+            ]
+            return filtered_data
+        except Exception as e:
+            logging.error(f"Error requesting {trainer_detail_page}: {str(e)}")
+            return None
     
     def fetch_all_category_members(self):
         for category in RELEVANT_CATEGORIES:
@@ -101,8 +180,16 @@ class DatabaseFetcher:
                 if not any(save_paths for save_paths in game_entry['save_location'].values()):
                     logging.info(f"No save locations found: {title}")
                     continue
+
                 if game_entry['steam_id']:
                     steam_ids.append(int(game_entry['steam_id']))
+
+                    # Add translations
+                    translation = self.find_translation_by_steam_id(game_entry['steam_id'])
+                    game_entry['zh_CN'] = translation
+                    if translation:
+                        logging.info(f"Found zh_CN for {title}: {translation}")
+
                 self.save_entry(game_entry)
 
                 game_processed += 1
@@ -322,6 +409,12 @@ class DatabaseFetcher:
                         logging.info(f"Found installation folder for steam_id {steam_id}")
                     else:
                         logging.error(f"No entry found in database for steam_id {steam_id}")
+    
+    def find_translation_by_steam_id(self, steam_id):
+        for translation in self.translations:
+            if translation.get('steam_id') == int(steam_id):
+                return translation.get('zh_CN')
+        return None
 
     def fetch_recent_changes(self):
         last_recent_change_time = self.get_last_recent_change_time()
@@ -395,7 +488,8 @@ class DatabaseFetcher:
                     steam_id INTEGER,
                     gog_id INTEGER,
                     save_location TEXT,
-                    platform TEXT
+                    platform TEXT,
+                    zh_CN TEXT
                 )
             """)
             self.conn.execute("""
@@ -409,8 +503,8 @@ class DatabaseFetcher:
         with self.conn:
             self.conn.execute("""
                 INSERT OR REPLACE INTO games
-                (title, wiki_page_id, install_folder, steam_id, gog_id, save_location, platform)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                (title, wiki_page_id, install_folder, steam_id, gog_id, save_location, platform, zh_CN)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             """, (
                 entry['title'],
                 entry['wiki_page_id'],
@@ -418,7 +512,8 @@ class DatabaseFetcher:
                 entry.get('steam_id'),
                 entry.get('gog_id'),
                 json.dumps(entry.get('save_location')),
-                json.dumps(entry.get('platform'))
+                json.dumps(entry.get('platform')),
+                entry.get('zh_CN')
             ))
     
     def find_entry_by_key(self, type, value):
@@ -434,7 +529,8 @@ class DatabaseFetcher:
                 'steam_id': row[3],
                 'gog_id': row[4],
                 'save_location': json.loads(row[5]) if row[5] else None,
-                'platform': json.loads(row[6]) if row[6] else None
+                'platform': json.loads(row[6]) if row[6] else None,
+                'zh_CN': row[7]
             }
         return None
 
@@ -443,11 +539,14 @@ def main():
     System argument: empty argument defaults to fetch all entries; "recent" for fetching recent changes
     '''
     fetcher = DatabaseFetcher()
+    
     if len(sys.argv) > 1 and sys.argv[1] == 'recent':
         fetcher.initialize_log_file("recent")
+        fetcher.fetch_translations()
         fetcher.fetch_recent_changes()
     else:
         fetcher.initialize_log_file("full")
+        fetcher.fetch_translations()
         fetcher.fetch_all_category_members()
 
 if __name__ == "__main__":
