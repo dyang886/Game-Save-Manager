@@ -1,185 +1,157 @@
-2024-08-30 00:37:31,264 - INFO - Total game translations fetched: 950
-2024-08-30 00:37:32,723 - INFO - Game translations successfully saved to ./database/game_names.json
-2024-08-30 00:37:32,723 - INFO - Fetching recent changes from 2024-08-29 00:36:14.102647 to 2024-08-30 00:37:32.723776
-2024-08-30 00:37:33,396 - INFO - No save locations found: Super Mario Unimaker
-2024-08-30 00:37:34,568 - INFO - 1. Saved in database: Adaca
-2024-08-30 00:37:35,657 - INFO - 2. Saved in database: Auf Abwegen
-2024-08-30 00:37:36,943 - INFO - 3. Saved in database: Disney Princess: My Fairytale Adventure
-2024-08-30 00:37:38,173 - INFO - 4. Saved in database: Endoparasitic
-2024-08-30 00:37:38,492 - INFO - 5. Saved in database: Glass Wing
-2024-08-30 00:37:39,517 - INFO - No save locations found: Handkerchief
-2024-08-30 00:37:40,740 - INFO - 6. Saved in database: Lil Gator Game
-2024-08-30 00:37:40,897 - INFO - 7. Saved in database: Magic: The Gathering - Duels of the Planeswalkers 2013
-2024-08-30 00:37:41,050 - INFO - 8. Saved in database: Marble Mayhem: Fragile Ball
-2024-08-30 00:37:41,716 - INFO - 9. Saved in database: Mortadelo y Filemón: Operación Moscú
-2024-08-30 00:37:42,782 - INFO - 10. Saved in database: NSFW Solitaire
-2024-08-30 00:37:44,214 - INFO - No save locations found: Princess Maker 2
-2024-08-30 00:37:45,611 - INFO - 11. Saved in database: Project OutFox
-2024-08-30 00:37:45,912 - INFO - 12. Saved in database: Runespell: Overture
-2024-08-30 00:37:47,136 - INFO - 13. Saved in database: Sky Force Anniversary
-2024-08-30 00:37:47,360 - INFO - 14. Saved in database: Sky Gamblers: Storm Raiders
-2024-08-30 00:37:48,489 - INFO - No save locations found: SpongeBob SquarePants: The Patrick Star Game
-2024-08-30 00:37:48,815 - INFO - 15. Saved in database: F.E.A.R.
-2024-08-30 00:37:49,688 - INFO - 16. Saved in database: Star Valor
-2024-08-30 00:37:50,001 - INFO - 17. Saved in database: Tropical Liquor
-2024-08-30 00:37:50,171 - INFO - 18. Saved in database: Unmechanical
-2024-08-30 00:37:54,040 - INFO - 19. Saved in database: Wizard101
-2024-08-30 00:37:54,996 - INFO - 20. Saved in database: F1 Chequered Flag
-2024-08-30 00:37:55,306 - INFO - 21. Saved in database: Foretales
-2024-08-30 00:37:55,501 - INFO - Path not specified for game install: Silent Hill 2: Director's Cut
-2024-08-30 00:37:55,505 - INFO - 22. Saved in database: Silent Hill 2: Director's Cut
-2024-08-30 00:37:56,770 - INFO - 23. Saved in database: Uru: Ages Beyond Myst
-2024-08-30 00:38:02,230 - INFO - 24. Saved in database: Night in the Woods
-2024-08-30 00:38:06,056 - INFO - 25. Saved in database: The Lord of the Rings: Return to Moria
-2024-08-30 00:38:09,915 - INFO - No save locations found: Angry Video Game Nerd I & II Deluxe
-2024-08-30 00:38:10,328 - INFO - 26. Saved in database: Black Mesa
-2024-08-30 00:38:14,408 - INFO - No save locations found: Prospekt
-2024-08-30 00:38:14,717 - INFO - 27. Saved in database: Hunt Down the Freeman
-2024-08-30 00:38:15,054 - INFO - 28. Saved in database: Peglin
-2024-08-30 00:38:15,341 - INFO - No save locations found: Redneck Deer Huntin'
-2024-08-30 00:38:15,647 - INFO - No save locations found: Visions of Mana
-2024-08-30 00:38:15,815 - INFO - No save locations found: Moonbase Down
-2024-08-30 00:38:15,984 - INFO - 29. Saved in database: Magicka
-2024-08-30 00:38:16,225 - INFO - No save locations found: Capcom Fighting Collection 2
-2024-08-30 00:38:16,530 - INFO - 30. Saved in database: World of Goo 2
-2024-08-30 00:38:18,399 - INFO - 31. Saved in database: Kitsune Tails
-2024-08-30 00:38:19,287 - INFO - No save locations found: Cops 2170: The Power of Law
-2024-08-30 00:38:19,469 - INFO - 32. Saved in database: Lego Harry Potter: Years 1-4
-2024-08-30 00:38:19,765 - INFO - No save locations found: Blue Protocol
-2024-08-30 00:38:20,153 - INFO - No save locations found: Linux
-2024-08-30 00:38:21,450 - INFO - 33. Saved in database: Harry Potter and the Philosopher's Stone
-2024-08-30 00:38:21,740 - INFO - 34. Saved in database: Grand Theft Auto: San Andreas
-2024-08-30 00:38:22,714 - INFO - 35. Saved in database: Myst III
-2024-08-30 00:38:22,890 - INFO - 36. Saved in database: Myst IV
-2024-08-30 00:38:23,197 - INFO - 37. Saved in database: Myst V
-2024-08-30 00:38:25,046 - INFO - 38. Saved in database: URU
-2024-08-30 00:38:25,256 - INFO - 39. Saved in database: Sonic Origins
-2024-08-30 00:38:25,581 - INFO - 40. Saved in database: Myst 4
-2024-08-30 00:38:25,890 - INFO - 41. Saved in database: Myst 5
-2024-08-30 00:38:26,140 - INFO - 42. Saved in database: Myst 2
-2024-08-30 00:38:26,314 - INFO - 43. Saved in database: Myst II
-2024-08-30 00:38:26,491 - INFO - 44. Saved in database: Lego Harry Potter: Years 5-7
-2024-08-30 00:38:26,734 - INFO - 45. Saved in database: Fallout 3
-2024-08-30 00:38:26,950 - INFO - 46. Saved in database: Age of Mythology: Retold
-2024-08-30 00:38:27,106 - INFO - Path not specified for game install: State of Emergency
-2024-08-30 00:38:27,109 - INFO - 47. Saved in database: State of Emergency
-2024-08-30 00:38:27,942 - INFO - No save locations found: JetX
-2024-08-30 00:38:30,469 - INFO - 48. Saved in database: Rayman 2: The Great Escape
-2024-08-30 00:38:30,669 - INFO - 49. Saved in database: Disney's Hercules
-2024-08-30 00:38:30,894 - INFO - 50. Saved in database: Croc: Legend of the Gobbos
-2024-08-30 00:38:31,174 - INFO - No save locations found: Silent Hill 2
-2024-08-30 00:38:31,511 - INFO - Found zh_CN for Sifu: 师父
-2024-08-30 00:38:31,513 - INFO - 51. Saved in database: Sifu
-2024-08-30 00:38:31,789 - INFO - Found zh_CN for Sid Meier's Civilization VI: 文明6
-2024-08-30 00:38:31,791 - INFO - 52. Saved in database: Sid Meier's Civilization VI
-2024-08-30 00:38:31,990 - INFO - 53. Saved in database: Planet Coaster
-2024-08-30 00:38:32,190 - INFO - Found zh_CN for Crusader Kings III: 十字军之王3
-2024-08-30 00:38:32,191 - INFO - 54. Saved in database: Crusader Kings III
-2024-08-30 00:38:32,473 - INFO - 55. Saved in database: Resident Evil 2 (2019)
-2024-08-30 00:38:32,702 - INFO - 56. Saved in database: Police Simulator Patrol Officers
-2024-08-30 00:38:33,789 - INFO - 57. Saved in database: Brick Rigs
-2024-08-30 00:38:34,020 - INFO - 58. Saved in database: Far Cry
-2024-08-30 00:38:34,430 - INFO - 59. Saved in database: Tropico 4
-2024-08-30 00:38:34,683 - INFO - 60. Saved in database: Dead by Daylight
-2024-08-30 00:38:34,912 - INFO - No save locations found: Bloodless
-2024-08-30 00:38:35,108 - INFO - 61. Saved in database: Castlevania Dominus Collection
-2024-08-30 00:38:35,273 - INFO - No save locations found: Epic Mickey: Rebrushed
-2024-08-30 00:38:35,566 - INFO - Found zh_CN for Black Myth: Wukong: 黑神话：悟空
-2024-08-30 00:38:35,568 - INFO - 62. Saved in database: Black Myth: Wukong
-2024-08-30 00:38:35,742 - INFO - No save locations found: Marvel vs. Capcom Fighting Collection: Arcade Classics
-2024-08-30 00:38:35,903 - INFO - No save locations found: Capcom Fighting Collection
-2024-08-30 00:38:36,890 - INFO - No save locations found: Ninjin: Clash of Carrots
-2024-08-30 00:38:37,080 - INFO - No save locations found: Barbie and the Magic of Pegasus
-2024-08-30 00:38:37,375 - INFO - Found zh_CN for Soulcalibur VI: 灵魂能力6
-2024-08-30 00:38:37,377 - INFO - 63. Saved in database: Soulcalibur VI
-2024-08-30 00:38:37,589 - INFO - 64. Saved in database: Castlevania Advance Collection
-2024-08-30 00:38:37,825 - INFO - 65. Saved in database: Castlevania Anniversary Collection
-2024-08-30 00:38:38,025 - INFO - 66. Saved in database: Star Wars: Battlefront Classic Collection
-2024-08-30 00:38:40,310 - INFO - 67. Saved in database: RealRTCW
-2024-08-30 00:38:40,552 - INFO - Found zh_CN for The Witcher 3: Wild Hunt: 巫师3：狂猎
-2024-08-30 00:38:40,554 - INFO - 68. Saved in database: The Witcher 3: Wild Hunt
-2024-08-30 00:38:40,992 - INFO - 69. Saved in database: Warframe
-2024-08-30 00:38:41,172 - INFO - 70. Saved in database: Grand Theft Auto: San Andreas 10 Year Anniversary
-2024-08-30 00:38:41,343 - INFO - 71. Saved in database: Star Wars Outlaws
-2024-08-30 00:38:41,507 - INFO - No save locations found: List of Unreal Engine 4-5 games where HDR can be forced
-2024-08-30 00:38:41,660 - INFO - No save locations found: Shadowrun
-2024-08-30 00:38:41,866 - INFO - No save locations found: Kunitsu-Gami: Path of the Goddess
-2024-08-30 00:38:43,167 - INFO - No save locations found: Taiko no Tatsujin: Rhythm Festival
-2024-08-30 00:38:43,328 - INFO - 72. Saved in database: Panzer Corps 2
-2024-08-30 00:38:43,472 - INFO - 73. Saved in database: Taiko no Tatsujin: The Drum Master!
-2024-08-30 00:38:43,678 - INFO - No save locations found: DRL
-2024-08-30 00:38:43,921 - INFO - 74. Saved in database: Not for Broadcast
-2024-08-30 00:38:44,327 - INFO - 75. Saved in database: Hero of the Kingdom
-2024-08-30 00:38:44,486 - INFO - 76. Saved in database: Tactical Breach Wizards
-2024-08-30 00:38:44,750 - INFO - 77. Saved in database: Grand Theft Auto III
-2024-08-30 00:38:45,057 - INFO - No save locations found: Nvidia Profile Inspector
-2024-08-30 00:38:45,255 - INFO - 78. Saved in database: Lords of the Realm III
-2024-08-30 00:38:45,704 - INFO - 79. Saved in database: Grand Theft Auto: Vice City
-2024-08-30 00:38:45,704 - INFO - Finding game installation folders...
-2024-08-30 00:38:50,138 - INFO - Found installation folder for steam_id 1765780
-2024-08-30 00:38:50,141 - INFO - Found installation folder for steam_id 1036850
-2024-08-30 00:38:50,144 - INFO - Found installation folder for steam_id 319080
-2024-08-30 00:38:50,147 - INFO - Found installation folder for steam_id 2124780
-2024-08-30 00:38:50,150 - INFO - Found installation folder for steam_id 382570
-2024-08-30 00:38:50,153 - INFO - Found installation folder for steam_id 1586800
-2024-08-30 00:38:50,156 - INFO - Found installation folder for steam_id 97330
-2024-08-30 00:38:50,159 - INFO - Found installation folder for steam_id 370510
-2024-08-30 00:38:50,161 - INFO - Found installation folder for steam_id 1114340
-2024-08-30 00:38:50,164 - INFO - Found installation folder for steam_id 2274120
-2024-08-30 00:38:50,167 - INFO - Found installation folder for steam_id 102200
-2024-08-30 00:38:50,170 - INFO - Found installation folder for steam_id 355050
-2024-08-30 00:38:50,172 - INFO - Found installation folder for steam_id 304910
-2024-08-30 00:38:50,175 - INFO - Found installation folder for steam_id 21090
-2024-08-30 00:38:50,178 - INFO - Found installation folder for steam_id 833360
-2024-08-30 00:38:50,180 - INFO - Found installation folder for steam_id 687920
-2024-08-30 00:38:50,183 - INFO - Found installation folder for steam_id 211180
-2024-08-30 00:38:50,186 - INFO - Found installation folder for steam_id 799960
-2024-08-30 00:38:50,189 - INFO - Found installation folder for steam_id 371600
-2024-08-30 00:38:50,194 - INFO - Found installation folder for steam_id 1170080
-2024-08-30 00:38:50,197 - INFO - Found installation folder for steam_id 63650
-2024-08-30 00:38:50,200 - INFO - Found installation folder for steam_id 481510
-2024-08-30 00:38:50,203 - INFO - Found installation folder for steam_id 2933130
-2024-08-30 00:38:50,205 - INFO - Found installation folder for steam_id 362890
-2024-08-30 00:38:50,208 - INFO - Found installation folder for steam_id 723390
-2024-08-30 00:38:50,211 - INFO - Found installation folder for steam_id 1296610
-2024-08-30 00:38:50,213 - INFO - Found installation folder for steam_id 42910
-2024-08-30 00:38:50,216 - INFO - Found installation folder for steam_id 1325260
-2024-08-30 00:38:50,218 - INFO - Found installation folder for steam_id 21130
-2024-08-30 00:38:50,221 - INFO - Found installation folder for steam_id 12120
-2024-08-30 00:38:50,224 - INFO - Found installation folder for steam_id 925930
-2024-08-30 00:38:50,227 - INFO - Found installation folder for steam_id 925940
-2024-08-30 00:38:50,230 - INFO - Found installation folder for steam_id 208110
-2024-08-30 00:38:50,233 - INFO - Found installation folder for steam_id 1794960
-2024-08-30 00:38:50,235 - INFO - Found installation folder for steam_id 63610
-2024-08-30 00:38:50,238 - INFO - Found installation folder for steam_id 204120
-2024-08-30 00:38:50,240 - INFO - Found installation folder for steam_id 22300
-2024-08-30 00:38:50,243 - INFO - Found installation folder for steam_id 1934680
-2024-08-30 00:38:50,246 - INFO - Found installation folder for steam_id 15060
-2024-08-30 00:38:50,249 - INFO - Found installation folder for steam_id 987400
-2024-08-30 00:38:50,253 - INFO - Found installation folder for steam_id 2138710
-2024-08-30 00:38:50,256 - INFO - Found installation folder for steam_id 289070
-2024-08-30 00:38:50,258 - INFO - Found installation folder for steam_id 493340
-2024-08-30 00:38:50,261 - INFO - Found installation folder for steam_id 1158310
-2024-08-30 00:38:50,264 - INFO - Found installation folder for steam_id 883710
-2024-08-30 00:38:50,266 - INFO - Found installation folder for steam_id 997010
-2024-08-30 00:38:50,269 - INFO - Found installation folder for steam_id 552100
-2024-08-30 00:38:50,272 - INFO - Found installation folder for steam_id 13520
-2024-08-30 00:38:50,275 - INFO - Found installation folder for steam_id 57690
-2024-08-30 00:38:50,278 - INFO - Found installation folder for steam_id 381210
-2024-08-30 00:38:50,281 - INFO - Found installation folder for steam_id 2369900
-2024-08-30 00:38:50,283 - INFO - Found installation folder for steam_id 2358720
-2024-08-30 00:38:50,286 - INFO - Found installation folder for steam_id 544750
-2024-08-30 00:38:50,289 - INFO - Found installation folder for steam_id 1552550
-2024-08-30 00:38:50,292 - INFO - Found installation folder for steam_id 1018010
-2024-08-30 00:38:50,294 - INFO - Found installation folder for steam_id 2446550
-2024-08-30 00:38:50,297 - INFO - Found installation folder for steam_id 1379630
-2024-08-30 00:38:50,299 - INFO - Found installation folder for steam_id 292030
-2024-08-30 00:38:50,302 - INFO - Found installation folder for steam_id 230410
-2024-08-30 00:38:50,307 - INFO - Found installation folder for steam_id 1072040
-2024-08-30 00:38:50,309 - INFO - Found installation folder for steam_id 1147550
-2024-08-30 00:38:50,312 - INFO - Found installation folder for steam_id 259550
-2024-08-30 00:38:50,315 - INFO - Found installation folder for steam_id 1043810
-2024-08-30 00:38:50,317 - INFO - Found installation folder for steam_id 12100
-2024-08-30 00:38:50,321 - INFO - Found installation folder for steam_id 254860
-2024-08-30 00:38:50,323 - INFO - Found installation folder for steam_id 12110
-2024-08-30 00:38:50,328 - INFO - All recent changes fetched!
+2024-08-31 00:37:21,037 - INFO - Total game translations fetched: 950
+2024-08-31 00:37:22,671 - INFO - Game translations successfully saved to ./database/game_names.json
+2024-08-31 00:37:22,671 - INFO - Fetching recent changes from 2024-08-30 00:36:32.723776 to 2024-08-31 00:37:22.671500
+2024-08-31 00:37:22,987 - INFO - No save locations found: Squirrel with a Gun
+2024-08-31 00:37:23,131 - INFO - Found zh_CN for Sniper: Ghost Warrior Contracts: 狙击手：幽灵战士契约
+2024-08-31 00:37:23,139 - INFO - 1. Saved in database: Sniper: Ghost Warrior Contracts
+2024-08-31 00:37:23,292 - INFO - No save locations found: Visions of Mana
+2024-08-31 00:37:23,409 - INFO - 2. Saved in database: Blood West
+2024-08-31 00:37:24,265 - INFO - 3. Saved in database: Jupiter Hell
+2024-08-31 00:37:24,371 - INFO - 4. Saved in database: Empty Shell
+2024-08-31 00:37:25,391 - INFO - 5. Saved in database: GRID Legends
+2024-08-31 00:37:25,614 - INFO - 6. Saved in database: Grand Theft Auto: San Andreas
+2024-08-31 00:37:25,722 - INFO - 7. Saved in database: Phantasy Star Online 2 New Genesis
+2024-08-31 00:37:25,836 - INFO - Path not specified for game install: Silent Hill 4: The Room
+2024-08-31 00:37:25,840 - INFO - 8. Saved in database: Silent Hill 4: The Room
+2024-08-31 00:37:25,981 - INFO - 9. Saved in database: Silent Hill 3
+2024-08-31 00:37:26,096 - INFO - 10. Saved in database: Aperture Tag: The Paint Gun Testing Initiative
+2024-08-31 00:37:26,210 - INFO - 11. Saved in database: Rexaura
+2024-08-31 00:37:26,342 - INFO - 12. Saved in database: Portal: Revolution
+2024-08-31 00:37:26,982 - INFO - No save locations found: Portal 2: Community Edition
+2024-08-31 00:37:27,071 - INFO - 13. Saved in database: Portal Stories: Mel
+2024-08-31 00:37:27,169 - INFO - No save locations found: Portal Stories: VR
+2024-08-31 00:37:27,264 - INFO - 14. Saved in database: Thinking with Time Machine
+2024-08-31 00:37:27,355 - INFO - 15. Saved in database: Portal Reloaded
+2024-08-31 00:37:28,084 - INFO - No save locations found: Gori: Cuddly Carnage
+2024-08-31 00:37:28,234 - INFO - 16. Saved in database: Assetto Corsa Competizione
+2024-08-31 00:37:28,385 - INFO - 17. Saved in database: F1 22
+2024-08-31 00:37:28,472 - INFO - No save locations found: Star99
+2024-08-31 00:37:28,599 - INFO - 18. Saved in database: Max Payne
+2024-08-31 00:37:29,153 - INFO - No save locations found: Blueprint Word
+2024-08-31 00:37:29,740 - INFO - No save locations found: Wondershot
+2024-08-31 00:37:29,955 - INFO - 19. Saved in database: Reus 2
+2024-08-31 00:37:30,124 - INFO - 20. Saved in database: Grand Theft Auto III
+2024-08-31 00:37:30,231 - INFO - No save locations found: Isbarah
+2024-08-31 00:37:30,354 - INFO - No save locations found: Metal Slug: Awakening
+2024-08-31 00:37:30,467 - INFO - 21. Saved in database: Star Wars Outlaws
+2024-08-31 00:37:30,581 - INFO - 22. Saved in database: Metal Slug Attack Reloaded
+2024-08-31 00:37:30,676 - INFO - No save locations found: Epic Mickey: Rebrushed
+2024-08-31 00:37:30,808 - INFO - 23. Saved in database: Payday 3
+2024-08-31 00:37:30,913 - INFO - 24. Saved in database: The Operator
+2024-08-31 00:37:31,019 - INFO - No save locations found: Cruel Bands Career
+2024-08-31 00:37:31,126 - INFO - No save locations found: SELF
+2024-08-31 00:37:31,235 - INFO - 25. Saved in database: A Dance of Fire and Ice
+2024-08-31 00:37:31,421 - INFO - 26. Saved in database: 64.0
+2024-08-31 00:37:31,531 - INFO - No save locations found: Rescue the Great Demon 2
+2024-08-31 00:37:31,631 - INFO - No save locations found: Marvel vs. Capcom Fighting Collection: Arcade Classics
+2024-08-31 00:37:31,719 - INFO - No save locations found: Clocker
+2024-08-31 00:37:31,822 - INFO - No save locations found: Capcom Fighting Collection 2
+2024-08-31 00:37:31,915 - INFO - No save locations found: Dragon Spirits
+2024-08-31 00:37:32,013 - INFO - No save locations found: Yesterday (Triple Tree Studio)
+2024-08-31 00:37:32,098 - INFO - No save locations found: Merlin Adventurer Store
+2024-08-31 00:37:32,213 - INFO - 27. Saved in database: Mortal Glory 2
+2024-08-31 00:37:32,312 - INFO - 28. Saved in database: Draw Puzzle
+2024-08-31 00:37:32,416 - INFO - 29. Saved in database: Super Mario Unimaker
+2024-08-31 00:37:32,516 - INFO - No save locations found: Heaven Dust 2
+2024-08-31 00:37:32,615 - INFO - 30. Saved in database: Bloody Hell
+2024-08-31 00:37:32,739 - INFO - 31. Saved in database: Pro Rally 2001
+2024-08-31 00:37:32,851 - INFO - 32. Saved in database: Tomb Raider (1996)
+2024-08-31 00:37:32,972 - INFO - No save locations found: Suikoden I & II HD Remaster Gate Rune and Dunan Unification Wars
+2024-08-31 00:37:33,066 - INFO - 33. Saved in database: Castlevania Dominus Collection
+2024-08-31 00:37:33,164 - INFO - Found zh_CN for Gundam Breaker 4: 高达创坏者4
+2024-08-31 00:37:33,165 - INFO - 34. Saved in database: Gundam Breaker 4
+2024-08-31 00:37:33,302 - INFO - 35. Saved in database: Prince of Persia: Warrior Within
+2024-08-31 00:37:33,423 - INFO - 36. Saved in database: Prince of Persia: The Two Thrones
+2024-08-31 00:37:33,565 - INFO - 37. Saved in database: Prince of Persia: The Sands of Time
+2024-08-31 00:37:33,696 - INFO - 38. Saved in database: Paladins: Champions of the Realm
+2024-08-31 00:37:33,813 - INFO - No save locations found: Imperia Online
+2024-08-31 00:37:33,978 - INFO - 39. Saved in database: Teenage Mutant Ninja Turtles: Shredder's Revenge
+2024-08-31 00:37:34,106 - INFO - 40. Saved in database: Guacamelee! 2
+2024-08-31 00:37:34,215 - INFO - Found zh_CN for Deep Rock Galactic: Survivor: 深岩银河：幸存者
+2024-08-31 00:37:34,216 - INFO - 41. Saved in database: Deep Rock Galactic: Survivor
+2024-08-31 00:37:34,320 - INFO - Found zh_CN for Black Myth: Wukong: 黑神话：悟空
+2024-08-31 00:37:34,322 - INFO - 42. Saved in database: Black Myth: Wukong
+2024-08-31 00:37:34,420 - INFO - 43. Saved in database: Bread & Fred
+2024-08-31 00:37:34,517 - INFO - 44. Saved in database: The Crooked Man
+2024-08-31 00:37:34,640 - INFO - 45. Saved in database: Dusk
+2024-08-31 00:37:34,743 - INFO - 46. Saved in database: The Even More Incredible Machine
+2024-08-31 00:37:34,853 - INFO - 47. Saved in database: Hugo: Bukkazoom!
+2024-08-31 00:37:34,989 - INFO - 48. Saved in database: Portal 2
+2024-08-31 00:37:35,105 - INFO - 49. Saved in database: Infinifactory
+2024-08-31 00:37:35,194 - INFO - No save locations found: Blocky Farm
+2024-08-31 00:37:35,297 - INFO - No save locations found: Radical Relocation
+2024-08-31 00:37:35,401 - INFO - 50. Saved in database: Land of the Vikings
+2024-08-31 00:37:35,498 - INFO - 51. Saved in database: Oriental Empires
+2024-08-31 00:37:35,585 - INFO - No save locations found: Infection Free Zone
+2024-08-31 00:37:35,673 - INFO - No save locations found: Not Dying Today
+2024-08-31 00:37:35,817 - INFO - No save locations found: Nvidia Profile Inspector
+2024-08-31 00:37:35,900 - INFO - No save locations found: Dark Veer
+2024-08-31 00:37:36,006 - INFO - 52. Saved in database: Shapez 2
+2024-08-31 00:37:36,117 - INFO - Found zh_CN for Devil May Cry 4: Special Edition: 鬼泣4：特别版
+2024-08-31 00:37:36,118 - INFO - 53. Saved in database: Devil May Cry 4: Special Edition
+2024-08-31 00:37:36,214 - INFO - No save locations found: Vanguard: Saga of Heroes
+2024-08-31 00:37:36,305 - INFO - No save locations found: 10 Minute Tower
+2024-08-31 00:37:36,400 - INFO - 54. Saved in database: Marsupilami: Hoobadventure
+2024-08-31 00:37:36,567 - INFO - 55. Saved in database: The Secret of Monkey Island
+2024-08-31 00:37:36,663 - INFO - 56. Saved in database: The Dig
+2024-08-31 00:37:36,791 - INFO - 57. Saved in database: The Stanley Parable
+2024-08-31 00:37:36,988 - INFO - 58. Saved in database: Black Mesa
+2024-08-31 00:37:37,103 - INFO - 59. Saved in database: The Legend of Kyrandia: Malcolm's Revenge
+2024-08-31 00:37:37,212 - INFO - 60. Saved in database: Knights of Honor II: Sovereign
+2024-08-31 00:37:37,319 - INFO - No save locations found: Farworld Pioneers
+2024-08-31 00:37:37,412 - INFO - No save locations found: List of software rendering games
+2024-08-31 00:37:37,520 - INFO - 61. Saved in database: Haunted House (2023)
+2024-08-31 00:37:37,520 - INFO - Finding game installation folders...
+2024-08-31 00:39:54,972 - INFO - Found installation folder for steam_id 973580
+2024-08-31 00:39:54,975 - INFO - Found installation folder for steam_id 1587130
+2024-08-31 00:39:54,978 - INFO - Found installation folder for steam_id 811320
+2024-08-31 00:39:54,981 - INFO - Found installation folder for steam_id 2243110
+2024-08-31 00:39:54,984 - INFO - Found installation folder for steam_id 1307710
+2024-08-31 00:39:54,987 - INFO - Found installation folder for steam_id 12120
+2024-08-31 00:39:54,989 - INFO - Found installation folder for steam_id 1056640
+2024-08-31 00:39:54,992 - INFO - Found installation folder for steam_id 280740
+2024-08-31 00:39:54,995 - INFO - Found installation folder for steam_id 317790
+2024-08-31 00:39:54,997 - INFO - Found installation folder for steam_id 601360
+2024-08-31 00:39:55,000 - INFO - Found installation folder for steam_id 317400
+2024-08-31 00:39:55,003 - INFO - Found installation folder for steam_id 286080
+2024-08-31 00:39:55,006 - INFO - Found installation folder for steam_id 1255980
+2024-08-31 00:39:55,008 - INFO - Found installation folder for steam_id 805550
+2024-08-31 00:39:55,011 - INFO - Found installation folder for steam_id 1692250
+2024-08-31 00:39:55,014 - INFO - Found installation folder for steam_id 12140
+2024-08-31 00:39:55,017 - INFO - Found installation folder for steam_id 1875060
+2024-08-31 00:39:55,020 - INFO - Found installation folder for steam_id 12100
+2024-08-31 00:39:55,023 - INFO - Found installation folder for steam_id 2322440
+2024-08-31 00:39:55,026 - INFO - Found installation folder for steam_id 1272080
+2024-08-31 00:39:55,029 - INFO - Found installation folder for steam_id 1771980
+2024-08-31 00:39:55,032 - INFO - Found installation folder for steam_id 977950
+2024-08-31 00:39:55,034 - INFO - Found installation folder for steam_id 578850
+2024-08-31 00:39:55,037 - INFO - Found installation folder for steam_id 2216660
+2024-08-31 00:39:55,040 - INFO - Found installation folder for steam_id 664180
+2024-08-31 00:39:55,042 - INFO - Found installation folder for steam_id 2056220
+2024-08-31 00:39:55,045 - INFO - Found installation folder for steam_id 224960
+2024-08-31 00:39:55,047 - INFO - Found installation folder for steam_id 2369900
+2024-08-31 00:39:55,050 - INFO - Found installation folder for steam_id 1672500
+2024-08-31 00:39:55,054 - INFO - Found installation folder for steam_id 13500
+2024-08-31 00:39:55,056 - INFO - Found installation folder for steam_id 13530
+2024-08-31 00:39:55,059 - INFO - Found installation folder for steam_id 13600
+2024-08-31 00:39:55,062 - INFO - Found installation folder for steam_id 444090
+2024-08-31 00:39:55,064 - INFO - Found installation folder for steam_id 1361510
+2024-08-31 00:39:55,067 - INFO - Found installation folder for steam_id 534550
+2024-08-31 00:39:55,070 - INFO - Found installation folder for steam_id 2321470
+2024-08-31 00:39:55,072 - INFO - Found installation folder for steam_id 2358720
+2024-08-31 00:39:55,075 - INFO - Found installation folder for steam_id 1607680
+2024-08-31 00:39:55,078 - INFO - Found installation folder for steam_id 736570
+2024-08-31 00:39:55,081 - INFO - Found installation folder for steam_id 519860
+2024-08-31 00:39:55,086 - INFO - Found installation folder for steam_id 620
+2024-08-31 00:39:55,089 - INFO - Found installation folder for steam_id 300570
+2024-08-31 00:39:55,091 - INFO - Found installation folder for steam_id 1981570
+2024-08-31 00:39:55,094 - INFO - Found installation folder for steam_id 357310
+2024-08-31 00:39:55,097 - INFO - Found installation folder for steam_id 2162800
+2024-08-31 00:39:55,101 - INFO - Found installation folder for steam_id 329050
+2024-08-31 00:39:55,103 - INFO - Found installation folder for steam_id 1586700
+2024-08-31 00:39:55,106 - INFO - Found installation folder for steam_id 6040
+2024-08-31 00:39:55,109 - INFO - Found installation folder for steam_id 221910
+2024-08-31 00:39:55,112 - INFO - Found installation folder for steam_id 362890
+2024-08-31 00:39:55,114 - INFO - Found installation folder for steam_id 736820
+2024-08-31 00:39:55,117 - INFO - Found installation folder for steam_id 1942330
+2024-08-31 00:39:55,120 - INFO - All recent changes fetched!
