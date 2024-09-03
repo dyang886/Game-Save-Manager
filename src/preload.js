@@ -8,5 +8,5 @@ contextBridge.exposeInMainWorld('api', {
 
 contextBridge.exposeInMainWorld('i18n', {
   changeLanguage: (lng) => ipcRenderer.invoke('change-language', lng),
-  translate: (key) => ipcRenderer.invoke('translate', key)
+  translate: (key, options) => ipcRenderer.invoke('translate', key, options)
 });

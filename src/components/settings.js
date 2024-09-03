@@ -8,15 +8,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const gamePathsContainer = document.getElementById('game-paths-container');
     const addNewPathButton = document.getElementById('add-new-path');
 
-    window.api.invoke('get-settings').then((value) => {
-        if (value) {
-            themeSelect.value = value.theme;
-            languageSelect.value = value.language;
-            backupPathInput.value = value.backupPath;
-            maxBackupsInput.value = value.maxBackups;
+    window.api.invoke('get-settings').then((settings) => {
+        if (settings) {
+            themeSelect.value = settings.theme;
+            languageSelect.value = settings.language;
+            backupPathInput.value = settings.backupPath;
+            maxBackupsInput.value = settings.maxBackups;
 
-            if (value.gameInstalls && value.gameInstalls.length > 0) {
-                value.gameInstalls.forEach((installPath) => {
+            if (settings.gameInstalls && settings.gameInstalls.length > 0) {
+                settings.gameInstalls.forEach((installPath) => {
                     addGameInstallPath(installPath);
                 });
             }
@@ -34,9 +34,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     backupPathButton.addEventListener('click', async () => {
-        const result = await window.api.invoke('open-dialog');
-        if (result.filePaths && result.filePaths.length > 0) {
-            backupPathInput.value = result.filePaths[0];
+        const result = await window.api.invoke('open-backup-dialog');
+        if (result) {
+            backupPathInput.value = result;
             window.api.send('save-settings', 'backupPath', backupPathInput.value);
         }
     });
@@ -61,10 +61,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         window.api.send('save-settings', 'maxBackups', maxBackupsInput.value);
         window.api.send('save-settings', 'gameInstalls', gameInstallPaths);
+        window.api.send('update-backup-table-main');
     });
 
     autoDetectButton.addEventListener('click', () => {
-        window.api.invoke('get-detected-game-paths').then((value) => {
+        window.api.invoke('get-detected-game-paths').then(async (value) => {
             if (value && value.length > 0) {
                 value.forEach(path => {
                     if (!duplicatePathCheck(path)) {
@@ -72,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
             } else {
-                showAlert('warning', 'settings.noPathsDetected');
+                showAlert('warning', await window.i18n.translate('settings.noPathsDetected'));
             }
         });
     });
@@ -106,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!duplicatePathCheck(result.filePaths[0], pathInput)) {
                     pathInput.value = result.filePaths[0];
                 } else {
-                    showAlert('warning', 'settings.gameInstallExists');
+                    showAlert('warning', await window.i18n.translate('settings.gameInstallExists'));
                 }
             }
         });
@@ -125,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!duplicatePathCheck(result.filePaths[0], pathInput)) {
                     pathInput.value = result.filePaths[0];
                 } else {
-                    showAlert('warning', 'settings.gameInstallExists');
+                    showAlert('warning', await window.i18n.translate('settings.gameInstallExists'));
                 }
             }
         });
@@ -140,4 +141,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         return isDuplicate;
     }
+});
+
+window.api.receive('apply-language', () => {
+    updateTranslations();
+    updateSelectedCountAndSize('backup');
 });

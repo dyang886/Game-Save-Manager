@@ -2,8 +2,8 @@
     "settings": {
         "title": "设置",
         "theme": "主题",
-        "dark": "黑色",
-        "light": "白色",
+        "dark": "深色",
+        "light": "浅色",
         "language": "语言",
         "backupPath": "备份存储路径",
         "maxBackups": "每个游戏最大备份数",
@@ -11,11 +11,14 @@
         "autoDetect": "自动检测",
         "addPath": "添加一个新路径",
         "noPathsDetected": "未检测到游戏安装路径",
-        "gameInstallExists": "游戏安装路径已存在"
+        "gameInstallExists": "游戏安装路径已存在",
+        "select_backup_path": "选择备份保存路径",
+        "select_path": "选择一个路径"
     },
 
     "main": {
         "title": "游戏存档管理器",
+        "loading": "加载中...",
         "backup": "备份",
         "restore": "还原",
         "custom": "自定义游戏",
@@ -24,6 +27,21 @@
         "backup_size": "备份大小",
         "last_backup_date": "上次备份日期",
         "more": "更多",
-        "backup_selected": "备份选中的游戏"
+        "backup_selected": "备份选中的游戏",
+        "backup_in_progress": "备份中...",
+        "no_games_selected": "没有选择游戏",
+        "backup_complete": "备份完成！",
+        "no_backups": "暂无备份",
+        "view_wiki": "在 PCGamingWiki 上查看",
+        "open_backup_folder": "打开备份文件夹",
+        "pin_on_top": "置顶",
+        "unpin": "取消置顶",
+        "no_backups_found": "无法找到备份",
+        "search_for_games": "搜索游戏",
+        "backup_error_for_game": "备份此游戏时出错",
+        "fetch_game_failed": "无法从数据库获取游戏数据",
+        "registry_existence_check_failed": "无法检查此游戏的注册表是否存在",
+        "selected_games_count": "已选择 {{count}}/{{total}} 个游戏",
+        "total_backup_size": "总备份大小：{{size}}"
     }
 }

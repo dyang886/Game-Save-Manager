@@ -5,6 +5,24 @@
 @keyframes fadeIn {
     from {
         opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes fadeInShift {
+    from {
+        opacity: 0;
         transform: translateY(-10px);
     }
     to {
@@ -13,7 +31,7 @@
     }
 }
 
-@keyframes fadeOut {
+@keyframes fadeOutShift {
     from {
         opacity: 1;
         transform: translateY(0);
@@ -30,4 +48,12 @@
 
 .animate-fadeOut {
     animation: fadeOut 0.3s ease-in-out forwards;
+}
+
+.animate-fadeInShift {
+    animation: fadeInShift 0.3s ease-in-out forwards;
+}
+
+.animate-fadeOutShift {
+    animation: fadeOutShift 0.3s ease-in-out forwards;
 }
