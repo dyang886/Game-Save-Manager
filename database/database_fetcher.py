@@ -336,7 +336,7 @@ class DatabaseFetcher:
                                     continue
                                 if len(node.params) > 0 and node.params[0].lower().strip() in ["hkcu", "hkey_current_user", "hklm", "hkey_local_machine", "wow64"]:
                                     system = "Registry"
-                            elif any(key in str(node).lower().strip() for key in ["hkey_current_user", "hkey_local_machine"]):
+                            elif any(key in str(node).lower().strip() for key in ["hkey_current_user", "hkey_local_machine", "hkey_classes_root"]):
                                 system = "Registry"
 
                             node_str = str(node).strip()

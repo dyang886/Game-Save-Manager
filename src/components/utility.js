@@ -12,11 +12,13 @@ async function updateTranslations() {
             }
         }
     });
-}
 
-window.api.receive('apply-language', () => {
-    updateTranslations();
-});
+    // Translate placeholders
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(async element => {
+        const i18nKey = element.getAttribute('data-i18n-placeholder');
+        element.setAttribute('placeholder', await window.i18n.translate(i18nKey));
+    });
+}
 
 function changeTheme(theme) {
     if (theme === 'dark') {
@@ -32,7 +34,7 @@ window.api.receive('apply-theme', (theme) => {
 
 window.api.send('load-theme');
 
-async function showAlert(type, translationKey) {
+async function showAlert(type, message) {
     const alertContainer = document.getElementById('alert-container');
 
     const alertClasses = {
@@ -49,9 +51,8 @@ async function showAlert(type, translationKey) {
         warning: 'M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z',
     };
 
-    const message = await window.i18n.translate(translationKey);
     const alertElement = document.createElement('div');
-    alertElement.className = `flex ml-auto max-w-max items-center p-4 mb-2 rounded-lg ${alertClasses[type]} animate-fadeIn`;
+    alertElement.className = `flex ml-auto max-w-max items-center p-4 mb-2 rounded-lg ${alertClasses[type]} animate-fadeInShift`;
 
     alertElement.innerHTML = `
         <svg class="flex-shrink-0 w-4 h-4" aria-hidden="true" fill="currentColor"
@@ -77,7 +78,7 @@ async function showAlert(type, translationKey) {
 
     // Handle manual close
     alertElement.querySelector('button').addEventListener('click', () => {
-        alertElement.classList.replace('animate-fadeIn', 'animate-fadeOut');
+        alertElement.classList.replace('animate-fadeInShift', 'animate-fadeOutShift');
         alertElement.addEventListener('animationend', () => {
             alertElement.remove();
         });
@@ -87,9 +88,13 @@ async function showAlert(type, translationKey) {
 
     // Handle automatic removal after 5 seconds
     setTimeout(() => {
-        alertElement.classList.replace('animate-fadeIn', 'animate-fadeOut');
+        alertElement.classList.replace('animate-fadeInShift', 'animate-fadeOutShift');
         alertElement.addEventListener('animationend', () => {
             alertElement.remove();
         });
     }, 5000);
 }
+
+window.api.receive('show-alert', (type, message) => {
+    showAlert(type, message);
+});
