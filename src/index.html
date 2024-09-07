@@ -54,6 +54,43 @@
         <!-- Tab 1: Backup -->
         <div class="hidden" id="backup" role="tabpanel" aria-labelledby="backup-tab">
             <div id="backup-loading" role="status" class="flex justify-center" data-i18n="main.loading"></div>
+
+            <div id="backup-summary" class="w-full p-8 text-center hidden animate-fadeInShift">
+                <h5 data-i18n="main.backup_success" class="mb-8 text-5xl font-bold text-gray-900 dark:text-white">
+                    <span class="text-content">Backup Success</span>
+                </h5>
+
+                <div class="flex justify-center items-center mb-8">
+                    <i class="fa-solid fa-circle-check text-green-500 fa-5x"></i>
+                </div>
+
+                <div class="text-lg text-gray-700 dark:text-gray-300 mb-6">
+                    <p class="mb-4" data-i18n="summary.total_games_backed_up">
+                        <span class="text-content">Total games backed up:</span>
+                        <span id="backup-summary-total-games"
+                            class="font-semibold text-gray-900 dark:text-white text-xl"></span>
+                    </p>
+                    <p class="mb-4" data-i18n="summary.total_backup_size">
+                        <span class="text-content">Total backup size:</span>
+                        <span id="backup-summary-total-size"
+                            class="font-semibold text-gray-900 dark:text-white text-xl"></span>
+                    </p>
+                    <p class="mb-4" data-i18n="summary.backup_saved_to">
+                        <span class="text-content">Backup saved to:</span>
+                        <span id="backup-summary-save-path"
+                            class="font-semibold text-gray-900 dark:text-white text-xl"></span>
+                    </p>
+                </div>
+
+                <div class="mt-8">
+                    <button id="backup-summary-done" type="button" data-i18n="summary.done"
+                        class="animate-fadeIn hidden text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700">
+                        <i class="fa-solid fa-check mr-1"></i>
+                        <span class="text-content">Done</span>
+                    </button>
+                </div>
+            </div>
+
             <div id="backup-content" class="hidden">
                 <div class="pb-4 bg-white dark:bg-gray-900 sticky top-0 flex flex-row justify-between items-center">
                     <label for="table-search" class="sr-only">Search</label>
@@ -112,21 +149,58 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
 
-            <!-- Backup button -->
-            <div class="mt-4">
-                <button id="backup-button" type="button" data-i18n="main.backup_selected"
-                    class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700">
-                    <i id="backup-icon" class="fa-solid fa-arrow-right-long mr-1"></i>
-                    <span id="backup-text" class="text-content">Backup Selected Games</span>
-                </button>
+                <!-- Backup button -->
+                <div class="mt-4">
+                    <button id="backup-button" type="button" data-i18n="main.backup_selected"
+                        class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700">
+                        <i id="backup-icon" class="fa-solid fa-arrow-right-long mr-1"></i>
+                        <span id="backup-text" class="text-content">Backup Selected Games</span>
+                    </button>
+                </div>
             </div>
         </div>
 
         <!-- Tab 2: Restore -->
         <div class="hidden" id="restore" role="tabpanel" aria-labelledby="restore-tab">
             <div id="restore-loading" role="status" class="flex justify-center" data-i18n="main.loading"></div>
+
+            <div id="restore-summary" class="w-full p-8 text-center hidden animate-fadeInShift">
+                <h5 data-i18n="main.restore_success" class="mb-8 text-5xl font-bold text-gray-900 dark:text-white">
+                    <span class="text-content">Restore Success</span>
+                </h5>
+
+                <div class="flex justify-center items-center mb-8">
+                    <i class="fa-solid fa-circle-check text-green-500 fa-5x"></i>
+                </div>
+
+                <div class="text-lg text-gray-700 dark:text-gray-300 mb-6">
+                    <p class="mb-4" data-i18n="summary.total_games_backed_up">
+                        <span class="text-content">Total games backed up:</span>
+                        <span id="restore-summary-total-games"
+                            class="font-semibold text-gray-900 dark:text-white text-xl"></span>
+                    </p>
+                    <p class="mb-4" data-i18n="summary.total_restore_size">
+                        <span class="text-content">Total backup size:</span>
+                        <span id="restore-summary-total-size"
+                            class="font-semibold text-gray-900 dark:text-white text-xl"></span>
+                    </p>
+                    <p class="mb-4" data-i18n="summary.restore_saved_to">
+                        <span class="text-content">Backup saved to:</span>
+                        <span id="restore-summary-save-path"
+                            class="font-semibold text-gray-900 dark:text-white text-xl"></span>
+                    </p>
+                </div>
+
+                <div class="mt-8">
+                    <button id="restore-summary-done" type="button" data-i18n="summary.done"
+                        class="animate-fadeIn hidden text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700">
+                        <i class="fa-solid fa-check mr-1"></i>
+                        <span class="text-content">Done</span>
+                    </button>
+                </div>
+            </div>
+
             <div id="restore-content" class="hidden">
                 <div class="pb-4 bg-white dark:bg-gray-900 sticky top-0">
                     <label for="table-search" class="sr-only">Search</label>
@@ -142,6 +216,10 @@
                         <input type="text" id="restore-search"
                             class="block py-2 pt-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                             placeholder="Search for items">
+                    </div>
+                    <div class="text-right">
+                        <p id="restore-selected-count" class="text-lg text-gray-900 dark:text-white"></p>
+                        <p id="restore-selected-size" class="text-sm text-gray-500 dark:text-gray-40e"></p>
                     </div>
                 </div>
 
@@ -159,19 +237,19 @@
                                         <label for="checkbox-all-search" class="sr-only">checkbox</label>
                                     </div>
                                 </th>
-                                <th scope="col" class="px-6 py-3 truncate w-2/5" data-i18n="main.game_name">
+                                <th scope="col" class="px-6 py-3 truncate w-3/12" data-i18n="main.game_name">
                                     <span class="text-content">Game Name</span>
                                 </th>
-                                <th scope="col" class="px-6 py-3 truncate w-2/5" data-i18n="main.supported_plats">
+                                <th scope="col" class="px-6 py-3 truncate w-2/12" data-i18n="main.supported_plats">
                                     <span class="text-content">Supported Platforms</span>
                                 </th>
-                                <th scope="col" class="px-6 py-3 truncate w-2/5" data-i18n="main.backup_size">
+                                <th scope="col" class="px-6 py-3 truncate w-2/12" data-i18n="main.backup_size">
                                     <span class="text-content">Backup Size</span>
                                 </th>
-                                <th scope="col" class="px-6 py-3 truncate w-2/5" data-i18n="main.last_backup_date">
+                                <th scope="col" class="px-6 py-3 truncate w-2/12" data-i18n="main.last_backup_date">
                                     <span class="text-content">Last Backup Date</span>
                                 </th>
-                                <th scope="col" class="px-6 py-3 truncate w-2/5" data-i18n="main.more">
+                                <th scope="col" class="px-6 py-3 truncate w-4 text-center" data-i18n="main.more">
                                     <span class="text-content">More</span>
                                 </th>
                             </tr>
@@ -183,26 +261,12 @@
                 </div>
             </div>
 
-            <!-- Restore buttons -->
+            <!-- Restore button -->
             <div class="mt-4">
-                <button type="button" data-i18n="main.backup_selected"
+                <button id="restore-button" type="button" data-i18n="main.restore_selected"
                     class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700">
-                    <i class="fa-solid fa-arrow-right-long mr-1"></i>
-                    <span class="text-content">Backup Selected Games</span>
-                </button>
-
-                <button disabled type="button"
-                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex items-center">
-                    <svg aria-hidden="true" role="status" class="inline w-4 h-4 me-3 text-white animate-spin"
-                        viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-                            fill="#E5E7EB" />
-                        <path
-                            d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-                            fill="currentColor" />
-                    </svg>
-                    Backup in Progress...
+                    <i id="restore-icon" class="fa-solid fa-arrow-right-long mr-1"></i>
+                    <span id="restore-text" class="text-content">Restore Selected Games</span>
                 </button>
             </div>
         </div>

@@ -1,13 +1,5 @@
-const {
-    screen,
-    app,
-    Menu,
-    BrowserWindow,
-    ipcMain,
-    dialog,
-    shell,
-} = require("electron");
-
+const { screen, app, Menu, BrowserWindow, ipcMain, dialog, shell } = require("electron");
+const { exec } = require('child_process');
 const fs = require("fs");
 const fse = require('fs-extra');
 const os = require('os');
@@ -21,7 +13,6 @@ const sqlite3 = require('sqlite3');
 const GameData = require('./GameData');
 
 app.commandLine.appendSwitch("lang", "en");
-// to change language for specific browser window: append '?lang=zh' to url
 
 let win;
 let settingsWin;
@@ -137,7 +128,7 @@ const menu = Menu.buildFromTemplate(menuTemplate);
 Menu.setApplicationMenu(menu);
 
 // ======================================================================
-// Settings module
+// Settings
 // ======================================================================
 const loadSettings = () => {
     const userDataPath = app.getPath("userData");
@@ -221,6 +212,9 @@ function saveSettings(key, value) {
     });
 }
 
+// ======================================================================
+// Listeners
+// ======================================================================
 ipcMain.on('save-settings', async (event, key, value) => {
     saveSettings(key, value);
 });
@@ -236,6 +230,19 @@ ipcMain.handle("get-settings", (event) => {
 ipcMain.handle("get-detected-game-paths", async (event) => {
     await gameData.detectGamePaths();
     return gameData.detectedGamePaths;
+});
+
+ipcMain.handle('open-url', async (event, url) => {
+    await shell.openExternal(url);
+});
+
+ipcMain.handle('open-backup-folder', async (event, wikiId) => {
+    const backupPath = path.join(settings['backupPath'], wikiId.toString());
+    if (fs.existsSync(backupPath) && fs.readdirSync(backupPath).length > 0) {
+        await shell.openPath(backupPath);
+    } else {
+        win.webContents.send('show-alert', 'warning', i18next.t('main.no_backups_found'));
+    }
 });
 
 ipcMain.handle('open-backup-dialog', async (event) => {
@@ -271,7 +278,7 @@ ipcMain.on('update-backup-table-main', (event) => {
 });
 
 // ======================================================================
-// Core functions
+// Backup
 // ======================================================================
 // A sample processed game: {
 //     title: 'Worms W.M.D',
@@ -309,6 +316,17 @@ ipcMain.on('update-backup-table-main', (event) => {
 //     backup_size: 414799
 // }
 
+ipcMain.handle('fetch-game-saves', async (event) => {
+    try {
+        const games = await getGameDataFromDB();
+        return games;
+    } catch (err) {
+        win.webContents.send('show-alert', 'error', i18next.t('main.fetch_game_failed'));
+        console.error("Failed to fetch game data:", err);
+        return [];
+    }
+});
+
 function getGameDataFromDB() {
     return new Promise((resolve, reject) => {
         const dbPath = path.join(__dirname, '../database/database.db');
@@ -326,7 +344,7 @@ function getGameDataFromDB() {
                     .map(dirent => dirent.name);
 
                 directories.forEach(dir => {
-                    stmt.get(dir, (err, row) => {
+                    stmt.get(dir, async (err, row) => {
                         if (err) {
                             console.error(`Error querying ${dir}:`, err);
                         } else if (row) {
@@ -334,7 +352,7 @@ function getGameDataFromDB() {
                             row.save_location = JSON.parse(row.save_location);
                             row.install_path = path.join(installPath, dir);
                             row.latest_backup = getLatestBackup(row.wiki_page_id);
-                            const processed_game = process_game(row);
+                            const processed_game = await process_game(row);
                             if (processed_game.resolved_paths.length != 0) {
                                 games.push(processed_game);
                             }
@@ -374,7 +392,7 @@ function getLatestBackup(wiki_page_id) {
     return moment(latestBackup, 'YYYY-MM-DD_HH-mm').format('YYYY/MM/DD HH:mm');
 }
 
-function process_game(db_game_row) {
+async function process_game(db_game_row) {
     const resolved_paths = [];
     let totalBackupSize = 0;
 
@@ -388,60 +406,60 @@ function process_game(db_game_row) {
     const osKey = osKeyMap[currentOS];
 
     if (osKey && db_game_row.save_location[osKey]) {
-        db_game_row.save_location[osKey].forEach((templatedPath) => {
-            const resolvedPaths = resolveTemplatedPath(templatedPath, db_game_row.install_path);
+        for (const templatedPath of db_game_row.save_location[osKey]) {
+            const resolvedPath = await resolveTemplatedPath(templatedPath, db_game_row.install_path);
 
             // Check whether the resolved path actually exists then calculate size
-            resolvedPaths.forEach(resolvedPath => {
-                if (resolvedPath.path.includes('*')) {
-                    const files = glob.sync(resolvedPath.path.replace(/\\/g, '/'));
-                    files.forEach(filePath => {
-                        if (fs.existsSync(filePath)) {
-                            totalBackupSize += calculateDirectorySize(filePath);
-                            resolved_paths.push({
-                                template: templatedPath,
-                                resolved: path.normalize(filePath),
-                                uid: resolvedPath.uid
-                            });
-                        }
-                    });
-                } else {
-                    if (fs.existsSync(resolvedPath.path)) {
-                        totalBackupSize += calculateDirectorySize(resolvedPath.path);
+            if (resolvedPath.path.includes('*')) {
+                const files = glob.sync(resolvedPath.path.replace(/\\/g, '/'));
+                for (const filePath of files) {
+                    if (fs.existsSync(filePath)) {
+                        totalBackupSize += calculateDirectorySize(filePath);
                         resolved_paths.push({
                             template: templatedPath,
-                            resolved: path.normalize(resolvedPath.path),
+                            resolved: path.normalize(filePath),
                             uid: resolvedPath.uid
                         });
                     }
                 }
-            });
-        });
+            } else {
+                if (fs.existsSync(resolvedPath.path)) {
+                    totalBackupSize += calculateDirectorySize(resolvedPath.path);
+                    resolved_paths.push({
+                        template: templatedPath,
+                        resolved: path.normalize(resolvedPath.path),
+                        uid: resolvedPath.uid
+                    });
+                }
+            }
+        }
     }
 
     // Process registry paths
-    if (osKey === 'win' && db_game_row.save_location['reg'].length > 0) {
-        db_game_row.save_location['reg'].forEach((templatedPath) => {
-            const resolvedPaths = resolveTemplatedPath(templatedPath, null);
+    if (osKey === 'win' && db_game_row.save_location['reg'] && db_game_row.save_location['reg'].length > 0) {
+        for (const templatedPath of db_game_row.save_location['reg']) {
+            const resolvedPath = await resolveTemplatedPath(templatedPath, null);
 
-            resolvedPaths.forEach(resolvedPath => {
-                const normalizedRegPath = path.normalize(resolvedPath.path);
-                const { hive, key } = parseRegistryPath(normalizedRegPath);
-                const winRegHive = getWinRegHive(hive);
-                if (!winRegHive) {
-                    return;
-                }
+            const normalizedRegPath = path.normalize(resolvedPath.path);
+            const { hive, key } = parseRegistryPath(normalizedRegPath);
+            const winRegHive = getWinRegHive(hive);
+            if (!winRegHive) {
+                continue;
+            }
 
-                const registryKey = new WinReg({
-                    hive: winRegHive,
-                    key: key
-                });
+            const registryKey = new WinReg({
+                hive: winRegHive,
+                key: key
+            });
 
+            await new Promise((resolve, reject) => {
                 registryKey.keyExists((err, exists) => {
                     if (err) {
                         win.webContents.send('show-alert', 'error', `${i18next.t('main.registry_existence_check_failed')}: ${db_game_row.title}`);
                         console.error(`Error checking registry existence for ${db_game_row.title}: ${err}`);
-                    } else if (exists) {
+                        return reject(err);
+                    }
+                    if (exists) {
                         resolved_paths.push({
                             template: templatedPath,
                             resolved: normalizedRegPath,
@@ -449,9 +467,10 @@ function process_game(db_game_row) {
                             type: 'reg'
                         });
                     }
+                    resolve();
                 });
             });
-        });
+        }
     }
 
     db_game_row.resolved_paths = resolved_paths;
@@ -481,9 +500,7 @@ function parseRegistryPath(registryPath) {
 }
 
 // Resolves the templated path to the actual path based on the save_path_mapping
-function resolveTemplatedPath(templatedPath, gameInstallPath) {
-    let resolvedPaths = [];
-
+async function resolveTemplatedPath(templatedPath, gameInstallPath) {
     let basePath = templatedPath.replace(/\{\{p\|[^\}]+\}\}/gi, match => {
         const normalizedMatch = match.toLowerCase().replace(/\\/g, '/');
 
@@ -504,21 +521,78 @@ function resolveTemplatedPath(templatedPath, gameInstallPath) {
     // Final check for unresolved placeholders, but ignore {{p|uid}}
     if (/\{\{p\|[^\}]+\}\}/i.test(basePath.toLowerCase().replace(/\{\{p\|uid\}\}/gi, ''))) {
         console.warn(`Unresolved placeholder found in path: ${basePath}`);
-        return resolvedPaths;
+        return { path: '' };
     }
 
-    // Handle {{p|uid}} by generating paths with all possible user IDs
+    // Handle {{p|uid}}
     if (basePath.includes('{{p|uid}}')) {
-        const userIds = [gameData.currentSteamUserId64, gameData.currentSteamUserId3, gameData.currentUbisoftUserId];
-        userIds.forEach(uid => {
-            const resolvedPath = basePath.replace(/\{\{p\|uid\}\}/gi, uid);
-            resolvedPaths.push({ path: resolvedPath, uid: uid });
-        });
+        return await fillPathUid(basePath);
     } else {
-        resolvedPaths.push({ path: basePath });
+        return { path: basePath };
+    }
+}
+
+async function fillPathUid(basePath) {
+    const userIds = [gameData.currentSteamUserId64, gameData.currentSteamUserId3, gameData.currentUbisoftUserId];
+
+    // Check with pre-determined user ids
+    for (const uid of userIds) {
+        const resolvedPath = basePath.replace(/\{\{p\|uid\}\}/gi, uid);
+        const matchedPaths = glob.sync(resolvedPath.replace(/\\/g, '/'));
+
+        if (matchedPaths.length > 0) {
+            return {
+                path: resolvedPath,
+                uid: uid,
+            };
+        }
     }
 
-    return resolvedPaths;
+    // If no valid paths found with userIds, attempt wildcard for uid
+    const wildcardPath = basePath.replace(/\{\{p\|uid\}\}/gi, '*');
+    const wildcardResolvedPaths = glob.sync(wildcardPath.replace(/\\/g, '/'));
+
+    if (wildcardResolvedPaths.length === 0) {
+        return { path: '' };
+    }
+
+    const latestPath = await findLatestModifiedPath(wildcardResolvedPaths);
+    const extractedUid = extractUidFromPath(basePath, latestPath);
+    return {
+        path: basePath.replace(/\{\{p\|uid\}\}/gi, extractedUid),
+        uid: extractedUid,
+    };
+}
+
+// Find the latest modified path
+async function findLatestModifiedPath(paths) {
+    let latestPath = null;
+    let latestTime = 0;
+
+    for (const filePath of paths) {
+        const stats = await fs.promises.stat(filePath);
+        if (stats.mtimeMs > latestTime) {
+            latestTime = stats.mtimeMs;
+            latestPath = filePath;
+        }
+    }
+
+    return latestPath;
+}
+
+// Extract the uid from the resolved path based on the template path
+function extractUidFromPath(templatePath, resolvedPath) {
+    const templateParts = templatePath.split(path.sep);
+    const resolvedParts = resolvedPath.split(path.sep);
+
+    // Find where {{p|uid}} appears in the template and extract the corresponding part from the resolved path
+    const uidIndex = templateParts.findIndex(part => part.includes('{{p|uid}}'));
+
+    if (uidIndex !== -1 && resolvedParts[uidIndex]) {
+        return resolvedParts[uidIndex];
+    }
+
+    return null;
 }
 
 // Calculates the total size of a directory or file
@@ -541,17 +615,6 @@ function calculateDirectorySize(directoryPath) {
 
     return totalSize;
 }
-
-ipcMain.handle('fetch-game-saves', async (event) => {
-    try {
-        const games = await getGameDataFromDB();
-        return games;
-    } catch (err) {
-        win.webContents.send('show-alert', 'error', i18next.t('main.fetch_game_failed'));
-        console.error("Failed to fetch game data:", err);
-        return [];
-    }
-});
 
 ipcMain.handle('get-icon-map', async (event) => {
     return {
@@ -591,8 +654,6 @@ const save_path_mapping = {
     '{{p|xdgconfighome}}': process.env.XDG_CONFIG_HOME || path.join(os.homedir(), '.config'),
 };
 
-// Battlerite, Deep Rock Galactic: Survivor
-
 ipcMain.handle('backup-game', async (event, gameData) => {
     const gameBackupPath = path.join(settings['backupPath'], gameData.wiki_page_id.toString());
 
@@ -605,13 +666,31 @@ ipcMain.handle('backup-game', async (event, gameData) => {
 
         // Iterate over resolved paths and copy files to the backup instance
         for (const [index, resolvedPathObj] of gameData.resolved_paths.entries()) {
+            const resolvedPath = path.normalize(resolvedPathObj.resolved);
+            const pathFolderName = `path${index + 1}`;
+            const targetPath = path.join(backupInstancePath, pathFolderName);
+
             if (resolvedPathObj['type'] === 'reg') {
+                // Registry backup logic using reg.exe
+                await fse.ensureDir(targetPath);
+                const registryFilePath = path.join(targetPath, 'registry_backup.reg');
+
+                const regExportCommand = `reg export "${resolvedPath}" "${registryFilePath}" /y`;
+                exec(regExportCommand, (error, stdout, stderr) => {
+                    if (error) {
+                        console.error(`Error exporting registry key: ${resolvedPath}`, error);
+                        return;
+                    }
+                });
+
+                backupConfig.push({
+                    folder_name: pathFolderName,
+                    template: resolvedPathObj.template,
+                    uid: resolvedPathObj.uid || null
+                });
 
             } else {
-                const resolvedPath = resolvedPathObj.resolved;
-                const pathFolderName = `path${index + 1}`;
-                const targetPath = path.join(backupInstancePath, pathFolderName);
-    
+                // File/directory backup logic
                 await fse.ensureDir(targetPath);
                 const stats = await fse.stat(resolvedPath);
                 if (stats.isDirectory()) {
@@ -620,7 +699,7 @@ ipcMain.handle('backup-game', async (event, gameData) => {
                     const targetFilePath = path.join(targetPath, path.basename(resolvedPath));
                     await fse.copy(resolvedPath, targetFilePath, { overwrite: true });
                 }
-    
+
                 backupConfig.push({
                     folder_name: pathFolderName,
                     template: resolvedPathObj.template,
@@ -635,7 +714,7 @@ ipcMain.handle('backup-game', async (event, gameData) => {
         const existingBackups = (await fse.readdir(gameBackupPath)).sort((a, b) => {
             return a.localeCompare(b);
         });
-    
+
         // If there are more backups than allowed, delete the oldest ones
         const maxBackups = settings['maxBackups'];
         if (existingBackups.length > maxBackups) {
@@ -652,15 +731,6 @@ ipcMain.handle('backup-game', async (event, gameData) => {
     }
 });
 
-ipcMain.handle('open-url', async (event, url) => {
-    await shell.openExternal(url);
-});
-
-ipcMain.handle('open-backup-folder', async (event, wikiId) => {
-    const backupPath = path.join(settings['backupPath'], wikiId.toString());
-    if (fs.existsSync(backupPath) && fs.readdirSync(backupPath).length > 0) {
-        await shell.openPath(backupPath);
-    } else {
-        win.webContents.send('show-alert', 'warning', i18next.t('main.no_backups_found'));
-    }
-});
+// ======================================================================
+// Restore
+// ======================================================================

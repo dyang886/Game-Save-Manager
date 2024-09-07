@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupBackupButton();
     setDropDownAction();
 
-    await updateBackupTable();
+    await updateBackupTable(true);
     updateSelectedCountAndSize('backup');
 });
 
@@ -15,6 +15,8 @@ window.api.receive('apply-language', () => {
 });
 
 const backupTableDataMap = new Map();
+let backup_total_size = 0;
+let backup_total_selected = 0;
 
 const loader = `
     <svg aria-hidden="true" class="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none">
@@ -24,25 +26,34 @@ const loader = `
     <span class="text-content pl-3 text-gray-900 dark:text-white">Loading...</span>
 `;
 
-async function updateBackupTable() {
-    await showLoadingIndicator('backup');
+async function updateBackupTable(loader) {
+    if (loader) {
+        await showLoadingIndicator('backup');
+    }
+
     const gameData = await window.api.invoke('fetch-game-saves');
     const iconMap = await window.api.invoke('get-icon-map');
     await populateBackupTable(gameData, iconMap);
-    hideLoadingIndicator('backup');
+
+    if (loader) {
+        hideLoadingIndicator('backup');
+    }
 }
 
 window.api.receive('update-backup-table', async () => {
-    await updateBackupTable();
+    await updateBackupTable(true);
 })
 
 async function showLoadingIndicator(tabId) {
     const loadingContainer = document.getElementById(`${tabId}-loading`);
+    const actionSummary = document.querySelector(`#${tabId}-summary`);
     const contentContainer = document.getElementById(`${tabId}-content`);
-    const backupButton = document.getElementById('backup-button');
+    const tableActionButton = document.getElementById(`${tabId}-button`);
 
-    backupButton.disabled = true;
-    backupButton.classList.add('cursor-not-allowed');
+    actionSummary.classList.add('hidden');
+    document.querySelector(`#${tabId}-summary-done`).classList.add('hidden');
+    tableActionButton.disabled = true;
+    tableActionButton.classList.add('cursor-not-allowed');
 
     if (contentContainer && window.getComputedStyle(contentContainer).display !== 'none') {
         contentContainer.classList.remove('animate-fadeInShift');
@@ -63,6 +74,8 @@ async function showLoadingIndicator(tabId) {
     } else {
         if (loadingContainer) {
             loadingContainer.innerHTML = loader;
+            const loadingTextKey = loadingContainer.getAttribute('data-i18n');
+            loadingContainer.querySelector('.text-content').textContent = await window.i18n.translate(loadingTextKey);
             loadingContainer.classList.remove('hidden');
         }
     }
@@ -489,10 +502,10 @@ async function unpinGameFromTop(wikiId) {
 async function updateSelectedCountAndSize(tableName) {
     const selectedCountWidget = document.querySelector(`#${tableName}-selected-count`);
     const totalSizeWidget = document.querySelector(`#${tableName}-selected-size`);
-    const tableBody = document.querySelector(`#${tableName} tbody`)
-    let total_size = 0;
-    let selected_games_count = 0;
+    const tableBody = document.querySelector(`#${tableName} tbody`);
     let total_games_count = 0;
+    backup_total_size = 0;
+    backup_total_selected = 0;
 
     Array.from(tableBody.querySelectorAll('.row-checkbox:checked'))
         .map(checkbox => checkbox.closest('tr').getAttribute('data-row-id'))
@@ -501,24 +514,24 @@ async function updateSelectedCountAndSize(tableName) {
                 const gameData = backupTableDataMap.get(parseInt(rowId));
                 total_games_count = backupTableDataMap.size
                 if (gameData) {
-                    total_size += gameData.backup_size;
-                    selected_games_count += 1;
+                    backup_total_size += gameData.backup_size;
+                    backup_total_selected += 1;
                 }
             } else if (tableName === 'restore') {
                 // TODO: restore tabledatamap
             }
         });
-    
-    if (selected_games_count === 0) {
+
+    if (backup_total_selected === 0) {
         total_games_count = tableBody.querySelectorAll('.row-checkbox').length;
     }
 
     selectedCountWidget.innerHTML = await window.i18n.translate('main.selected_games_count', {
-        count: selected_games_count,
+        count: backup_total_selected,
         total: total_games_count
     });
     totalSizeWidget.innerHTML = await window.i18n.translate(`main.total_${tableName}_size`, {
-        size: formatSize(total_size)
+        size: formatSize(backup_total_size)
     });
 }
 
@@ -579,6 +592,11 @@ function setupBackupButton() {
         backupText.textContent = await window.i18n.translate('main.backup_in_progress');
 
         const exitCode = await performBackup();
+        if (!exitCode) {
+            showBackupSummary();
+            await updateBackupTable(false);
+            document.querySelector('#backup-summary-done').classList.remove('hidden');
+        }
 
         // Re-enable the button and revert to the original state
         backupButton.disabled = false;
@@ -587,10 +605,6 @@ function setupBackupButton() {
         backupIcon.classList.add('fa-arrow-right-long');
         backupButton.setAttribute('data-i18n', 'main.backup_selected');
         backupText.textContent = await window.i18n.translate('main.backup_selected');
-
-        if (!exitCode) {
-            await updateBackupTable();
-        }
     });
 }
 
@@ -610,6 +624,27 @@ async function performBackup() {
         await window.api.invoke('backup-game', gameData);
     });
 
-    showAlert('success', await window.i18n.translate('main.backup_complete'));
     return 0
+}
+
+function showBackupSummary() {
+    const backupSummary = document.querySelector('#backup-summary');
+    const backupContent = document.querySelector('#backup-content');
+    backupSummary.classList.remove('hidden');
+    backupContent.classList.add('hidden');
+
+    window.api.invoke('get-settings').then((settings) => {
+        if (settings) {
+            document.getElementById('backup-summary-total-games').textContent = backup_total_selected;
+            document.getElementById('backup-summary-total-size').textContent = formatSize(backup_total_size);
+            document.getElementById('backup-summary-save-path').textContent = settings.backupPath;
+        }
+    });
+
+    document.querySelector('#backup-summary-done').addEventListener('click', (event) => {
+        backupContent.classList.remove('animate-fadeInShift', 'animate-fadeOut');
+        backupSummary.classList.add('hidden');
+        backupContent.classList.remove('hidden');
+        event.target.closest('button').classList.add('hidden');
+    });
 }

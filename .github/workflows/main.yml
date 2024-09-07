@@ -40,7 +40,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         git add ./database/fetch_recent.log
-        git add ./database/game_names.json
+        git add ./database/translations.json
         git add ./database/database.db
         git commit -m 'Database update'
         git push origin HEAD:${{ github.ref }}
@@ -55,7 +55,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: game-name-translations
-        path: ./database/game_names.json
+        path: ./database/translations.json
 
     - name: Upload Database File
       uses: actions/upload-artifact@v4

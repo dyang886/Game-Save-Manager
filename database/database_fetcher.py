@@ -12,8 +12,6 @@ import mwparserfromhell
 import requests
 from steam.client import SteamClient
 
-from trans_additions import additions
-
 WIKI_API_URL = "https://www.pcgamingwiki.com/w/api.php"
 RELEVANT_CATEGORIES = ["Category:Games", "Category:Emulators"]
 game_processed = 0
@@ -40,9 +38,21 @@ class DatabaseFetcher:
 
     def fetch_translations(self):
         index_page = "https://dl.fucnm.com/datafile/xgqdetail/index.txt"
+        translations_file = './database/translations.json'
+
+        # Load existing translations if the file exists
+        existing_translations = []
+        if os.path.exists(translations_file):
+            with open(translations_file, 'r', encoding='utf-8') as file:
+                existing_translations = json.load(file)
+
+        # Ensure existing_translations is a dictionary by steam_id or en_US as fallback
+        existing_translations_dict = {
+            item.get('steam_id') or item['en_US']: item for item in existing_translations
+        }
+
         retry = 0
         max_retry = 10
-
         while retry < max_retry:
             try:
                 response = self.client.get(index_page, headers=self.headers)
@@ -55,13 +65,7 @@ class DatabaseFetcher:
                 if not total_pages:
                     raise ValueError("Total pages not found in the response")
 
-                all_data = self.fetch_all_pages(total_pages)
-                all_data.extend(additions)
-                self.translations = all_data
-                game_names_file = './database/game_names.json'
-                with open(game_names_file, 'w', encoding='utf-8') as file:
-                    json.dump(all_data, file, ensure_ascii=False, indent=4)
-                logging.info(f"Game translations successfully saved to {game_names_file}")
+                new_data = self.fetch_all_pages(total_pages)
                 break
 
             except Exception as e:
@@ -69,6 +73,39 @@ class DatabaseFetcher:
                 logging.warning(f"Failed to query game translations (attempt {retry}/{max_retry}): {str(e)}")
                 if retry >= max_retry:
                     raise
+
+        # Filter new translations
+        added_entries_count = 0
+        for entry in new_data:
+            en_name = entry.get('en_US')
+            steam_id = entry.get('steam_id')
+
+            # Check if there's an existing entry with the same en_US name
+            existing_entry = next((e for e in existing_translations if e.get('en_US') == en_name), None)
+
+            if existing_entry:
+                # If the new entry has a steam_id and the existing one doesn't, add the steam_id
+                if steam_id and not existing_entry.get('steam_id'):
+                    existing_translations_dict[en_name]['steam_id'] = steam_id
+                    logging.info(f"Added steam_id to existing entry for {en_name}.")
+            elif (steam_id and steam_id not in existing_translations_dict) or not steam_id:
+                # Add the new entry if it's completely new
+                unique_key = steam_id or en_name
+                existing_translations_dict[unique_key] = entry
+                added_entries_count += 1
+
+        # Convert back to list and sort by en_US
+        combined_translations = sorted(
+            existing_translations_dict.values(),
+            key=lambda x: x['en_US']
+        )
+        self.translations = combined_translations
+
+        # Save the updated translations to the file
+        with open(translations_file, 'w', encoding='utf-8') as file:
+            json.dump(combined_translations, file, ensure_ascii=False, indent=4)
+
+        logging.info(f"Added {added_entries_count} new game translations")
     
     def fetch_all_pages(self, total_pages):
         all_data = []
@@ -113,6 +150,7 @@ class DatabaseFetcher:
     def fetch_all_category_members(self):
         for category in RELEVANT_CATEGORIES:
             continue_param = {}
+            continue_param = {'cmcontinue': 'page|494e46494e49554d20535452494b45|35702', 'continue': '-||'}
 
             while True:
                 members = []
@@ -181,14 +219,14 @@ class DatabaseFetcher:
                     logging.info(f"No save locations found: {title}")
                     continue
 
+                # Add translations
+                translation = self.find_translation(game_entry.get('steam_id'), game_entry['title'])
+                game_entry['zh_CN'] = translation
+                if translation:
+                    logging.info(f"Found zh_CN for {title}: {translation}")
+
                 if game_entry['steam_id']:
                     steam_ids.append(int(game_entry['steam_id']))
-
-                    # Add translations
-                    translation = self.find_translation_by_steam_id(game_entry['steam_id'])
-                    game_entry['zh_CN'] = translation
-                    if translation:
-                        logging.info(f"Found zh_CN for {title}: {translation}")
 
                 self.save_entry(game_entry)
 
@@ -322,67 +360,69 @@ class DatabaseFetcher:
             for template in templates:
                 # example of a "template": {{Game data/saves|Windows|{{p|game}}\mlc01\usr\save\|{{p|userprofile}}\Documents\mlc01\usr\save\{{Note|Legacy default location}}}}
                 params = template.params
-                system = params[0].strip()
                 paths = params[1:]
 
-                if system in system_map and any(path.strip() for path in paths):
+                if any(path.strip() for path in paths):
                     for path in paths:
-                        cleaned_path_nodes = []
 
-                        for node in path.value.nodes:
-                            if isinstance(node, mwparserfromhell.nodes.template.Template):
-                                # Remove the "Note" and "citation needed" section, for instance: {{Note|Legacy default location}} or {{cn}}
-                                if node.name.lower().strip() in ["note", "cn"]:
-                                    continue
-                                if len(node.params) > 0 and node.params[0].lower().strip() in ["hkcu", "hkey_current_user", "hklm", "hkey_local_machine", "wow64"]:
+                        system = params[0].strip()
+                        if system in system_map:
+
+                            cleaned_path_nodes = []
+                            for node in path.value.nodes:
+                                if isinstance(node, mwparserfromhell.nodes.template.Template):
+                                    # Remove the "Note" and "citation needed" section, for instance: {{Note|Legacy default location}} or {{cn}}
+                                    if node.name.lower().strip() in ["note", "cn"]:
+                                        continue
+                                    if len(node.params) > 0 and node.params[0].lower().strip() in ["hkcu", "hkey_current_user", "hklm", "hkey_local_machine", "wow64"]:
+                                        system = "Registry"
+                                elif any(key in str(node).lower().strip() for key in ["hkey_current_user", "hkey_local_machine", "hkey_classes_root"]):
                                     system = "Registry"
-                            elif any(key in str(node).lower().strip() for key in ["hkey_current_user", "hkey_local_machine", "hkey_classes_root"]):
-                                system = "Registry"
 
-                            node_str = str(node).strip()
-                            if '<ref>' in node_str and '</ref>' in node_str:
-                                node = node_str.split('<ref>')[0] + node_str.split('</ref>')[1]
-                            if '<!--' in node_str and '-->' in node_str:
-                                node = node_str.split('<!--')[0] + node_str.split('-->')[1]
+                                node_str = str(node).strip()
+                                if '<ref>' in node_str and '</ref>' in node_str:
+                                    node = node_str.split('<ref>')[0] + node_str.split('</ref>')[1]
+                                if '<!--' in node_str and '-->' in node_str:
+                                    node = node_str.split('<!--')[0] + node_str.split('-->')[1]
 
-                            cleaned_path_nodes.append(str(node))
-                        cleaned_path = "".join(cleaned_path_nodes).strip()
+                                cleaned_path_nodes.append(str(node))
+                            cleaned_path = "".join(cleaned_path_nodes).strip()
 
-                        # Only keep the most general path, any subdirectories should not be separate paths
-                        cleaned_path_check = os.path.normpath(cleaned_path).lower()
-                        if cleaned_path and cleaned_path_check != "{{p|game}}":
-                            save_location_key = system_map[system]
-                            relative_paths = {p for p in entry['save_location'][save_location_key] if not os.path.isabs(p)}
-                            absolute_paths = {p for p in entry['save_location'][save_location_key] if os.path.isabs(p)}
+                            # Only keep the most general path, any subdirectories should not be separate paths
+                            cleaned_path_check = os.path.normpath(cleaned_path).lower()
+                            if cleaned_path and cleaned_path_check != "{{p|game}}":
+                                save_location_key = system_map[system]
+                                relative_paths = {p for p in entry['save_location'][save_location_key] if not os.path.isabs(p)}
+                                absolute_paths = {p for p in entry['save_location'][save_location_key] if os.path.isabs(p)}
 
-                            is_abs = os.path.isabs(cleaned_path)
-                            should_add_path = True
-                            cleaned_path_normalized = os.path.normpath(cleaned_path)
-                            
-                            paths_to_check = absolute_paths if is_abs else relative_paths
-                            try:
-                                for existing_path in paths_to_check:
-                                    existing_path_normalized = os.path.normpath(existing_path)
-                                    common_path = os.path.commonpath([existing_path_normalized, cleaned_path_normalized])
+                                is_abs = os.path.isabs(cleaned_path)
+                                should_add_path = True
+                                cleaned_path_normalized = os.path.normpath(cleaned_path)
+                                
+                                paths_to_check = absolute_paths if is_abs else relative_paths
+                                try:
+                                    for existing_path in paths_to_check:
+                                        existing_path_normalized = os.path.normpath(existing_path)
+                                        common_path = os.path.commonpath([existing_path_normalized, cleaned_path_normalized])
 
-                                    if common_path == existing_path_normalized:
-                                        should_add_path = False
-                                        break
-                                    if common_path == cleaned_path_normalized:
-                                        entry['save_location'][save_location_key].remove(existing_path)
+                                        if common_path == existing_path_normalized:
+                                            should_add_path = False
+                                            break
+                                        if common_path == cleaned_path_normalized:
+                                            entry['save_location'][save_location_key].remove(existing_path)
 
-                            except ValueError as e:
-                                if not str(e) == "Paths don't have the same drive":
-                                    raise e
+                                except ValueError as e:
+                                    if not str(e) == "Paths don't have the same drive":
+                                        raise e
 
-                            if should_add_path:
-                                entry['save_location'][save_location_key].add(cleaned_path_normalized)
+                                if should_add_path:
+                                    entry['save_location'][save_location_key].add(cleaned_path_normalized)
 
-                        elif cleaned_path_check == "{{p|game}}":
-                            logging.info(f"Path not specified for game install: {title}")
+                            elif cleaned_path_check == "{{p|game}}":
+                                logging.info(f"Path not specified for game install: {title}")
 
-                if system not in system_map:
-                    logging.warning(f"Unknown system: {system}")
+                        if system not in system_map:
+                            logging.warning(f"Unknown system: {system}")
         
         for os_key in entry['save_location']:
             entry['save_location'][os_key] = list(entry['save_location'][os_key])
@@ -410,10 +450,14 @@ class DatabaseFetcher:
                     else:
                         logging.error(f"No entry found in database for steam_id {steam_id}")
     
-    def find_translation_by_steam_id(self, steam_id):
+    def find_translation(self, steam_id, en_name):
         for translation in self.translations:
-            if translation.get('steam_id') == int(steam_id):
+            if steam_id and translation.get('steam_id') == steam_id:
                 return translation.get('zh_CN')
+            
+            if en_name and translation.get('en_US') == en_name:
+                return translation.get('zh_CN')
+    
         return None
 
     def fetch_recent_changes(self):
