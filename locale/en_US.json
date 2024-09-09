@@ -25,7 +25,8 @@
         "game_name": "Game Name",
         "supported_plats": "Supported Platforms",
         "backup_size": "Backup Size",
-        "last_backup_date": "Last Backup Date",
+        "restore_size": "Restore Size",
+        "newest_backup_time": "Newest Backup Time",
         "more": "More",
         "backup_selected": "Backup Selected Games",
         "backup_in_progress": "Backup in progress...",
@@ -39,10 +40,15 @@
         "no_backups_found": "No backups found",
         "search_for_games": "Search for games",
         "backup_error_for_game": "Error during backup for game",
-        "fetch_game_failed": "Failed to fetch game data from database",
+        "fetch_backup_failed": "Failed to fetch data for backup",
+        "fetch_restore_failed": "Failed to fetch data for restoration",
         "registry_existence_check_failed": "Failed to check registry existence for game",
         "selected_games_count": "{{count}} of {{total}} games selected",
-        "total_backup_size": "Total backup size: {{size}}"
+        "total_backup_size": "Total backup size: {{size}}",
+        "total_restore_size": "Total restore size: {{size}}",
+        "backup_count": "Number of Backups",
+        "restore_selected": "Restore Selected Games",
+        "incorrect_backup_structure": "Incorrect backup structure"
     },
 
     "summary": {

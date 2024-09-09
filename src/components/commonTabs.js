@@ -1,104 +1,19 @@
 document.addEventListener('DOMContentLoaded', async () => {
     updateTranslations();
     initializeTabs();
-    setupSearchFilter();
+    setupSearchFilter('backup');
+    setupSearchFilter('restore');
     setupBackupButton();
     setDropDownAction();
 
-    await updateBackupTable(true);
-    updateSelectedCountAndSize('backup');
+    updateBackupTable(true);
+    updateRestoreTable(true);
 });
 
 window.api.receive('apply-language', () => {
     updateTranslations();
     updateSelectedCountAndSize('backup');
 });
-
-const backupTableDataMap = new Map();
-let backup_total_size = 0;
-let backup_total_selected = 0;
-
-const loader = `
-    <svg aria-hidden="true" class="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none">
-        <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
-        <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
-    </svg>
-    <span class="text-content pl-3 text-gray-900 dark:text-white">Loading...</span>
-`;
-
-async function updateBackupTable(loader) {
-    if (loader) {
-        await showLoadingIndicator('backup');
-    }
-
-    const gameData = await window.api.invoke('fetch-game-saves');
-    const iconMap = await window.api.invoke('get-icon-map');
-    await populateBackupTable(gameData, iconMap);
-
-    if (loader) {
-        hideLoadingIndicator('backup');
-    }
-}
-
-window.api.receive('update-backup-table', async () => {
-    await updateBackupTable(true);
-})
-
-async function showLoadingIndicator(tabId) {
-    const loadingContainer = document.getElementById(`${tabId}-loading`);
-    const actionSummary = document.querySelector(`#${tabId}-summary`);
-    const contentContainer = document.getElementById(`${tabId}-content`);
-    const tableActionButton = document.getElementById(`${tabId}-button`);
-
-    actionSummary.classList.add('hidden');
-    document.querySelector(`#${tabId}-summary-done`).classList.add('hidden');
-    tableActionButton.disabled = true;
-    tableActionButton.classList.add('cursor-not-allowed');
-
-    if (contentContainer && window.getComputedStyle(contentContainer).display !== 'none') {
-        contentContainer.classList.remove('animate-fadeInShift');
-        contentContainer.classList.add('animate-fadeOut');
-
-        setTimeout(async () => {
-            contentContainer.classList.add('hidden');
-
-            if (loadingContainer) {
-                loadingContainer.innerHTML = loader;
-                const loadingTextKey = loadingContainer.getAttribute('data-i18n');
-                loadingContainer.querySelector('.text-content').textContent = await window.i18n.translate(loadingTextKey);
-                loadingContainer.classList.remove('hidden');
-            }
-        }, 300);
-
-        // First time showing loader without table content
-    } else {
-        if (loadingContainer) {
-            loadingContainer.innerHTML = loader;
-            const loadingTextKey = loadingContainer.getAttribute('data-i18n');
-            loadingContainer.querySelector('.text-content').textContent = await window.i18n.translate(loadingTextKey);
-            loadingContainer.classList.remove('hidden');
-        }
-    }
-}
-
-function hideLoadingIndicator(tabId) {
-    const loadingContainer = document.getElementById(`${tabId}-loading`);
-    const contentContainer = document.getElementById(`${tabId}-content`);
-    const backupButton = document.getElementById('backup-button');
-
-    backupButton.disabled = false;
-    backupButton.classList.remove('cursor-not-allowed');
-
-    if (loadingContainer) {
-        loadingContainer.classList.add('hidden');
-    }
-
-    if (contentContainer) {
-        contentContainer.classList.remove('hidden');
-        contentContainer.classList.remove('animate-fadeOut');
-        contentContainer.classList.add('animate-fadeInShift');
-    }
-}
 
 // Function to initialize the tab switching functionality
 function initializeTabs() {
@@ -153,10 +68,74 @@ function showTab(tab, tabElements, options) {
     }
 }
 
+const loader = `
+    <svg aria-hidden="true" class="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none">
+        <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+        <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+    </svg>
+    <span class="text-content pl-3 text-gray-900 dark:text-white">Loading...</span>
+`;
+
+async function showLoadingIndicator(tabName) {
+    const loadingContainer = document.getElementById(`${tabName}-loading`);
+    const actionSummary = document.querySelector(`#${tabName}-summary`);
+    const contentContainer = document.getElementById(`${tabName}-content`);
+    const actionButton = document.getElementById(`${tabName}-button`);
+
+    actionSummary.classList.add('hidden');
+    document.querySelector(`#${tabName}-summary-done`).classList.add('hidden');
+    actionButton.disabled = true;
+    actionButton.classList.add('cursor-not-allowed');
+
+    if (contentContainer && window.getComputedStyle(contentContainer).display !== 'none') {
+        contentContainer.classList.remove('animate-fadeInShift');
+        contentContainer.classList.add('animate-fadeOut');
+
+        setTimeout(async () => {
+            contentContainer.classList.add('hidden');
+
+            if (loadingContainer) {
+                loadingContainer.innerHTML = loader;
+                const loadingTextKey = loadingContainer.getAttribute('data-i18n');
+                loadingContainer.querySelector('.text-content').textContent = await window.i18n.translate(loadingTextKey);
+                loadingContainer.classList.remove('hidden');
+            }
+        }, 300);
+
+        // First time showing loader without table content
+    } else {
+        if (loadingContainer) {
+            loadingContainer.innerHTML = loader;
+            const loadingTextKey = loadingContainer.getAttribute('data-i18n');
+            loadingContainer.querySelector('.text-content').textContent = await window.i18n.translate(loadingTextKey);
+            loadingContainer.classList.remove('hidden');
+        }
+    }
+}
+
+function hideLoadingIndicator(tabName) {
+    const loadingContainer = document.getElementById(`${tabName}-loading`);
+    const contentContainer = document.getElementById(`${tabName}-content`);
+    const actionButton = document.getElementById(`${tabName}-button`);
+
+    actionButton.disabled = false;
+    actionButton.classList.remove('cursor-not-allowed');
+
+    if (loadingContainer) {
+        loadingContainer.classList.add('hidden');
+    }
+
+    if (contentContainer) {
+        contentContainer.classList.remove('hidden');
+        contentContainer.classList.remove('animate-fadeOut');
+        contentContainer.classList.add('animate-fadeInShift');
+    }
+}
+
 // Function to set up the search filter for the table
-function setupSearchFilter() {
-    const searchInput = document.getElementById('backup-search');
-    const tableBody = document.querySelector('#backup tbody');
+function setupSearchFilter(tabName) {
+    const searchInput = document.getElementById(`${tabName}-search`);
+    const tableBody = document.querySelector(`#${tabName} tbody`);
 
     searchInput.addEventListener('input', function () {
         const filter = searchInput.value.toLowerCase();
@@ -170,63 +149,26 @@ function setupSearchFilter() {
     });
 }
 
-// Function to populate backup table
-async function populateBackupTable(data, iconMap) {
-    const backupTable = document.querySelector('#backup');
-    const tableBody = document.querySelector('#backup tbody');
-    const selectedRowIds = Array.from(tableBody.querySelectorAll('.row-checkbox:checked'))
-        .map(checkbox => checkbox.closest('tr').getAttribute('data-row-id'));
-    tableBody.innerHTML = '';
-    const selectAllCheckbox = backupTable.querySelector('#checkbox-all-search');
-    const settings = await window.api.invoke('get-settings');
-    const pinnedGamesWikiIds = settings.pinnedGames || [];
-    backupTableDataMap.clear();
+async function updateNewestBackupTime(tabName, wikiId) {
+    const tableBody = document.querySelector(`#${tabName} tbody`);
+    const row = tableBody.querySelector(`tr[data-wiki-id="${wikiId}"]`);
+    const newestBackupTime = await window.api.invoke('get-newest-backup-time', wikiId);
 
-    const platformOrder = ['Steam', 'Ubisoft', 'EA', 'Epic', 'GOG', 'Xbox', 'Blizzard'];
+    if (row) {
+        const newestBackupCell = row.querySelector('.newest-backup-time');
+        if (newestBackupCell) {
+            newestBackupCell.textContent = newestBackupTime;
+        }
 
-    const pinnedGames = data.filter(game => pinnedGamesWikiIds.includes(game.wiki_page_id.toString()));
-    const otherGames = data.filter(game => !pinnedGamesWikiIds.includes(game.wiki_page_id.toString()));
+        const dataMap = tabName === 'backup' ? backupTableDataMap : restoreTableDataMap;
 
-    // Function to append rows to the table body
-    const appendRowsToTable = (games, isPinned) => {
-        games.forEach((game) => {
-            const index = backupTableDataMap.size;
-            backupTableDataMap.set(index, game);
-
-            let gameTitle = game.title;
-            if (game.zh_CN && settings.language === 'zh_CN') {
-                gameTitle = game.zh_CN;
-            }
-
-            const sortedPlatforms = platformOrder.filter(platform => game.platform.includes(platform));
-            const platformIcons = sortedPlatforms.map(platform => getPlatformIcon(platform, iconMap)).join(' ');
-            const backupSize = formatSize(game.backup_size);
-
-            let row = createBackupTableRow(index, gameTitle, platformIcons, backupSize, game.latest_backup, game.wiki_page_id);
-
-            // Check if selected
-            if (selectedRowIds.includes(index.toString())) {
-                const checkbox = row.querySelector('.row-checkbox');
-                if (checkbox) {
-                    checkbox.checked = true;
-                }
-            }
-
-            // Check if pinned
-            if (isPinned) {
-                row = addPinIcon(row);
-            }
-
-            tableBody.appendChild(row);
-        });
-    };
-
-    appendRowsToTable(pinnedGames, true);
-    appendRowsToTable(otherGames, false);
-
-    setupBackupSelectAllCheckbox(selectAllCheckbox);
+        const gameData = dataMap.get(wikiId);
+        if (gameData) {
+            gameData.latest_backup = newestBackupTime;
+            dataMap.set(wikiId, gameData);
+        }
+    }
 }
-
 
 function addPinIcon(row) {
     const titleCell = row.querySelector('th[scope="row"]');
@@ -249,44 +191,6 @@ function formatSize(sizeInBytes) {
     if (sizeInBytes === 0) return '0 B';
     const i = Math.floor(Math.log(sizeInBytes) / Math.log(1024));
     return (sizeInBytes / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'KB', 'MB', 'GB', 'TB'][i];
-}
-
-// Function to create a backup table row
-function createBackupTableRow(index, gameTitle, platformIcons, backupSize, lastBackupTime, wikiPageId) {
-    const row = document.createElement('tr');
-    row.setAttribute('data-row-id', index);
-    row.classList.add('bg-white', 'border-b', 'dark:bg-gray-800', 'dark:border-gray-700', 'hover:bg-gray-50', 'dark:hover:bg-gray-600');
-    row.innerHTML = `
-        <td class="w-4 py-4 pl-4">
-            <div class="flex items-center">
-                <input type="checkbox" class="row-checkbox w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:outline-none dark:bg-gray-700 dark:border-gray-600">
-                <label class="sr-only">checkbox</label>
-            </div>
-        </td>
-        <th scope="row" class="pr-6 py-4 truncate font-medium text-gray-900 whitespace-nowrap dark:text-white">
-            ${gameTitle}
-        </th>
-        <td class="px-6 py-4 truncate">
-            ${platformIcons}
-        </td>
-        <td class="px-6 py-4 truncate">
-            ${backupSize}
-        </td>
-        <td class="px-6 py-4 truncate">
-            ${lastBackupTime}
-        </td>
-        <td class="px-6 py-4 truncate text-center">
-            <button class="dropdown-menu-button inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 hover:bg-transparent focus:outline-none dark:text-white"
-                data-wiki-id="${wikiPageId}"
-                type="button">
-                <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 16 3">
-                    <path
-                        d="M2 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.041 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM14 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z" />
-                </svg>
-            </button>
-        </td>
-    `;
-    return row;
 }
 
 async function createDropdownMenu(wikiPageId) {
@@ -366,7 +270,8 @@ function setDropDownAction() {
                         let pinned_games_wiki_ids = new Set(settings['pinnedGames']);
                         pinned_games_wiki_ids.add(wikiId);
                         window.api.send('save-settings', 'pinnedGames', Array.from(pinned_games_wiki_ids));
-                        pinGameOnTop(wikiId);
+                        pinGameOnTop('backup', wikiId);
+                        pinGameOnTop('restore', wikiId);
                     }
                 });
                 removeDropDown();
@@ -381,7 +286,8 @@ function setDropDownAction() {
                         let pinned_games_wiki_ids = new Set(settings['pinnedGames']);
                         pinned_games_wiki_ids.delete(wikiId);
                         window.api.send('save-settings', 'pinnedGames', Array.from(pinned_games_wiki_ids));
-                        unpinGameFromTop(wikiId);
+                        unpinGameFromTop('backup', wikiId);
+                        unpinGameFromTop('restore', wikiId);
                     }
                 });
                 removeDropDown();
@@ -421,7 +327,7 @@ function setDropDownAction() {
 
         // If clicking a different button or first time clicking
         if (button) {
-            const wikiPageId = button.getAttribute('data-wiki-id');
+            const wikiPageId = button.closest('tr').getAttribute('data-wiki-id');
 
             if (activeDropdownMenu) {
                 activeDropdownMenu.remove();
@@ -439,105 +345,145 @@ function setDropDownAction() {
             removeDropDown();
         }
     });
+    document.querySelector('#restore .table-container').addEventListener('scroll', () => {
+        if (activeDropdownMenu) {
+            removeDropDown();
+        }
+    });
 }
 
-async function pinGameOnTop(wikiId) {
-    const tableBody = document.querySelector('#backup tbody');
-    const rows = Array.from(tableBody.querySelectorAll('tr'));
-    let rowToMove = rows.find(row => row.querySelector('[data-wiki-id]').getAttribute('data-wiki-id') === wikiId);
+// Sort objects using object.titleToSort
+async function sortGames(games) {
+    const promises = games.map(async (game) => {
+        try {
+            const isChinese = /[\u4e00-\u9fff]/.test(game.titleToSort);
+            const titleToSort = isChinese ? await window.api.invoke('get-pinyin', game.titleToSort) : game.titleToSort.toLowerCase();
+            return { ...game, titleToSort };
+        } catch (error) {
+            showAlert('error', `${await window.i18n.translate('main.incorrect_backup_structure')} [id: ${game.wiki_page_id}]`);
+            console.error("Error during game sorting:", error);
+            return { ...game, titleToSort: '' };
+        }
+    });
+
+    const gamesWithSortedTitles = await Promise.all(promises);
+
+    return gamesWithSortedTitles.sort((a, b) => {
+        return a.titleToSort.localeCompare(b.titleToSort);
+    });
+}
+
+async function pinGameOnTop(tabName, wikiId) {
+    const tableBody = document.querySelector(`#${tabName} tbody`);
+    const rowToMove = tableBody.querySelector(`tr[data-wiki-id="${wikiId}"]`);
 
     if (rowToMove) {
         tableBody.removeChild(rowToMove);
-        rowToMove = addPinIcon(rowToMove);
-        tableBody.insertBefore(rowToMove, tableBody.firstChild);
+        const newRow = addPinIcon(rowToMove);
 
-        // Remap backupTableDataMap to reflect the new order
-        const newBackupTableDataMap = new Map();
-        Array.from(tableBody.querySelectorAll('tr')).forEach((row, index) => {
-            const rowId = row.getAttribute('data-row-id');
-            const gameData = backupTableDataMap.get(parseInt(rowId));
-            newBackupTableDataMap.set(index, gameData);
-        });
-        backupTableDataMap = newBackupTableDataMap;
+        const pinnedGames = Array.from(tableBody.querySelectorAll('tr')).filter(row => {
+            return row.querySelector('i.fa-thumbtack');
+        }).map(row => ({
+            row,
+            titleToSort: row.querySelector('th[scope="row"]').textContent.trim()
+        }));
+
+        pinnedGames.push({ row: newRow, titleToSort: newRow.querySelector('th[scope="row"]').textContent.trim() });
+        const sortedPinnedGames = await sortGames(pinnedGames);
+        const indexToInsert = sortedPinnedGames.findIndex(game => game.row === newRow);
+
+        // Insert the row in the correct sorted position
+        if (indexToInsert === 0) {
+            tableBody.insertBefore(newRow, tableBody.firstChild);
+        } else {
+            const previousRow = sortedPinnedGames[indexToInsert - 1].row;
+            tableBody.insertBefore(newRow, previousRow.nextSibling);
+        }
+
+        // Update pinned game IDs in settings
+        let pinnedGameIds = await window.api.invoke('get-settings').then(settings => settings.pinnedGames || []);
+        if (!pinnedGameIds.includes(wikiId)) {
+            pinnedGameIds.push(wikiId);
+        }
+        window.api.send('save-settings', 'pinnedGames', pinnedGameIds);
     }
 }
 
-async function unpinGameFromTop(wikiId) {
-    const tableBody = document.querySelector('#backup tbody');
-    const rows = Array.from(tableBody.querySelectorAll('tr'));
-    let rowToMove = rows.find(row => row.querySelector('[data-wiki-id]').getAttribute('data-wiki-id') === wikiId);
+async function unpinGameFromTop(tabName, wikiId) {
+    const tableBody = document.querySelector(`#${tabName} tbody`);
+    const rowToMove = tableBody.querySelector(`tr[data-wiki-id="${wikiId}"]`);
 
     if (rowToMove) {
-        tableBody.removeChild(rowToMove);
-
         const pinIcon = rowToMove.querySelector('.fa-thumbtack');
         if (pinIcon) {
             pinIcon.remove();
         }
+        tableBody.removeChild(rowToMove);
 
-        // Find the correct position after pinned games
-        const pinnedRows = Array.from(tableBody.querySelectorAll('tr')).filter(row => {
-            return row.querySelector('.fa-thumbtack');
-        });
+        const unpinnedGames = Array.from(tableBody.querySelectorAll('tr')).filter(row => {
+            return !row.querySelector('i.fa-thumbtack');
+        }).map(row => ({
+            row,
+            titleToSort: row.querySelector('th[scope="row"]').textContent.trim()
+        }));
 
-        if (pinnedRows.length > 0) {
-            const lastPinnedRow = pinnedRows[pinnedRows.length - 1];
-            tableBody.insertBefore(rowToMove, lastPinnedRow.nextSibling);
+        unpinnedGames.push({ row: rowToMove, titleToSort: rowToMove.querySelector('th[scope="row"]').textContent.trim() });
+        const sortedUnpinnedGames = await sortGames(unpinnedGames);
+        const indexToInsert = sortedUnpinnedGames.findIndex(game => game.row === rowToMove);
+
+        // Insert the row in the correct sorted position
+        const lastPinnedRow = Array.from(tableBody.querySelectorAll('tr')).find(row => row.querySelector('i.fa-thumbtack'));
+        if (indexToInsert === 0) {
+            if (lastPinnedRow) {
+                tableBody.insertBefore(rowToMove, lastPinnedRow.nextSibling);
+            } else {
+                tableBody.appendChild(rowToMove);
+            }
         } else {
-            tableBody.insertBefore(rowToMove, tableBody.firstChild);
+            const previousRow = sortedUnpinnedGames[indexToInsert - 1].row;
+            tableBody.insertBefore(rowToMove, previousRow.nextSibling);
         }
 
-        // Remap backupTableDataMap to reflect the new order
-        const newBackupTableDataMap = new Map();
-        Array.from(tableBody.querySelectorAll('tr')).forEach((row, index) => {
-            const rowId = row.getAttribute('data-row-id');
-            const gameData = backupTableDataMap.get(parseInt(rowId));
-            newBackupTableDataMap.set(index, gameData);
-        });
-        backupTableDataMap = newBackupTableDataMap;
+        // Update pinned game IDs in settings by removing this game
+        let pinnedGameIds = await window.api.invoke('get-settings').then(settings => settings.pinnedGames || []);
+        pinnedGameIds = pinnedGameIds.filter(id => id !== wikiId);
+        window.api.send('save-settings', 'pinnedGames', pinnedGameIds);
     }
 }
 
 // Function to update the count and size display
-async function updateSelectedCountAndSize(tableName) {
-    const selectedCountWidget = document.querySelector(`#${tableName}-selected-count`);
-    const totalSizeWidget = document.querySelector(`#${tableName}-selected-size`);
-    const tableBody = document.querySelector(`#${tableName} tbody`);
-    let total_games_count = 0;
-    backup_total_size = 0;
-    backup_total_selected = 0;
+async function updateSelectedCountAndSize(tabName) {
+    const selectedCountWidget = document.querySelector(`#${tabName}-selected-count`);
+    const totalSizeWidget = document.querySelector(`#${tabName}-selected-size`);
+    const tableBody = document.querySelector(`#${tabName} tbody`);
+    const selectedWikiIds = getSelectedWikiIds(tabName);
+    const total_games_count = tableBody.querySelectorAll('.row-checkbox').length;
 
-    Array.from(tableBody.querySelectorAll('.row-checkbox:checked'))
-        .map(checkbox => checkbox.closest('tr').getAttribute('data-row-id'))
-        .forEach(rowId => {
-            if (tableName === 'backup') {
-                const gameData = backupTableDataMap.get(parseInt(rowId));
-                total_games_count = backupTableDataMap.size
-                if (gameData) {
-                    backup_total_size += gameData.backup_size;
-                    backup_total_selected += 1;
-                }
-            } else if (tableName === 'restore') {
-                // TODO: restore tabledatamap
-            }
-        });
+    let total_size = 0;
+    let total_selected = 0;
 
-    if (backup_total_selected === 0) {
-        total_games_count = tableBody.querySelectorAll('.row-checkbox').length;
-    }
+    const dataMap = tabName === 'backup' ? backupTableDataMap : restoreTableDataMap;
+
+    selectedWikiIds.forEach(wikiId => {
+        const gameData = dataMap.get(wikiId);
+        if (gameData) {
+            total_size += gameData.backup_size;
+            total_selected += 1;
+        }
+    });
 
     selectedCountWidget.innerHTML = await window.i18n.translate('main.selected_games_count', {
-        count: backup_total_selected,
+        count: total_selected,
         total: total_games_count
     });
-    totalSizeWidget.innerHTML = await window.i18n.translate(`main.total_${tableName}_size`, {
-        size: formatSize(backup_total_size)
+    totalSizeWidget.innerHTML = await window.i18n.translate(`main.total_${tabName}_size`, {
+        size: formatSize(total_size)
     });
 }
 
 // Function to setup "Select All" checkbox functionality
-function setupBackupSelectAllCheckbox(selectAllCheckbox) {
-    const tableBody = document.querySelector('#backup tbody');
+function setupSelectAllCheckbox(tabName, selectAllCheckbox) {
+    const tableBody = document.querySelector(`#${tabName} tbody`);
 
     // Handle the "Select All" checkbox change
     selectAllCheckbox.addEventListener('change', function () {
@@ -547,21 +493,21 @@ function setupBackupSelectAllCheckbox(selectAllCheckbox) {
             checkbox.checked = isChecked;
         });
 
-        updateBackupSelectAllCheckbox(selectAllCheckbox, tableBody);
-        updateSelectedCountAndSize('backup');
+        updateSelectAllCheckbox(selectAllCheckbox, tableBody);
+        updateSelectedCountAndSize(tabName);
     });
 
     // Handle individual row checkbox changes
     tableBody.addEventListener('change', function (event) {
         if (event.target.classList.contains('row-checkbox')) {
-            updateBackupSelectAllCheckbox(selectAllCheckbox, tableBody);
-            updateSelectedCountAndSize('backup');
+            updateSelectAllCheckbox(selectAllCheckbox, tableBody);
+            updateSelectedCountAndSize(tabName);
         }
     });
 }
 
 // Function to update the "Select All" checkbox state
-function updateBackupSelectAllCheckbox(selectAllCheckbox, tableContainer) {
+function updateSelectAllCheckbox(selectAllCheckbox, tableContainer) {
     const rowCheckboxes = tableContainer.querySelectorAll('.row-checkbox');
     const allChecked = Array.from(rowCheckboxes).every(checkbox => checkbox.checked);
     const anyChecked = Array.from(rowCheckboxes).some(checkbox => checkbox.checked);
@@ -569,82 +515,11 @@ function updateBackupSelectAllCheckbox(selectAllCheckbox, tableContainer) {
     selectAllCheckbox.indeterminate = !allChecked && anyChecked;
 }
 
-function setupBackupButton() {
-    const backupButton = document.getElementById('backup-button');
-    const backupIcon = document.getElementById('backup-icon');
-    const backupText = document.getElementById('backup-text');
-
-    backupButton.addEventListener('click', async () => {
-        if (backupButton.disabled) return;
-
-        // Disable the button and change the appearance
-        backupButton.disabled = true;
-        backupButton.classList.add('cursor-not-allowed');
-        backupIcon.classList.remove('fa-arrow-right-long');
-        backupIcon.innerHTML = `
-            <svg aria-hidden="true" role="status" class="inline w-4 h-4 text-white animate-spin"
-                viewBox="0 0 100 101" fill="none">
-                <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-                    fill="#E5E7EB" />
-                <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentColor" />
-            </svg>`;
-        backupButton.setAttribute('data-i18n', 'main.backup_in_progress');
-        backupText.textContent = await window.i18n.translate('main.backup_in_progress');
-
-        const exitCode = await performBackup();
-        if (!exitCode) {
-            showBackupSummary();
-            await updateBackupTable(false);
-            document.querySelector('#backup-summary-done').classList.remove('hidden');
-        }
-
-        // Re-enable the button and revert to the original state
-        backupButton.disabled = false;
-        backupButton.classList.remove('cursor-not-allowed');
-        backupIcon.innerHTML = '';
-        backupIcon.classList.add('fa-arrow-right-long');
-        backupButton.setAttribute('data-i18n', 'main.backup_selected');
-        backupText.textContent = await window.i18n.translate('main.backup_selected');
-    });
-}
-
-async function performBackup() {
-    const backupTable = document.querySelector('#backup');
-    const selectedRows = backupTable.querySelectorAll('.row-checkbox:checked');
-    if (selectedRows.length === 0) {
-        showAlert('warning', await window.i18n.translate('main.no_games_selected'));
-        return 1;
-    }
-
-    selectedRows.forEach(async checkbox => {
+function getSelectedWikiIds(tabName) {
+    const table = document.querySelector(`#${tabName}`);
+    const selectedRows = table.querySelectorAll('.row-checkbox:checked');
+    return Array.from(selectedRows).map(checkbox => {
         const row = checkbox.closest('tr');
-        const rowId = row.getAttribute('data-row-id');
-        const gameData = backupTableDataMap.get(parseInt(rowId));
-
-        await window.api.invoke('backup-game', gameData);
-    });
-
-    return 0
-}
-
-function showBackupSummary() {
-    const backupSummary = document.querySelector('#backup-summary');
-    const backupContent = document.querySelector('#backup-content');
-    backupSummary.classList.remove('hidden');
-    backupContent.classList.add('hidden');
-
-    window.api.invoke('get-settings').then((settings) => {
-        if (settings) {
-            document.getElementById('backup-summary-total-games').textContent = backup_total_selected;
-            document.getElementById('backup-summary-total-size').textContent = formatSize(backup_total_size);
-            document.getElementById('backup-summary-save-path').textContent = settings.backupPath;
-        }
-    });
-
-    document.querySelector('#backup-summary-done').addEventListener('click', (event) => {
-        backupContent.classList.remove('animate-fadeInShift', 'animate-fadeOut');
-        backupSummary.classList.add('hidden');
-        backupContent.classList.remove('hidden');
-        event.target.closest('button').classList.add('hidden');
+        return parseInt(row.getAttribute('data-wiki-id'));
     });
 }

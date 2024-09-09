@@ -1,8 +1,10 @@
 const { screen, app, Menu, BrowserWindow, ipcMain, dialog, shell } = require("electron");
 const { exec } = require('child_process');
+const { pinyin } = require('pinyin');
 const fs = require("fs");
 const fse = require('fs-extra');
 const os = require('os');
+const util = require('util');
 const path = require("path");
 const glob = require('glob');
 const WinReg = require('winreg');
@@ -20,6 +22,7 @@ let settingsWin;
 let settings;
 let gameData = new GameData();
 let writeQueue = Promise.resolve();
+const execPromise = util.promisify(exec);
 
 // Main window
 const createWindow = async () => {
@@ -125,7 +128,7 @@ const menuTemplate = [
     },
 ];
 const menu = Menu.buildFromTemplate(menuTemplate);
-Menu.setApplicationMenu(menu);
+// Menu.setApplicationMenu(menu);
 
 // ======================================================================
 // Settings
@@ -277,10 +280,18 @@ ipcMain.on('update-backup-table-main', (event) => {
     win.webContents.send('update-backup-table');
 });
 
+ipcMain.handle('get-newest-backup-time', (event, wiki_page_id) => {
+    return getNewestBackup(wiki_page_id);
+});
+
+ipcMain.handle('get-pinyin', (event, zhTitle) => {
+    return pinyin(zhTitle, { style: pinyin.STYLE_NORMAL }).join(' ');
+});
+
 // ======================================================================
 // Backup
 // ======================================================================
-// A sample processed game: {
+// A sample backup game object: {
 //     title: 'Worms W.M.D',
 //     wiki_page_id: 35700,
 //     install_folder: 'WormsWMD',
@@ -321,13 +332,13 @@ ipcMain.handle('fetch-game-saves', async (event) => {
         const games = await getGameDataFromDB();
         return games;
     } catch (err) {
-        win.webContents.send('show-alert', 'error', i18next.t('main.fetch_game_failed'));
-        console.error("Failed to fetch game data:", err);
+        win.webContents.send('show-alert', 'error', i18next.t('main.fetch_backup_failed'));
+        console.error("Failed to fetch backup data:", err);
         return [];
     }
 });
 
-function getGameDataFromDB() {
+async function getGameDataFromDB() {
     return new Promise((resolve, reject) => {
         const dbPath = path.join(__dirname, '../database/database.db');
         const db = new sqlite3.Database(dbPath, sqlite3.OPEN_READONLY);
@@ -335,41 +346,55 @@ function getGameDataFromDB() {
 
         const games = [];
 
-        db.serialize(() => {
-            const stmt = db.prepare("SELECT * FROM games WHERE install_folder = ?");
+        db.serialize(async () => {
+            const stmtInstallFolder = db.prepare("SELECT * FROM games WHERE install_folder = ?");
 
-            gameInstallPaths.forEach(installPath => {
-                const directories = fs.readdirSync(installPath, { withFileTypes: true })
-                    .filter(dirent => dirent.isDirectory())
-                    .map(dirent => dirent.name);
+            try {
+                for (const installPath of gameInstallPaths) {
+                    const directories = fs.readdirSync(installPath, { withFileTypes: true })
+                        .filter(dirent => dirent.isDirectory())
+                        .map(dirent => dirent.name);
 
-                directories.forEach(dir => {
-                    stmt.get(dir, async (err, row) => {
-                        if (err) {
-                            console.error(`Error querying ${dir}:`, err);
-                        } else if (row) {
+                    for (const dir of directories) {
+                        const row = await new Promise((resolve, reject) => {
+                            stmtInstallFolder.get(dir, (err, row) => {
+                                if (err) {
+                                    console.error(`Error querying ${dir}:`, err);
+                                    reject(err);
+                                } else {
+                                    resolve(row);
+                                }
+                            });
+                        });
+
+                        if (row) {
                             row.platform = JSON.parse(row.platform);
                             row.save_location = JSON.parse(row.save_location);
                             row.install_path = path.join(installPath, dir);
-                            row.latest_backup = getLatestBackup(row.wiki_page_id);
+                            row.latest_backup = getNewestBackup(row.wiki_page_id);
+
                             const processed_game = await process_game(row);
-                            if (processed_game.resolved_paths.length != 0) {
+                            if (processed_game.resolved_paths.length !== 0) {
                                 games.push(processed_game);
                             }
                         }
-                    });
-                });
-            });
+                    }
+                }
 
-            stmt.finalize(() => {
+                stmtInstallFolder.finalize(() => {
+                    db.close();
+                    resolve(games);
+                });
+            } catch (error) {
+                console.error('Error during processing:', error);
                 db.close();
-                resolve(games);
-            });
+                reject(error);
+            }
         });
     });
 }
 
-function getLatestBackup(wiki_page_id) {
+function getNewestBackup(wiki_page_id) {
     const backupDir = path.join(settings['backupPath'], wiki_page_id.toString());
 
     if (!fs.existsSync(backupDir)) {
@@ -662,7 +687,11 @@ ipcMain.handle('backup-game', async (event, gameData) => {
     const backupInstancePath = path.join(gameBackupPath, backupInstanceFolder);
 
     try {
-        const backupConfig = [];
+        const backupConfig = {
+            title: gameData.title,
+            zh_CN: gameData.zh_CN || null,
+            backup_paths: []
+        };
 
         // Iterate over resolved paths and copy files to the backup instance
         for (const [index, resolvedPathObj] of gameData.resolved_paths.entries()) {
@@ -676,14 +705,14 @@ ipcMain.handle('backup-game', async (event, gameData) => {
                 const registryFilePath = path.join(targetPath, 'registry_backup.reg');
 
                 const regExportCommand = `reg export "${resolvedPath}" "${registryFilePath}" /y`;
-                exec(regExportCommand, (error, stdout, stderr) => {
-                    if (error) {
-                        console.error(`Error exporting registry key: ${resolvedPath}`, error);
-                        return;
-                    }
-                });
+                try {
+                    await execPromise(regExportCommand);
+                } catch (error) {
+                    console.error(`Error exporting registry key: ${resolvedPath}`, error);
+                    throw error;
+                }
 
-                backupConfig.push({
+                backupConfig.backup_paths.push({
                     folder_name: pathFolderName,
                     template: resolvedPathObj.template,
                     uid: resolvedPathObj.uid || null
@@ -700,7 +729,7 @@ ipcMain.handle('backup-game', async (event, gameData) => {
                     await fse.copy(resolvedPath, targetFilePath, { overwrite: true });
                 }
 
-                backupConfig.push({
+                backupConfig.backup_paths.push({
                     folder_name: pathFolderName,
                     template: resolvedPathObj.template,
                     uid: resolvedPathObj.uid || null
@@ -734,3 +763,120 @@ ipcMain.handle('backup-game', async (event, gameData) => {
 // ======================================================================
 // Restore
 // ======================================================================
+// A sample restore game object: {
+//     "wiki_page_id": "97395",
+//     "latest_backup": "2024/09/08 15:23",
+//     "title": "Control",
+//     "zh_CN": "控制",
+//     "backup_size": 132168,
+//     "backups": [
+//         {
+//             "date": "2024-09-08_15-23",
+//             "title": "Control",
+//             "zh_CN": "控制",
+//             "backup_size": 132168,
+//             "backup_paths": [
+//                 {
+//                     "folder_name": "path1",
+//                     "template": "{{P|steam}}\\userdata\\{{p|uid}}\\870780\\remote",
+//                     "uid": "477235894"
+//                 },
+//                 {
+//                     "folder_name": "path2",
+//                     "template": "{{P|game}}\\renderer.ini",
+//                     "uid": null
+//                 }
+//             ]
+//         },
+//         {
+//             "date": "2024-09-08_15-22",
+//             "title": "Control",
+//             "zh_CN": "控制",
+//             "backup_size": 132168,
+//             "backup_paths": [
+//                 {
+//                     "folder_name": "path1",
+//                     "template": "{{P|steam}}\\userdata\\{{p|uid}}\\870780\\remote",
+//                     "uid": "477235894"
+//                 },
+//                 {
+//                     "folder_name": "path2",
+//                     "template": "{{P|game}}\\renderer.ini",
+//                     "uid": null
+//                 }
+//             ]
+//         }
+//     ]
+// }
+
+ipcMain.handle('fetch-restore-table-data', async (event) => {
+    try {
+        const games = await getGameDataForRestore();
+        return games;
+    } catch (err) {
+        win.webContents.send('show-alert', 'error', i18next.t('main.fetch_restore_failed'));
+        console.error("Failed to fetch restore data:", err);
+        return [];
+    }
+});
+
+async function getGameDataForRestore() {
+    const backupPath = settings.backupPath;
+    const games = [];
+
+    const gameFolders = await fse.readdir(backupPath);
+    for (const gameFolder of gameFolders) {
+        const wikiIdFolderPath = path.join(backupPath, gameFolder);
+
+        const stats = await fse.stat(wikiIdFolderPath);
+        if (stats.isDirectory()) {
+            const backups = [];
+
+            // Read all backup instance folders inside this game folder
+            const backupFolders = await fse.readdir(wikiIdFolderPath);
+            for (const backupFolder of backupFolders) {
+                const backupFolderPath = path.join(wikiIdFolderPath, backupFolder);
+                const configFilePath = path.join(backupFolderPath, 'backup_info.json');
+                const backupSize = calculateDirectorySize(backupFolderPath);
+
+                // Check if the backup instance contains a config file
+                if (fse.exists(configFilePath)) {
+                    try {
+                        const backupConfig = await fse.readJson(configFilePath);
+                        backups.push({
+                            date: backupFolder,  // Backup folder name is the date (YYYY-MM-DD_HH-mm)
+                            title: backupConfig.title,
+                            zh_CN: backupConfig.zh_CN,
+                            backup_size: backupSize,
+                            backup_paths: backupConfig.backup_paths
+                        });
+                    } catch (err) {
+                        console.error(`Failed to read backup config file: ${configFilePath}`, err);
+                    }
+                }
+            }
+
+            if (backups.length > 0) {
+                const latestBackup = backups.sort((a, b) => {
+                    return b.date.localeCompare(a.date);
+                })[0];
+                const latestBackupFormatted = moment(latestBackup.date, 'YYYY-MM-DD_HH-mm').format('YYYY/MM/DD HH:mm');
+
+                games.push({
+                    wiki_page_id: gameFolder,
+                    latest_backup: latestBackupFormatted,
+                    title: latestBackup.title,
+                    zh_CN: latestBackup.zh_CN,
+                    backup_size: latestBackup.backup_size,
+                    backups: backups
+                });
+            }
+        }
+    }
+
+    return games;
+}
+
+ipcMain.handle('restore-game', async (event, gameData) => {
+    const gameBackupPath = path.join(settings['backupPath'], gameData.wiki_page_id.toString());
+});

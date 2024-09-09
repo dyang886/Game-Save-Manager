@@ -12,6 +12,8 @@
     <link href="./components/styles_addition.css" rel="stylesheet">
     <script defer src="./components/utility.js"></script>
     <script src="./components/commonTabs.js"></script>
+    <script src="./components/backupTab.js"></script>
+    <script src="./components/restoreTab.js"></script>
 </head>
 
 <body class="bg-white dark:bg-gray-900 p-8 pt-2 overflow-hidden">
@@ -122,9 +124,9 @@
                             <tr>
                                 <th scope="col" class="w-4 py-3 pl-4">
                                     <div class="flex items-center">
-                                        <input id="checkbox-all-search" type="checkbox"
+                                        <input id="backup-checkbox-all-search" type="checkbox"
                                             class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:outline-none dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600">
-                                        <label for="checkbox-all-search" class="sr-only">checkbox</label>
+                                        <label for="backup-checkbox-all-search" class="sr-only">checkbox</label>
                                     </div>
                                 </th>
                                 <th scope="col" class="pr-6 py-3 truncate w-3/12" data-i18n="main.game_name">
@@ -136,8 +138,8 @@
                                 <th scope="col" class="px-6 py-3 truncate w-2/12" data-i18n="main.backup_size">
                                     <span class="text-content">Backup Size</span>
                                 </th>
-                                <th scope="col" class="px-6 py-3 truncate w-2/12" data-i18n="main.last_backup_date">
-                                    <span class="text-content">Last Backup Date</span>
+                                <th scope="col" class="px-6 py-3 truncate w-2/12" data-i18n="main.newest_backup_time">
+                                    <span class="text-content">Newest Backup Time</span>
                                 </th>
                                 <th scope="col" class="px-6 py-3 truncate w-4 text-center" data-i18n="main.more">
                                     <span class="text-content">More</span>
@@ -175,18 +177,18 @@
                 </div>
 
                 <div class="text-lg text-gray-700 dark:text-gray-300 mb-6">
-                    <p class="mb-4" data-i18n="summary.total_games_backed_up">
-                        <span class="text-content">Total games backed up:</span>
+                    <p class="mb-4" data-i18n="summary.total_games_restored">
+                        <span class="text-content">Total games restored:</span>
                         <span id="restore-summary-total-games"
                             class="font-semibold text-gray-900 dark:text-white text-xl"></span>
                     </p>
                     <p class="mb-4" data-i18n="summary.total_restore_size">
-                        <span class="text-content">Total backup size:</span>
+                        <span class="text-content">Total restore size:</span>
                         <span id="restore-summary-total-size"
                             class="font-semibold text-gray-900 dark:text-white text-xl"></span>
                     </p>
                     <p class="mb-4" data-i18n="summary.restore_saved_to">
-                        <span class="text-content">Backup saved to:</span>
+                        <span class="text-content">Restore saved to:</span>
                         <span id="restore-summary-save-path"
                             class="font-semibold text-gray-900 dark:text-white text-xl"></span>
                     </p>
@@ -202,7 +204,7 @@
             </div>
 
             <div id="restore-content" class="hidden">
-                <div class="pb-4 bg-white dark:bg-gray-900 sticky top-0">
+                <div class="pb-4 bg-white dark:bg-gray-900 sticky top-0 flex flex-row justify-between items-center">
                     <label for="table-search" class="sr-only">Search</label>
                     <div class="relative mt-1">
                         <div
@@ -215,7 +217,7 @@
                         </div>
                         <input type="text" id="restore-search"
                             class="block py-2 pt-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                            placeholder="Search for items">
+                            data-i18n-placeholder="main.search_for_games">
                     </div>
                     <div class="text-right">
                         <p id="restore-selected-count" class="text-lg text-gray-900 dark:text-white"></p>
@@ -225,29 +227,29 @@
 
                 <!-- Restore table -->
                 <div
-                    class="table-height shadow-md rounded-lg overflow-y-auto scrollbar scrollbar-w-2 scrollbar-h-2 scrollbar-track-rounded-full scrollbar-thumb-rounded-full scrollbar-track-white scrollbar-thumb-slate-300 dark:scrollbar-track-gray-800 dark:scrollbar-thumb-slate-600">
+                    class="table-container table-height shadow-md rounded-lg overflow-y-auto scrollbar scrollbar-w-2 scrollbar-h-2 scrollbar-track-rounded-full scrollbar-thumb-rounded-full scrollbar-track-white scrollbar-thumb-slate-300 dark:scrollbar-track-gray-800 dark:scrollbar-thumb-slate-600">
                     <table class="w-full table-fixed text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                         <thead
                             class="sticky top-0 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                             <tr>
-                                <th scope="col" class="w-4 p-4">
+                                <th scope="col" class="w-4 py-3 pl-4">
                                     <div class="flex items-center">
-                                        <input id="checkbox-all-search" type="checkbox"
+                                        <input id="restore-checkbox-all-search" type="checkbox"
                                             class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:outline-none dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600">
-                                        <label for="checkbox-all-search" class="sr-only">checkbox</label>
+                                        <label for="restore-checkbox-all-search" class="sr-only">checkbox</label>
                                     </div>
                                 </th>
-                                <th scope="col" class="px-6 py-3 truncate w-3/12" data-i18n="main.game_name">
+                                <th scope="col" class="pr-6 py-3 truncate w-3/12" data-i18n="main.game_name">
                                     <span class="text-content">Game Name</span>
                                 </th>
-                                <th scope="col" class="px-6 py-3 truncate w-2/12" data-i18n="main.supported_plats">
-                                    <span class="text-content">Supported Platforms</span>
+                                <th scope="col" class="px-6 py-3 truncate w-2/12" data-i18n="main.backup_count">
+                                    <span class="text-content">Number of Backups</span>
                                 </th>
-                                <th scope="col" class="px-6 py-3 truncate w-2/12" data-i18n="main.backup_size">
+                                <th scope="col" class="px-6 py-3 truncate w-2/12" data-i18n="main.restore_size">
                                     <span class="text-content">Backup Size</span>
                                 </th>
-                                <th scope="col" class="px-6 py-3 truncate w-2/12" data-i18n="main.last_backup_date">
-                                    <span class="text-content">Last Backup Date</span>
+                                <th scope="col" class="px-6 py-3 truncate w-2/12" data-i18n="main.newest_backup_time">
+                                    <span class="text-content">Newest Backup Time</span>
                                 </th>
                                 <th scope="col" class="px-6 py-3 truncate w-4 text-center" data-i18n="main.more">
                                     <span class="text-content">More</span>
@@ -259,15 +261,15 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
 
-            <!-- Restore button -->
-            <div class="mt-4">
-                <button id="restore-button" type="button" data-i18n="main.restore_selected"
-                    class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700">
-                    <i id="restore-icon" class="fa-solid fa-arrow-right-long mr-1"></i>
-                    <span id="restore-text" class="text-content">Restore Selected Games</span>
-                </button>
+                <!-- Restore button -->
+                <div class="mt-4">
+                    <button id="restore-button" type="button" data-i18n="main.restore_selected"
+                        class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700">
+                        <i id="restore-icon" class="fa-solid fa-arrow-right-long mr-1"></i>
+                        <span id="restore-text" class="text-content">Restore Selected Games</span>
+                    </button>
+                </div>
             </div>
         </div>
 
