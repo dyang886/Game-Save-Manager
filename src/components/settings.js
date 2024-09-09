@@ -146,4 +146,5 @@ document.addEventListener('DOMContentLoaded', () => {
 window.api.receive('apply-language', () => {
     updateTranslations();
     updateSelectedCountAndSize('backup');
+    updateSelectedCountAndSize('restore');
 });

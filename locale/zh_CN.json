@@ -25,7 +25,8 @@
         "game_name": "游戏名",
         "supported_plats": "支持的平台",
         "backup_size": "备份大小",
-        "last_backup_date": "上次备份日期",
+        "restore_size": "还原大小",
+        "newest_backup_time": "最新备份时间",
         "more": "更多",
         "backup_selected": "备份选中的游戏",
         "backup_in_progress": "备份中...",
@@ -39,10 +40,15 @@
         "no_backups_found": "无法找到备份",
         "search_for_games": "搜索游戏",
         "backup_error_for_game": "备份此游戏时出错",
-        "fetch_game_failed": "无法从数据库获取游戏数据",
+        "fetch_backup_failed": "无法获取数据进行备份",
+        "fetch_restore_failed": "无法获取数据进行恢复",
         "registry_existence_check_failed": "无法检查此游戏的注册表是否存在",
         "selected_games_count": "已选择 {{count}}/{{total}} 个游戏",
-        "total_backup_size": "总备份大小：{{size}}"
+        "total_backup_size": "总备份大小：{{size}}",
+        "total_restore_size": "总还原大小：{{size}}",
+        "backup_count": "备份个数",
+        "restore_selected": "还原选中的游戏",
+        "incorrect_backup_structure": "错误的备份结构"
     },
 
     "summary": {
