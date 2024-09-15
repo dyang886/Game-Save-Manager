@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         window.api.send('save-settings', 'maxBackups', maxBackupsInput.value);
         window.api.send('save-settings', 'gameInstalls', gameInstallPaths);
-        window.api.send('update-backup-table-main');
+        window.api.send('update-tables-main');
     });
 
     autoDetectButton.addEventListener('click', () => {

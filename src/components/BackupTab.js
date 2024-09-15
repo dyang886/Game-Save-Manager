@@ -161,8 +161,8 @@ function setupBackupButton() {
             showBackupSummary();
             getSelectedWikiIds('backup').forEach(async wikiId => {
                 await updateNewestBackupTime('backup', wikiId);
-                await updateNewestBackupTime('restore', wikiId);
             });
+            await updateRestoreTable(true);
             document.querySelector('#backup-summary-done').classList.remove('hidden');
         }
 

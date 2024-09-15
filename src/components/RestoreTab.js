@@ -154,10 +154,6 @@ function setupRestoreButton() {
         const exitCode = await performRestore();
         if (!exitCode) {
             showRestoreSummary();
-            getSelectedWikiIds('restore').forEach(async wikiId => {
-                await updateNewestBackupTime('backup', wikiId);
-                await updateNewestBackupTime('restore', wikiId);
-            });
             document.querySelector('#restore-summary-done').classList.remove('hidden');
         }
 
