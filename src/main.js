@@ -39,7 +39,7 @@ const createWindow = async () => {
     });
 
     // win.webContents.openDevTools();
-    win.loadURL(path.join(__dirname, "index.html"));
+    win.loadFile(path.join(__dirname, "index.html"));
 
     win.on("closed", () => {
         BrowserWindow.getAllWindows().forEach((window) => {
@@ -128,7 +128,7 @@ const menuTemplate = [
     },
 ];
 const menu = Menu.buildFromTemplate(menuTemplate);
-// Menu.setApplicationMenu(menu);
+Menu.setApplicationMenu(menu);
 
 // ======================================================================
 // Settings
@@ -276,8 +276,9 @@ ipcMain.handle('open-dialog', async (event) => {
     return result;
 });
 
-ipcMain.on('update-backup-table-main', (event) => {
+ipcMain.on('update-tables-main', (event) => {
     win.webContents.send('update-backup-table');
+    win.webContents.send('update-restore-table');
 });
 
 ipcMain.handle('get-newest-backup-time', (event, wiki_page_id) => {
@@ -330,6 +331,7 @@ ipcMain.handle('get-pinyin', (event, zhTitle) => {
 ipcMain.handle('fetch-game-saves', async (event) => {
     try {
         const games = await getGameDataFromDB();
+        // const games = await getAllGameDataFromDB();
         return games;
     } catch (err) {
         win.webContents.send('show-alert', 'error', i18next.t('main.fetch_backup_failed'));
@@ -340,7 +342,12 @@ ipcMain.handle('fetch-game-saves', async (event) => {
 
 async function getGameDataFromDB() {
     return new Promise((resolve, reject) => {
-        const dbPath = path.join(__dirname, '../database/database.db');
+        let dbPath;
+        if (app.isPackaged) {
+            dbPath = path.join('./database', 'database.db');
+        } else {
+            dbPath = path.join(__dirname, '../database/database.db');
+        }
         const db = new sqlite3.Database(dbPath, sqlite3.OPEN_READONLY);
         const gameInstallPaths = settings['gameInstalls'];
 
@@ -356,32 +363,88 @@ async function getGameDataFromDB() {
                         .map(dirent => dirent.name);
 
                     for (const dir of directories) {
-                        const row = await new Promise((resolve, reject) => {
-                            stmtInstallFolder.get(dir, (err, row) => {
+                        const rows = await new Promise((resolve, reject) => {
+                            stmtInstallFolder.all(dir, (err, rows) => {
                                 if (err) {
                                     console.error(`Error querying ${dir}:`, err);
                                     reject(err);
                                 } else {
-                                    resolve(row);
+                                    resolve(rows);
                                 }
                             });
                         });
 
-                        if (row) {
-                            row.platform = JSON.parse(row.platform);
-                            row.save_location = JSON.parse(row.save_location);
-                            row.install_path = path.join(installPath, dir);
-                            row.latest_backup = getNewestBackup(row.wiki_page_id);
+                        if (rows && rows.length > 0) {
+                            for (const row of rows) {
+                                row.platform = JSON.parse(row.platform);
+                                row.save_location = JSON.parse(row.save_location);
+                                row.install_path = path.join(installPath, dir);
+                                row.latest_backup = getNewestBackup(row.wiki_page_id);
 
-                            const processed_game = await process_game(row);
-                            if (processed_game.resolved_paths.length !== 0) {
-                                games.push(processed_game);
+                                const processed_game = await process_game(row);
+                                if (processed_game.resolved_paths.length !== 0) {
+                                    games.push(processed_game);
+                                }
                             }
                         }
                     }
                 }
 
                 stmtInstallFolder.finalize(() => {
+                    db.close();
+                    resolve(games);
+                });
+            } catch (error) {
+                console.error('Error during processing:', error);
+                db.close();
+                reject(error);
+            }
+        });
+    });
+}
+
+async function getAllGameDataFromDB() {
+    return new Promise((resolve, reject) => {
+        let dbPath;
+        if (app.isPackaged) {
+            dbPath = path.join('./database', 'database.db');
+        } else {
+            dbPath = path.join(__dirname, '../database/database.db');
+        }
+        const db = new sqlite3.Database(dbPath, sqlite3.OPEN_READONLY);
+
+        const games = [];
+
+        db.serialize(async () => {
+            const stmtGetAllGames = db.prepare("SELECT * FROM games");
+
+            try {
+                const rows = await new Promise((resolve, reject) => {
+                    stmtGetAllGames.all((err, rows) => {
+                        if (err) {
+                            console.error('Error querying all games:', err);
+                            reject(err);
+                        } else {
+                            resolve(rows);
+                        }
+                    });
+                });
+
+                if (rows && rows.length > 0) {
+                    for (const row of rows) {
+                        row.platform = JSON.parse(row.platform);
+                        row.save_location = JSON.parse(row.save_location);
+                        // row.install_path = getInstallPathFromSettings(row.game_name);
+                        row.latest_backup = getNewestBackup(row.wiki_page_id);
+
+                        const processed_game = await process_game(row);
+                        if (processed_game.resolved_paths.length !== 0) {
+                            games.push(processed_game);
+                        }
+                    }
+                }
+
+                stmtGetAllGames.finalize(() => {
                     db.close();
                     resolve(games);
                 });
@@ -432,7 +495,7 @@ async function process_game(db_game_row) {
 
     if (osKey && db_game_row.save_location[osKey]) {
         for (const templatedPath of db_game_row.save_location[osKey]) {
-            const resolvedPath = await resolveTemplatedPath(templatedPath, db_game_row.install_path);
+            const resolvedPath = await resolveTemplatedBackupPath(templatedPath, db_game_row.install_path);
 
             // Check whether the resolved path actually exists then calculate size
             if (resolvedPath.path.includes('*')) {
@@ -463,7 +526,7 @@ async function process_game(db_game_row) {
     // Process registry paths
     if (osKey === 'win' && db_game_row.save_location['reg'] && db_game_row.save_location['reg'].length > 0) {
         for (const templatedPath of db_game_row.save_location['reg']) {
-            const resolvedPath = await resolveTemplatedPath(templatedPath, null);
+            const resolvedPath = await resolveTemplatedBackupPath(templatedPath, null);
 
             const normalizedRegPath = path.normalize(resolvedPath.path);
             const { hive, key } = parseRegistryPath(normalizedRegPath);
@@ -525,7 +588,7 @@ function parseRegistryPath(registryPath) {
 }
 
 // Resolves the templated path to the actual path based on the save_path_mapping
-async function resolveTemplatedPath(templatedPath, gameInstallPath) {
+async function resolveTemplatedBackupPath(templatedPath, gameInstallPath) {
     let basePath = templatedPath.replace(/\{\{p\|[^\}]+\}\}/gi, match => {
         const normalizedMatch = match.toLowerCase().replace(/\\/g, '/');
 
@@ -540,7 +603,7 @@ async function resolveTemplatedPath(templatedPath, gameInstallPath) {
             return '{{p|uid}}';
         }
 
-        return save_path_mapping[normalizedMatch] || match;
+        return placeholder_mapping[normalizedMatch] || match;
     });
 
     // Final check for unresolved placeholders, but ignore {{p|uid}}
@@ -624,18 +687,25 @@ function extractUidFromPath(templatePath, resolvedPath) {
 function calculateDirectorySize(directoryPath) {
     let totalSize = 0;
 
-    if (fs.lstatSync(directoryPath).isDirectory()) {
-        const files = fs.readdirSync(directoryPath);
-        files.forEach(file => {
-            const filePath = path.join(directoryPath, file);
-            if (fs.lstatSync(filePath).isDirectory()) {
-                totalSize += calculateDirectorySize(filePath);
-            } else {
-                totalSize += fs.lstatSync(filePath).size;
-            }
-        });
-    } else {
-        totalSize += fs.lstatSync(directoryPath).size;
+    try {
+        if (fs.lstatSync(directoryPath).isDirectory()) {
+            const files = fs.readdirSync(directoryPath);
+            files.forEach(file => {
+                if (file === 'backup_info.json') {
+                    return;
+                }
+                const filePath = path.join(directoryPath, file);
+                if (fs.lstatSync(filePath).isDirectory()) {
+                    totalSize += calculateDirectorySize(filePath);
+                } else {
+                    totalSize += fs.lstatSync(filePath).size;
+                }
+            });
+        } else {
+            totalSize += fs.lstatSync(directoryPath).size;
+        }
+    } catch (error) {
+        console.error(`Error calculating directory size for ${directoryPath}:`, error);
     }
 
     return totalSize;
@@ -653,7 +723,7 @@ ipcMain.handle('get-icon-map', async (event) => {
     };
 });
 
-const save_path_mapping = {
+const placeholder_mapping = {
     // Windows
     '{{p|username}}': os.userInfo().username,
     '{{p|userprofile}}': process.env.USERPROFILE || os.homedir(),
@@ -664,6 +734,7 @@ const save_path_mapping = {
     '{{p|programfiles}}': process.env.PROGRAMFILES || 'C:\\Program Files',
     '{{p|programdata}}': process.env.PROGRAMDATA || 'C:\\ProgramData',
     '{{p|public}}': path.join(process.env.PUBLIC || 'C:\\Users\\Public'),
+    '{{p|windir}}': process.env.WINDIR || 'C:\\Windows',
 
     // Registry
     '{{p|hkcu}}': 'HKEY_CURRENT_USER',
@@ -679,8 +750,33 @@ const save_path_mapping = {
     '{{p|xdgconfighome}}': process.env.XDG_CONFIG_HOME || path.join(os.homedir(), '.config'),
 };
 
-ipcMain.handle('backup-game', async (event, gameData) => {
-    const gameBackupPath = path.join(settings['backupPath'], gameData.wiki_page_id.toString());
+const placeholder_identifier = {
+    '{{p|username}}': '{{p1}}',
+    '{{p|userprofile}}': '{{p2}}',
+    '{{p|userprofile/documents}}': '{{p3}}',
+    '{{p|userprofile/appdata/locallow}}': '{{p4}}',
+    '{{p|appdata}}': '{{p5}}',
+    '{{p|localappdata}}': '{{p6}}',
+    '{{p|programfiles}}': '{{p7}}',
+    '{{p|programdata}}': '{{p8}}',
+    '{{p|public}}': '{{p9}}',
+    '{{p|windir}}': '{{p10}}',
+    '{{p|game}}': '{{p11}}',
+    '{{p|uid}}': '{{p12}}',
+    '{{p|steam}}': '{{p13}}',
+    '{{p|uplay}}': '{{p14}}',
+    '{{p|ubisoftconnect}}': '{{p14}}',
+    '{{p|hkcu}}': '{{p15}}',
+    '{{p|hklm}}': '{{p16}}',
+    '{{p|wow64}}': '{{p17}}',
+    '{{p|osxhome}}': '{{p18}}',
+    '{{p|linuxhome}}': '{{p19}}',
+    '{{p|xdgdatahome}}': '{{p20}}',
+    '{{p|xdgconfighome}}': '{{p21}}',
+};
+
+ipcMain.handle('backup-game', async (event, gameObj) => {
+    const gameBackupPath = path.join(settings['backupPath'], gameObj.wiki_page_id.toString());
 
     // Create a new backup instance folder based on the current date and time
     const backupInstanceFolder = moment().format('YYYY-MM-DD_HH-mm');
@@ -688,13 +784,13 @@ ipcMain.handle('backup-game', async (event, gameData) => {
 
     try {
         const backupConfig = {
-            title: gameData.title,
-            zh_CN: gameData.zh_CN || null,
+            title: gameObj.title,
+            zh_CN: gameObj.zh_CN || null,
             backup_paths: []
         };
 
         // Iterate over resolved paths and copy files to the backup instance
-        for (const [index, resolvedPathObj] of gameData.resolved_paths.entries()) {
+        for (const [index, resolvedPathObj] of gameObj.resolved_paths.entries()) {
             const resolvedPath = path.normalize(resolvedPathObj.resolved);
             const pathFolderName = `path${index + 1}`;
             const targetPath = path.join(backupInstancePath, pathFolderName);
@@ -715,24 +811,29 @@ ipcMain.handle('backup-game', async (event, gameData) => {
                 backupConfig.backup_paths.push({
                     folder_name: pathFolderName,
                     template: resolvedPathObj.template,
-                    uid: resolvedPathObj.uid || null
+                    type: 'reg',
+                    install_folder: gameObj.install_folder || null
                 });
 
             } else {
                 // File/directory backup logic
+                let dataType = null;
                 await fse.ensureDir(targetPath);
                 const stats = await fse.stat(resolvedPath);
                 if (stats.isDirectory()) {
+                    dataType = 'folder';
                     await fse.copy(resolvedPath, targetPath, { overwrite: true });
                 } else {
+                    dataType = 'file';
                     const targetFilePath = path.join(targetPath, path.basename(resolvedPath));
                     await fse.copy(resolvedPath, targetFilePath, { overwrite: true });
                 }
 
                 backupConfig.backup_paths.push({
                     folder_name: pathFolderName,
-                    template: resolvedPathObj.template,
-                    uid: resolvedPathObj.uid || null
+                    template: finalizeTemplate(resolvedPathObj.template, resolvedPathObj.resolved, resolvedPathObj.uid, gameObj.install_path),
+                    type: dataType,
+                    install_folder: gameObj.install_folder || null
                 });
             }
         }
@@ -755,10 +856,72 @@ ipcMain.handle('backup-game', async (event, gameData) => {
         }
 
     } catch (error) {
-        win.webContents.send('show-alert', 'error', `${i18next.t('main.backup_error_for_game')}: ${gameData.title}`);
-        console.error(`Error during backup for game: ${gameData.title}`, error);
+        win.webContents.send('show-alert', 'error', `${i18next.t('main.backup_error_for_game')}: ${gameObj.title}`);
+        console.error(`Error during backup for game: ${gameObj.title}`, error);
     }
 });
+
+// Replace wildcards and uid by finding the corresponding components in resolved path
+function finalizeTemplate(template, resolvedPath, uid, gameInstallPath) {
+    function splitTemplatePath(templatePath) {
+        let normalizedTemplate = templatePath.replace(/\{\{p\|[^\}]+\}\}/gi, match => {
+            const normalizedMatch = match.toLowerCase().replace(/\\/g, '/');
+            return placeholder_identifier[normalizedMatch] || normalizedMatch;
+        });
+
+        return normalizedTemplate.replace(/[\\/]+/g, path.sep).split(path.sep);
+    }
+
+    const templateParts = splitTemplatePath(template);
+    let resolvedParts = resolvedPath.split(path.sep);
+
+    let resultParts = [];
+    let resolvedIndex = 0;
+
+    for (let i = 0; i < templateParts.length; i++) {
+        const currentPart = templateParts[i];
+
+        // Process placeholders
+        if (/\{\{p\d+\}\}/.test(currentPart)) {
+            let pathMapping = '';
+            const placeholder = findKeyByValue(placeholder_identifier, currentPart) || currentPart;
+
+            if (currentPart.includes('{{p11}}')) {
+                pathMapping = currentPart.replace('{{p11}}', gameInstallPath);
+            } else if (currentPart.includes('{{p13}}')) {
+                pathMapping = currentPart.replace('{{p13}}', gameData.steamPath);
+            } else if (currentPart.includes('{{p14}}')) {
+                pathMapping = currentPart.replace('{{p14}}', gameData.ubisoftPath);
+            } else if (currentPart.includes('{{p12}}')) {
+                resultParts.push(currentPart.replace('{{p12}}', uid));
+                resolvedIndex++;
+                continue;
+            } else {
+                pathMapping = placeholder_mapping[placeholder];
+            }
+
+            resultParts.push(placeholder);
+            const splittedPathMapping = pathMapping.split(path.sep);
+            resolvedIndex += splittedPathMapping.length;
+
+            // Process wildcards
+        } else if (currentPart.includes('*')) {
+            resultParts.push(resolvedParts[resolvedIndex]);
+            resolvedIndex++;
+
+            // Process normal path elements
+        } else {
+            resultParts.push(currentPart);
+            resolvedIndex++;
+        }
+    }
+
+    return path.join(...resultParts);
+}
+
+function findKeyByValue(obj, value) {
+    return Object.keys(obj).find(key => obj[key] === value);
+}
 
 // ======================================================================
 // Restore
@@ -778,31 +941,15 @@ ipcMain.handle('backup-game', async (event, gameData) => {
 //             "backup_paths": [
 //                 {
 //                     "folder_name": "path1",
-//                     "template": "{{P|steam}}\\userdata\\{{p|uid}}\\870780\\remote",
-//                     "uid": "477235894"
+//                     "template": "{{p|steam}}\\userdata\\477235894\\870780\\remote",
+//                     "type": "folder",
+//                     "install_folder": "Control"
 //                 },
 //                 {
 //                     "folder_name": "path2",
-//                     "template": "{{P|game}}\\renderer.ini",
-//                     "uid": null
-//                 }
-//             ]
-//         },
-//         {
-//             "date": "2024-09-08_15-22",
-//             "title": "Control",
-//             "zh_CN": "控制",
-//             "backup_size": 132168,
-//             "backup_paths": [
-//                 {
-//                     "folder_name": "path1",
-//                     "template": "{{P|steam}}\\userdata\\{{p|uid}}\\870780\\remote",
-//                     "uid": "477235894"
-//                 },
-//                 {
-//                     "folder_name": "path2",
-//                     "template": "{{P|game}}\\renderer.ini",
-//                     "uid": null
+//                     "template": "{{p|game}}\\renderer.ini",
+//                     "type": "file",
+//                     "install_folder": "Control"
 //                 }
 //             ]
 //         }
@@ -877,6 +1024,93 @@ async function getGameDataForRestore() {
     return games;
 }
 
-ipcMain.handle('restore-game', async (event, gameData) => {
-    const gameBackupPath = path.join(settings['backupPath'], gameData.wiki_page_id.toString());
+ipcMain.handle('restore-game', async (event, gameObj) => {
+    try {
+        const gameBackupPath = path.join(settings['backupPath'], gameObj.wiki_page_id.toString());
+
+        // Find the latest backup folder based on the backup date
+        const latestBackupFolder = gameObj.backups.sort((a, b) => {
+            return b.date.localeCompare(a.date);
+        })[0];
+
+        const latestBackupPath = path.join(gameBackupPath, latestBackupFolder.date);
+
+        // Restore each path in the latest backup
+        for (const backupPath of latestBackupFolder.backup_paths) {
+            const sourcePath = path.join(latestBackupPath, backupPath.folder_name);
+            const destinationPath = resolveTemplatedRestorePath(backupPath.template, backupPath.install_folder);
+
+            if (!await fse.pathExists(sourcePath)) {
+                console.warn(`Source path does not exist: ${sourcePath}`);
+                continue;
+            }
+            if (backupPath.type !== 'reg' && !path.isAbsolute(destinationPath)) {
+                console.warn(`Destination path is not absolute: ${destinationPath}`);
+                continue;
+            }
+
+            if (backupPath.type === 'folder') {
+                await fse.ensureDir(destinationPath);
+                await fse.copy(sourcePath, destinationPath, { overwrite: true });
+
+            } else if (backupPath.type === 'file') {
+                await fse.ensureDir(path.dirname(destinationPath));
+                await fse.copy(path.join(sourcePath, path.basename(destinationPath)), destinationPath, { overwrite: true });
+
+            } else if (backupPath.type === 'reg') {
+                const registryFilePath = path.join(sourcePath, 'registry_backup.reg');
+                const regImportCommand = `reg import "${registryFilePath}"`;
+
+                try {
+                    await execPromise(regImportCommand);
+                } catch (error) {
+                    console.error(`Error importing registry key: ${registryFilePath}`, error);
+                    throw error;
+                }
+
+            } else {
+                console.warn(`Unknown backup type: ${backupPath.type}`);
+            }
+        }
+
+    } catch (err) {
+        win.webContents.send('show-alert', 'error', `${i18next.t('main.restore_error_for_game')}: ${gameObj.title}`);
+        console.error(`Error during restore for game: ${gameObj.title}`, err);
+    }
 });
+
+function resolveTemplatedRestorePath(templatedPath, installFolder) {
+    let basePath = templatedPath.replace(/\{\{p\|[^\}]+\}\}/gi, match => {
+        const normalizedMatch = match.toLowerCase().replace(/\\/g, '/');
+
+        if (normalizedMatch === '{{p|game}}') {
+            return getGameInstallPath(installFolder);
+        } else if (normalizedMatch === '{{p|steam}}') {
+            return gameData.steamPath;
+        } else if (normalizedMatch === '{{p|uplay}}' || normalizedMatch === '{{p|ubisoftconnect}}') {
+            return gameData.ubisoftPath;
+        }
+
+        return placeholder_mapping[normalizedMatch] || match;
+    });
+
+    return basePath;
+}
+
+function getGameInstallPath(installFolder) {
+    const gameInstallPaths = settings['gameInstalls'];
+
+    for (const installPath of gameInstallPaths) {
+        const directories = fs.readdirSync(installPath, { withFileTypes: true })
+            .filter(dirent => dirent.isDirectory())
+            .map(dirent => dirent.name);
+
+        for (const dir of directories) {
+            if (dir === installFolder) {
+                return path.join(installPath, dir);
+            }
+        }
+    }
+
+    return 'gameNotInstalled';
+}

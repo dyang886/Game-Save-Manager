@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupSearchFilter('backup');
     setupSearchFilter('restore');
     setupBackupButton();
+    setupRestoreButton();
+    setupCustomPage();
     setDropDownAction();
 
     updateBackupTable(true);
@@ -13,6 +15,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 window.api.receive('apply-language', () => {
     updateTranslations();
     updateSelectedCountAndSize('backup');
+    updateSelectedCountAndSize('restore');
 });
 
 // Function to initialize the tab switching functionality
@@ -175,7 +178,7 @@ function addPinIcon(row) {
 
     if (titleCell) {
         const pinIcon = document.createElement('i');
-        pinIcon.classList.add('fa-solid', 'fa-thumbtack', 'mr-2');
+        pinIcon.classList.add('fa-solid', 'fa-thumbtack', 'text-red-500', 'mr-2');
 
         titleCell.prepend(pinIcon);
     }
@@ -399,13 +402,6 @@ async function pinGameOnTop(tabName, wikiId) {
             const previousRow = sortedPinnedGames[indexToInsert - 1].row;
             tableBody.insertBefore(newRow, previousRow.nextSibling);
         }
-
-        // Update pinned game IDs in settings
-        let pinnedGameIds = await window.api.invoke('get-settings').then(settings => settings.pinnedGames || []);
-        if (!pinnedGameIds.includes(wikiId)) {
-            pinnedGameIds.push(wikiId);
-        }
-        window.api.send('save-settings', 'pinnedGames', pinnedGameIds);
     }
 }
 
@@ -432,7 +428,7 @@ async function unpinGameFromTop(tabName, wikiId) {
         const indexToInsert = sortedUnpinnedGames.findIndex(game => game.row === rowToMove);
 
         // Insert the row in the correct sorted position
-        const lastPinnedRow = Array.from(tableBody.querySelectorAll('tr')).find(row => row.querySelector('i.fa-thumbtack'));
+        const lastPinnedRow = Array.from(tableBody.querySelectorAll('tr')).reverse().find(row => row.querySelector('i.fa-thumbtack'));
         if (indexToInsert === 0) {
             if (lastPinnedRow) {
                 tableBody.insertBefore(rowToMove, lastPinnedRow.nextSibling);
@@ -443,11 +439,6 @@ async function unpinGameFromTop(tabName, wikiId) {
             const previousRow = sortedUnpinnedGames[indexToInsert - 1].row;
             tableBody.insertBefore(rowToMove, previousRow.nextSibling);
         }
-
-        // Update pinned game IDs in settings by removing this game
-        let pinnedGameIds = await window.api.invoke('get-settings').then(settings => settings.pinnedGames || []);
-        pinnedGameIds = pinnedGameIds.filter(id => id !== wikiId);
-        window.api.send('save-settings', 'pinnedGames', pinnedGameIds);
     }
 }
 

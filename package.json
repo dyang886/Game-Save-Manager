@@ -7,19 +7,25 @@
     "start": "concurrently -k \"npm:tailwind:build\" \"npm:electron:start\"",
     "tailwind:build": "tailwindcss -i ./src/style_config.css -o ./src/components/styles.css --watch",
     "electron:start": "wait-on ./src/components/styles.css && electron .",
-    "build": "electron-builder --dir",
+    "build": "electron-builder",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "build": {
     "extends": null,
     "icon": "assets/logo.ico",
-    "appId": "com.dyang.game-save-manager"
+    "appId": "com.dyang.game-save-manager",
+    "productName": "Game Save Manager",
+    "copyright": "Copyright © 2024 Yongcan Yang",
+    "extraFiles": [
+      "./database/database.db"
+    ]
   },
   "author": "Yongcan Yang",
   "license": "GPL-3.0-only",
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.6.0",
     "autoprefixer": "^10.4.19",
+    "fs-extra": "^11.2.0",
     "i18next": "^23.12.2",
     "i18next-browser-languagedetector": "^8.0.0",
     "i18next-fs-backend": "^2.3.2",
@@ -27,7 +33,7 @@
     "moment": "^2.30.1",
     "pinyin": "^4.0.0-alpha.2",
     "postcss": "^8.4.40",
-    "sqlite3": "^5.1.7",
+    "sqlite3": "^5.1.6",
     "tailwindcss": "^3.4.7",
     "vdf-parser": "^1.2.1",
     "winreg": "^1.2.5"

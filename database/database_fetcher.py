@@ -4,6 +4,7 @@ import json
 import logging
 import os
 import sqlite3
+import string
 import sys
 
 import gevent
@@ -11,6 +12,7 @@ import gevent.timeout
 import mwparserfromhell
 import requests
 from steam.client import SteamClient
+import zhon
 
 WIKI_API_URL = "https://www.pcgamingwiki.com/w/api.php"
 RELEVANT_CATEGORIES = ["Category:Games", "Category:Emulators"]
@@ -150,7 +152,6 @@ class DatabaseFetcher:
     def fetch_all_category_members(self):
         for category in RELEVANT_CATEGORIES:
             continue_param = {}
-            continue_param = {'cmcontinue': 'page|494e46494e49554d20535452494b45|35702', 'continue': '-||'}
 
             while True:
                 members = []
@@ -388,9 +389,32 @@ class DatabaseFetcher:
                                 cleaned_path_nodes.append(str(node))
                             cleaned_path = "".join(cleaned_path_nodes).strip()
 
-                            # Only keep the most general path, any subdirectories should not be separate paths
+                            standalonePaths = [
+                                '{{p|game}}',
+                                '{{p|userprofile}}',
+                                '{{p|userprofile/documents}}',
+                                '{{p|userprofile/appdata/locallow}}',
+                                '{{p|appdata}}',
+                                '{{p|localappdata}}',
+                                '{{p|programfiles}}',
+                                '{{p|programdata}}',
+                                '{{p|public}}',
+                                '{{p|windir}}',
+                                '{{p|steam}}',
+                                '{{p|uplay}}',
+                                '{{p|ubisoftconnect}}',
+                                '{{p|wow64}}',
+                                '{{p|hklm}}',
+                                '{{p|hkcu}}',
+                                '{{p|osxhome}}',
+                                '{{p|xdgconfighome}}',
+                                '{{p|xdgdatahome}}',
+                                '{{p|linuxhome}}',
+                            ]
                             cleaned_path_check = os.path.normpath(cleaned_path).lower()
-                            if cleaned_path and cleaned_path_check != "{{p|game}}":
+
+                            # Only keep the most general path, any subdirectories should not be separate paths
+                            if cleaned_path and cleaned_path_check not in standalonePaths:
                                 save_location_key = system_map[system]
                                 relative_paths = {p for p in entry['save_location'][save_location_key] if not os.path.isabs(p)}
                                 absolute_paths = {p for p in entry['save_location'][save_location_key] if os.path.isabs(p)}
@@ -418,8 +442,8 @@ class DatabaseFetcher:
                                 if should_add_path:
                                     entry['save_location'][save_location_key].add(cleaned_path_normalized)
 
-                            elif cleaned_path_check == "{{p|game}}":
-                                logging.info(f"Path not specified for game install: {title}")
+                            elif cleaned_path_check in standalonePaths:
+                                logging.info(f"Path not specified from {cleaned_path_check}: {title}")
 
                         if system not in system_map:
                             logging.warning(f"Unknown system: {system}")
@@ -451,11 +475,15 @@ class DatabaseFetcher:
                         logging.error(f"No entry found in database for steam_id {steam_id}")
     
     def find_translation(self, steam_id, en_name):
+        def normalize_name(name):
+            all_punctuation = string.punctuation + zhon.hanzi.punctuation
+            return ''.join(char for char in name if char not in all_punctuation and not char.isspace()).lower()
+
         for translation in self.translations:
             if steam_id and translation.get('steam_id') == steam_id:
                 return translation.get('zh_CN')
             
-            if en_name and translation.get('en_US') == en_name:
+            if en_name and normalize_name(translation.get('en_US')) == normalize_name(en_name):
                 return translation.get('zh_CN')
     
         return None

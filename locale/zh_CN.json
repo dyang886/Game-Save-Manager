@@ -30,8 +30,10 @@
         "more": "更多",
         "backup_selected": "备份选中的游戏",
         "backup_in_progress": "备份中...",
+        "restore_in_progress": "还原中...",
         "no_games_selected": "没有选择游戏",
         "backup_success": "备份成功",
+        "restore_success": "还原成功",
         "no_backups": "暂无备份",
         "view_wiki": "在 PCGamingWiki 上查看",
         "open_backup_folder": "打开备份文件夹",
@@ -40,6 +42,7 @@
         "no_backups_found": "无法找到备份",
         "search_for_games": "搜索游戏",
         "backup_error_for_game": "备份此游戏时出错",
+        "restore_error_for_game": "还原此游戏时出错",
         "fetch_backup_failed": "无法获取数据进行备份",
         "fetch_restore_failed": "无法获取数据进行恢复",
         "registry_existence_check_failed": "无法检查此游戏的注册表是否存在",
@@ -55,6 +58,9 @@
         "done": "完成",
         "total_games_backed_up": "备份游戏总数：",
         "total_backup_size": "备份总大小：",
-        "backup_saved_to": "备份保存至："
+        "backup_saved_to": "备份保存至：",
+        "total_games_restored": "还原游戏总数：",
+        "total_restore_size": "还原总大小：",
+        "restored_from": "从此处还原："
     }
 }
