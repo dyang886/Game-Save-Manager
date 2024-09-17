@@ -106,7 +106,6 @@ function addTemplate() {
     customTabContent.insertAdjacentHTML('beforeend', createCustomEntry());
     const newEntry = customTabContent.lastElementChild;
     
-    // Add click event listener for the new entry
     const button = newEntry.querySelector('.custom-entry-title');
     button.addEventListener('click', () => {
         toggleEntry(newEntry);
