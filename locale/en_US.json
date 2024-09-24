@@ -15,7 +15,6 @@
         "select_backup_path": "Select backup save path",
         "select_path": "Select a path"
     },
-
     "main": {
         "title": "Game Save Manager",
         "loading": "Loading...",
@@ -31,7 +30,6 @@
         "backup_selected": "Backup Selected Games",
         "backup_in_progress": "Backup in progress...",
         "restore_in_progress": "Restore in progress...",
-        "no_games_selected": "No games selected",
         "backup_success": "Backup Success",
         "restore_success": "Restore Success",
         "no_backups": "No backups",
@@ -39,21 +37,31 @@
         "open_backup_folder": "Open backup folder",
         "pin_on_top": "Pin on top",
         "unpin": "Unpin",
-        "no_backups_found": "No backups found",
         "search_for_games": "Search for games",
+        "selected_games_count": "{{count}} of {{total}} games selected",
+        "total_backup_size": "Total backup size: {{size}}",
+        "total_restore_size": "Total restore size: {{size}}",
+        "backup_count": "Number of Backups",
+        "restore_selected": "Restore Selected Games"
+    },
+    "alert": {
+        "no_games_selected": "No games selected",
+        "no_backups_found": "No backups found",
         "backup_error_for_game": "Error during backup for game",
         "restore_error_for_game": "Error during restore for game",
         "fetch_backup_failed": "Failed to fetch data for backup",
         "fetch_restore_failed": "Failed to fetch data for restoration",
         "registry_existence_check_failed": "Failed to check registry existence for game",
-        "selected_games_count": "{{count}} of {{total}} games selected",
-        "total_backup_size": "Total backup size: {{size}}",
-        "total_restore_size": "Total restore size: {{size}}",
-        "backup_count": "Number of Backups",
-        "restore_selected": "Restore Selected Games",
-        "incorrect_backup_structure": "Incorrect backup structure"
+        "incorrect_backup_structure": "Incorrect backup structure",
+        "yes": "Yes",
+        "no": "No",
+        "save_conflict": "Save Conflict",
+        "save_conflict_detected": "Save conflict detected for {{game}}.",
+        "machine_save_date": "Save data on machine (last modified on {{machineTime}})",
+        "backup_save_date": "is newer than backup (last modified on {{backupTime}})",
+        "overwrite_prompt": "Do you want to overwrite local save data with backup?",
+        "do_this_for_all": "Do this for all games"
     },
-
     "summary": {
         "done": "Done",
         "total_games_backed_up": "Total games backed up:",

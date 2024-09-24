@@ -180,7 +180,7 @@ async function performBackup() {
     const selectedWikiIds = getSelectedWikiIds('backup');
 
     if (selectedWikiIds.length === 0) {
-        showAlert('warning', await window.i18n.translate('main.no_games_selected'));
+        showAlert('warning', await window.i18n.translate('alert.no_games_selected'));
         return 1;
     }
 

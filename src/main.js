@@ -244,7 +244,7 @@ ipcMain.handle('open-backup-folder', async (event, wikiId) => {
     if (fs.existsSync(backupPath) && fs.readdirSync(backupPath).length > 0) {
         await shell.openPath(backupPath);
     } else {
-        win.webContents.send('show-alert', 'warning', i18next.t('main.no_backups_found'));
+        win.webContents.send('show-alert', 'warning', i18next.t('alert.no_backups_found'));
     }
 });
 
@@ -334,7 +334,7 @@ ipcMain.handle('fetch-game-saves', async (event) => {
         // const games = await getAllGameDataFromDB();
         return games;
     } catch (err) {
-        win.webContents.send('show-alert', 'error', i18next.t('main.fetch_backup_failed'));
+        win.webContents.send('show-alert', 'error', i18next.t('alert.fetch_backup_failed'));
         console.error("Failed to fetch backup data:", err);
         return [];
     }
@@ -543,7 +543,7 @@ async function process_game(db_game_row) {
             await new Promise((resolve, reject) => {
                 registryKey.keyExists((err, exists) => {
                     if (err) {
-                        win.webContents.send('show-alert', 'error', `${i18next.t('main.registry_existence_check_failed')}: ${db_game_row.title}`);
+                        win.webContents.send('show-alert', 'error', `${i18next.t('alert.registry_existence_check_failed')}: ${db_game_row.title}`);
                         console.error(`Error checking registry existence for ${db_game_row.title}: ${err}`);
                         return reject(err);
                     }
@@ -701,9 +701,11 @@ function calculateDirectorySize(directoryPath) {
                     totalSize += fs.lstatSync(filePath).size;
                 }
             });
+
         } else {
             totalSize += fs.lstatSync(directoryPath).size;
         }
+
     } catch (error) {
         console.error(`Error calculating directory size for ${directoryPath}:`, error);
     }
@@ -856,7 +858,7 @@ ipcMain.handle('backup-game', async (event, gameObj) => {
         }
 
     } catch (error) {
-        win.webContents.send('show-alert', 'error', `${i18next.t('main.backup_error_for_game')}: ${gameObj.title}`);
+        win.webContents.send('show-alert', 'error', `${i18next.t('alert.backup_error_for_game')}: ${getGameDisplayName(gameObj)}`);
         console.error(`Error during backup for game: ${gameObj.title}`, error);
     }
 });
@@ -961,7 +963,7 @@ ipcMain.handle('fetch-restore-table-data', async (event) => {
         const games = await getGameDataForRestore();
         return games;
     } catch (err) {
-        win.webContents.send('show-alert', 'error', i18next.t('main.fetch_restore_failed'));
+        win.webContents.send('show-alert', 'error', i18next.t('alert.fetch_restore_failed'));
         console.error("Failed to fetch restore data:", err);
         return [];
     }
@@ -1024,18 +1026,17 @@ async function getGameDataForRestore() {
     return games;
 }
 
-ipcMain.handle('restore-game', async (event, gameObj) => {
+ipcMain.handle('restore-game', async (event, gameObj, userActionForAll) => {
     try {
         const gameBackupPath = path.join(settings['backupPath'], gameObj.wiki_page_id.toString());
 
         // Find the latest backup folder based on the backup date
-        const latestBackupFolder = gameObj.backups.sort((a, b) => {
-            return b.date.localeCompare(a.date);
-        })[0];
-
+        const latestBackupFolder = gameObj.backups.sort((a, b) => b.date.localeCompare(a.date))[0];
         const latestBackupPath = path.join(gameBackupPath, latestBackupFolder.date);
 
-        // Restore each path in the latest backup
+        let localActionForAll = userActionForAll;
+        const pathsToCheck = [];
+
         for (const backupPath of latestBackupFolder.backup_paths) {
             const sourcePath = path.join(latestBackupPath, backupPath.folder_name);
             const destinationPath = resolveTemplatedRestorePath(backupPath.template, backupPath.install_folder);
@@ -1044,20 +1045,35 @@ ipcMain.handle('restore-game', async (event, gameObj) => {
                 console.warn(`Source path does not exist: ${sourcePath}`);
                 continue;
             }
+
             if (backupPath.type !== 'reg' && !path.isAbsolute(destinationPath)) {
                 console.warn(`Destination path is not absolute: ${destinationPath}`);
                 continue;
             }
 
-            if (backupPath.type === 'folder') {
+            pathsToCheck.push({ sourcePath, destinationPath, backupType: backupPath.type });
+        }
+
+        // Check for any conflicts before proceeding with the restore
+        const shouldProceed = await shouldSkip(pathsToCheck, getGameDisplayName(gameObj), localActionForAll);
+
+        if (shouldProceed.skip) {
+            return;
+        } else if (shouldProceed.actionForAll) {
+            localActionForAll = shouldProceed.actionForAll;
+        }
+
+        // Proceed with restoring all paths based on user's decision
+        for (const { sourcePath, destinationPath, backupType } of pathsToCheck) {
+            if (backupType === 'folder') {
                 await fse.ensureDir(destinationPath);
                 await fse.copy(sourcePath, destinationPath, { overwrite: true });
 
-            } else if (backupPath.type === 'file') {
+            } else if (backupType === 'file') {
                 await fse.ensureDir(path.dirname(destinationPath));
                 await fse.copy(path.join(sourcePath, path.basename(destinationPath)), destinationPath, { overwrite: true });
 
-            } else if (backupPath.type === 'reg') {
+            } else if (backupType === 'reg') {
                 const registryFilePath = path.join(sourcePath, 'registry_backup.reg');
                 const regImportCommand = `reg import "${registryFilePath}"`;
 
@@ -1067,17 +1083,107 @@ ipcMain.handle('restore-game', async (event, gameObj) => {
                     console.error(`Error importing registry key: ${registryFilePath}`, error);
                     throw error;
                 }
-
             } else {
-                console.warn(`Unknown backup type: ${backupPath.type}`);
+                console.warn(`Unknown backup type: ${backupType}`);
             }
         }
 
+        return localActionForAll;
+
     } catch (err) {
-        win.webContents.send('show-alert', 'error', `${i18next.t('main.restore_error_for_game')}: ${gameObj.title}`);
+        win.webContents.send('show-alert', 'error', `${i18next.t('alert.restore_error_for_game')}: ${getGameDisplayName(gameObj.title)}`);
         console.error(`Error during restore for game: ${gameObj.title}`, err);
     }
 });
+
+async function shouldSkip(pathsToCheck, gameDisplayName, userActionForAll) {
+    let latestSourceModTime = new Date(0);
+    let latestDestModTime = new Date(0);
+
+    // Loop through each source-destination pair to find the latest modification times
+    for (const { sourcePath, destinationPath } of pathsToCheck) {
+        const srcModTime = await getLatestModificationTime(sourcePath);
+        const destModTime = await getLatestModificationTime(destinationPath);
+
+        if (srcModTime > latestSourceModTime) {
+            latestSourceModTime = srcModTime;
+        }
+        if (destModTime > latestDestModTime) {
+            latestDestModTime = destModTime;
+        }
+    }
+
+    // If the destination files are newer than the source (backup), prompt the user
+    if (latestSourceModTime < latestDestModTime) {
+        if (userActionForAll) {
+            return { skip: userActionForAll === 'skip', actionForAll: userActionForAll };
+        }
+
+        // Show the dialog to ask the user whether to replace or skip
+        const response = await dialog.showMessageBox(BrowserWindow.getFocusedWindow(), {
+            type: 'question',
+            buttons: [i18next.t('alert.yes'), i18next.t('alert.no')],
+            title: i18next.t('alert.save_conflict'),
+            message: `${i18next.t('alert.save_conflict_detected', { game: gameDisplayName })}\n\n` +
+                `${i18next.t('alert.machine_save_date', { machineTime: moment(latestDestModTime).format('YYYY-MM-DD HH:mm') })}\n` +
+                `${i18next.t('alert.backup_save_date', { backupTime: moment(latestSourceModTime).format('YYYY-MM-DD HH:mm') })}\n\n` +
+                `${i18next.t('alert.overwrite_prompt')}`,
+            checkboxLabel: i18next.t('alert.do_this_for_all'),
+            defaultId: 1, // Default to 'Skip'
+            cancelId: 1,
+            noLink: true,
+            modal: true
+        });
+
+        const userChoice = response.response === 0 ? 'replace' : 'skip';
+        const doForAll = response.checkboxChecked;
+
+        return {
+            skip: userChoice === 'skip',
+            actionForAll: doForAll ? userChoice : null
+        };
+    }
+
+    return { skip: false, actionForAll: null };
+}
+
+async function getLatestModificationTime(filePath) {
+    try {
+        const stats = await fse.lstat(filePath);
+
+        if (stats.isDirectory()) {
+            const files = await fse.readdir(filePath);
+            let latestModTime = new Date(0);
+
+            for (const file of files) {
+                const fullPath = path.join(filePath, file);
+                const fileStats = await fse.lstat(fullPath);
+
+                if (fileStats.isDirectory()) {
+                    // Recursively check subdirectories
+                    const subDirModTime = await getLatestModificationTime(fullPath);
+                    if (subDirModTime > latestModTime) {
+                        latestModTime = subDirModTime;
+                    }
+                } else {
+                    // Consider file modification time
+                    const fileModTime = moment(fileStats.mtime).seconds(0).milliseconds(0).toDate();
+                    if (fileModTime > latestModTime) {
+                        latestModTime = fileModTime;
+                    }
+                }
+            }
+            return latestModTime;
+
+        } else {
+            return moment(stats.mtime).seconds(0).milliseconds(0).toDate();
+        }
+
+    } catch (error) {
+        console.error(`Error getting modification time for ${filePath}:`, error);
+        return new Date(0);
+    }
+}
 
 function resolveTemplatedRestorePath(templatedPath, installFolder) {
     let basePath = templatedPath.replace(/\{\{p\|[^\}]+\}\}/gi, match => {
@@ -1114,3 +1220,12 @@ function getGameInstallPath(installFolder) {
 
     return 'gameNotInstalled';
 }
+
+function getGameDisplayName(gameObj) {
+    if (settings.language === "en_US") {
+        return gameObj.title;
+    } else if (settings.language === "zh_CN") {
+        return gameObj.zh_CN || gameObj.title;
+    }
+}
+

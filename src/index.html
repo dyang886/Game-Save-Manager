@@ -276,52 +276,7 @@
 
         <!-- Tab 3: Custom Games -->
         <div class="hidden rounded-lg" id="custom" role="tabpanel" aria-labelledby="custom-tab">
-            <div id="custom-content" data-accordion="collapse">
-                <div class="custom-entry flex flex-col">
-                    <button type="button"
-                        class="custom-entry-title flex items-center justify-between w-full p-5 font-medium rtl:text-right text-gray-500 border border-gray-200 rounded-t-xl focus:outline-none dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 gap-3">
-                        <span>Test content</span>
-                        <svg data-accordion-icon class="w-3 h-3 rotate-180 shrink-0" aria-hidden="true" fill="none"
-                            viewBox="0 0 10 6">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 5 5 1 1 5" />
-                        </svg>
-                    </button>
-                    <div
-                        class="collapsed-content flex flex-col p-5 border border-gray-200 dark:border-gray-700 dark:bg-gray-900">
-                        <div class="collapsed-row">
-                            <div class="flex items-center mb-3">
-                                <select
-                                    class="custom-backup-type-dropdown bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white mr-3">
-                                    <option value="file">File</option>
-                                    <option value="folder">Folder</option>
-                                    <option value="registry">Registry</option>
-                                </select>
-
-                                <input type="text"
-                                    class="custom-path-select-input flex-grow bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white mr-3"
-                                    placeholder="Select Path">
-
-                                <button type="button"
-                                    class="custom-path-select-button text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700">
-                                    <i class="fa-solid fa-ellipsis"></i>
-                                </button>
-
-                                <button type="button"
-                                    class="custom-delete-collapsed-row text-white bg-red-600 hover:bg-red-700 font-medium rounded-lg text-sm px-4 py-2 ml-3 dark:bg-red-500 dark:hover:bg-red-600">
-                                    <i class="fa-solid fa-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <button type="button" id="custom-add-path" data-i18n="main.add_path"
-                            class="ml-auto text-white bg-green-600 hover:bg-green-700 font-medium rounded-lg text-sm px-5 py-2.5 mt-2 dark:bg-green-500 dark:hover:bg-green-600">
-                            <i class="fa-solid fa-plus mr-1"></i>
-                            <span class="text-content">Add Another Path</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
+            <div id="custom-content" data-accordion="collapse" class="custom-height overflow-y-auto scrollbar scrollbar-w-2 scrollbar-h-2 scrollbar-track-rounded-full scrollbar-thumb-rounded-full scrollbar-track-white scrollbar-thumb-slate-300 dark:scrollbar-track-gray-800 dark:scrollbar-thumb-slate-600"></div>
 
             <!-- Custom Buttons -->
             <div class="flex mt-4">

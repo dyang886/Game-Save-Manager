@@ -363,7 +363,7 @@ async function sortGames(games) {
             const titleToSort = isChinese ? await window.api.invoke('get-pinyin', game.titleToSort) : game.titleToSort.toLowerCase();
             return { ...game, titleToSort };
         } catch (error) {
-            showAlert('error', `${await window.i18n.translate('main.incorrect_backup_structure')} [id: ${game.wiki_page_id}]`);
+            showAlert('error', `${await window.i18n.translate('alert.incorrect_backup_structure')} [id: ${game.wiki_page_id}]`);
             console.error("Error during game sorting:", error);
             return { ...game, titleToSort: '' };
         }
