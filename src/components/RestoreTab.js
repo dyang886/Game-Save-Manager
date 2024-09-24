@@ -171,13 +171,19 @@ async function performRestore() {
     const selectedWikiIds = getSelectedWikiIds('restore');
 
     if (selectedWikiIds.length === 0) {
-        showAlert('warning', await window.i18n.translate('main.no_games_selected'));
+        showAlert('warning', await window.i18n.translate('alert.no_games_selected'));
         return 1;
     }
 
+    let globalAction = null;
+
     for (const wikiId of selectedWikiIds) {
         const gameData = restoreTableDataMap.get(wikiId);
-        await window.api.invoke('restore-game', gameData);
+        const actionForAll = await window.api.invoke('restore-game', gameData, globalAction);
+
+        if (actionForAll) {
+            globalAction = actionForAll;
+        }
     }
 
     return 0;

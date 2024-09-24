@@ -1,5 +1,9 @@
 .table-height {
-    max-height: calc(100vh - 220px);
+    max-height: calc(100vh - 230px);
+}
+
+.custom-height {
+    max-height: calc(100vh - 166px);
 }
 
 @keyframes fadeIn {

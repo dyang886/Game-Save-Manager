@@ -15,7 +15,6 @@
         "select_backup_path": "选择备份保存路径",
         "select_path": "选择一个路径"
     },
-
     "main": {
         "title": "游戏存档管理器",
         "loading": "加载中...",
@@ -31,7 +30,6 @@
         "backup_selected": "备份选中的游戏",
         "backup_in_progress": "备份中...",
         "restore_in_progress": "还原中...",
-        "no_games_selected": "没有选择游戏",
         "backup_success": "备份成功",
         "restore_success": "还原成功",
         "no_backups": "暂无备份",
@@ -39,21 +37,31 @@
         "open_backup_folder": "打开备份文件夹",
         "pin_on_top": "置顶",
         "unpin": "取消置顶",
-        "no_backups_found": "无法找到备份",
         "search_for_games": "搜索游戏",
+        "selected_games_count": "已选择 {{count}}/{{total}} 个游戏",
+        "total_backup_size": "总备份大小：{{size}}",
+        "total_restore_size": "总还原大小：{{size}}",
+        "backup_count": "备份个数",
+        "restore_selected": "还原选中的游戏"
+    },
+    "alert": {
+        "no_games_selected": "没有选择游戏",
+        "no_backups_found": "无法找到备份",
         "backup_error_for_game": "备份此游戏时出错",
         "restore_error_for_game": "还原此游戏时出错",
         "fetch_backup_failed": "无法获取数据进行备份",
         "fetch_restore_failed": "无法获取数据进行恢复",
         "registry_existence_check_failed": "无法检查此游戏的注册表是否存在",
-        "selected_games_count": "已选择 {{count}}/{{total}} 个游戏",
-        "total_backup_size": "总备份大小：{{size}}",
-        "total_restore_size": "总还原大小：{{size}}",
-        "backup_count": "备份个数",
-        "restore_selected": "还原选中的游戏",
-        "incorrect_backup_structure": "错误的备份结构"
+        "incorrect_backup_structure": "错误的备份结构",
+        "yes": "是",
+        "no": "否",
+        "save_conflict": "存档冲突",
+        "save_conflict_detected": "检测到 {{game}} 的存档冲突。",
+        "machine_save_date": "本地保存数据（最后修改于 {{machineTime}}）",
+        "backup_save_date": "比备份数据新（最后修改于 {{backupTime}}）",
+        "overwrite_prompt": "是否用备份覆盖本地保存数据？",
+        "do_this_for_all": "对所有游戏执行此操作"
     },
-
     "summary": {
         "done": "完成",
         "total_games_backed_up": "备份游戏总数：",
