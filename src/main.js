@@ -276,6 +276,37 @@ ipcMain.handle('open-dialog', async (event) => {
     return result;
 });
 
+ipcMain.handle('select-path', async (event, fileType) => {
+    const focusedWindow = BrowserWindow.getFocusedWindow();
+
+    let dialogOptions = {
+        title: i18next.t('settings.select_path'),
+        properties: []
+    };
+
+    switch (fileType) {
+        case 'file':
+            dialogOptions.properties = ['openFile'];
+            break;
+        case 'folder':
+            dialogOptions.properties = ['openDirectory'];
+            break;
+        case 'registry':
+            return null;
+    }
+
+    const result = await dialog.showOpenDialog(focusedWindow, {
+        ...dialogOptions,
+        modal: true
+    });
+
+    if (result.filePaths.length > 0) {
+        return result.filePaths[0];
+    }
+
+    return null;
+});
+
 ipcMain.on('update-tables-main', (event) => {
     win.webContents.send('update-backup-table');
     win.webContents.send('update-restore-table');
@@ -287,6 +318,33 @@ ipcMain.handle('get-newest-backup-time', (event, wiki_page_id) => {
 
 ipcMain.handle('get-pinyin', (event, zhTitle) => {
     return pinyin(zhTitle, { style: pinyin.STYLE_NORMAL }).join(' ');
+});
+
+ipcMain.handle('save-custom-entries', async (event, jsonObj) => {
+    console.log(jsonObj)
+    await fse.writeJson(path.join(settings.backupPath, "custom_entries.json"), jsonObj, { spaces: 4 });
+});
+
+ipcMain.handle('load-custom-entries', async () => {
+    try {
+        const filePath = path.join(settings.backupPath, "custom_entries.json");
+        
+        const fileExists = await fse.pathExists(filePath);
+        if (!fileExists) {
+            return [];
+        }
+
+        const jsonData = await fse.readJson(filePath);
+        return jsonData;
+
+    } catch (error) {
+        console.error('Error loading custom entries:', error);
+        return [];
+    }
+});
+
+ipcMain.handle('get-platform', (event) => {
+    return osKeyMap[os.platform()];
 });
 
 // ======================================================================
@@ -485,12 +543,6 @@ async function process_game(db_game_row) {
     let totalBackupSize = 0;
 
     const currentOS = os.platform();
-    const osKeyMap = {
-        win32: 'win',
-        darwin: 'mac',
-        linux: 'linux'
-    };
-
     const osKey = osKeyMap[currentOS];
 
     if (osKey && db_game_row.save_location[osKey]) {
@@ -775,6 +827,12 @@ const placeholder_identifier = {
     '{{p|linuxhome}}': '{{p19}}',
     '{{p|xdgdatahome}}': '{{p20}}',
     '{{p|xdgconfighome}}': '{{p21}}',
+};
+
+const osKeyMap = {
+    win32: 'win',
+    darwin: 'mac',
+    linux: 'linux'
 };
 
 ipcMain.handle('backup-game', async (event, gameObj) => {
