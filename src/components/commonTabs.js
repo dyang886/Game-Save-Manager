@@ -46,6 +46,9 @@ function initializeTabs() {
                 if (contentEl) {
                     contentEl.classList.remove('animate-fadeInShift', 'animate-fadeOut');
                 }
+                if (tab.id === 'custom') {
+                    loadEntriesFromJson();
+                }
                 showTab(tab, tabElements, options);
             });
         });
