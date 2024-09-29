@@ -500,47 +500,60 @@ class DatabaseFetcher:
         end = datetime.now()
         logging.info(f"Fetching recent changes from {start} to {end}")
 
-        recent_changes = []
-        params = {
-            "action": "query",
-            "list": "recentchanges",
-            "rcdir": "newer",
-            "rcstart": start.isoformat() + "Z",
-            "rcend": end.isoformat() + "Z",
-            "rclimit": "500",
-            "rcnamespace": "0",
-            "format": "json"
-        }
-
-        retry = 0
-        max_retry = 10
-        while retry < max_retry:
-            try:
-                response = self.scraper.get(WIKI_API_URL, params=params, headers=self.headers)
-                response.raise_for_status()
-
-                data = response.json()
-                recent_changes.extend(data.get("query", {}).get("recentchanges", []))
-                break
-            except Exception as e:
-                retry += 1
-                logging.warning(f"Failed to query recent changes (attempt {retry}/{max_retry}): {str(e)}")
-                if retry >= max_retry:
-                    raise
-
-        members = []
+        continue_param = {}
         distinct_page_ids = set()
-        for change in recent_changes:
-            page_id = change.get("pageid")
-            title = change.get("title")
+
+        while True:
+            recent_changes = []
+            params = {
+                "action": "query",
+                "list": "recentchanges",
+                "rcdir": "newer",
+                "rcstart": start.isoformat() + "Z",
+                "rcend": end.isoformat() + "Z",
+                "rclimit": "50",
+                "rcnamespace": "0",
+                "format": "json"
+            }
+
+            if continue_param:
+                params.update(continue_param)
+
+            retry = 0
+            max_retry = 10
+            while retry < max_retry:
+                try:
+                    response = self.scraper.get(WIKI_API_URL, params=params, headers=self.headers)
+                    response.raise_for_status()
+
+                    data = response.json()
+                    recent_changes.extend(data.get("query", {}).get("recentchanges", []))
+                    break
+                except Exception as e:
+                    retry += 1
+                    logging.warning(f"Failed to query recent changes (attempt {retry}/{max_retry}): {str(e)}")
+                    if retry >= max_retry:
+                        raise
             
-            if page_id not in distinct_page_ids:
-                members.append({"title": title, "pageid": page_id})
-                distinct_page_ids.add(page_id)
-        
-        self.process_games(members)
+            members = []
+            for change in recent_changes:
+                page_id = change.get("pageid")
+                title = change.get("title")
+                
+                if page_id not in distinct_page_ids:
+                    members.append({"title": title, "pageid": page_id})
+                    distinct_page_ids.add(page_id)
+            
+            self.process_games(members)
+
+            if "continue" in data:
+                continue_param = data["continue"]
+                logging.info("Continue parameter: %s", continue_param)
+            else:
+                logging.info("All recent changes fetched!")
+                break
+
         self.update_last_recent_change_time(end)
-        logging.info("All recent changes fetched!")
 
     def get_last_recent_change_time(self):
         cursor = self.conn.cursor()
