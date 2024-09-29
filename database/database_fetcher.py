@@ -7,10 +7,10 @@ import sqlite3
 import string
 import sys
 
+import cloudscraper
 import gevent
 import gevent.timeout
 import mwparserfromhell
-import requests
 from steam.client import SteamClient
 import zhon
 
@@ -23,7 +23,7 @@ class DatabaseFetcher:
     def __init__(self):
         self.conn = sqlite3.connect('./database/database.db')
         self.create_tables()
-        self.client = requests.Session()
+        self.scraper = cloudscraper.create_scraper()
         self.translations = []
         self.headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
@@ -57,7 +57,7 @@ class DatabaseFetcher:
         max_retry = 10
         while retry < max_retry:
             try:
-                response = self.client.get(index_page, headers=self.headers)
+                response = self.scraper.get(index_page, headers=self.headers)
                 response.raise_for_status()
 
                 data = response.json()
@@ -131,7 +131,7 @@ class DatabaseFetcher:
     def fetch_page(self, page_number):
         trainer_detail_page = f"https://dl.fucnm.com/datafile/xgqdetail/list_{page_number}.txt"
         try:
-            response = self.client.get(trainer_detail_page, headers=self.headers)
+            response = self.scraper.get(trainer_detail_page, headers=self.headers)
             response.raise_for_status()
 
             data = response.json()
@@ -170,8 +170,11 @@ class DatabaseFetcher:
                 max_retry = 10
                 while retry < max_retry:
                     try:
-                        response = self.client.get(WIKI_API_URL, params=params).json()
-                        members.extend(response.get("query", {}).get("categorymembers", []))
+                        response = self.scraper.get(WIKI_API_URL, params=params, headers=self.headers)
+                        response.raise_for_status()
+
+                        data = response.json()
+                        members.extend(data.get("query", {}).get("categorymembers", []))
                         break
                     except Exception as e:
                         retry += 1
@@ -181,8 +184,8 @@ class DatabaseFetcher:
 
                 self.process_games(members)
                 
-                if "continue" in response:
-                    continue_param = response["continue"]
+                if "continue" in data:
+                    continue_param = data["continue"]
                     logging.info("Continue parameter: %s", continue_param)
                 else:
                     logging.info(f"All entries fetched for {category}!")
@@ -260,8 +263,11 @@ class DatabaseFetcher:
             "format": "json",
             "redirects": "1"
         }
-        response = self.client.get(WIKI_API_URL, params=params).json()
-        return response.get("parse", {}).get("wikitext", {}).get("*", "")
+        response = self.scraper.get(WIKI_API_URL, params=params, headers=self.headers)
+        response.raise_for_status()
+
+        data = response.json()
+        return data.get("parse", {}).get("wikitext", {}).get("*", "")
 
     def parse_wikitext(self, wikitext, title):
         entry = {
@@ -510,8 +516,11 @@ class DatabaseFetcher:
         max_retry = 10
         while retry < max_retry:
             try:
-                response = self.client.get(WIKI_API_URL, params=params).json()
-                recent_changes.extend(response.get("query", {}).get("recentchanges", []))
+                response = self.scraper.get(WIKI_API_URL, params=params, headers=self.headers)
+                response.raise_for_status()
+
+                data = response.json()
+                recent_changes.extend(data.get("query", {}).get("recentchanges", []))
                 break
             except Exception as e:
                 retry += 1
