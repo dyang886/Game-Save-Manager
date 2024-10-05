@@ -7,14 +7,14 @@
     <meta http-equiv="Content-Security-Policy"
         content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; connect-src 'self'">
     <title class="text-content" data-i18n="main.title">Game Save Manager</title>
-    <link href="../node_modules/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
-    <link href="./components/styles.css" rel="stylesheet">
-    <link href="./components/styles_addition.css" rel="stylesheet">
-    <script defer src="./components/utility.js"></script>
-    <script src="./components/commonTabs.js"></script>
-    <script src="./components/backupTab.js"></script>
-    <script src="./components/restoreTab.js"></script>
-    <script src="./components/customTab.js"></script>
+    <link href="../../../node_modules/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+    <link href="../css/styles_addition.css" rel="stylesheet">
+    <script defer src="../js/utility.js"></script>
+    <script src="../js/commonTabs.js"></script>
+    <script src="../js/backupTab.js"></script>
+    <script src="../js/restoreTab.js"></script>
+    <script src="../js/customTab.js"></script>
 </head>
 
 <body class="bg-white dark:bg-gray-900 p-8 pt-2 overflow-hidden">
@@ -280,16 +280,16 @@
 
             <!-- Custom Buttons -->
             <div class="flex mt-4">
-                <button type="button" id="custom-save-all" data-i18n="main.save_all"
+                <button type="button" id="custom-save-all" data-i18n="custom.save_all"
                     class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700">
                     <i class="fa-solid fa-floppy-disk mr-1"></i>
                     <span class="text-content">Save All</span>
                 </button>
 
-                <button type="button" id="custom-add-game" data-i18n="main.add_game"
+                <button type="button" id="custom-add-game" data-i18n="custom.add_game"
                     class="ml-auto text-white bg-green-600 hover:bg-green-700 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-green-500 dark:hover:bg-green-600">
                     <i class="fa-solid fa-plus mr-1"></i>
-                    <span class="text-content">Add Another Game</span>
+                    <span class="text-content">Add Game</span>
                 </button>
             </div>
         </div>

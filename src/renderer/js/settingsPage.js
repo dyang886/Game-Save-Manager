@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }
         }
-        updateTranslations();
+        updateTranslations(document);
     });
 
     // Event listeners for changes
@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         window.api.send('save-settings', 'maxBackups', maxBackupsInput.value);
         window.api.send('save-settings', 'gameInstalls', gameInstallPaths);
-        window.api.send('update-tables-main');
+        window.api.send('update-components-after-applying-settings');
     });
 
     autoDetectButton.addEventListener('click', () => {
@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 window.api.receive('apply-language', () => {
-    updateTranslations();
+    updateTranslations(document);
     updateSelectedCountAndSize('backup');
     updateSelectedCountAndSize('restore');
 });

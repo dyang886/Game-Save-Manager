@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', async () => {
-    updateTranslations();
+    updateTranslations(document);
     initializeTabs();
     setupSearchFilter('backup');
     setupSearchFilter('restore');
@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 window.api.receive('apply-language', () => {
-    updateTranslations();
+    updateTranslations(document);
     updateSelectedCountAndSize('backup');
     updateSelectedCountAndSize('restore');
 });
