@@ -44,6 +44,24 @@
         "backup_count": "备份个数",
         "restore_selected": "还原选中的游戏"
     },
+    "summary": {
+        "done": "完成",
+        "total_games_backed_up": "备份游戏总数：",
+        "total_backup_size": "备份总大小：",
+        "backup_saved_to": "备份保存至：",
+        "total_games_restored": "还原游戏总数：",
+        "total_restore_size": "还原总大小：",
+        "restored_from": "从此处还原："
+    },
+    "custom": {
+        "save_all": "保存全部",
+        "add_game": "添加游戏",
+        "enter_game_name": "请输入游戏名",
+        "add_path": "添加路径",
+        "file": "文件",
+        "folder": "文件夹",
+        "registry": "注册表"
+    },
     "alert": {
         "no_games_selected": "没有选择游戏",
         "no_backups_found": "无法找到备份",
@@ -61,14 +79,5 @@
         "backup_save_date": "比备份数据新（最后修改于 {{backupTime}}）",
         "overwrite_prompt": "是否用备份覆盖本地保存数据？",
         "do_this_for_all": "对所有游戏执行此操作"
-    },
-    "summary": {
-        "done": "完成",
-        "total_games_backed_up": "备份游戏总数：",
-        "total_backup_size": "备份总大小：",
-        "backup_saved_to": "备份保存至：",
-        "total_games_restored": "还原游戏总数：",
-        "total_restore_size": "还原总大小：",
-        "restored_from": "从此处还原："
     }
 }

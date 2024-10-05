@@ -44,6 +44,24 @@
         "backup_count": "Number of Backups",
         "restore_selected": "Restore Selected Games"
     },
+    "summary": {
+        "done": "Done",
+        "total_games_backed_up": "Total games backed up:",
+        "total_backup_size": "Total backup size:",
+        "backup_saved_to": "Backup saved to:",
+        "total_games_restored": "Total games restored:",
+        "total_restore_size": "Total restore size:",
+        "restored_from": "Restored from:"
+    },
+    "custom": {
+        "save_all": "Save All",
+        "add_game": "Add Game",
+        "enter_game_name": "Please enter game name",
+        "add_path": "Add Path",
+        "file": "File",
+        "folder": "Folder",
+        "registry": "Registry"
+    },
     "alert": {
         "no_games_selected": "No games selected",
         "no_backups_found": "No backups found",
@@ -61,14 +79,5 @@
         "backup_save_date": "is newer than backup (last modified on {{backupTime}})",
         "overwrite_prompt": "Do you want to overwrite local save data with backup?",
         "do_this_for_all": "Do this for all games"
-    },
-    "summary": {
-        "done": "Done",
-        "total_games_backed_up": "Total games backed up:",
-        "total_backup_size": "Total backup size:",
-        "backup_saved_to": "Backup saved to:",
-        "total_games_restored": "Total games restored:",
-        "total_restore_size": "Total restore size:",
-        "restored_from": "Restored from:"
     }
 }

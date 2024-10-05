@@ -1,9 +1,10 @@
-const WinReg = require('winreg');
-const path = require('path');
-const vdf = require('vdf-parser');
 const fs = require('fs');
-const yaml = require('js-yaml');
+const path = require('path');
+
 const glob = require('glob');
+const vdf = require('vdf-parser');
+const WinReg = require('winreg');
+const yaml = require('js-yaml');
 
 class GameData {
     constructor() {
@@ -280,4 +281,10 @@ class GameData {
     }
 }
 
-module.exports = GameData;
+let gameData = new GameData();
+
+module.exports = {
+    getGameData: () => gameData,
+    initializeGameData: async () => await gameData.initialize(),
+    detectGamePaths: async () => await gameData.detectGamePaths(),
+};
