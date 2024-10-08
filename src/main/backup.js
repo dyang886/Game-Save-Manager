@@ -13,8 +13,7 @@ const moment = require('moment');
 const sqlite3 = require('sqlite3');
 const WinReg = require('winreg');
 
-const { getMainWin, getGameDisplayName, calculateDirectorySize, ensureWritable, getNewestBackup, placeholder_mapping, placeholder_identifier, osKeyMap, } = require('./global');
-const { getSettings } = require('./settings');
+const { getMainWin, getGameDisplayName, calculateDirectorySize, ensureWritable, getNewestBackup, placeholder_mapping, placeholder_identifier, osKeyMap, getSettings } = require('./global');
 const { getGameData } = require('./gameData');
 
 const execPromise = util.promisify(exec);
@@ -112,8 +111,10 @@ async function getGameDataFromDB() {
                     db.close();
 
                     // Process custom entries after the database games
-                    const customGames = await processCustomEntries(customJsonPath);
-                    games.push(...customGames);
+                    if (fs.existsSync(customJsonPath)) {
+                        const customGames = await processCustomEntries(customJsonPath);
+                        games.push(...customGames);
+                    }
                     resolve(games);
                 });
 

@@ -178,16 +178,31 @@ function setupBackupButton() {
 
 async function performBackup() {
     const selectedWikiIds = getSelectedWikiIds('backup');
-
-    if (selectedWikiIds.length === 0) {
+    const progressContainer = document.getElementById('backup-progress');
+    const progressBar = document.getElementById('backup-progress-bar');
+    const progressText = document.getElementById('backup-progress-text');
+    const totalGames = selectedWikiIds.length;
+    
+    if (totalGames === 0) {
         showAlert('warning', await window.i18n.translate('alert.no_games_selected'));
         return 1;
     }
 
+    progressContainer.classList.remove('hidden');
+
+    let backedUpCount = 0;
     for (const wikiId of selectedWikiIds) {
         const gameData = backupTableDataMap.get(wikiId);
         await window.api.invoke('backup-game', gameData);
+
+        backedUpCount++;
+        const progressPercentage = Math.round((backedUpCount / totalGames) * 100);
+        
+        progressBar.style.width = `${progressPercentage}%`;
+        progressText.innerText = `${progressPercentage}%`;
     }
+
+    progressContainer.classList.add('hidden');
 
     return 0;
 }

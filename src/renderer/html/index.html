@@ -18,7 +18,51 @@
 </head>
 
 <body class="bg-white dark:bg-gray-900 p-8 pt-2 overflow-hidden">
-    <div id="alert-container" class="fixed top-5 right-5 z-50 space-y-3"></div>
+    <!-- Top right alerts and progresses -->
+    <div class="fixed top-3 right-5 z-30">
+        <div id="migrate-progress" class="hidden w-full mb-2 animate-fadeIn">
+            <div class="flex justify-between mb-1">
+                <span class="text-base font-medium text-blue-700 dark:text-white text-content"
+                    data-i18n="alert.migrate_backups">Migrating backup files...</span>
+                <span id="migrate-progress-text" class="text-sm font-medium text-blue-700 dark:text-white"></span>
+            </div>
+            <div class="w-96 bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                <div id="migrate-progress-bar" class="bg-blue-600 h-2.5 rounded-full"></div>
+            </div>
+        </div>
+
+        <div id="alert-container"></div>
+    </div>
+
+    <!-- Modals -->
+    <div id="modal-overlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-40"></div>
+    <div id="modal" tabindex="-1" aria-hidden="true"
+        class="hidden animate-fadeInShift overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 max-h-[calc(100%-1rem)]">
+        <div class="relative p-4 w-full max-w-2xl max-h-full">
+            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                    <h3 id="modal-title" class="text-xl font-semibold text-gray-900 dark:text-white"></h3>
+                    <button type="button" id="modal-close"
+                        class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
+                        <svg class="w-3 h-3" aria-hidden="true" fill="none" viewBox="0 0 14 14">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                        </svg>
+                        <span class="sr-only">Close modal</span>
+                    </button>
+                </div>
+
+                <div class="break-all max-h-[calc(100vh-250px)] p-4 md:p-5 space-y-4 overflow-y-auto scrollbar scrollbar-w-2 scrollbar-h-2 scrollbar-track-rounded-full scrollbar-thumb-rounded-full scrollbar-track-white scrollbar-thumb-slate-300 dark:scrollbar-track-gray-800 dark:scrollbar-thumb-slate-600">
+                    <p id="modal-content" class="text-base leading-relaxed text-gray-500 dark:text-gray-400"></p>
+                </div>
+
+                <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
+                    <button type="button" id="modal-confirm"
+                        class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="mb-4 border-b border-gray-200 dark:border-gray-700">
         <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="main-tab"
@@ -58,6 +102,7 @@
         <div class="hidden" id="backup" role="tabpanel" aria-labelledby="backup-tab">
             <div id="backup-loading" role="status" class="flex justify-center" data-i18n="main.loading"></div>
 
+            <!-- Backup summary -->
             <div id="backup-summary" class="w-full p-8 text-center hidden animate-fadeInShift">
                 <h5 data-i18n="main.backup_success" class="mb-8 text-5xl font-bold text-gray-900 dark:text-white">
                     <span class="text-content">Backup Success</span>
@@ -94,6 +139,7 @@
                 </div>
             </div>
 
+            <!-- Backup content -->
             <div id="backup-content" class="hidden">
                 <div class="pb-4 bg-white dark:bg-gray-900 sticky top-0 flex flex-row justify-between items-center">
                     <label for="table-search" class="sr-only">Search</label>
@@ -153,13 +199,25 @@
                     </table>
                 </div>
 
-                <!-- Backup button -->
-                <div class="mt-4">
+                <!-- Backup button and progress bar -->
+                <div class="mt-4 mb-2 flex flex-row items-center">
                     <button id="backup-button" type="button" data-i18n="main.backup_selected"
-                        class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700">
+                        class="whitespace-nowrap text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 dark:bg-blue-600 dark:hover:bg-blue-700">
                         <i id="backup-icon" class="fa-solid fa-arrow-right-long mr-1"></i>
                         <span id="backup-text" class="text-content">Backup Selected Games</span>
                     </button>
+
+                    <div id="backup-progress" class="hidden w-full ml-10 animate-fadeIn">
+                        <div class="flex justify-between mb-1">
+                            <span class="text-base font-medium text-blue-700 dark:text-white text-content"
+                                data-i18n="main.backup_in_progress">Backup in progress...</span>
+                            <span id="backup-progress-text"
+                                class="text-sm font-medium text-blue-700 dark:text-white"></span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-3 dark:bg-gray-700">
+                            <div id="backup-progress-bar" class="bg-blue-600 h-3 rounded-full"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -168,6 +226,7 @@
         <div class="hidden" id="restore" role="tabpanel" aria-labelledby="restore-tab">
             <div id="restore-loading" role="status" class="flex justify-center" data-i18n="main.loading"></div>
 
+            <!-- Restore summary -->
             <div id="restore-summary" class="w-full p-8 text-center hidden animate-fadeInShift">
                 <h5 data-i18n="main.restore_success" class="mb-8 text-5xl font-bold text-gray-900 dark:text-white">
                     <span class="text-content">Restore Success</span>
@@ -204,6 +263,7 @@
                 </div>
             </div>
 
+            <!-- Restore content -->
             <div id="restore-content" class="hidden">
                 <div class="pb-4 bg-white dark:bg-gray-900 sticky top-0 flex flex-row justify-between items-center">
                     <label for="table-search" class="sr-only">Search</label>
@@ -263,20 +323,34 @@
                     </table>
                 </div>
 
-                <!-- Restore button -->
-                <div class="mt-4">
+                <!-- Restore button and progress bar -->
+                <div class="mt-4 mb-2 flex flex-row items-center">
                     <button id="restore-button" type="button" data-i18n="main.restore_selected"
-                        class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700">
+                        class="whitespace-nowrap text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 dark:bg-blue-600 dark:hover:bg-blue-700">
                         <i id="restore-icon" class="fa-solid fa-arrow-right-long mr-1"></i>
                         <span id="restore-text" class="text-content">Restore Selected Games</span>
                     </button>
+
+                    <div id="restore-progress" class="hidden w-full ml-10 animate-fadeIn">
+                        <div class="flex justify-between mb-1">
+                            <span class="text-base font-medium text-blue-700 dark:text-white text-content"
+                                data-i18n="main.restore_in_progress">Restore in progress...</span>
+                            <span id="restore-progress-text"
+                                class="text-sm font-medium text-blue-700 dark:text-white"></span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-3 dark:bg-gray-700">
+                            <div id="restore-progress-bar" class="bg-blue-600 h-3 rounded-full"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Tab 3: Custom Games -->
         <div class="hidden rounded-lg" id="custom" role="tabpanel" aria-labelledby="custom-tab">
-            <div id="custom-content" data-accordion="collapse" class="custom-height overflow-y-auto scrollbar scrollbar-w-2 scrollbar-h-2 scrollbar-track-rounded-full scrollbar-thumb-rounded-full scrollbar-track-white scrollbar-thumb-slate-300 dark:scrollbar-track-gray-800 dark:scrollbar-thumb-slate-600"></div>
+            <div id="custom-content" data-accordion="collapse"
+                class="custom-height overflow-y-auto scrollbar scrollbar-w-2 scrollbar-h-2 scrollbar-track-rounded-full scrollbar-thumb-rounded-full scrollbar-track-white scrollbar-thumb-slate-300 dark:scrollbar-track-gray-800 dark:scrollbar-thumb-slate-600">
+            </div>
 
             <!-- Custom Buttons -->
             <div class="flex mt-4">
