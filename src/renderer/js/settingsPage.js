@@ -8,12 +8,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const gamePathsContainer = document.getElementById('game-paths-container');
     const addNewPathButton = document.getElementById('add-new-path');
 
+    let previousBackupPath = '';
+
     window.api.invoke('get-settings').then((settings) => {
         if (settings) {
             themeSelect.value = settings.theme;
             languageSelect.value = settings.language;
             backupPathInput.value = settings.backupPath;
             maxBackupsInput.value = settings.maxBackups;
+
+            previousBackupPath = settings.backupPath.trim();
 
             if (settings.gameInstalls && settings.gameInstalls.length > 0) {
                 settings.gameInstalls.forEach((installPath) => {
@@ -37,7 +41,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const result = await window.api.invoke('open-backup-dialog');
         if (result) {
             backupPathInput.value = result;
-            window.api.send('save-settings', 'backupPath', backupPathInput.value);
         }
     });
 
@@ -58,10 +61,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 gameInstallPaths.push(path);
             }
         });
+        window.api.send('save-settings', 'gameInstalls', gameInstallPaths);
+
+        const newBackupPath = backupPathInput.value.trim();
+        if (previousBackupPath !== newBackupPath) {
+            window.api.send('migrate-backups', newBackupPath);
+        }
 
         window.api.send('save-settings', 'maxBackups', maxBackupsInput.value);
-        window.api.send('save-settings', 'gameInstalls', gameInstallPaths);
-        window.api.send('update-components-after-applying-settings');
+        // window.api.send('update-components-after-applying-settings');
     });
 
     autoDetectButton.addEventListener('click', () => {

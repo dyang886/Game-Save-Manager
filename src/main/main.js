@@ -10,8 +10,7 @@ const i18next = require('i18next');
 const Backend = require('i18next-fs-backend');
 const { pinyin } = require('pinyin');
 
-const { createMainWindow, getMainWin, getNewestBackup, osKeyMap, } = require('./global');
-const { loadSettings, saveSettings, getSettings } = require('./settings');
+const { createMainWindow, getMainWin, getNewestBackup, osKeyMap, loadSettings, saveSettings, getSettings, moveFilesWithProgress } = require('./global');
 const { getGameData, initializeGameData, detectGamePaths } = require('./gameData');
 const { getGameDataFromDB, getAllGameDataFromDB, backupGame } = require('./backup');
 const { getGameDataForRestore, restoreGame } = require("./restore");
@@ -64,11 +63,11 @@ ipcMain.on("load-theme", (event) => {
     event.reply("apply-theme", getSettings().theme);
 });
 
-ipcMain.handle("get-settings", (event) => {
+ipcMain.handle("get-settings", () => {
     return getSettings();
 });
 
-ipcMain.handle("get-detected-game-paths", async (event) => {
+ipcMain.handle("get-detected-game-paths", async () => {
     await detectGamePaths();
     return getGameData().detectedGamePaths;
 });
@@ -86,7 +85,7 @@ ipcMain.handle('open-backup-folder', async (event, wikiId) => {
     }
 });
 
-ipcMain.handle('open-backup-dialog', async (event) => {
+ipcMain.handle('open-backup-dialog', async () => {
     const focusedWindow = BrowserWindow.getFocusedWindow();
 
     const result = await dialog.showOpenDialog(focusedWindow, {
@@ -102,7 +101,7 @@ ipcMain.handle('open-backup-dialog', async (event) => {
     return null;
 });
 
-ipcMain.handle('open-dialog', async (event) => {
+ipcMain.handle('open-dialog', async () => {
     const focusedWindow = BrowserWindow.getFocusedWindow();
 
     const result = await dialog.showOpenDialog(focusedWindow, {
@@ -145,7 +144,7 @@ ipcMain.handle('select-path', async (event, fileType) => {
     return null;
 });
 
-ipcMain.on('update-components-after-applying-settings', (event) => {
+ipcMain.on('update-components-after-applying-settings', () => {
     getMainWin().webContents.send('update-backup-table');
     getMainWin().webContents.send('update-restore-table');
 });
@@ -189,7 +188,7 @@ ipcMain.handle('get-uuid', () => {
     return randomUUID();
 });
 
-ipcMain.handle('fetch-game-saves', async (event) => {
+ipcMain.handle('fetch-game-saves', async () => {
     try {
         const games = await getGameDataFromDB();
         // const games = await getAllGameDataFromDB();
@@ -205,7 +204,7 @@ ipcMain.handle('backup-game', async (event, gameObj) => {
     await backupGame(gameObj);
 });
 
-ipcMain.handle('get-icon-map', async (event) => {
+ipcMain.handle('get-icon-map', async () => {
     return {
         'Custom': fs.readFileSync(path.join(__dirname, '../assets/custom.svg'), 'utf-8'),
         'Steam': fs.readFileSync(path.join(__dirname, '../assets/steam.svg'), 'utf-8'),
@@ -218,7 +217,7 @@ ipcMain.handle('get-icon-map', async (event) => {
     };
 });
 
-ipcMain.handle('fetch-restore-table-data', async (event) => {
+ipcMain.handle('fetch-restore-table-data', async () => {
     try {
         const games = await getGameDataForRestore();
         return games;
@@ -231,4 +230,9 @@ ipcMain.handle('fetch-restore-table-data', async (event) => {
 
 ipcMain.handle('restore-game', async (event, gameObj, userActionForAll) => {
     await restoreGame(gameObj, userActionForAll);
+});
+
+ipcMain.on('migrate-backups', (event, newBackupPath) => {
+    const currentBackupPath = getSettings().backupPath;
+    moveFilesWithProgress(currentBackupPath, newBackupPath);
 });

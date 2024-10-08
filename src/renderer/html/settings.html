@@ -15,8 +15,17 @@
 </head>
 
 <body
-    class="bg-white dark:bg-gray-900 p-8 pt-5 flex items-center min-h-screen scrollbar scrollbar-w-2 scrollbar-h-2 scrollbar-track-rounded-full scrollbar-thumb-rounded-full scrollbar-track-white scrollbar-thumb-slate-300 dark:scrollbar-track-gray-800 dark:scrollbar-thumb-slate-600">
+    class="bg-white dark:bg-gray-900 p-8 pt-5 flex flex-col items-center min-h-screen scrollbar scrollbar-w-2 scrollbar-h-2 scrollbar-track-rounded-full scrollbar-thumb-rounded-full scrollbar-track-white scrollbar-thumb-slate-300 dark:scrollbar-track-gray-800 dark:scrollbar-thumb-slate-600">
     <div id="alert-container" class="fixed top-5 right-5 z-50 space-y-2"></div>
+
+    <div class="flex items-center mb-3 mt-1">
+        <svg class="w-4 h-4 text-yellow-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
+            <path
+                d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+        </svg>
+        <span class="ml-2 text-yellow-500 text-sm font-medium text-content"
+            data-i18n="settings.auto_save_settings">Settings will be automatically saved upon closing the window</span>
+    </div>
 
     <form class="max-w-sm mx-auto w-full">
         <!-- Theme selection -->

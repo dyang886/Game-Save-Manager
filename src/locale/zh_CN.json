@@ -13,7 +13,8 @@
         "noPathsDetected": "未检测到游戏安装路径",
         "gameInstallExists": "游戏安装路径已存在",
         "select_backup_path": "选择备份保存路径",
-        "select_path": "选择一个路径"
+        "select_path": "选择一个路径",
+        "auto_save_settings": "设置将在关闭窗口时自动保存"
     },
     "main": {
         "title": "游戏存档管理器",
@@ -78,6 +79,10 @@
         "machine_save_date": "本地保存数据（最后修改于 {{machineTime}}）",
         "backup_save_date": "比备份数据新（最后修改于 {{backupTime}}）",
         "overwrite_prompt": "是否用备份覆盖本地保存数据？",
-        "do_this_for_all": "对所有游戏执行此操作"
+        "do_this_for_all": "对所有游戏执行此操作",
+        "migrate_backups": "转移备份文件中...",
+        "backup_migration_success": "备份转移成功",
+        "error_during_backup_migration": "转移备份时出错",
+        "learn_more": "了解详情"
     }
 }

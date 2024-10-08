@@ -38,7 +38,7 @@ window.api.receive('apply-theme', (theme) => {
 
 window.api.send('load-theme');
 
-async function showAlert(type, message) {
+async function showAlert(type, message, modalContent) {
     const alertContainer = document.getElementById('alert-container');
 
     const alertClasses = {
@@ -46,6 +46,7 @@ async function showAlert(type, message) {
         error: 'text-red-800 bg-red-50 dark:bg-gray-800 dark:text-red-400',
         success: 'text-green-800 bg-green-50 dark:bg-gray-800 dark:text-green-400',
         warning: 'text-yellow-800 bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300',
+        modal: 'text-red-800 bg-red-50 dark:bg-gray-800 dark:text-red-400',
     };
 
     const iconPaths = {
@@ -53,6 +54,7 @@ async function showAlert(type, message) {
         error: 'M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z',
         success: 'M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z',
         warning: 'M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z',
+        modal: 'M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z',
     };
 
     const alertElement = document.createElement('div');
@@ -68,27 +70,44 @@ async function showAlert(type, message) {
         <div class="ms-3 text-sm font-medium">
             <span class="text-content">${message}</span>
         </div>
-        <button type="button"
-            class="ms-auto -mx-1.5 -my-1.5 rounded-lg p-1.5 inline-flex items-center justify-center h-8 w-8 hover:bg-opacity-75"
-            aria-label="Close">
-            <span class="sr-only">Close</span>
-            <svg class="w-3 h-3" aria-hidden="true" fill="none"
-                viewBox="0 0 14 14">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-            </svg>
-        </button>
     `;
 
-    // Handle manual close
-    alertElement.querySelector('button').addEventListener('click', () => {
-        alertElement.classList.replace('animate-fadeInShift', 'animate-fadeOutShift');
-        alertElement.addEventListener('animationend', () => {
-            alertElement.remove();
+    if (type === 'modal') {
+        alertElement.innerHTML += `
+            <button type="button" class="ms-2 text-blue-500 text-sm font-medium underline" data-i18n="alert.learn_more">
+                <span class="text-content">Learn More</span>
+            </button>
+        `;
+
+        alertElement.querySelector('button').addEventListener('click', () => {
+            showModal(message, modalContent);
         });
-    });
+
+    } else {
+        alertElement.innerHTML += `
+            <button type="button"
+                class="ms-auto -mx-1.5 -my-1.5 rounded-lg p-1.5 inline-flex items-center justify-center h-8 w-8 hover:bg-opacity-75"
+                aria-label="Close">
+                <span class="sr-only">Close</span>
+                <svg class="w-3 h-3" aria-hidden="true" fill="none"
+                    viewBox="0 0 14 14">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                </svg>
+            </button>
+        `;
+
+        // Handle manual close
+        alertElement.querySelector('button').addEventListener('click', () => {
+            alertElement.classList.replace('animate-fadeInShift', 'animate-fadeOutShift');
+            alertElement.addEventListener('animationend', () => {
+                alertElement.remove();
+            });
+        });
+    }
 
     alertContainer.appendChild(alertElement);
+    updateTranslations(alertElement);
 
     // Handle automatic removal after 5 seconds
     setTimeout(() => {
@@ -99,6 +118,37 @@ async function showAlert(type, message) {
     }, 5000);
 }
 
-window.api.receive('show-alert', (type, message) => {
-    showAlert(type, message);
+window.api.receive('show-alert', (type, message, modalContent) => {
+    showAlert(type, message, modalContent);
 });
+
+function showModal(modalTitle, modalContent) {
+    const modal = document.getElementById('modal');
+    const modalOverlay = document.getElementById('modal-overlay');
+    const modalTitleElement = document.getElementById('modal-title');
+    const modalContentElement = document.getElementById('modal-content');
+
+    modalTitleElement.textContent = modalTitle;
+
+    if (Array.isArray(modalContent)) {
+        modalContentElement.innerHTML = modalContent.map(item => `<li>${item}</li>`).join('');
+    } else {
+        modalContentElement.textContent = modalContent;
+    }
+
+    modal.classList.add('flex');
+    modal.classList.remove('hidden');
+    modalOverlay.classList.remove('hidden');
+
+    document.getElementById('modal-close').addEventListener('click', closeModal);
+    document.getElementById('modal-confirm').addEventListener('click', closeModal);
+}
+
+function closeModal() {
+    const modal = document.getElementById('modal');
+    const modalOverlay = document.getElementById('modal-overlay');
+    
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    modalOverlay.classList.add('hidden');
+}

@@ -169,22 +169,37 @@ function setupRestoreButton() {
 
 async function performRestore() {
     const selectedWikiIds = getSelectedWikiIds('restore');
+    const progressContainer = document.getElementById('restore-progress');
+    const progressBar = document.getElementById('restore-progress-bar');
+    const progressText = document.getElementById('restore-progress-text');
+    const totalGames = selectedWikiIds.length;
 
-    if (selectedWikiIds.length === 0) {
+    if (totalGames === 0) {
         showAlert('warning', await window.i18n.translate('alert.no_games_selected'));
         return 1;
     }
 
+    progressContainer.classList.remove('hidden');
+
+    let restoredCount = 0;
     let globalAction = null;
 
     for (const wikiId of selectedWikiIds) {
         const gameData = restoreTableDataMap.get(wikiId);
         const actionForAll = await window.api.invoke('restore-game', gameData, globalAction);
 
+        restoredCount++;
+        const progressPercentage = Math.round((restoredCount / totalGames) * 100);
+        
+        progressBar.style.width = `${progressPercentage}%`;
+        progressText.innerText = `${progressPercentage}%`;
+
         if (actionForAll) {
             globalAction = actionForAll;
         }
     }
+
+    progressContainer.classList.add('hidden');
 
     return 0;
 }

@@ -10,8 +10,7 @@ const i18next = require('i18next');
 const moment = require('moment');
 
 const { getGameData } = require('./gameData');
-const { getMainWin, getGameDisplayName, calculateDirectorySize, ensureWritable, placeholder_mapping } = require('./global');
-const { getSettings } = require('./settings');
+const { getMainWin, getGameDisplayName, calculateDirectorySize, ensureWritable, placeholder_mapping, getSettings } = require('./global');
 
 const execPromise = util.promisify(exec);
 
@@ -48,6 +47,7 @@ const execPromise = util.promisify(exec);
 
 async function getGameDataForRestore() {
     const backupPath = getSettings().backupPath;
+    fse.ensureDir(backupPath);
     const games = [];
 
     const gameFolders = await fse.readdir(backupPath);

@@ -18,6 +18,24 @@ window.api.receive('apply-language', () => {
     updateSelectedCountAndSize('restore');
 });
 
+window.api.receive('migrate-backup-progress', (percentage) => {
+    const progressContainer = document.getElementById('migrate-progress');
+    const progressBar = document.getElementById('migrate-progress-bar');
+    const progressText = document.getElementById('migrate-progress-text');
+
+    if (percentage === 'start') {
+        progressBar.style.width = '0';
+        progressContainer.classList.remove('hidden');
+        return;
+    } else if (percentage === 'end') {
+        progressContainer.classList.add('hidden');
+        return;
+    }
+
+    progressBar.style.width = `${percentage}%`;
+    progressText.innerText = `${percentage}%`;
+});
+
 // Function to initialize the tab switching functionality
 function initializeTabs() {
     const tabsElement = document.getElementById('main-tab');
