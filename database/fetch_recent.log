@@ -1,190 +1,498 @@
-2024-10-08 01:21:07,898 - INFO - Total game translations fetched: 1017
-2024-10-08 01:21:09,494 - INFO - Added steam_id to existing entry for Sniper Elite 5.
-2024-10-08 01:21:09,495 - INFO - Added steam_id to existing entry for Lethal Company.
-2024-10-08 01:21:09,495 - INFO - Added steam_id to existing entry for Kenshi.
-2024-10-08 01:21:09,496 - INFO - Added steam_id to existing entry for Unturned.
-2024-10-08 01:21:09,499 - INFO - Added steam_id to existing entry for Phasmophobia.
-2024-10-08 01:21:09,584 - INFO - Added 2 new game translations
-2024-10-08 01:21:09,585 - INFO - Fetching recent changes from 2024-10-07 01:22:29.096221 to 2024-10-08 01:21:09.585017
-2024-10-08 01:21:10,739 - INFO - Found zh_CN for Lightyear Frontier: 光年边境
-2024-10-08 01:21:10,748 - INFO - 1. Saved in database: Lightyear Frontier
-2024-10-08 01:21:11,051 - INFO - 2. Saved in database: American McGee's Alice (2011)
-2024-10-08 01:21:12,206 - INFO - 3. Saved in database: Rabbids: Party of Legends
-2024-10-08 01:21:12,452 - INFO - Found zh_CN for Silent Hill 2: 寂静岭2：重制版
-2024-10-08 01:21:12,454 - INFO - 4. Saved in database: Silent Hill 2
-2024-10-08 01:21:12,719 - INFO - Found zh_CN for Saints Row: The Third: 黑道圣徒3
-2024-10-08 01:21:12,721 - INFO - 5. Saved in database: Saints Row: The Third
-2024-10-08 01:21:13,129 - INFO - No save locations found: UPK Explorer
-2024-10-08 01:21:13,366 - INFO - Found zh_CN for Payday 3: 收获日3
-2024-10-08 01:21:13,368 - INFO - 6. Saved in database: Payday 3
-2024-10-08 01:21:13,555 - INFO - Found zh_CN for Gungrave G.O.R.E: 铳墓G.O.R.E.
-2024-10-08 01:21:13,557 - INFO - 7. Saved in database: Gungrave G.O.R.E
-2024-10-08 01:21:14,292 - INFO - No save locations found: Little Goody Two Shoes
-2024-10-08 01:21:14,512 - INFO - Found zh_CN for Lego Star Wars: The Force Awakens: 乐高星球大战：原力觉醒
-2024-10-08 01:21:14,513 - INFO - 8. Saved in database: Lego Star Wars: The Force Awakens
-2024-10-08 01:21:14,752 - INFO - Found zh_CN for Tales of Berseria: 狂战传说
-2024-10-08 01:21:14,753 - INFO - 9. Saved in database: Tales of Berseria
-2024-10-08 01:21:15,010 - INFO - Found zh_CN for Sackboy: A Big Adventure: 麻布仔大冒险
-2024-10-08 01:21:15,011 - INFO - 10. Saved in database: Sackboy: A Big Adventure
-2024-10-08 01:21:15,323 - INFO - Found zh_CN for The Lord of the Rings: Return to Moria: 指环王：重返摩瑞亚
-2024-10-08 01:21:15,324 - INFO - 11. Saved in database: The Lord of the Rings: Return to Moria
-2024-10-08 01:21:15,608 - INFO - Found zh_CN for Tokyo Ghoul: re Call to Exist: 东京喰种：re CALL to EXIST
-2024-10-08 01:21:15,609 - INFO - 12. Saved in database: Tokyo Ghoul: re Call to Exist
-2024-10-08 01:21:15,983 - INFO - 13. Saved in database: Where in the World Is Carmen Sandiego? Treasures of Knowledge
-2024-10-08 01:21:16,251 - INFO - 14. Saved in database: The Finals
-2024-10-08 01:21:16,476 - INFO - Found zh_CN for Dragon Age: Inquisition: 龙腾世纪：审判
-2024-10-08 01:21:16,479 - INFO - 15. Saved in database: Dragon Age: Inquisition
-2024-10-08 01:21:16,781 - INFO - 16. Saved in database: Epic Mickey: Rebrushed
-2024-10-08 01:21:17,948 - INFO - 17. Saved in database: Scarlet Hollow
-2024-10-08 01:21:18,799 - INFO - 18. Saved in database: Like Clay
-2024-10-08 01:21:19,149 - INFO - 19. Saved in database: Lost in Vivo
-2024-10-08 01:21:19,378 - INFO - No save locations found: List of games that support Crossfire
-2024-10-08 01:21:19,705 - INFO - Found zh_CN for Warframe: 星际战甲
-2024-10-08 01:21:19,707 - INFO - 20. Saved in database: Warframe
-2024-10-08 01:21:20,088 - INFO - No save locations found: List of games that support SLI
-2024-10-08 01:21:21,111 - INFO - Found zh_CN for Bus Driver: 巴士驾驶员
-2024-10-08 01:21:21,112 - INFO - 21. Saved in database: Bus Driver
-2024-10-08 01:21:21,112 - INFO - Finding game installation folders...
-2024-10-08 01:21:24,310 - INFO - Found installation folder for steam_id 1677110
-2024-10-08 01:21:24,313 - INFO - Found installation folder for steam_id 55230
-2024-10-08 01:21:24,316 - INFO - Found installation folder for steam_id 1272080
-2024-10-08 01:21:24,318 - INFO - Found installation folder for steam_id 1630110
-2024-10-08 01:21:24,321 - INFO - Found installation folder for steam_id 438640
-2024-10-08 01:21:24,324 - INFO - Found installation folder for steam_id 429660
-2024-10-08 01:21:24,326 - INFO - Found installation folder for steam_id 1599660
-2024-10-08 01:21:24,329 - INFO - Found installation folder for steam_id 2933130
-2024-10-08 01:21:24,332 - INFO - Found installation folder for steam_id 756530
-2024-10-08 01:21:24,335 - INFO - Found installation folder for steam_id 2073850
-2024-10-08 01:21:24,337 - INFO - Found installation folder for steam_id 1222690
-2024-10-08 01:21:24,340 - INFO - Found installation folder for steam_id 1522160
-2024-10-08 01:21:24,343 - INFO - Found installation folder for steam_id 1609230
-2024-10-08 01:21:24,345 - INFO - Found installation folder for steam_id 604000
-2024-10-08 01:21:24,348 - INFO - Found installation folder for steam_id 963710
-2024-10-08 01:21:24,351 - INFO - Found installation folder for steam_id 230410
-2024-10-08 01:21:24,354 - INFO - Found installation folder for steam_id 302080
-2024-10-08 01:21:24,354 - INFO - Continue parameter: {'rccontinue': '20241007144635|1894698', 'continue': '-||'}
-2024-10-08 01:21:24,683 - INFO - Found zh_CN for Gundam Breaker 4: 高达创坏者4
-2024-10-08 01:21:24,684 - INFO - 22. Saved in database: Gundam Breaker 4
-2024-10-08 01:21:24,888 - INFO - Found zh_CN for FlatOut: 横冲直撞
-2024-10-08 01:21:24,890 - INFO - 23. Saved in database: FlatOut
-2024-10-08 01:21:25,136 - INFO - Found zh_CN for Persona 5 Strikers: 女神异闻录5 乱战：魅影攻手
-2024-10-08 01:21:25,138 - INFO - 24. Saved in database: Persona 5 Strikers
-2024-10-08 01:21:25,372 - INFO - Found zh_CN for Persona 5 Royal: 女神异闻录5 皇家版
-2024-10-08 01:21:25,373 - INFO - 25. Saved in database: Persona 5 Royal
-2024-10-08 01:21:25,631 - INFO - Found zh_CN for Art of Rally: 拉力赛艺术
-2024-10-08 01:21:25,632 - INFO - 26. Saved in database: Art of Rally
-2024-10-08 01:21:25,878 - INFO - Found zh_CN for JoJo's Bizarre Adventure: All Star Battle R: JOJO的奇妙冒险 群星之战 重制版
-2024-10-08 01:21:25,879 - INFO - 27. Saved in database: JoJo's Bizarre Adventure: All Star Battle R
-2024-10-08 01:21:26,045 - INFO - Found zh_CN for BDSM: Big Drunk Satanic Massacre: 醉杀狂魔
-2024-10-08 01:21:26,046 - INFO - 28. Saved in database: BDSM: Big Drunk Satanic Massacre
-2024-10-08 01:21:26,290 - INFO - 29. Saved in database: Time Break 2121
-2024-10-08 01:21:26,456 - INFO - Found zh_CN for Assetto Corsa Competizione: 神力科莎：竞速
-2024-10-08 01:21:26,462 - INFO - 30. Saved in database: Assetto Corsa Competizione
-2024-10-08 01:21:26,606 - INFO - No save locations found: Home/Search suggestions
-2024-10-08 01:21:26,853 - INFO - 31. Saved in database: Lego 2K Drive
-2024-10-08 01:21:27,010 - INFO - No save locations found: Atelier Yumia: The Alchemist of Memories & the Envisioned Land
-2024-10-08 01:21:27,293 - INFO - 32. Saved in database: Earth Defense Force: World Brothers 2
-2024-10-08 01:21:27,443 - INFO - No save locations found: Fairy Tail 2
-2024-10-08 01:21:27,595 - INFO - No save locations found: Fatal Fury: City of the Wolves
-2024-10-08 01:21:27,757 - INFO - No save locations found: Lunar Remastered Collection
-2024-10-08 01:21:28,570 - INFO - No save locations found: Bakeru
-2024-10-08 01:21:28,884 - INFO - 33. Saved in database: HAWKED
-2024-10-08 01:21:29,888 - INFO - Found zh_CN for 7 Billion Humans: 70亿人
-2024-10-08 01:21:29,889 - INFO - 34. Saved in database: 7 Billion Humans
-2024-10-08 01:21:30,910 - INFO - 35. Saved in database: After the End
-2024-10-08 01:21:31,140 - INFO - 36. Saved in database: Alien Sky
-2024-10-08 01:21:31,140 - INFO - Finding game installation folders...
-2024-10-08 01:21:32,983 - INFO - Found installation folder for steam_id 1672500
-2024-10-08 01:21:32,986 - INFO - Found installation folder for steam_id 6220
-2024-10-08 01:21:32,989 - INFO - Found installation folder for steam_id 1382330
-2024-10-08 01:21:32,992 - INFO - Found installation folder for steam_id 1687950
-2024-10-08 01:21:32,994 - INFO - Found installation folder for steam_id 550320
-2024-10-08 01:21:32,998 - INFO - Found installation folder for steam_id 1372110
-2024-10-08 01:21:33,000 - INFO - Found installation folder for steam_id 669950
-2024-10-08 01:21:33,003 - INFO - Found installation folder for steam_id 1121490
-2024-10-08 01:21:33,005 - INFO - Found installation folder for steam_id 805550
-2024-10-08 01:21:33,008 - INFO - Found installation folder for steam_id 1451810
-2024-10-08 01:21:33,011 - INFO - Found installation folder for steam_id 1497950
-2024-10-08 01:21:33,014 - INFO - Found installation folder for steam_id 1955960
-2024-10-08 01:21:33,016 - INFO - Found installation folder for steam_id 792100
-2024-10-08 01:21:33,017 - INFO - Continue parameter: {'rccontinue': '20241007212925|1894777', 'continue': '-||'}
-2024-10-08 01:21:33,332 - INFO - Found zh_CN for Atelier Lulua: The Scion of Arland: 露露亚的工作室：亚兰德的炼金术士4
-2024-10-08 01:21:33,334 - INFO - 37. Saved in database: Atelier Lulua: The Scion of Arland
-2024-10-08 01:21:33,499 - INFO - Found zh_CN for Atelier Ryza: Ever Darkness & the Secret Hideout: 莱莎的炼金工房：常暗女王与秘密藏身处
-2024-10-08 01:21:33,500 - INFO - 38. Saved in database: Atelier Ryza: Ever Darkness & the Secret Hideout
-2024-10-08 01:21:33,747 - INFO - 39. Saved in database: A.I.M. 2: Clan Wars
-2024-10-08 01:21:33,979 - INFO - Found zh_CN for Predator: Hunting Grounds: 铁血战士：狩猎场
-2024-10-08 01:21:33,981 - INFO - 40. Saved in database: Predator: Hunting Grounds
-2024-10-08 01:21:34,138 - INFO - No save locations found: Battlefield Online
-2024-10-08 01:21:34,387 - INFO - 41. Saved in database: Battlefield Play4Free
-2024-10-08 01:21:34,568 - INFO - Found zh_CN for Bad End Theater: 坏结局剧院
-2024-10-08 01:21:34,569 - INFO - 42. Saved in database: Bad End Theater
-2024-10-08 01:21:34,742 - INFO - Found zh_CN for Beyond: Two Souls: 超凡双生
-2024-10-08 01:21:34,744 - INFO - 43. Saved in database: Beyond: Two Souls
-2024-10-08 01:21:34,970 - INFO - Found zh_CN for Death Stranding Director's Cut: 死亡搁浅 导演剪辑版
-2024-10-08 01:21:34,971 - INFO - 44. Saved in database: Death Stranding Director's Cut
-2024-10-08 01:21:35,229 - INFO - 45. Saved in database: Biohazard 2 (Sourcenext)
-2024-10-08 01:21:35,511 - INFO - 46. Saved in database: Biohazard 3: Last Escape (Sourcenext)
-2024-10-08 01:21:35,770 - INFO - 47. Saved in database: Blood Omen: Legacy of Kain
-2024-10-08 01:21:36,457 - INFO - No save locations found: Bruce Lee
-2024-10-08 01:21:37,673 - INFO - Found zh_CN for Carmageddon: 疯狂飙车
-2024-10-08 01:21:37,676 - INFO - 48. Saved in database: Carmageddon
-2024-10-08 01:21:37,852 - INFO - Found zh_CN for Cat Quest: 喵咪斗恶龙
-2024-10-08 01:21:37,853 - INFO - 49. Saved in database: Cat Quest
-2024-10-08 01:21:38,093 - INFO - Found zh_CN for Cat Quest II: 猫咪斗恶龙2
-2024-10-08 01:21:38,094 - INFO - 50. Saved in database: Cat Quest II
-2024-10-08 01:21:39,077 - INFO - 51. Saved in database: Championship Lode Runner
-2024-10-08 01:21:39,326 - INFO - No save locations found: Comix Zone
-2024-10-08 01:21:39,537 - INFO - Found zh_CN for Black Mesa: 黑山基地
-2024-10-08 01:21:39,538 - INFO - 52. Saved in database: Black Mesa
-2024-10-08 01:21:39,761 - INFO - Found zh_CN for Crysis Warhead: 孤岛危机：弹头
-2024-10-08 01:21:39,762 - INFO - 53. Saved in database: Crysis Warhead
-2024-10-08 01:21:40,943 - INFO - 54. Saved in database: Day of the Tentacle
-2024-10-08 01:21:41,154 - INFO - Found zh_CN for Deus Ex: Human Revolution - Director's Cut: 杀出重围 人类革命 导演剪辑版
-2024-10-08 01:21:41,156 - INFO - 55. Saved in database: Deus Ex: Human Revolution - Director's Cut
-2024-10-08 01:21:41,428 - INFO - 56. Saved in database: Doom 64 EX
-2024-10-08 01:21:42,785 - INFO - Found zh_CN for Dual Universe: 双重宇宙
-2024-10-08 01:21:42,787 - INFO - 57. Saved in database: Dual Universe
-2024-10-08 01:21:43,148 - INFO - Found zh_CN for The Lord of the Rings: The Return of the King: 指环王：国王归来
-2024-10-08 01:21:43,149 - INFO - 58. Saved in database: The Lord of the Rings: The Return of the King
-2024-10-08 01:21:43,419 - INFO - Found zh_CN for Trine Enchanted Edition: 三位一体：魔法版
-2024-10-08 01:21:43,421 - INFO - 59. Saved in database: Trine Enchanted Edition
-2024-10-08 01:21:43,580 - INFO - No save locations found: DXVK
-2024-10-08 01:21:43,840 - INFO - 60. Saved in database: EA Sports FC 25
-2024-10-08 01:21:44,124 - INFO - 61. Saved in database: Elements of Destruction
-2024-10-08 01:21:44,391 - INFO - 62. Saved in database: Crazy Chicken: The Original
-2024-10-08 01:21:44,623 - INFO - 63. Saved in database: Moorhuhn 2
-2024-10-08 01:21:44,884 - INFO - 64. Saved in database: Moorhuhn: Winter-Edition
-2024-10-08 01:21:45,242 - INFO - 65. Saved in database: Moorhen 3 Chicken Chase
-2024-10-08 01:21:45,573 - INFO - 66. Saved in database: Crazy Chicken X
-2024-10-08 01:21:45,874 - INFO - 67. Saved in database: Crazy Chicken Adventure - The Pharao's Treasure
-2024-10-08 01:21:45,874 - INFO - Finding game installation folders...
-2024-10-08 01:21:47,892 - INFO - Found installation folder for steam_id 1045620
-2024-10-08 01:21:47,895 - INFO - Found installation folder for steam_id 1121560
-2024-10-08 01:21:47,898 - INFO - Found installation folder for steam_id 289180
-2024-10-08 01:21:47,901 - INFO - Found installation folder for steam_id 1556200
-2024-10-08 01:21:47,903 - INFO - Found installation folder for steam_id 1764390
-2024-10-08 01:21:47,906 - INFO - Found installation folder for steam_id 960990
-2024-10-08 01:21:47,909 - INFO - Found installation folder for steam_id 1850570
-2024-10-08 01:21:47,911 - INFO - Found installation folder for steam_id 282010
-2024-10-08 01:21:47,914 - INFO - Found installation folder for steam_id 593280
-2024-10-08 01:21:47,917 - INFO - Found installation folder for steam_id 914710
-2024-10-08 01:21:47,920 - INFO - Found installation folder for steam_id 362890
-2024-10-08 01:21:47,923 - INFO - Found installation folder for steam_id 17330
-2024-10-08 01:21:47,926 - INFO - Found installation folder for steam_id 238010
-2024-10-08 01:21:47,929 - INFO - Found installation folder for steam_id 2000270
-2024-10-08 01:21:47,931 - INFO - Found installation folder for steam_id 35700
-2024-10-08 01:21:47,934 - INFO - Found installation folder for steam_id 2669320
-2024-10-08 01:21:47,934 - INFO - Continue parameter: {'rccontinue': '20241008002109|1894852', 'continue': '-||'}
-2024-10-08 01:21:48,339 - INFO - 68. Saved in database: Crazy Chicken Kart Classic
-2024-10-08 01:21:49,392 - INFO - Found zh_CN for Fallout 4 VR: 辐射4 VR
-2024-10-08 01:21:49,394 - INFO - 69. Saved in database: Fallout 4 VR
-2024-10-08 01:21:49,672 - INFO - 70. Saved in database: Final Fantasy VIII (2013)
-2024-10-08 01:21:49,940 - INFO - 71. Saved in database: Oneshot: World Machine Edition
-2024-10-08 01:21:50,107 - INFO - No save locations found: Korea: Forgotten Conflict
-2024-10-08 01:21:51,046 - INFO - No save locations found: Football Manager 2005
-2024-10-08 01:21:51,046 - INFO - Finding game installation folders...
-2024-10-08 01:21:54,334 - INFO - Found installation folder for steam_id 611660
-2024-10-08 01:21:54,337 - INFO - Found installation folder for steam_id 39150
-2024-10-08 01:21:54,340 - INFO - Found installation folder for steam_id 2915460
-2024-10-08 01:21:54,340 - INFO - All recent changes fetched!
+2024-10-09 01:20:42,133 - INFO - Total game translations fetched: 1020
+2024-10-09 01:20:45,732 - INFO - Added 2 new game translations
+2024-10-09 01:20:45,733 - INFO - Fetching recent changes from 2024-10-08 01:20:09.585017 to 2024-10-09 01:20:45.732981
+2024-10-09 01:20:46,188 - INFO - Found zh_CN for Silent Hill 2: 寂静岭2：重制版
+2024-10-09 01:20:46,196 - INFO - 1. Saved in database: Silent Hill 2
+2024-10-09 01:20:47,176 - INFO - Found zh_CN for Guilty Gear Xrd Rev 2: 罪恶装备：启示者2
+2024-10-09 01:20:47,178 - INFO - 2. Saved in database: Guilty Gear Xrd Rev 2
+2024-10-09 01:20:47,334 - INFO - No save locations found: Halo Wars 2
+2024-10-09 01:20:47,547 - INFO - Found zh_CN for Halo: The Master Chief Collection: 光环：士官长合集
+2024-10-09 01:20:47,553 - INFO - 3. Saved in database: Halo: The Master Chief Collection
+2024-10-09 01:20:47,828 - INFO - 4. Saved in database: Happy Tree Friends: False Alarm
+2024-10-09 01:20:48,099 - INFO - Found zh_CN for Ion Fury: 离子狂怒
+2024-10-09 01:20:48,101 - INFO - 5. Saved in database: Ion Fury
+2024-10-09 01:20:49,248 - INFO - No save locations found: King of Dragon Pass (2015)
+2024-10-09 01:20:49,494 - INFO - Found zh_CN for Legacy of Kain: Soul Reaver: 凯恩的遗产：勾魂使者
+2024-10-09 01:20:49,495 - INFO - 6. Saved in database: Legacy of Kain: Soul Reaver
+2024-10-09 01:20:49,752 - INFO - Found zh_CN for Persona 3 Reload: 女神异闻录3：Reload
+2024-10-09 01:20:49,753 - INFO - 7. Saved in database: Persona 3 Reload
+2024-10-09 01:20:49,951 - INFO - Found zh_CN for Dragon Ball: Sparking! Zero: 七龙珠 电光炸裂！ZERO
+2024-10-09 01:20:49,953 - INFO - 8. Saved in database: Dragon Ball: Sparking! Zero
+2024-10-09 01:20:50,210 - INFO - Found zh_CN for Vanguard Princess: 先锋公主
+2024-10-09 01:20:50,211 - INFO - 9. Saved in database: Vanguard Princess
+2024-10-09 01:20:50,419 - INFO - Found zh_CN for Horizon Zero Dawn: 地平线 零之曙光
+2024-10-09 01:20:50,420 - INFO - 10. Saved in database: Horizon Zero Dawn
+2024-10-09 01:20:50,605 - INFO - Found zh_CN for Loop Hero: 循环英雄
+2024-10-09 01:20:50,607 - INFO - 11. Saved in database: Loop Hero
+2024-10-09 01:20:50,916 - INFO - 12. Saved in database: EA Sports WRC
+2024-10-09 01:20:51,138 - INFO - Found zh_CN for Gundam Breaker 4: 高达创坏者4
+2024-10-09 01:20:51,140 - INFO - 13. Saved in database: Gundam Breaker 4
+2024-10-09 01:20:51,431 - INFO - Found zh_CN for Warframe: 星际战甲
+2024-10-09 01:20:51,433 - INFO - 14. Saved in database: Warframe
+2024-10-09 01:20:51,713 - INFO - 15. Saved in database: Maniac Mansion Deluxe
+2024-10-09 01:20:51,994 - INFO - 16. Saved in database: Marvel: Ultimate Alliance (2016)
+2024-10-09 01:20:52,238 - INFO - Found zh_CN for DiRT Rally 2.0: 尘埃 拉力赛 2.0
+2024-10-09 01:20:52,240 - INFO - 17. Saved in database: DiRT Rally 2.0
+2024-10-09 01:20:52,460 - INFO - Found zh_CN for Resident Evil 6: 生化危机6
+2024-10-09 01:20:52,461 - INFO - 18. Saved in database: Resident Evil 6
+2024-10-09 01:20:52,635 - INFO - Found zh_CN for Atari 50: The Anniversary Celebration: 雅达利50周年纪念合集
+2024-10-09 01:20:52,637 - INFO - 19. Saved in database: Atari 50: The Anniversary Celebration
+2024-10-09 01:20:52,891 - INFO - 20. Saved in database: Atari 50
+2024-10-09 01:20:53,666 - INFO - Found zh_CN for The Vagrant: 流浪者
+2024-10-09 01:20:53,668 - INFO - 21. Saved in database: The Vagrant
+2024-10-09 01:20:53,825 - INFO - No save locations found: Lunar Remastered Collection
+2024-10-09 01:20:54,151 - INFO - 22. Saved in database: Tomb Raider III: Adventures of Lara Croft
+2024-10-09 01:20:54,333 - INFO - Found zh_CN for DiRT 4: 尘埃4
+2024-10-09 01:20:54,335 - INFO - 23. Saved in database: DiRT 4
+2024-10-09 01:20:54,538 - INFO - Found zh_CN for Forza Horizon 5: 极限竞速：地平线5
+2024-10-09 01:20:54,540 - INFO - 24. Saved in database: Forza Horizon 5
+2024-10-09 01:20:54,800 - INFO - 25. Saved in database: Crazy Chicken: Wanted
+2024-10-09 01:20:54,994 - INFO - Found zh_CN for Deliver Us Mars: 火星孤征
+2024-10-09 01:20:54,996 - INFO - 26. Saved in database: Deliver Us Mars
+2024-10-09 01:20:55,239 - INFO - 27. Saved in database: Mosa Lina
+2024-10-09 01:20:55,239 - INFO - Finding game installation folders...
+2024-10-09 01:20:57,823 - INFO - Found installation folder for steam_id 2124490
+2024-10-09 01:20:57,827 - INFO - Found installation folder for steam_id 520440
+2024-10-09 01:20:57,831 - INFO - Found installation folder for steam_id 976730
+2024-10-09 01:20:57,835 - INFO - Found installation folder for steam_id 10470
+2024-10-09 01:20:57,839 - INFO - Found installation folder for steam_id 562860
+2024-10-09 01:20:57,842 - INFO - Found installation folder for steam_id 224920
+2024-10-09 01:20:57,845 - INFO - Found installation folder for steam_id 2161700
+2024-10-09 01:20:57,848 - INFO - Found installation folder for steam_id 262150
+2024-10-09 01:20:57,851 - INFO - Found installation folder for steam_id 1151640
+2024-10-09 01:20:57,854 - INFO - Found installation folder for steam_id 1282730
+2024-10-09 01:20:57,857 - INFO - Found installation folder for steam_id 1849250
+2024-10-09 01:20:57,860 - INFO - Found installation folder for steam_id 1672500
+2024-10-09 01:20:57,863 - INFO - Found installation folder for steam_id 230410
+2024-10-09 01:20:57,866 - INFO - Found installation folder for steam_id 433300
+2024-10-09 01:20:57,869 - INFO - Found installation folder for steam_id 690790
+2024-10-09 01:20:57,873 - INFO - Found installation folder for steam_id 221040
+2024-10-09 01:20:57,875 - INFO - Found installation folder for steam_id 1919470
+2024-10-09 01:20:57,878 - INFO - Found installation folder for steam_id 598700
+2024-10-09 01:20:57,884 - INFO - Found installation folder for steam_id 225320
+2024-10-09 01:20:57,887 - INFO - Found installation folder for steam_id 421020
+2024-10-09 01:20:57,890 - INFO - Found installation folder for steam_id 1551360
+2024-10-09 01:20:57,893 - INFO - Found installation folder for steam_id 1345890
+2024-10-09 01:20:57,896 - INFO - Found installation folder for steam_id 2477090
+2024-10-09 01:20:57,897 - INFO - Continue parameter: {'rccontinue': '20241008122725|1894936', 'continue': '-||'}
+2024-10-09 01:20:58,258 - INFO - 28. Saved in database: Echo Point Nova
+2024-10-09 01:20:58,476 - INFO - 29. Saved in database: MDK
+2024-10-09 01:20:58,601 - INFO - No save locations found: Korea: Forgotten Conflict
+2024-10-09 01:20:58,864 - INFO - Found zh_CN for Red Dead Redemption 2: 荒野大镖客 救赎2
+2024-10-09 01:20:58,866 - INFO - 30. Saved in database: Red Dead Redemption 2
+2024-10-09 01:20:59,012 - INFO - No save locations found: Smite 2
+2024-10-09 01:20:59,260 - INFO - Found zh_CN for Saints Row IV: 黑道圣徒4
+2024-10-09 01:20:59,261 - INFO - 31. Saved in database: Saints Row IV
+2024-10-09 01:20:59,413 - INFO - Found zh_CN for Age of Wonders 4: 奇迹时代4
+2024-10-09 01:20:59,416 - INFO - 32. Saved in database: Age of Wonders 4
+2024-10-09 01:20:59,572 - INFO - Found zh_CN for Age of Wonders: Planetfall: 奇迹时代：行星陨落
+2024-10-09 01:20:59,575 - INFO - 33. Saved in database: Age of Wonders: Planetfall
+2024-10-09 01:20:59,808 - INFO - Found zh_CN for Baldur's Gate 3: 博德之门3
+2024-10-09 01:20:59,809 - INFO - 34. Saved in database: Baldur's Gate 3
+2024-10-09 01:20:59,997 - INFO - Found zh_CN for Jagged Alliance 3: 铁血联盟3
+2024-10-09 01:20:59,999 - INFO - 35. Saved in database: Jagged Alliance 3
+2024-10-09 01:21:00,262 - INFO - 36. Saved in database: Age of Mythology: Retold
+2024-10-09 01:21:00,464 - INFO - Found zh_CN for Painkiller: 斩妖除魔
+2024-10-09 01:21:00,466 - INFO - 37. Saved in database: Painkiller
+2024-10-09 01:21:00,615 - INFO - No save locations found: Red Dead Redemption
+2024-10-09 01:21:00,852 - INFO - Found zh_CN for Pathfinder: Wrath of the Righteous: 开拓者 正义之怒
+2024-10-09 01:21:00,853 - INFO - 38. Saved in database: Pathfinder: Wrath of the Righteous
+2024-10-09 01:21:01,119 - INFO - Found zh_CN for Warhammer 40,000: Rogue Trader: 战锤40K：行商浪人
+2024-10-09 01:21:01,122 - INFO - 39. Saved in database: Warhammer 40,000: Rogue Trader
+2024-10-09 01:21:01,381 - INFO - Found zh_CN for Warhammer 40,000: Boltgun: 战锤40K：爆矢枪
+2024-10-09 01:21:01,383 - INFO - 40. Saved in database: Warhammer 40,000: Boltgun
+2024-10-09 01:21:01,643 - INFO - 41. Saved in database: Tactical Breach Wizards
+2024-10-09 01:21:02,798 - INFO - Found zh_CN for Windjammers 2: 野外飞盘2
+2024-10-09 01:21:02,801 - INFO - 42. Saved in database: Windjammers 2
+2024-10-09 01:21:03,003 - INFO - Found zh_CN for Orcs Must Die!: 兽人必须死单机版
+2024-10-09 01:21:03,005 - INFO - 43. Saved in database: Orcs Must Die!
+2024-10-09 01:21:03,247 - INFO - Found zh_CN for Torchlight: 火炬之光
+2024-10-09 01:21:03,249 - INFO - 44. Saved in database: Torchlight
+2024-10-09 01:21:03,459 - INFO - Found zh_CN for Orcs Must Die! 2: 兽人必须死2
+2024-10-09 01:21:03,461 - INFO - 45. Saved in database: Orcs Must Die! 2
+2024-10-09 01:21:03,699 - INFO - Found zh_CN for Orcs Must Die! Unchained: 兽人必须死 解放
+2024-10-09 01:21:03,700 - INFO - 46. Saved in database: Orcs Must Die! Unchained
+2024-10-09 01:21:03,944 - INFO - Found zh_CN for Torchlight II: 火炬之光2
+2024-10-09 01:21:03,946 - INFO - 47. Saved in database: Torchlight II
+2024-10-09 01:21:04,145 - INFO - Found zh_CN for Orcs Must Die! 3: 兽人必须死3
+2024-10-09 01:21:04,147 - INFO - 48. Saved in database: Orcs Must Die! 3
+2024-10-09 01:21:04,382 - INFO - 49. Saved in database: Torchlight III
+2024-10-09 01:21:04,543 - INFO - Found zh_CN for Diablo IV: 暗黑破坏神4
+2024-10-09 01:21:04,546 - INFO - 50. Saved in database: Diablo IV
+2024-10-09 01:21:04,718 - INFO - Found zh_CN for Diablo II: Resurrected: 暗黑破坏神2：重制版
+2024-10-09 01:21:04,720 - INFO - 51. Saved in database: Diablo II: Resurrected
+2024-10-09 01:21:05,010 - INFO - Found zh_CN for Overwatch 2: 守望先锋 归来
+2024-10-09 01:21:05,014 - INFO - 52. Saved in database: Overwatch 2
+2024-10-09 01:21:05,214 - INFO - Found zh_CN for Overwatch: 守望先锋
+2024-10-09 01:21:05,216 - INFO - 53. Saved in database: Overwatch
+2024-10-09 01:21:05,443 - INFO - Found zh_CN for Saints Row 2: 黑道圣徒2
+2024-10-09 01:21:05,445 - INFO - 54. Saved in database: Saints Row 2
+2024-10-09 01:21:05,686 - INFO - Found zh_CN for Saints Row: The Third: 黑道圣徒3
+2024-10-09 01:21:05,688 - INFO - 55. Saved in database: Saints Row: The Third
+2024-10-09 01:21:05,912 - INFO - Found zh_CN for Saints Row: Gat out of Hell: 黑道圣徒：逃出地狱
+2024-10-09 01:21:05,913 - INFO - 56. Saved in database: Saints Row: Gat out of Hell
+2024-10-09 01:21:06,172 - INFO - Found zh_CN for Saints Row: The Third Remastered: 黑道圣徒3：重制版
+2024-10-09 01:21:06,174 - INFO - 57. Saved in database: Saints Row: The Third Remastered
+2024-10-09 01:21:06,174 - INFO - Finding game installation folders...
+2024-10-09 01:21:10,265 - INFO - Found installation folder for steam_id 1836730
+2024-10-09 01:21:10,269 - INFO - Found installation folder for steam_id 38450
+2024-10-09 01:21:10,272 - INFO - Found installation folder for steam_id 1174180
+2024-10-09 01:21:10,275 - INFO - Found installation folder for steam_id 206420
+2024-10-09 01:21:10,277 - INFO - Found installation folder for steam_id 1669000
+2024-10-09 01:21:10,280 - INFO - Found installation folder for steam_id 718850
+2024-10-09 01:21:10,283 - INFO - Found installation folder for steam_id 1086940
+2024-10-09 01:21:10,286 - INFO - Found installation folder for steam_id 1084160
+2024-10-09 01:21:10,289 - INFO - Found installation folder for steam_id 1934680
+2024-10-09 01:21:10,293 - INFO - Found installation folder for steam_id 39530
+2024-10-09 01:21:10,296 - INFO - Found installation folder for steam_id 1184370
+2024-10-09 01:21:10,299 - INFO - Found installation folder for steam_id 2186680
+2024-10-09 01:21:10,302 - INFO - Found installation folder for steam_id 2005010
+2024-10-09 01:21:10,305 - INFO - Found installation folder for steam_id 1043810
+2024-10-09 01:21:10,308 - INFO - Found installation folder for steam_id 1114290
+2024-10-09 01:21:10,311 - INFO - Found installation folder for steam_id 102600
+2024-10-09 01:21:10,314 - INFO - Found installation folder for steam_id 41500
+2024-10-09 01:21:10,317 - INFO - Found installation folder for steam_id 201790
+2024-10-09 01:21:10,321 - INFO - Found installation folder for steam_id 427270
+2024-10-09 01:21:10,324 - INFO - Found installation folder for steam_id 200710
+2024-10-09 01:21:10,327 - INFO - Found installation folder for steam_id 1522820
+2024-10-09 01:21:10,330 - INFO - Found installation folder for steam_id 1030210
+2024-10-09 01:21:10,333 - INFO - Found installation folder for steam_id 2344520
+2024-10-09 01:21:10,337 - INFO - Found installation folder for steam_id 2357570
+2024-10-09 01:21:10,340 - INFO - Found installation folder for steam_id 9480
+2024-10-09 01:21:10,343 - INFO - Found installation folder for steam_id 55230
+2024-10-09 01:21:10,346 - INFO - Found installation folder for steam_id 301910
+2024-10-09 01:21:10,350 - INFO - Found installation folder for steam_id 978300
+2024-10-09 01:21:10,351 - INFO - Continue parameter: {'rccontinue': '20241008150725|1894989', 'continue': '-||'}
+2024-10-09 01:21:10,829 - INFO - Found zh_CN for Saints Row: 黑道圣徒
+2024-10-09 01:21:10,832 - INFO - 58. Saved in database: Saints Row
+2024-10-09 01:21:11,004 - INFO - Found zh_CN for Agents of Mayhem: 混乱特工
+2024-10-09 01:21:11,007 - INFO - 59. Saved in database: Agents of Mayhem
+2024-10-09 01:21:11,269 - INFO - Found zh_CN for Mass Effect: 质量效应
+2024-10-09 01:21:11,272 - INFO - 60. Saved in database: Mass Effect
+2024-10-09 01:21:11,468 - INFO - Found zh_CN for Dragon Age: Inquisition: 龙腾世纪：审判
+2024-10-09 01:21:11,469 - INFO - 61. Saved in database: Dragon Age: Inquisition
+2024-10-09 01:21:11,705 - INFO - Found zh_CN for Mass Effect 2: 质量效应2
+2024-10-09 01:21:11,707 - INFO - 62. Saved in database: Mass Effect 2
+2024-10-09 01:21:11,927 - INFO - Found zh_CN for Mass Effect 3: 质量效应3
+2024-10-09 01:21:11,931 - INFO - 63. Saved in database: Mass Effect 3
+2024-10-09 01:21:12,149 - INFO - Found zh_CN for Mass Effect: Andromeda: 质量效应：仙女座
+2024-10-09 01:21:12,153 - INFO - 64. Saved in database: Mass Effect: Andromeda
+2024-10-09 01:21:12,403 - INFO - Found zh_CN for Mass Effect Legendary Edition: 质量效应：传奇版
+2024-10-09 01:21:12,405 - INFO - 65. Saved in database: Mass Effect Legendary Edition
+2024-10-09 01:21:12,574 - INFO - Found zh_CN for Anthem: 圣歌
+2024-10-09 01:21:12,576 - INFO - 66. Saved in database: Anthem
+2024-10-09 01:21:12,814 - INFO - Found zh_CN for Jade Empire: Special Edition: 翡翠帝国特别版
+2024-10-09 01:21:12,815 - INFO - 67. Saved in database: Jade Empire: Special Edition
+2024-10-09 01:21:13,094 - INFO - 68. Saved in database: Star Trek: Voyager - Elite Force
+2024-10-09 01:21:13,316 - INFO - Found zh_CN for Street Fighter 6: 街头霸王6
+2024-10-09 01:21:13,318 - INFO - 69. Saved in database: Street Fighter 6
+2024-10-09 01:21:13,595 - INFO - Found zh_CN for Super Street Fighter IV: Arcade Edition: 超级街霸4：街机版
+2024-10-09 01:21:13,596 - INFO - 70. Saved in database: Super Street Fighter IV: Arcade Edition
+2024-10-09 01:21:13,844 - INFO - 71. Saved in database: Phantom Fury
+2024-10-09 01:21:14,026 - INFO - Found zh_CN for Cultic: 邪教
+2024-10-09 01:21:14,029 - INFO - 72. Saved in database: Cultic
+2024-10-09 01:21:14,278 - INFO - Found zh_CN for Wrath: Aeon of Ruin: 怒火：永恒遗迹
+2024-10-09 01:21:14,280 - INFO - 73. Saved in database: Wrath: Aeon of Ruin
+2024-10-09 01:21:14,576 - INFO - 74. Saved in database: A.W.O.L.
+2024-10-09 01:21:14,715 - INFO - Found zh_CN for Bombshell: 弹片
+2024-10-09 01:21:14,719 - INFO - 75. Saved in database: Bombshell
+2024-10-09 01:21:14,935 - INFO - 76. Saved in database: Graven
+2024-10-09 01:21:15,243 - INFO - Found zh_CN for West of Loathing: 憎恶之西
+2024-10-09 01:21:15,246 - INFO - 77. Saved in database: West of Loathing
+2024-10-09 01:21:16,264 - INFO - 78. Saved in database: Speed Crew
+2024-10-09 01:21:16,537 - INFO - Found zh_CN for Tomb Raider I-III Remastered: 古墓丽影123：复刻版
+2024-10-09 01:21:16,538 - INFO - 79. Saved in database: Tomb Raider I-III Remastered
+2024-10-09 01:21:16,806 - INFO - 80. Saved in database: Shadow Warrior (2013)
+2024-10-09 01:21:17,037 - INFO - Found zh_CN for Shadow of the Tomb Raider: 古墓丽影 暗影
+2024-10-09 01:21:17,039 - INFO - 81. Saved in database: Shadow of the Tomb Raider
+2024-10-09 01:21:17,273 - INFO - Found zh_CN for Rise of the Tomb Raider: 古墓丽影 崛起
+2024-10-09 01:21:17,276 - INFO - 82. Saved in database: Rise of the Tomb Raider
+2024-10-09 01:21:17,505 - INFO - Found zh_CN for Shadow Warrior 2: 影子武士2
+2024-10-09 01:21:17,507 - INFO - 83. Saved in database: Shadow Warrior 2
+2024-10-09 01:21:17,791 - INFO - Found zh_CN for Tomb Raider (2013): 古墓丽影 (2013)
+2024-10-09 01:21:17,793 - INFO - 84. Saved in database: Tomb Raider (2013)
+2024-10-09 01:21:18,008 - INFO - Found zh_CN for Shadow Warrior 3: 影子武士3
+2024-10-09 01:21:18,011 - INFO - 85. Saved in database: Shadow Warrior 3
+2024-10-09 01:21:18,278 - INFO - Found zh_CN for Viscera Cleanup Detail: Shadow Warrior: 内脏清洁工：影武者
+2024-10-09 01:21:18,280 - INFO - 86. Saved in database: Viscera Cleanup Detail: Shadow Warrior
+2024-10-09 01:21:18,551 - INFO - Found zh_CN for Viscera Cleanup Detail: Santa's Rampage: 内脏清洁工：圣诞之怒
+2024-10-09 01:21:18,552 - INFO - 87. Saved in database: Viscera Cleanup Detail: Santa's Rampage
+2024-10-09 01:21:18,801 - INFO - Found zh_CN for Viscera Cleanup Detail: 内脏清洁工
+2024-10-09 01:21:18,802 - INFO - 88. Saved in database: Viscera Cleanup Detail
+2024-10-09 01:21:19,044 - INFO - Found zh_CN for Unreal Tournament 3: 虚幻竞技场3
+2024-10-09 01:21:19,045 - INFO - 89. Saved in database: Unreal Tournament 3
+2024-10-09 01:21:19,289 - INFO - 90. Saved in database: Unreal Tournament 4
+2024-10-09 01:21:19,560 - INFO - Found zh_CN for Unreal Tournament 2004: 虚幻竞技场2004
+2024-10-09 01:21:19,562 - INFO - 91. Saved in database: Unreal Tournament 2004
+2024-10-09 01:21:19,827 - INFO - Found zh_CN for Star Wars: Jedi Knight - Jedi Academy: 星球大战：绝地武士3
+2024-10-09 01:21:19,829 - INFO - 92. Saved in database: Star Wars: Jedi Knight - Jedi Academy
+2024-10-09 01:21:20,918 - INFO - Found zh_CN for Unreal Tournament 2003: 虚幻竞技场2003
+2024-10-09 01:21:20,919 - INFO - 93. Saved in database: Unreal Tournament 2003
+2024-10-09 01:21:21,165 - INFO - Found zh_CN for Unreal Tournament: 虚幻竞技场2014
+2024-10-09 01:21:21,167 - INFO - 94. Saved in database: Unreal Tournament
+2024-10-09 01:21:21,405 - INFO - Found zh_CN for Unreal: 虚幻
+2024-10-09 01:21:21,407 - INFO - 95. Saved in database: Unreal
+2024-10-09 01:21:21,707 - INFO - 96. Saved in database: Star Wars: Jedi Knight II - Jedi Outcast
+2024-10-09 01:21:21,953 - INFO - Found zh_CN for Mirror's Edge: 镜之边缘
+2024-10-09 01:21:21,955 - INFO - 97. Saved in database: Mirror's Edge
+2024-10-09 01:21:21,955 - INFO - Finding game installation folders...
+2024-10-09 01:21:26,201 - INFO - Found installation folder for steam_id 742420
+2024-10-09 01:21:26,204 - INFO - Found installation folder for steam_id 304530
+2024-10-09 01:21:26,208 - INFO - Found installation folder for steam_id 17460
+2024-10-09 01:21:26,211 - INFO - Found installation folder for steam_id 1222690
+2024-10-09 01:21:26,214 - INFO - Found installation folder for steam_id 2362420
+2024-10-09 01:21:26,217 - INFO - Found installation folder for steam_id 1238020
+2024-10-09 01:21:26,220 - INFO - Found installation folder for steam_id 1238000
+2024-10-09 01:21:26,223 - INFO - Found installation folder for steam_id 1328670
+2024-10-09 01:21:26,226 - INFO - Found installation folder for steam_id 7110
+2024-10-09 01:21:26,228 - INFO - Found installation folder for steam_id 1364780
+2024-10-09 01:21:26,231 - INFO - Found installation folder for steam_id 45760
+2024-10-09 01:21:26,234 - INFO - Found installation folder for steam_id 1733240
+2024-10-09 01:21:26,237 - INFO - Found installation folder for steam_id 1684930
+2024-10-09 01:21:26,240 - INFO - Found installation folder for steam_id 1000410
+2024-10-09 01:21:26,243 - INFO - Found installation folder for steam_id 1740150
+2024-10-09 01:21:26,247 - INFO - Found installation folder for steam_id 353190
+2024-10-09 01:21:26,250 - INFO - Found installation folder for steam_id 1371690
+2024-10-09 01:21:26,253 - INFO - Found installation folder for steam_id 597220
+2024-10-09 01:21:26,257 - INFO - Found installation folder for steam_id 2367480
+2024-10-09 01:21:26,261 - INFO - Found installation folder for steam_id 2478970
+2024-10-09 01:21:26,264 - INFO - Found installation folder for steam_id 233130
+2024-10-09 01:21:26,270 - INFO - Found installation folder for steam_id 750920
+2024-10-09 01:21:26,273 - INFO - Found installation folder for steam_id 391220
+2024-10-09 01:21:26,276 - INFO - Found installation folder for steam_id 324800
+2024-10-09 01:21:26,279 - INFO - Found installation folder for steam_id 203160
+2024-10-09 01:21:26,282 - INFO - Found installation folder for steam_id 1036890
+2024-10-09 01:21:26,286 - INFO - Found installation folder for steam_id 255520
+2024-10-09 01:21:26,289 - INFO - Found installation folder for steam_id 265210
+2024-10-09 01:21:26,292 - INFO - Found installation folder for steam_id 246900
+2024-10-09 01:21:26,295 - INFO - Found installation folder for steam_id 13210
+2024-10-09 01:21:26,298 - INFO - Found installation folder for steam_id 13230
+2024-10-09 01:21:26,301 - INFO - Found installation folder for steam_id 6020
+2024-10-09 01:21:26,304 - INFO - Found installation folder for steam_id 13240
+2024-10-09 01:21:26,307 - INFO - Found installation folder for steam_id 13250
+2024-10-09 01:21:26,310 - INFO - Found installation folder for steam_id 6030
+2024-10-09 01:21:26,313 - INFO - Found installation folder for steam_id 17410
+2024-10-09 01:21:26,315 - INFO - Continue parameter: {'rccontinue': '20241008154751|1895039', 'continue': '-||'}
+2024-10-09 01:21:26,729 - INFO - Found zh_CN for Mirror's Edge Catalyst: 镜之边缘 催化剂
+2024-10-09 01:21:26,731 - INFO - 98. Saved in database: Mirror's Edge Catalyst
+2024-10-09 01:21:26,910 - INFO - Found zh_CN for Alice: Madness Returns: 爱丽丝：疯狂回归
+2024-10-09 01:21:26,912 - INFO - 99. Saved in database: Alice: Madness Returns
+2024-10-09 01:21:27,146 - INFO - 100. Saved in database: Jane's USAF
+2024-10-09 01:21:27,296 - INFO - No save locations found: Jane's Israeli Air Force
+2024-10-09 01:21:27,563 - INFO - Found zh_CN for Star Wars Jedi: Fallen Order: 星球大战 绝地：陨落的武士团
+2024-10-09 01:21:27,564 - INFO - 101. Saved in database: Star Wars Jedi: Fallen Order
+2024-10-09 01:21:27,795 - INFO - Found zh_CN for Star Wars Jedi: Survivor: 星球大战 绝地：幸存者
+2024-10-09 01:21:27,797 - INFO - 102. Saved in database: Star Wars Jedi: Survivor
+2024-10-09 01:21:27,986 - INFO - Found zh_CN for L.A. Noire: 黑色洛城
+2024-10-09 01:21:27,987 - INFO - 103. Saved in database: L.A. Noire
+2024-10-09 01:21:28,174 - INFO - Found zh_CN for Destiny 2: 命运2 邪姬魅影
+2024-10-09 01:21:28,178 - INFO - 104. Saved in database: Destiny 2
+2024-10-09 01:21:28,465 - INFO - Found zh_CN for Thief: The Dark Project: 神偷 暗黑计划
+2024-10-09 01:21:28,466 - INFO - 105. Saved in database: Thief: The Dark Project
+2024-10-09 01:21:28,722 - INFO - Found zh_CN for Thief II: The Metal Age: 神偷2 金属时代
+2024-10-09 01:21:28,724 - INFO - 106. Saved in database: Thief II: The Metal Age
+2024-10-09 01:21:28,866 - INFO - Found zh_CN for Age of Empires: 帝国时代
+2024-10-09 01:21:28,869 - INFO - 107. Saved in database: Age of Empires
+2024-10-09 01:21:29,142 - INFO - 108. Saved in database: Age of Empires II: The Age of Kings
+2024-10-09 01:21:29,355 - INFO - Found zh_CN for Ys Seven: 伊苏7
+2024-10-09 01:21:29,357 - INFO - 109. Saved in database: Ys Seven
+2024-10-09 01:21:29,598 - INFO - 110. Saved in database: Age of Mythology
+2024-10-09 01:21:29,744 - INFO - Found zh_CN for Age of Empires III: 帝国时代3
+2024-10-09 01:21:29,746 - INFO - 111. Saved in database: Age of Empires III
+2024-10-09 01:21:30,019 - INFO - 112. Saved in database: Age of Empires II: HD Edition
+2024-10-09 01:21:30,238 - INFO - Found zh_CN for Age of Mythology: Extended Edition: 神话时代：扩充版
+2024-10-09 01:21:30,240 - INFO - 113. Saved in database: Age of Mythology: Extended Edition
+2024-10-09 01:21:30,391 - INFO - Found zh_CN for Age of Empires: Definitive Edition: 帝国时代：终极版
+2024-10-09 01:21:30,394 - INFO - 114. Saved in database: Age of Empires: Definitive Edition
+2024-10-09 01:21:30,629 - INFO - Found zh_CN for Star Wars: Galactic Battlegrounds: 星球大战：银河战场
+2024-10-09 01:21:30,631 - INFO - 115. Saved in database: Star Wars: Galactic Battlegrounds
+2024-10-09 01:21:30,812 - INFO - Found zh_CN for Age of Empires II: Definitive Edition: 帝国时代2：决定版
+2024-10-09 01:21:30,815 - INFO - 116. Saved in database: Age of Empires II: Definitive Edition
+2024-10-09 01:21:30,957 - INFO - Found zh_CN for Age of Empires III: Definitive Edition: 帝国时代3：决定版
+2024-10-09 01:21:30,958 - INFO - 117. Saved in database: Age of Empires III: Definitive Edition
+2024-10-09 01:21:31,112 - INFO - Found zh_CN for Age of Empires IV: 帝国时代4
+2024-10-09 01:21:31,114 - INFO - 118. Saved in database: Age of Empires IV
+2024-10-09 01:21:31,384 - INFO - 119. Saved in database: Command & Conquer 4: Tiberian Twilight
+2024-10-09 01:21:32,274 - INFO - 120. Saved in database: OpenRA
+2024-10-09 01:21:32,459 - INFO - Found zh_CN for Command & Conquer Remastered Collection: 命令与征服：重制版
+2024-10-09 01:21:32,461 - INFO - 121. Saved in database: Command & Conquer Remastered Collection
+2024-10-09 01:21:32,705 - INFO - 122. Saved in database: Dune 2000
+2024-10-09 01:21:32,981 - INFO - 123. Saved in database: Command & Conquer: Red Alert 3 - Uprising
+2024-10-09 01:21:33,255 - INFO - 124. Saved in database: Command & Conquer: Red Alert 3
+2024-10-09 01:21:33,465 - INFO - Found zh_CN for Command & Conquer 3: Tiberium Wars: 命运与征服3 泰伯利亚之战
+2024-10-09 01:21:33,466 - INFO - 125. Saved in database: Command & Conquer 3: Tiberium Wars
+2024-10-09 01:21:33,743 - INFO - 126. Saved in database: Command & Conquer: Generals
+2024-10-09 01:21:34,055 - INFO - Found zh_CN for The Lord of the Rings: The Battle for Middle-earth: 指环王：中土之战
+2024-10-09 01:21:34,057 - INFO - 127. Saved in database: The Lord of the Rings: The Battle for Middle-earth
+2024-10-09 01:21:34,381 - INFO - 128. Saved in database: The Lord of the Rings: The Battle for Middle-earth II
+2024-10-09 01:21:34,631 - INFO - Found zh_CN for StarCraft: 星际争霸
+2024-10-09 01:21:34,632 - INFO - 129. Saved in database: StarCraft
+2024-10-09 01:21:34,923 - INFO - 130. Saved in database: StarCraft II
+2024-10-09 01:21:35,213 - INFO - 131. Saved in database: Warcraft III: Reign of Chaos
+2024-10-09 01:21:35,462 - INFO - Found zh_CN for Warcraft III: Reforged: 魔兽争霸3：重制版
+2024-10-09 01:21:35,463 - INFO - 132. Saved in database: Warcraft III: Reforged
+2024-10-09 01:21:35,463 - INFO - Finding game installation folders...
+2024-10-09 01:21:38,532 - INFO - Found installation folder for steam_id 1233570
+2024-10-09 01:21:38,535 - INFO - Found installation folder for steam_id 19680
+2024-10-09 01:21:38,538 - INFO - Found installation folder for steam_id 1172380
+2024-10-09 01:21:38,541 - INFO - Found installation folder for steam_id 1774580
+2024-10-09 01:21:38,544 - INFO - Found installation folder for steam_id 110800
+2024-10-09 01:21:38,547 - INFO - Found installation folder for steam_id 1085660
+2024-10-09 01:21:38,550 - INFO - Found installation folder for steam_id 211600
+2024-10-09 01:21:38,553 - INFO - Found installation folder for steam_id 211740
+2024-10-09 01:21:38,555 - INFO - Found installation folder for steam_id 587100
+2024-10-09 01:21:38,558 - INFO - Found installation folder for steam_id 105450
+2024-10-09 01:21:38,561 - INFO - Found installation folder for steam_id 221380
+2024-10-09 01:21:38,563 - INFO - Found installation folder for steam_id 266840
+2024-10-09 01:21:38,566 - INFO - Found installation folder for steam_id 1017900
+2024-10-09 01:21:38,569 - INFO - Found installation folder for steam_id 356500
+2024-10-09 01:21:38,572 - INFO - Found installation folder for steam_id 813780
+2024-10-09 01:21:38,575 - INFO - Found installation folder for steam_id 933110
+2024-10-09 01:21:38,577 - INFO - Found installation folder for steam_id 1466860
+2024-10-09 01:21:38,580 - INFO - Found installation folder for steam_id 47700
+2024-10-09 01:21:38,583 - INFO - Found installation folder for steam_id 1213210
+2024-10-09 01:21:38,586 - INFO - Found installation folder for steam_id 24800
+2024-10-09 01:21:38,588 - INFO - Found installation folder for steam_id 17480
+2024-10-09 01:21:38,591 - INFO - Found installation folder for steam_id 24790
+2024-10-09 01:21:38,594 - INFO - Found installation folder for steam_id 2229870
+2024-10-09 01:21:38,596 - INFO - Continue parameter: {'rccontinue': '20241008171548|1895096', 'continue': '-||'}
+2024-10-09 01:21:38,973 - INFO - 133. Saved in database: Warcraft II: Battle.net Edition
+2024-10-09 01:21:39,119 - INFO - No save locations found: Microsoft Flight Simulator 2024
+2024-10-09 01:21:39,407 - INFO - 134. Saved in database: Warhammer 40,000: Dawn of War
+2024-10-09 01:21:39,685 - INFO - 135. Saved in database: Warhammer 40,000: Dawn of War: Dark Crusade
+2024-10-09 01:21:39,964 - INFO - Found zh_CN for Warhammer 40,000: Dawn of War: Soulstorm: 战锤40K：战争黎明-灵魂风暴
+2024-10-09 01:21:39,965 - INFO - 136. Saved in database: Warhammer 40,000: Dawn of War: Soulstorm
+2024-10-09 01:21:40,239 - INFO - Found zh_CN for Warhammer 40,000: Dawn of War II: 战锤40K：战争黎明2
+2024-10-09 01:21:40,242 - INFO - 137. Saved in database: Warhammer 40,000: Dawn of War II
+2024-10-09 01:21:40,539 - INFO - 138. Saved in database: Warhammer 40,000: Dawn of War II: Chaos Rising
+2024-10-09 01:21:40,834 - INFO - Found zh_CN for Warhammer 40,000: Dawn of War II: Retribution: 战锤40K：战争黎明2-惩罚
+2024-10-09 01:21:40,836 - INFO - 139. Saved in database: Warhammer 40,000: Dawn of War II: Retribution
+2024-10-09 01:21:41,028 - INFO - Found zh_CN for Company of Heroes: 英雄连
+2024-10-09 01:21:41,030 - INFO - 140. Saved in database: Company of Heroes
+2024-10-09 01:21:41,282 - INFO - Found zh_CN for Company of Heroes 2: 英雄连2
+2024-10-09 01:21:41,284 - INFO - 141. Saved in database: Company of Heroes 2
+2024-10-09 01:21:41,470 - INFO - Found zh_CN for Company of Heroes 3: 英雄连3
+2024-10-09 01:21:41,472 - INFO - 142. Saved in database: Company of Heroes 3
+2024-10-09 01:21:41,733 - INFO - Found zh_CN for Warhammer 40,000: Dawn of War III: 战锤40K：战争黎明3
+2024-10-09 01:21:41,735 - INFO - 143. Saved in database: Warhammer 40,000: Dawn of War III
+2024-10-09 01:21:41,958 - INFO - 144. Saved in database: Amalgam
+2024-10-09 01:21:42,171 - INFO - 145. Saved in database: Swelter
+2024-10-09 01:21:42,432 - INFO - 146. Saved in database: Entropy: Zero
+2024-10-09 01:21:42,643 - INFO - Found zh_CN for It Takes Two: 双人成行
+2024-10-09 01:21:42,645 - INFO - 147. Saved in database: It Takes Two
+2024-10-09 01:21:42,781 - INFO - No save locations found: Lego Harry Potter Collection
+2024-10-09 01:21:43,021 - INFO - 148. Saved in database: Caribbean Legend
+2024-10-09 01:21:43,271 - INFO - 149. Saved in database: Prey (2017)
+2024-10-09 01:21:43,415 - INFO - No save locations found: List of PC games with features removed compared to their console versions
+2024-10-09 01:21:43,604 - INFO - Found zh_CN for Marvel's Avengers: 漫威复仇者
+2024-10-09 01:21:43,606 - INFO - 150. Saved in database: Marvel's Avengers
+2024-10-09 01:21:43,828 - INFO - Found zh_CN for Race Driver: Grid: 超级房车赛 起跑点
+2024-10-09 01:21:43,830 - INFO - 151. Saved in database: Race Driver: Grid
+2024-10-09 01:21:44,052 - INFO - 152. Saved in database: Isonzo
+2024-10-09 01:21:44,257 - INFO - Found zh_CN for Mafia: Definitive Edition: 四海兄弟：最终版
+2024-10-09 01:21:44,259 - INFO - 153. Saved in database: Mafia: Definitive Edition
+2024-10-09 01:21:44,468 - INFO - Found zh_CN for Mafia II: Definitive Edition: 黑手党2：最终版
+2024-10-09 01:21:44,469 - INFO - 154. Saved in database: Mafia II: Definitive Edition
+2024-10-09 01:21:44,713 - INFO - 155. Saved in database: Mafia III
+2024-10-09 01:21:44,873 - INFO - Found zh_CN for Alien: Isolation: 异形：隔离
+2024-10-09 01:21:44,875 - INFO - 156. Saved in database: Alien: Isolation
+2024-10-09 01:21:45,161 - INFO - 157. Saved in database: The Curse of Montezuma
+2024-10-09 01:21:45,327 - INFO - Found zh_CN for Black Mesa: 黑山基地
+2024-10-09 01:21:45,328 - INFO - 158. Saved in database: Black Mesa
+2024-10-09 01:21:45,554 - INFO - 159. Saved in database: Sandbox
+2024-10-09 01:21:45,554 - INFO - Finding game installation folders...
+2024-10-09 01:21:48,871 - INFO - Found installation folder for steam_id 4570
+2024-10-09 01:21:48,874 - INFO - Found installation folder for steam_id 4580
+2024-10-09 01:21:48,876 - INFO - Found installation folder for steam_id 9450
+2024-10-09 01:21:48,879 - INFO - Found installation folder for steam_id 15620
+2024-10-09 01:21:48,882 - INFO - Found installation folder for steam_id 20570
+2024-10-09 01:21:48,885 - INFO - Found installation folder for steam_id 4560
+2024-10-09 01:21:48,888 - INFO - Found installation folder for steam_id 231430
+2024-10-09 01:21:48,891 - INFO - Found installation folder for steam_id 1677280
+2024-10-09 01:21:48,894 - INFO - Found installation folder for steam_id 285190
+2024-10-09 01:21:48,897 - INFO - Found installation folder for steam_id 1389950
+2024-10-09 01:21:48,900 - INFO - Found installation folder for steam_id 1815330
+2024-10-09 01:21:48,903 - INFO - Found installation folder for steam_id 714070
+2024-10-09 01:21:48,906 - INFO - Found installation folder for steam_id 1426210
+2024-10-09 01:21:48,909 - INFO - Found installation folder for steam_id 2230980
+2024-10-09 01:21:48,912 - INFO - Found installation folder for steam_id 480490
+2024-10-09 01:21:48,915 - INFO - Found installation folder for steam_id 997070
+2024-10-09 01:21:48,918 - INFO - Found installation folder for steam_id 12750
+2024-10-09 01:21:48,920 - INFO - Found installation folder for steam_id 1556790
+2024-10-09 01:21:48,923 - INFO - Found installation folder for steam_id 1030840
+2024-10-09 01:21:48,926 - INFO - Found installation folder for steam_id 1030830
+2024-10-09 01:21:48,933 - INFO - Found installation folder for steam_id 360430
+2024-10-09 01:21:48,936 - INFO - Found installation folder for steam_id 214490
+2024-10-09 01:21:48,939 - INFO - Found installation folder for steam_id 362890
+2024-10-09 01:21:48,940 - INFO - Continue parameter: {'rccontinue': '20241008202239|1895161', 'continue': '-||'}
+2024-10-09 01:21:49,306 - INFO - Found zh_CN for Sackboy: A Big Adventure: 麻布仔大冒险
+2024-10-09 01:21:49,308 - INFO - 160. Saved in database: Sackboy: A Big Adventure
+2024-10-09 01:21:49,494 - INFO - Found zh_CN for Hades: 哈迪斯
+2024-10-09 01:21:49,496 - INFO - 161. Saved in database: Hades
+2024-10-09 01:21:49,629 - INFO - No save locations found: Deep Sleep
+2024-10-09 01:21:49,885 - INFO - Found zh_CN for The Last of Us Part I: 最后的生还者1
+2024-10-09 01:21:49,887 - INFO - 162. Saved in database: The Last of Us Part I
+2024-10-09 01:21:50,019 - INFO - No save locations found: Deep Sleep Trilogy
+2024-10-09 01:21:50,247 - INFO - 163. Saved in database: Spin Rhythm XD
+2024-10-09 01:21:50,474 - INFO - Found zh_CN for Xanadu Next: 迷城的国度
+2024-10-09 01:21:50,475 - INFO - 164. Saved in database: Xanadu Next
+2024-10-09 01:21:50,651 - INFO - Found zh_CN for Fortnite: 堡垒之夜
+2024-10-09 01:21:50,652 - INFO - 165. Saved in database: Fortnite
+2024-10-09 01:21:50,886 - INFO - Found zh_CN for Rocket League: 火箭联盟
+2024-10-09 01:21:50,887 - INFO - 166. Saved in database: Rocket League
+2024-10-09 01:21:51,182 - INFO - 167. Saved in database: Halo: Combat Evolved
+2024-10-09 01:21:51,356 - INFO - Found zh_CN for Halo 2: 光环2
+2024-10-09 01:21:51,358 - INFO - 168. Saved in database: Halo 2
+2024-10-09 01:21:51,537 - INFO - Found zh_CN for Halo: Spartan Assault: 光环：斯巴达突袭
+2024-10-09 01:21:51,538 - INFO - 169. Saved in database: Halo: Spartan Assault
+2024-10-09 01:21:51,716 - INFO - Found zh_CN for Halo: Spartan Strike: 光环：斯巴达进攻
+2024-10-09 01:21:51,717 - INFO - 170. Saved in database: Halo: Spartan Strike
+2024-10-09 01:21:51,933 - INFO - No save locations found: Disney Infinity 2.0
+2024-10-09 01:21:52,151 - INFO - Found zh_CN for Risen 3: Titan Lords: 崛起3：泰坦之王
+2024-10-09 01:21:52,152 - INFO - 171. Saved in database: Risen 3: Titan Lords
+2024-10-09 01:21:52,484 - INFO - 172. Saved in database: Where in the World Is Carmen Sandiego? Treasures of Knowledge
+2024-10-09 01:21:52,682 - INFO - Found zh_CN for Asphalt 9: Legends: 狂野飙车9：竞速传奇
+2024-10-09 01:21:52,684 - INFO - 173. Saved in database: Asphalt 9: Legends
+2024-10-09 01:21:52,887 - INFO - Found zh_CN for Lego Racers 2: 乐高赛车2
+2024-10-09 01:21:52,889 - INFO - 174. Saved in database: Lego Racers 2
+2024-10-09 01:21:53,084 - INFO - Found zh_CN for Lollipop Chainsaw RePOP: 电锯甜心RePOP
+2024-10-09 01:21:53,085 - INFO - 175. Saved in database: Lollipop Chainsaw RePOP
+2024-10-09 01:21:53,341 - INFO - 176. Saved in database: Rugrats: Adventures in Gameland
+2024-10-09 01:21:53,578 - INFO - 177. Saved in database: FIFA Manager 14
+2024-10-09 01:21:53,800 - INFO - Found zh_CN for Spider-Man 3: 蜘蛛侠3
+2024-10-09 01:21:53,802 - INFO - 178. Saved in database: Spider-Man 3
+2024-10-09 01:21:54,875 - INFO - 179. Saved in database: The Amazing Spider-Man (2012)
+2024-10-09 01:21:55,023 - INFO - No save locations found: Hello Neighbor Pre-Alpha
+2024-10-09 01:21:55,254 - INFO - Found zh_CN for Tiger Woods PGA Tour 12: 泰格伍兹高尔夫球巡回赛12
+2024-10-09 01:21:55,256 - INFO - 180. Saved in database: Tiger Woods PGA Tour 12
+2024-10-09 01:21:55,459 - INFO - No save locations found: SpongeBob SquarePants: The Patrick Star Game
+2024-10-09 01:21:55,707 - INFO - 181. Saved in database: Silent Hunter II
+2024-10-09 01:21:55,930 - INFO - Found zh_CN for Until Dawn: 直到黎明
+2024-10-09 01:21:55,932 - INFO - 182. Saved in database: Until Dawn
+2024-10-09 01:21:56,070 - INFO - No save locations found: Under Defeat
+2024-10-09 01:21:56,303 - INFO - 183. Saved in database: Roadwarden
+2024-10-09 01:21:56,445 - INFO - No save locations found: Romancing SaGa 2: Revenge of the Seven
+2024-10-09 01:21:56,445 - INFO - Finding game installation folders...
+2024-10-09 01:21:57,153 - INFO - Found installation folder for steam_id 1599660
+2024-10-09 01:21:57,156 - INFO - Found installation folder for steam_id 1145360
+2024-10-09 01:21:57,159 - INFO - Found installation folder for steam_id 1888930
+2024-10-09 01:21:57,161 - INFO - Found installation folder for steam_id 1058830
+2024-10-09 01:21:57,164 - INFO - Found installation folder for steam_id 312560
+2024-10-09 01:21:57,167 - INFO - Found installation folder for steam_id 252950
+2024-10-09 01:21:57,171 - INFO - Found installation folder for steam_id 277430
+2024-10-09 01:21:57,174 - INFO - Found installation folder for steam_id 324570
+2024-10-09 01:21:57,177 - INFO - Found installation folder for steam_id 249230
+2024-10-09 01:21:57,180 - INFO - Found installation folder for steam_id 1815780
+2024-10-09 01:21:57,183 - INFO - Found installation folder for steam_id 2658450
+2024-10-09 01:21:57,187 - INFO - Found installation folder for steam_id 2633950
+2024-10-09 01:21:57,190 - INFO - Found installation folder for steam_id 212580
+2024-10-09 01:21:57,193 - INFO - Found installation folder for steam_id 2172010
+2024-10-09 01:21:57,195 - INFO - Found installation folder for steam_id 1155970
+2024-10-09 01:21:57,196 - INFO - Continue parameter: {'rccontinue': '20241008232217|1895215', 'continue': '-||'}
+2024-10-09 01:21:57,507 - INFO - No save locations found: Call of Duty: Black Ops 6
+2024-10-09 01:21:57,642 - INFO - No save locations found: NeosVR
+2024-10-09 01:21:57,799 - INFO - Found zh_CN for Armored Core VI: Fires of Rubicon: 机战佣兵6：境界天火/装甲核心6
+2024-10-09 01:21:57,800 - INFO - 184. Saved in database: Armored Core VI: Fires of Rubicon
+2024-10-09 01:21:57,800 - INFO - Finding game installation folders...
+2024-10-09 01:21:59,575 - INFO - Found installation folder for steam_id 1888160
+2024-10-09 01:21:59,575 - INFO - All recent changes fetched!
