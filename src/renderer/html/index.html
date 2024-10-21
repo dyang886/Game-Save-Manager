@@ -52,7 +52,8 @@
                     </button>
                 </div>
 
-                <div class="break-all max-h-[calc(100vh-250px)] p-4 md:p-5 space-y-4 overflow-y-auto scrollbar scrollbar-w-2 scrollbar-h-2 scrollbar-track-rounded-full scrollbar-thumb-rounded-full scrollbar-track-white scrollbar-thumb-slate-300 dark:scrollbar-track-gray-800 dark:scrollbar-thumb-slate-600">
+                <div
+                    class="break-all max-h-[calc(100vh-250px)] p-4 md:p-5 space-y-4 overflow-y-auto scrollbar scrollbar-w-2 scrollbar-h-2 scrollbar-track-rounded-full scrollbar-thumb-rounded-full scrollbar-track-white scrollbar-thumb-slate-300 dark:scrollbar-track-gray-800 dark:scrollbar-thumb-slate-600">
                     <p id="modal-content" class="text-base leading-relaxed text-gray-500 dark:text-gray-400"></p>
                 </div>
 
@@ -104,8 +105,8 @@
 
             <!-- Backup summary -->
             <div id="backup-summary" class="w-full p-8 text-center hidden animate-fadeInShift">
-                <h5 data-i18n="main.backup_success" class="mb-8 text-5xl font-bold text-gray-900 dark:text-white">
-                    <span class="text-content">Backup Success</span>
+                <h5 data-i18n="main.backup_complete" class="mb-8 text-5xl font-bold text-gray-900 dark:text-white">
+                    <span class="text-content">Backup Complete</span>
                 </h5>
 
                 <div class="flex justify-center items-center mb-8">
@@ -117,6 +118,14 @@
                         <span class="text-content">Total games backed up:</span>
                         <span id="backup-summary-total-games"
                             class="font-semibold text-gray-900 dark:text-white text-xl"></span>
+                    </p>
+                    <p id="backup-summary-total-failed-container" class="hidden mb-4" data-i18n="summary.total_backup_failed">
+                        <i class="fa-solid fa-xmark mr-1 text-red-700"></i>
+                        <span id="backup-summary-total-failed" class="text-content">Failed to backup x games</span>
+                        <button id="backup-failed-learn-more" type="button"
+                            class="ms-2 text-blue-500 text-lg font-medium underline" data-i18n="alert.learn_more">
+                            <span class="text-content">Learn More</span>
+                        </button>
                     </p>
                     <p class="mb-4" data-i18n="summary.total_backup_size">
                         <span class="text-content">Total backup size:</span>
@@ -228,8 +237,8 @@
 
             <!-- Restore summary -->
             <div id="restore-summary" class="w-full p-8 text-center hidden animate-fadeInShift">
-                <h5 data-i18n="main.restore_success" class="mb-8 text-5xl font-bold text-gray-900 dark:text-white">
-                    <span class="text-content">Restore Success</span>
+                <h5 data-i18n="main.restore_complete" class="mb-8 text-5xl font-bold text-gray-900 dark:text-white">
+                    <span class="text-content">Restore Complete</span>
                 </h5>
 
                 <div class="flex justify-center items-center mb-8">
@@ -241,6 +250,14 @@
                         <span class="text-content">Total games restored:</span>
                         <span id="restore-summary-total-games"
                             class="font-semibold text-gray-900 dark:text-white text-xl"></span>
+                    </p>
+                    <p id="restore-summary-total-failed-container" class="hidden mb-4" data-i18n="summary.total_restore_failed">
+                        <i class="fa-solid fa-xmark mr-1 text-red-700"></i>
+                        <span id="restore-summary-total-failed" class="text-content">Failed to restore x games</span>
+                        <button id="restore-failed-learn-more" type="button"
+                            class="ms-2 text-blue-500 text-lg font-medium underline" data-i18n="alert.learn_more">
+                            <span class="text-content">Learn More</span>
+                        </button>
                     </p>
                     <p class="mb-4" data-i18n="summary.total_restore_size">
                         <span class="text-content">Total restore size:</span>

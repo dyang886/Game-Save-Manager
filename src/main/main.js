@@ -144,17 +144,35 @@ ipcMain.handle('select-path', async (event, fileType) => {
     return null;
 });
 
-ipcMain.on('update-components-after-applying-settings', () => {
-    getMainWin().webContents.send('update-backup-table');
-    getMainWin().webContents.send('update-restore-table');
+ipcMain.on('post-settings-close-update', (event, table_name) => {
+    if (table_name === 'backup') {
+        getMainWin().webContents.send('update-backup-table');
+    } else if (table_name === 'restore') {
+        getMainWin().webContents.send('update-restore-table');
+    }
 });
 
 ipcMain.handle('get-newest-backup-time', (event, wiki_page_id) => {
     return getNewestBackup(wiki_page_id);
 });
 
-ipcMain.handle('get-pinyin', (event, zhTitle) => {
-    return pinyin(zhTitle, { style: pinyin.STYLE_NORMAL }).join(' ');
+// Sort objects using object.titleToSort
+ipcMain.handle('sort-games', (event, games) => {
+    const gamesWithSortedTitles = games.map((game) => {
+        try {
+            const isChinese = /[\u4e00-\u9fff]/.test(game.titleToSort);
+            const titleToSort = isChinese ? pinyin(game.titleToSort, { style: pinyin.STYLE_NORMAL }).join(' ') : game.titleToSort.toLowerCase();
+            return { ...game, titleToSort };
+        } catch (error) {
+            console.error(`Error sorting game ${game.titleToSort}: ${error.stack}`);
+            getMainWin().webContents.send('show-alert', 'modal', `${i18next.t('alert.sort_failed', { game_name: game.titleToSort })}`, error.message);
+            return { ...game, titleToSort: '' };
+        }
+    });
+
+    return gamesWithSortedTitles.sort((a, b) => {
+        return a.titleToSort.localeCompare(b.titleToSort);
+    });
 });
 
 ipcMain.handle('save-custom-entries', async (event, jsonObj) => {
@@ -188,22 +206,6 @@ ipcMain.handle('get-uuid', () => {
     return randomUUID();
 });
 
-ipcMain.handle('fetch-game-saves', async () => {
-    try {
-        const games = await getGameDataFromDB();
-        // const games = await getAllGameDataFromDB();
-        return games;
-    } catch (err) {
-        getMainWin().webContents.send('show-alert', 'error', i18next.t('alert.fetch_backup_failed'));
-        console.error("Failed to fetch backup data:", err);
-        return [];
-    }
-});
-
-ipcMain.handle('backup-game', async (event, gameObj) => {
-    await backupGame(gameObj);
-});
-
 ipcMain.handle('get-icon-map', async () => {
     return {
         'Custom': fs.readFileSync(path.join(__dirname, '../assets/custom.svg'), 'utf-8'),
@@ -217,19 +219,32 @@ ipcMain.handle('get-icon-map', async () => {
     };
 });
 
-ipcMain.handle('fetch-restore-table-data', async () => {
-    try {
-        const games = await getGameDataForRestore();
-        return games;
-    } catch (err) {
-        getMainWin().webContents.send('show-alert', 'error', i18next.t('alert.fetch_restore_failed'));
-        console.error("Failed to fetch restore data:", err);
-        return [];
+ipcMain.handle('fetch-backup-table-data', async () => {
+    const { games, errors } = await getGameDataFromDB();
+
+    if (errors.length > 0) {
+        getMainWin().webContents.send('show-alert', 'modal', i18next.t('alert.backup_process_error_display'), errors);
     }
+
+    return games;
+});
+
+ipcMain.handle('backup-game', async (event, gameObj) => {
+    return await backupGame(gameObj);
+});
+
+ipcMain.handle('fetch-restore-table-data', async () => {
+    const { games, errors } = await getGameDataForRestore();
+
+    if (errors.length > 0) {
+        getMainWin().webContents.send('show-alert', 'modal', i18next.t('alert.restore_process_error_display'), errors);
+    }
+
+    return games;
 });
 
 ipcMain.handle('restore-game', async (event, gameObj, userActionForAll) => {
-    await restoreGame(gameObj, userActionForAll);
+    return await restoreGame(gameObj, userActionForAll);
 });
 
 ipcMain.on('migrate-backups', (event, newBackupPath) => {

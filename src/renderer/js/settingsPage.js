@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const gamePathsContainer = document.getElementById('game-paths-container');
     const addNewPathButton = document.getElementById('add-new-path');
 
-    let previousBackupPath = '';
+    let previousSettings = '';
 
     window.api.invoke('get-settings').then((settings) => {
         if (settings) {
@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
             backupPathInput.value = settings.backupPath;
             maxBackupsInput.value = settings.maxBackups;
 
-            previousBackupPath = settings.backupPath.trim();
+            previousSettings = settings;
 
             if (settings.gameInstalls && settings.gameInstalls.length > 0) {
                 settings.gameInstalls.forEach((installPath) => {
@@ -54,22 +54,37 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     window.addEventListener('beforeunload', () => {
-        const gameInstallPaths = [];
+        // Check if game install paths changed
+        const newGameInstallPaths = [];
         document.querySelectorAll('.game-path-item .display-path').forEach((input) => {
             const path = input.value.trim();
             if (path) {
-                gameInstallPaths.push(path);
+                newGameInstallPaths.push(path);
             }
         });
-        window.api.send('save-settings', 'gameInstalls', gameInstallPaths);
 
+        const areArraysEqual = (arr1, arr2) => {
+            if (arr1.length !== arr2.length) {
+                return false;
+            }
+            const sortedArr1 = [...arr1].sort();
+            const sortedArr2 = [...arr2].sort();
+
+            return sortedArr1.every((value, index) => value === sortedArr2[index]);
+        };
+
+        if (!areArraysEqual(previousSettings.gameInstalls, newGameInstallPaths)) {
+            window.api.send('save-settings', 'gameInstalls', newGameInstallPaths);
+            window.api.send('post-settings-close-update', 'backup');
+        }
+
+        // Check if backup path changed
         const newBackupPath = backupPathInput.value.trim();
-        if (previousBackupPath !== newBackupPath) {
+        if (previousSettings.backupPath.trim() !== newBackupPath) {
             window.api.send('migrate-backups', newBackupPath);
         }
 
         window.api.send('save-settings', 'maxBackups', maxBackupsInput.value);
-        // window.api.send('update-components-after-applying-settings');
     });
 
     autoDetectButton.addEventListener('click', () => {
