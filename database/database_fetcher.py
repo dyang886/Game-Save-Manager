@@ -595,20 +595,31 @@ class DatabaseFetcher:
 
     def save_entry(self, entry):
         with self.conn:
+            current_entry = self.conn.execute("""
+                SELECT title, wiki_page_id, install_folder, steam_id, gog_id, save_location, platform, zh_CN
+                FROM games WHERE title = ?
+            """, (entry['title'],)).fetchone()
+            
+            if not current_entry:
+                current_entry = (None,) * 8
+
+            # Use existing values if the new ones are empty
+            updated_entry = (
+                entry['title'],
+                entry.get('wiki_page_id') or current_entry[1],
+                entry.get('install_folder') or current_entry[2],
+                entry.get('steam_id') or current_entry[3],
+                entry.get('gog_id') or current_entry[4],
+                json.dumps(entry.get('save_location')) if entry.get('save_location') else current_entry[5],
+                json.dumps(entry.get('platform')) if entry.get('platform') else current_entry[6],
+                entry.get('zh_CN') or current_entry[7]
+            )
+
             self.conn.execute("""
                 INSERT OR REPLACE INTO games
                 (title, wiki_page_id, install_folder, steam_id, gog_id, save_location, platform, zh_CN)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            """, (
-                entry['title'],
-                entry['wiki_page_id'],
-                entry['install_folder'],
-                entry.get('steam_id'),
-                entry.get('gog_id'),
-                json.dumps(entry.get('save_location')),
-                json.dumps(entry.get('platform')),
-                entry.get('zh_CN')
-            ))
+            """, updated_entry)
     
     def find_entry_by_key(self, type, value):
         cursor = self.conn.cursor()

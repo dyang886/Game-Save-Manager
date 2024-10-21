@@ -48,71 +48,80 @@ const execPromise = util.promisify(exec);
 async function getGameDataForRestore() {
     const backupPath = getSettings().backupPath;
     fse.ensureDir(backupPath);
-    const games = [];
-
     const gameFolders = await fse.readdir(backupPath);
+
+    const games = [];
+    const errors = [];
+
     for (const gameFolder of gameFolders) {
         const wikiIdFolderPath = path.join(backupPath, gameFolder);
-
         const stats = await fse.stat(wikiIdFolderPath);
-        if (stats.isDirectory()) {
-            const backups = [];
 
-            // Read all backup instance folders inside this game folder
-            const backupFolders = await fse.readdir(wikiIdFolderPath);
-            for (const backupFolder of backupFolders) {
-                const backupFolderPath = path.join(wikiIdFolderPath, backupFolder);
-                const configFilePath = path.join(backupFolderPath, 'backup_info.json');
-                const backupSize = calculateDirectorySize(backupFolderPath);
+        try {
+            if (stats.isDirectory()) {
+                const backups = [];
 
-                // Check if the backup instance contains a config file
-                if (fs.existsSync(configFilePath)) {
-                    try {
-                        const backupConfig = await fse.readJson(configFilePath);
-                        backups.push({
-                            date: backupFolder,  // Backup folder name is the date (YYYY-MM-DD_HH-mm)
-                            title: backupConfig.title,
-                            zh_CN: backupConfig.zh_CN,
-                            backup_size: backupSize,
-                            backup_paths: backupConfig.backup_paths
-                        });
-                    } catch (err) {
-                        console.error(`Failed to read backup config file: ${configFilePath}`, err);
+                // Read all backup instance folders inside this game folder
+                const backupFolders = await fse.readdir(wikiIdFolderPath);
+                for (const backupFolder of backupFolders) {
+                    const backupFolderPath = path.join(wikiIdFolderPath, backupFolder);
+                    const configFilePath = path.join(backupFolderPath, 'backup_info.json');
+                    const backupSize = calculateDirectorySize(backupFolderPath);
+
+                    // Check if the backup instance contains a config file
+                    if (fs.existsSync(configFilePath)) {
+                        try {
+                            const backupConfig = await fse.readJson(configFilePath);
+                            backups.push({
+                                date: backupFolder,  // Backup folder name is the date (YYYY-MM-DD_HH-mm)
+                                title: backupConfig.title,
+                                zh_CN: backupConfig.zh_CN,
+                                backup_size: backupSize,
+                                backup_paths: backupConfig.backup_paths
+                            });
+                        } catch (err) {
+                            console.error(`Error reading backup config file at ${configFilePath}: ${err.stack}`);
+                            errors.push(`${i18next.t('alert.restore_process_error_config', { config_path: configFilePath })}: ${err.message}`);
+                        }
                     }
+                }
+
+                if (backups.length > 0) {
+                    const latestBackup = backups.sort((a, b) => {
+                        return b.date.localeCompare(a.date);
+                    })[0];
+                    const latestBackupFormatted = moment(latestBackup.date, 'YYYY-MM-DD_HH-mm').format('YYYY/MM/DD HH:mm');
+
+                    games.push({
+                        wiki_page_id: gameFolder,
+                        latest_backup: latestBackupFormatted,
+                        title: latestBackup.title,
+                        zh_CN: latestBackup.zh_CN,
+                        backup_size: latestBackup.backup_size,
+                        backups: backups
+                    });
                 }
             }
 
-            if (backups.length > 0) {
-                const latestBackup = backups.sort((a, b) => {
-                    return b.date.localeCompare(a.date);
-                })[0];
-                const latestBackupFormatted = moment(latestBackup.date, 'YYYY-MM-DD_HH-mm').format('YYYY/MM/DD HH:mm');
-
-                games.push({
-                    wiki_page_id: gameFolder,
-                    latest_backup: latestBackupFormatted,
-                    title: latestBackup.title,
-                    zh_CN: latestBackup.zh_CN,
-                    backup_size: latestBackup.backup_size,
-                    backups: backups
-                });
-            }
+        } catch (error) {
+            console.error(`Error processing ${wikiIdFolderPath} for restore table display: ${error.stack}`);
+            errors.push(`${i18next.t('alert.restore_process_error_path', { backup_path: wikiIdFolderPath })}: ${error.message}`);
         }
     }
 
-    return games;
+    return { games, errors };
 }
 
 async function restoreGame(gameObj, userActionForAll) {
+    let localActionForAll = userActionForAll;
+    const pathsToCheck = [];
+
     try {
         const gameBackupPath = path.join(getSettings().backupPath, gameObj.wiki_page_id.toString());
 
         // Find the latest backup folder based on the backup date
         const latestBackupFolder = gameObj.backups.sort((a, b) => b.date.localeCompare(a.date))[0];
         const latestBackupPath = path.join(gameBackupPath, latestBackupFolder.date);
-
-        let localActionForAll = userActionForAll;
-        const pathsToCheck = [];
 
         for (const backupPath of latestBackupFolder.backup_paths) {
             const sourcePath = path.join(latestBackupPath, backupPath.folder_name);
@@ -135,7 +144,7 @@ async function restoreGame(gameObj, userActionForAll) {
         const shouldProceed = await shouldSkip(pathsToCheck, getGameDisplayName(gameObj), localActionForAll);
 
         if (shouldProceed.skip) {
-            return;
+            return { action: null, error: null };
         } else if (shouldProceed.actionForAll) {
             localActionForAll = shouldProceed.actionForAll;
         }
@@ -155,23 +164,18 @@ async function restoreGame(gameObj, userActionForAll) {
             } else if (backupType === 'reg') {
                 const registryFilePath = path.join(sourcePath, 'registry_backup.reg');
                 const regImportCommand = `reg import "${registryFilePath}"`;
+                await execPromise(regImportCommand);
 
-                try {
-                    await execPromise(regImportCommand);
-                } catch (error) {
-                    console.error(`Error importing registry key: ${registryFilePath}`, error.stack);
-                    throw error;
-                }
             } else {
                 console.warn(`Unknown backup type: ${backupType}`);
             }
         }
 
-        return localActionForAll;
+        return { action: localActionForAll, error: null };
 
-    } catch (err) {
-        getMainWin().webContents.send('show-alert', 'error', `${i18next.t('alert.restore_error_for_game')}: ${getGameDisplayName(gameObj.title)}`);
-        console.error(`Error during restore for game: ${gameObj.title}`, err.stack);
+    } catch (error) {
+        console.error(`Error during restore for game: ${getGameDisplayName(gameObj)}`, error.stack);
+        return { action: localActionForAll, error: `${i18next.t('alert.restore_game_error', { game_name: getGameDisplayName(gameObj) })}: ${error.message}` };
     }
 }
 

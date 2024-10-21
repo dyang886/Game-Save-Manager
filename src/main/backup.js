@@ -63,36 +63,36 @@ async function getGameDataFromDB() {
         } else {
             dbPath = path.join(__dirname, '../../database/database.db');
         }
-        const customJsonPath = path.join(getSettings().backupPath, 'custom_entries.json');
-        const db = new sqlite3.Database(dbPath, sqlite3.OPEN_READONLY);
-        const gameInstallPaths = getSettings().gameInstalls;
 
         const games = [];
+        const errors = [];
+        const db = new sqlite3.Database(dbPath, sqlite3.OPEN_READONLY);
+        let stmtInstallFolder;
 
-        // Process database entries
-        db.serialize(async () => {
-            const stmtInstallFolder = db.prepare("SELECT * FROM games WHERE install_folder = ?");
+        try {
+            stmtInstallFolder = db.prepare("SELECT * FROM games WHERE install_folder = ?");
+            const gameInstallPaths = getSettings().gameInstalls;
 
-            try {
-                for (const installPath of gameInstallPaths) {
-                    const directories = fs.readdirSync(installPath, { withFileTypes: true })
-                        .filter(dirent => dirent.isDirectory())
-                        .map(dirent => dirent.name);
+            // Process database entries
+            for (const installPath of gameInstallPaths) {
+                const directories = fs.readdirSync(installPath, { withFileTypes: true })
+                    .filter(dirent => dirent.isDirectory())
+                    .map(dirent => dirent.name);
 
-                    for (const dir of directories) {
-                        const rows = await new Promise((resolve, reject) => {
-                            stmtInstallFolder.all(dir, (err, rows) => {
-                                if (err) {
-                                    console.error(`Error querying ${dir}:`, err);
-                                    reject(err);
-                                } else {
-                                    resolve(rows);
-                                }
-                            });
+                for (const dir of directories) {
+                    const rows = await new Promise((resolve, reject) => {
+                        stmtInstallFolder.all(dir, (err, rows) => {
+                            if (err) {
+                                reject(err);
+                            } else {
+                                resolve(rows);
+                            }
                         });
+                    });
 
-                        if (rows && rows.length > 0) {
-                            for (const row of rows) {
+                    if (rows && rows.length > 0) {
+                        for (const row of rows) {
+                            try {
                                 row.platform = JSON.parse(row.platform);
                                 row.save_location = JSON.parse(row.save_location);
                                 row.install_path = path.join(installPath, dir);
@@ -102,49 +102,66 @@ async function getGameDataFromDB() {
                                 if (processed_game.resolved_paths.length !== 0) {
                                     games.push(processed_game);
                                 }
+
+                            } catch (err) {
+                                console.error(`Error processing database game ${getGameDisplayName(row)}: ${err.stack}`);
+                                errors.push(`${i18next.t('alert.backup_process_error_db', { game_name: getGameDisplayName(row) })}: ${err.message}`);
                             }
                         }
                     }
                 }
-
-                stmtInstallFolder.finalize(async () => {
-                    db.close();
-
-                    // Process custom entries after the database games
-                    if (fs.existsSync(customJsonPath)) {
-                        const customGames = await processCustomEntries(customJsonPath);
-                        games.push(...customGames);
-                    }
-                    resolve(games);
-                });
-
-            } catch (error) {
-                console.error('Error during processing:', error);
-                db.close();
-                reject(error);
             }
-        });
+
+            stmtInstallFolder.finalize();
+
+            // Process custom entries after the database games
+            const customJsonPath = path.join(getSettings().backupPath, 'custom_entries.json');
+
+            if (fs.existsSync(customJsonPath)) {
+                const { customGames, customGameErrors } = await processCustomEntries(customJsonPath);
+                games.push(...customGames);
+                errors.push(...customGameErrors);
+            }
+
+            db.close();
+            resolve({ games, errors });
+
+        } catch (error) {
+            console.error(`Error displaying backup table: ${error.stack}`);
+            errors.push(`${i18next.t('alert.backup_process_error_display')}: ${error.message}`);
+            if (stmtInstallFolder) {
+                stmtInstallFolder.finalize();
+            }
+            db.close();
+            resolve({ games, errors });
+        }
     });
 }
 
 async function processCustomEntries(customJsonPath) {
-    const games = [];
+    const customGames = [];
+    const customGameErrors = [];
 
     const customEntries = JSON.parse(fs.readFileSync(customJsonPath, 'utf-8'));
     for (let customEntry of customEntries) {
-        customEntry.platform = ['Custom'];
-        customEntry.latest_backup = getNewestBackup(customEntry.wiki_page_id);
-        for (const plat in customEntry.save_location) {
-            customEntry.save_location[plat] = customEntry.save_location[plat].map(entry => entry.template);
-        }
+        try {
+            customEntry.platform = ['Custom'];
+            customEntry.latest_backup = getNewestBackup(customEntry.wiki_page_id);
+            for (const plat in customEntry.save_location) {
+                customEntry.save_location[plat] = customEntry.save_location[plat].map(entry => entry.template);
+            }
 
-        const processed_game = await process_game(customEntry);
-        if (processed_game.resolved_paths.length !== 0) {
-            games.push(processed_game);
+            const processed_game = await process_game(customEntry);
+            if (processed_game.resolved_paths.length !== 0) {
+                customGames.push(processed_game);
+            }
+        } catch (err) {
+            console.error(`Error processing custom game ${customEntry.title}: ${err.stack}`);
+            customGameErrors.push(`${i18next.t('alert.backup_process_error_custom', { game_name: customEntry.title })}: ${err.message}`);
         }
     }
 
-    return games;
+    return { customGames, customGameErrors };
 }
 
 async function getAllGameDataFromDB() {
@@ -424,12 +441,7 @@ async function backupGame(gameObj) {
                 const registryFilePath = path.join(targetPath, 'registry_backup.reg');
 
                 const regExportCommand = `reg export "${resolvedPath}" "${registryFilePath}" /y`;
-                try {
-                    await execPromise(regExportCommand);
-                } catch (error) {
-                    console.error(`Error exporting registry key: ${resolvedPath}`, error);
-                    throw error;
-                }
+                await execPromise(regExportCommand);
 
                 backupConfig.backup_paths.push({
                     folder_name: pathFolderName,
@@ -481,9 +493,11 @@ async function backupGame(gameObj) {
         }
 
     } catch (error) {
-        getMainWin().webContents.send('show-alert', 'error', `${i18next.t('alert.backup_error_for_game')}: ${getGameDisplayName(gameObj)}`);
-        console.error(`Error during backup for game: ${gameObj.title}`, error);
+        console.error(`Error during backup for game ${getGameDisplayName(gameObj)}: ${error.stack}`);
+        return `${i18next.t('alert.backup_game_error', { game_name: getGameDisplayName(gameObj) })}: ${err.message}`;
     }
+
+    return null;
 }
 
 // Replace wildcards and uid by finding the corresponding components in resolved path

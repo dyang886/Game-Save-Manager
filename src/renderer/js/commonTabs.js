@@ -376,27 +376,6 @@ function setDropDownAction() {
     });
 }
 
-// Sort objects using object.titleToSort
-async function sortGames(games) {
-    const promises = games.map(async (game) => {
-        try {
-            const isChinese = /[\u4e00-\u9fff]/.test(game.titleToSort);
-            const titleToSort = isChinese ? await window.api.invoke('get-pinyin', game.titleToSort) : game.titleToSort.toLowerCase();
-            return { ...game, titleToSort };
-        } catch (error) {
-            showAlert('error', `${await window.i18n.translate('alert.incorrect_backup_structure')} [id: ${game.wiki_page_id}]`);
-            console.error("Error during game sorting:", error);
-            return { ...game, titleToSort: '' };
-        }
-    });
-
-    const gamesWithSortedTitles = await Promise.all(promises);
-
-    return gamesWithSortedTitles.sort((a, b) => {
-        return a.titleToSort.localeCompare(b.titleToSort);
-    });
-}
-
 async function pinGameOnTop(tabName, wikiId) {
     const tableBody = document.querySelector(`#${tabName} tbody`);
     const rowToMove = tableBody.querySelector(`tr[data-wiki-id="${wikiId}"]`);
@@ -413,7 +392,7 @@ async function pinGameOnTop(tabName, wikiId) {
         }));
 
         pinnedGames.push({ row: newRow, titleToSort: newRow.querySelector('th[scope="row"]').textContent.trim() });
-        const sortedPinnedGames = await sortGames(pinnedGames);
+        const sortedPinnedGames = await window.api.invoke('sort-games', pinnedGames);
         const indexToInsert = sortedPinnedGames.findIndex(game => game.row === newRow);
 
         // Insert the row in the correct sorted position
@@ -445,7 +424,7 @@ async function unpinGameFromTop(tabName, wikiId) {
         }));
 
         unpinnedGames.push({ row: rowToMove, titleToSort: rowToMove.querySelector('th[scope="row"]').textContent.trim() });
-        const sortedUnpinnedGames = await sortGames(unpinnedGames);
+        const sortedUnpinnedGames = await window.api.invoke('sort-games', pinnedGames);
         const indexToInsert = sortedUnpinnedGames.findIndex(game => game.row === rowToMove);
 
         // Insert the row in the correct sorted position

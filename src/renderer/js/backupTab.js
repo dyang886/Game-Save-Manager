@@ -11,7 +11,7 @@ async function updateBackupTable(loader) {
         await showLoadingIndicator('backup');
     }
 
-    const gameData = await window.api.invoke('fetch-game-saves');
+    const gameData = await window.api.invoke('fetch-backup-table-data');
     const iconMap = await window.api.invoke('get-icon-map');
     await populateBackupTable(gameData, iconMap);
     updateSelectedCountAndSize('backup');
@@ -46,11 +46,13 @@ async function populateBackupTable(data, iconMap) {
     );
 
     // Split and sort pinned and unpinned games
-    const pinnedGames = await sortGames(
+    const pinnedGames = await window.api.invoke(
+        'sort-games',
         gamesWithTitleToSort.filter(game => pinnedGamesWikiIds.includes(game.wiki_page_id.toString()))
     );
 
-    const otherGames = await sortGames(
+    const otherGames = await window.api.invoke(
+        'sort-games',
         gamesWithTitleToSort.filter(game => !pinnedGamesWikiIds.includes(game.wiki_page_id.toString()))
     );
 
@@ -156,15 +158,12 @@ function setupBackupButton() {
         backupButton.setAttribute('data-i18n', 'main.backup_in_progress');
         backupText.textContent = await window.i18n.translate('main.backup_in_progress');
 
-        const exitCode = await performBackup();
-        if (!exitCode) {
-            showBackupSummary();
-            getSelectedWikiIds('backup').forEach(async wikiId => {
-                await updateNewestBackupTime('backup', wikiId);
-            });
-            await updateRestoreTable(true);
-            document.querySelector('#backup-summary-done').classList.remove('hidden');
-        }
+        await performBackup();
+        getSelectedWikiIds('backup').forEach(async wikiId => {
+            await updateNewestBackupTime('backup', wikiId);
+        });
+        await updateRestoreTable(true);
+        document.querySelector('#backup-summary-done').classList.remove('hidden');
 
         // Re-enable the button and revert to the original state
         backupButton.disabled = false;
@@ -182,54 +181,65 @@ async function performBackup() {
     const progressBar = document.getElementById('backup-progress-bar');
     const progressText = document.getElementById('backup-progress-text');
     const totalGames = selectedWikiIds.length;
-    
+
     if (totalGames === 0) {
         showAlert('warning', await window.i18n.translate('alert.no_games_selected'));
-        return 1;
+        return;
     }
 
     progressContainer.classList.remove('hidden');
 
-    let backedUpCount = 0;
+    let backupCount = 0;
+    let backupFailed = 0;
+    let backupSize = 0;
+    let errors = [];
+
     for (const wikiId of selectedWikiIds) {
         const gameData = backupTableDataMap.get(wikiId);
-        await window.api.invoke('backup-game', gameData);
+        const newError = await window.api.invoke('backup-game', gameData);
 
-        backedUpCount++;
-        const progressPercentage = Math.round((backedUpCount / totalGames) * 100);
-        
+        if (newError) {
+            backupFailed += 1;
+            errors.push(newError);
+        } else {
+            backupSize += gameData.backup_size;
+        }
+
+        backupCount++;
+        const progressPercentage = Math.round((backupCount / totalGames) * 100);
         progressBar.style.width = `${progressPercentage}%`;
         progressText.innerText = `${progressPercentage}%`;
     }
 
     progressContainer.classList.add('hidden');
-
-    return 0;
+    showBackupSummary(backupCount, backupFailed, errors, backupSize);
 }
 
-function showBackupSummary() {
+function showBackupSummary(backupCount, backupFailed, errors, backupSize) {
     const backupSummary = document.querySelector('#backup-summary');
     const backupContent = document.querySelector('#backup-content');
+    const backupFailedContainer = document.querySelector('#backup-summary-total-failed-container');
     backupSummary.classList.remove('hidden');
     backupContent.classList.add('hidden');
 
-    const selectedWikiIds = getSelectedWikiIds('backup');
-    let total_size = 0;
-    let total_selected = 0;
-
-    selectedWikiIds.forEach(wikiId => {
-        const gameData = backupTableDataMap.get(wikiId);
-        if (gameData) {
-            total_size += gameData.backup_size;
-            total_selected += 1;
-        }
-    });
-
-    window.api.invoke('get-settings').then((settings) => {
+    window.api.invoke('get-settings').then(async (settings) => {
         if (settings) {
-            document.getElementById('backup-summary-total-games').textContent = total_selected;
-            document.getElementById('backup-summary-total-size').textContent = formatSize(total_size);
+            document.getElementById('backup-summary-total-games').textContent = backupCount;
+            document.getElementById('backup-summary-total-size').textContent = formatSize(backupSize);
             document.getElementById('backup-summary-save-path').textContent = settings.backupPath;
+
+            if (backupFailed > 0) {
+                const failed_message = await window.i18n.translate('summary.total_backup_failed', {
+                    failed_count: backupFailed
+                });
+                document.getElementById('backup-summary-total-failed').textContent = failed_message;
+                document.getElementById('backup-failed-learn-more').addEventListener('click', () => {
+                    showModal(failed_message, errors);
+                });
+                backupFailedContainer.classList.remove('hidden');
+            } else {
+                backupFailedContainer.classList.add('hidden');
+            }
         }
     });
 

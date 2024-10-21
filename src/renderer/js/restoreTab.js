@@ -43,11 +43,13 @@ async function populateRestoreTable(data) {
     );
 
     // Split and sort pinned and unpinned games
-    const pinnedGames = await sortGames(
+    const pinnedGames = await window.api.invoke(
+        'sort-games',
         gamesWithTitleToSort.filter(game => pinnedGamesWikiIds.includes(game.wiki_page_id.toString()))
     );
 
-    const otherGames = await sortGames(
+    const otherGames = await window.api.invoke(
+        'sort-games',
         gamesWithTitleToSort.filter(game => !pinnedGamesWikiIds.includes(game.wiki_page_id.toString()))
     );
 
@@ -151,11 +153,8 @@ function setupRestoreButton() {
         restoreButton.setAttribute('data-i18n', 'main.restore_in_progress');
         restoreText.textContent = await window.i18n.translate('main.restore_in_progress');
 
-        const exitCode = await performRestore();
-        if (!exitCode) {
-            showRestoreSummary();
-            document.querySelector('#restore-summary-done').classList.remove('hidden');
-        }
+        await performRestore();
+        document.querySelector('#restore-summary-done').classList.remove('hidden');
 
         // Re-enable the button and revert to the original state
         restoreButton.disabled = false;
@@ -176,21 +175,32 @@ async function performRestore() {
 
     if (totalGames === 0) {
         showAlert('warning', await window.i18n.translate('alert.no_games_selected'));
-        return 1;
+        return;
     }
 
     progressContainer.classList.remove('hidden');
 
-    let restoredCount = 0;
+    let restoreCount = 0;
+    let restoreFailed = 0;
+    let restoreSize = 0;
+    let errors = [];
     let globalAction = null;
 
     for (const wikiId of selectedWikiIds) {
         const gameData = restoreTableDataMap.get(wikiId);
-        const actionForAll = await window.api.invoke('restore-game', gameData, globalAction);
+        const { action: actionForAll, error: newError } = await window.api.invoke('restore-game', gameData, globalAction);
 
-        restoredCount++;
-        const progressPercentage = Math.round((restoredCount / totalGames) * 100);
-        
+        // Not counting games that are skipped
+        if (newError) {
+            restoreFailed += 1;
+            restoreCount++;
+            errors.push(newError);
+        } else if (actionForAll !== 'skip') {
+            restoreSize += gameData.backup_size;
+            restoreCount++;
+        }
+
+        const progressPercentage = Math.round((restoreCount / totalGames) * 100);
         progressBar.style.width = `${progressPercentage}%`;
         progressText.innerText = `${progressPercentage}%`;
 
@@ -200,33 +210,34 @@ async function performRestore() {
     }
 
     progressContainer.classList.add('hidden');
-
-    return 0;
+    showRestoreSummary(restoreCount, restoreFailed, errors, restoreSize);
 }
 
-function showRestoreSummary() {
+function showRestoreSummary(restoreCount, restoreFailed, errors, restoreSize) {
     const restoreSummary = document.querySelector('#restore-summary');
     const restoreContent = document.querySelector('#restore-content');
+    const restoreFailedContainer = document.querySelector('#restore-summary-total-failed-container');
     restoreSummary.classList.remove('hidden');
     restoreContent.classList.add('hidden');
 
-    const selectedWikiIds = getSelectedWikiIds('restore');
-    let total_size = 0;
-    let total_selected = 0;
-
-    selectedWikiIds.forEach(wikiId => {
-        const gameData = restoreTableDataMap.get(wikiId);
-        if (gameData) {
-            total_size += gameData.backup_size;
-            total_selected += 1;
-        }
-    });
-
-    window.api.invoke('get-settings').then((settings) => {
+    window.api.invoke('get-settings').then(async (settings) => {
         if (settings) {
-            document.getElementById('restore-summary-total-games').textContent = total_selected;
-            document.getElementById('restore-summary-total-size').textContent = formatSize(total_size);
+            document.getElementById('restore-summary-total-games').textContent = restoreCount;
+            document.getElementById('restore-summary-total-size').textContent = formatSize(restoreSize);
             document.getElementById('restore-summary-save-path').textContent = settings.backupPath;
+
+            if (restoreFailed > 0) {
+                const failed_message = await window.i18n.translate('summary.total_restore_failed', {
+                    failed_count: restoreFailed
+                });
+                document.getElementById('restore-summary-total-failed').textContent = failed_message;
+                document.getElementById('restore-failed-learn-more').addEventListener('click', () => {
+                    showModal(failed_message, errors);
+                });
+                restoreFailedContainer.classList.remove('hidden');
+            } else {
+                restoreFailedContainer.classList.add('hidden');
+            }
         }
     });
 

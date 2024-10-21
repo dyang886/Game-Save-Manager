@@ -79,12 +79,6 @@ const menuTemplate = [
                     }
                 },
             },
-            {
-                label: 'test',
-                click() {
-                    win.webContents.send('show-alert', 'modal', i18next.t('alert.error_during_backup_migration'), ['shit, what is that', 'sdaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafasdfsd fasdf asdf asd fsddafsd fasdf asd fanother shit, what', 'jjj', 'asdf', 'asdlf', 'asdfg', 'asdfg', 'asdfd', 'asd f', 'asdf', 'asdf', 'asdf', 'asdf', 'asdf', 'asdf', 'asdf', 'asdf', 'asdfas', 'asdf', 'asdf', 'asdfg', 'asdf', 'asdf']);
-                }
-            }
         ],
     },
 ];
@@ -344,21 +338,15 @@ async function moveFilesWithProgress(sourceDir, destinationDir) {
                         win.webContents.send('migrate-backup-progress', progressPercentage);
                     });
 
-                    await new Promise((resolve) => {
+                    await new Promise((resolve, reject) => {
                         readStream.pipe(writeStream);
-                        writeStream.on('finish', async () => {
-                            try {
-                                await fs.promises.utimes(destPath, fileStats.atime, fileStats.mtime);
-                                fs.unlink(srcPath, (err) => {
-                                    if (err) {
-                                        errors.push(`Error deleting file ${srcPath}: ${err.message}`);
-                                    }
-                                    resolve();
-                                });
-                            } catch (err) {
-                                errors.push(`Error preserving metadata for ${destPath}: ${err.message}`);
-                                resolve();
-                            }
+                        readStream.on('error', reject);
+                        writeStream.on('error', reject);
+                        writeStream.on('finish', () => {
+                            fs.promises.utimes(destPath, fileStats.atime, fileStats.mtime)
+                                .then(() => fs.promises.rm(srcPath))
+                                .then(resolve)
+                                .catch(reject);
                         });
                     });
                 }
@@ -386,6 +374,7 @@ async function moveFilesWithProgress(sourceDir, destinationDir) {
         }
     }
     saveSettings('backupPath', destinationDir);
+    getMainWin().webContents.send('update-restore-table');
 }
 
 module.exports = {
