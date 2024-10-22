@@ -1,1816 +1,261 @@
-2024-10-20 21:17:05,306 - INFO - Total game translations fetched: 1063
-2024-10-20 21:17:09,612 - INFO - Added 1 new game translations
-2024-10-20 21:17:09,613 - INFO - Fetching recent changes from 2024-10-10 01:19:35.388374 to 2024-10-20 21:17:09.613540
-2024-10-20 21:17:13,364 - INFO - 1. Saved in database: Lego Harry Potter Collection
-2024-10-20 21:17:13,622 - INFO - Found zh_CN for Rayman 2: The Great Escape: 雷曼2：胜利大逃亡
-2024-10-20 21:17:13,630 - INFO - 2. Saved in database: Rayman 2: The Great Escape
-2024-10-20 21:17:13,795 - INFO - No save locations found: Life After
-2024-10-20 21:17:14,051 - INFO - 3. Saved in database: God of War Ragnarök
-2024-10-20 21:17:14,315 - INFO - Found zh_CN for Horizon Forbidden West: 地平线 西之绝境
-2024-10-20 21:17:14,322 - INFO - 4. Saved in database: Horizon Forbidden West
-2024-10-20 21:17:16,696 - INFO - 5. Saved in database: Shadow Tactics: Blades of the Shogun - Aiko's Choice
-2024-10-20 21:17:16,950 - INFO - Found zh_CN for Marvel's Spider-Man Remastered: 漫威蜘蛛侠：重制版
-2024-10-20 21:17:16,958 - INFO - 6. Saved in database: Marvel's Spider-Man Remastered
-2024-10-20 21:17:17,218 - INFO - Found zh_CN for Marvel's Spider-Man: Miles Morales: 漫威蜘蛛侠 迈尔斯·莫拉莱斯
-2024-10-20 21:17:17,225 - INFO - 7. Saved in database: Marvel's Spider-Man: Miles Morales
-2024-10-20 21:17:17,410 - INFO - Found zh_CN for Dragon Age: Inquisition: 龙腾世纪：审判
-2024-10-20 21:17:17,417 - INFO - 8. Saved in database: Dragon Age: Inquisition
-2024-10-20 21:17:17,619 - INFO - Found zh_CN for Atelier Ryza: Ever Darkness & the Secret Hideout: 莱莎的炼金工房：常暗女王与秘密藏身处
-2024-10-20 21:17:17,625 - INFO - 9. Saved in database: Atelier Ryza: Ever Darkness & the Secret Hideout
-2024-10-20 21:17:17,909 - INFO - Found zh_CN for Art of Rally: 拉力赛艺术
-2024-10-20 21:17:17,916 - INFO - 10. Saved in database: Art of Rally
-2024-10-20 21:17:18,152 - INFO - Found zh_CN for Kingdoms of Amalur: Re-Reckoning: 阿玛拉王国：惩罚重制版
-2024-10-20 21:17:18,159 - INFO - 11. Saved in database: Kingdoms of Amalur: Re-Reckoning
-2024-10-20 21:17:18,423 - INFO - Found zh_CN for Atelier Ryza 3: Alchemist of the End & the Secret Key: 莱莎的炼金工房3：终结之炼金术士与秘密钥匙
-2024-10-20 21:17:18,430 - INFO - 12. Saved in database: Atelier Ryza 3: Alchemist of the End & the Secret Key
-2024-10-20 21:17:18,672 - INFO - Found zh_CN for Atelier Ryza 2: Lost Legends & the Secret Fairy: 莱莎的炼金工房2失落传说与秘密妖精
-2024-10-20 21:17:18,679 - INFO - 13. Saved in database: Atelier Ryza 2: Lost Legends & the Secret Fairy
-2024-10-20 21:17:18,898 - INFO - Found zh_CN for V Rising: 夜族崛起
-2024-10-20 21:17:18,905 - INFO - 14. Saved in database: V Rising
-2024-10-20 21:17:19,185 - INFO - Found zh_CN for Last Epoch: 最后纪元
-2024-10-20 21:17:19,192 - INFO - 15. Saved in database: Last Epoch
-2024-10-20 21:17:19,534 - INFO - 16. Saved in database: Guild Wars 2
-2024-10-20 21:17:19,794 - INFO - Found zh_CN for Ereban: Shadow Legacy: 厄瑞班：暗影之族
-2024-10-20 21:17:19,801 - INFO - 17. Saved in database: Ereban: Shadow Legacy
-2024-10-20 21:17:20,026 - INFO - Found zh_CN for Ratchet & Clank: Rift Apart: 瑞奇与叮当：时空跳转
-2024-10-20 21:17:20,033 - INFO - 18. Saved in database: Ratchet & Clank: Rift Apart
-2024-10-20 21:17:20,225 - INFO - Found zh_CN for Ghost of Tsushima Director's Cut: 对马之魂 导演剪辑版
-2024-10-20 21:17:20,232 - INFO - 19. Saved in database: Ghost of Tsushima Director's Cut
-2024-10-20 21:17:20,405 - INFO - Found zh_CN for Helldivers 2: 地狱潜者2
-2024-10-20 21:17:20,413 - INFO - 20. Saved in database: Helldivers 2
-2024-10-20 21:17:20,619 - INFO - Found zh_CN for Silent Hill 2: 寂静岭2
-2024-10-20 21:17:20,627 - INFO - 21. Saved in database: Silent Hill 2
-2024-10-20 21:17:20,823 - INFO - Found zh_CN for God of War: 战神
-2024-10-20 21:17:20,830 - INFO - 22. Saved in database: God of War
-2024-10-20 21:17:21,024 - INFO - No save locations found: Mad Streets
-2024-10-20 21:17:22,559 - INFO - Found zh_CN for Sifu: 师父
-2024-10-20 21:17:22,566 - INFO - 23. Saved in database: Sifu
-2024-10-20 21:17:22,848 - INFO - Found zh_CN for Inscryption: 邪恶冥刻
-2024-10-20 21:17:22,855 - INFO - 24. Saved in database: Inscryption
-2024-10-20 21:17:23,049 - INFO - Found zh_CN for Days Gone: 往日不再
-2024-10-20 21:17:23,055 - INFO - 25. Saved in database: Days Gone
-2024-10-20 21:17:23,308 - INFO - Found zh_CN for The Path: 血径迷踪
-2024-10-20 21:17:23,315 - INFO - 26. Saved in database: The Path
-2024-10-20 21:17:23,608 - INFO - 27. Saved in database: Condemned: Criminal Origins
-2024-10-20 21:17:23,879 - INFO - 28. Saved in database: Echo Point Nova
-2024-10-20 21:17:24,109 - INFO - Found zh_CN for Devil May Cry 3: Special Edition: 鬼泣3 特别版
-2024-10-20 21:17:24,116 - INFO - 29. Saved in database: Devil May Cry 3: Special Edition
-2024-10-20 21:17:24,398 - INFO - 30. Saved in database: Metaphor: ReFantazio
-2024-10-20 21:17:24,645 - INFO - 31. Saved in database: Shift 2 Unleashed
-2024-10-20 21:17:24,985 - INFO - 32. Saved in database: Where in the World Is Carmen Sandiego? Treasures of Knowledge
-2024-10-20 21:17:24,985 - INFO - Finding game installation folders...
-2024-10-20 21:18:03,670 - WARNING - Failed to fetch steam database (attempt 1/10): 15 seconds
-2024-10-20 21:18:42,321 - WARNING - Failed to fetch steam database (attempt 2/10): 15 seconds
-2024-10-20 21:19:20,785 - WARNING - Failed to fetch steam database (attempt 3/10): 15 seconds
-2024-10-20 21:19:59,476 - WARNING - Failed to fetch steam database (attempt 4/10): 15 seconds
-2024-10-20 21:20:04,669 - INFO - Found installation folder for steam_id 2950340
-2024-10-20 21:20:04,677 - INFO - Found installation folder for steam_id 15060
-2024-10-20 21:20:04,685 - INFO - Found installation folder for steam_id 2322010
-2024-10-20 21:20:04,693 - INFO - Found installation folder for steam_id 2420110
-2024-10-20 21:20:04,701 - INFO - Found installation folder for steam_id 1579380
-2024-10-20 21:20:04,709 - INFO - Found installation folder for steam_id 1817070
-2024-10-20 21:20:04,718 - INFO - Found installation folder for steam_id 1817190
-2024-10-20 21:20:04,726 - INFO - Found installation folder for steam_id 1222690
-2024-10-20 21:20:04,734 - INFO - Found installation folder for steam_id 1121560
-2024-10-20 21:20:04,766 - INFO - Found installation folder for steam_id 550320
-2024-10-20 21:20:04,774 - INFO - Found installation folder for steam_id 1041720
-2024-10-20 21:20:04,783 - INFO - Found installation folder for steam_id 1999770
-2024-10-20 21:20:04,792 - INFO - Found installation folder for steam_id 1257290
-2024-10-20 21:20:04,801 - INFO - Found installation folder for steam_id 1604030
-2024-10-20 21:20:04,812 - INFO - Found installation folder for steam_id 899770
-2024-10-20 21:20:04,822 - INFO - Found installation folder for steam_id 1284210
-2024-10-20 21:20:04,832 - INFO - Found installation folder for steam_id 1671360
-2024-10-20 21:20:04,842 - INFO - Found installation folder for steam_id 1895880
-2024-10-20 21:20:04,852 - INFO - Found installation folder for steam_id 2215430
-2024-10-20 21:20:04,862 - INFO - Found installation folder for steam_id 553850
-2024-10-20 21:20:04,870 - INFO - Found installation folder for steam_id 2124490
-2024-10-20 21:20:04,879 - INFO - Found installation folder for steam_id 1593500
-2024-10-20 21:20:04,887 - INFO - Found installation folder for steam_id 2138710
-2024-10-20 21:20:04,895 - INFO - Found installation folder for steam_id 1092790
-2024-10-20 21:20:04,903 - INFO - Found installation folder for steam_id 1259420
-2024-10-20 21:20:04,911 - INFO - Found installation folder for steam_id 27000
-2024-10-20 21:20:04,919 - INFO - Found installation folder for steam_id 4720
-2024-10-20 21:20:04,929 - INFO - Found installation folder for steam_id 1836730
-2024-10-20 21:20:04,939 - INFO - Found installation folder for steam_id 6550
-2024-10-20 21:20:04,948 - INFO - Found installation folder for steam_id 2679460
-2024-10-20 21:20:04,956 - INFO - Found installation folder for steam_id 47920
-2024-10-20 21:20:04,957 - INFO - Continue parameter: {'rccontinue': '20241010104541|1895401', 'continue': '-||'}
-2024-10-20 21:20:05,689 - INFO - 33. Saved in database: Dark Waters: Gino and the Witch of the Black Swamp
-2024-10-20 21:20:05,960 - INFO - 34. Saved in database: F1 2019
-2024-10-20 21:20:06,248 - INFO - No save locations found: Red Dead Redemption
-2024-10-20 21:20:06,509 - INFO - Found zh_CN for Jusant: 退潮
-2024-10-20 21:20:06,521 - INFO - 35. Saved in database: Jusant
-2024-10-20 21:20:06,754 - INFO - Found zh_CN for Resident Evil Village: 生化危机 村庄
-2024-10-20 21:20:06,761 - INFO - 36. Saved in database: Resident Evil Village
-2024-10-20 21:20:06,980 - INFO - Found zh_CN for Diablo IV: 暗黑破坏神4
-2024-10-20 21:20:06,988 - INFO - 37. Saved in database: Diablo IV
-2024-10-20 21:20:07,196 - INFO - No save locations found: Star Wars Episode I: Jedi Power Battles
-2024-10-20 21:20:07,580 - INFO - 38. Saved in database: Hawked
-2024-10-20 21:20:07,779 - INFO - Found zh_CN for Empyrion - Galactic Survival: 帝国霸业 银河生存
-2024-10-20 21:20:07,786 - INFO - 39. Saved in database: Empyrion - Galactic Survival
-2024-10-20 21:20:08,363 - INFO - No save locations found: List of games that support high-fidelity upscaling
-2024-10-20 21:20:08,682 - INFO - 40. Saved in database: BallisticNG
-2024-10-20 21:20:08,951 - INFO - 41. Saved in database: Anger Foot
-2024-10-20 21:20:09,181 - INFO - Found zh_CN for Horizon Zero Dawn: 地平线 零之曙光
-2024-10-20 21:20:09,188 - INFO - 42. Saved in database: Horizon Zero Dawn
-2024-10-20 21:20:09,445 - INFO - Found zh_CN for Death Stranding Director's Cut: 死亡搁浅 导演剪辑版
-2024-10-20 21:20:09,452 - INFO - 43. Saved in database: Death Stranding Director's Cut
-2024-10-20 21:20:09,781 - INFO - Found zh_CN for Death Stranding: 死亡搁浅
-2024-10-20 21:20:09,788 - INFO - 44. Saved in database: Death Stranding
-2024-10-20 21:20:10,087 - INFO - Found zh_CN for Drake of the 99 Dragons: 龙人德里克传奇
-2024-10-20 21:20:10,096 - INFO - 45. Saved in database: Drake of the 99 Dragons
-2024-10-20 21:20:10,375 - INFO - Found zh_CN for Starfield: 星空
-2024-10-20 21:20:10,383 - INFO - 46. Saved in database: Starfield
-2024-10-20 21:20:10,750 - INFO - 47. Saved in database: The Lamplighters League
-2024-10-20 21:20:10,918 - INFO - No save locations found: Commandos: Origins
-2024-10-20 21:20:11,163 - INFO - No save locations found: Call of Duty: Warzone 2.0
-2024-10-20 21:20:11,337 - INFO - No save locations found: Call of Duty: Black Ops 6
-2024-10-20 21:20:11,542 - INFO - Found zh_CN for Call of Duty: Modern Warfare II: 使命召唤 现代战争2（2022）
-2024-10-20 21:20:11,550 - INFO - 48. Saved in database: Call of Duty: Modern Warfare II
-2024-10-20 21:20:11,952 - INFO - 49. Saved in database: Call of Duty: Modern Warfare III
-2024-10-20 21:20:12,285 - INFO - Found zh_CN for Party Animals: 猛兽派对
-2024-10-20 21:20:13,634 - INFO - 50. Saved in database: Party Animals
-2024-10-20 21:20:13,814 - INFO - Found zh_CN for Age of Empires III: 帝国时代3
-2024-10-20 21:20:13,824 - INFO - 51. Saved in database: Age of Empires III
-2024-10-20 21:20:14,760 - INFO - No save locations found: Decline's Drops
-2024-10-20 21:20:15,061 - INFO - Found zh_CN for Stasis: Bone Totem: 沉睡：骨图腾
-2024-10-20 21:20:15,151 - INFO - 52. Saved in database: Stasis: Bone Totem
-2024-10-20 21:20:15,151 - INFO - Finding game installation folders...
-2024-10-20 21:20:50,884 - WARNING - Failed to fetch steam database (attempt 1/10): 15 seconds
-2024-10-20 21:21:29,589 - WARNING - Failed to fetch steam database (attempt 2/10): 15 seconds
-2024-10-20 21:22:08,061 - WARNING - Failed to fetch steam database (attempt 3/10): 15 seconds
-2024-10-20 21:22:46,540 - WARNING - Failed to fetch steam database (attempt 4/10): 15 seconds
-2024-10-20 21:23:25,000 - WARNING - Failed to fetch steam database (attempt 5/10): 15 seconds
-2024-10-20 21:24:03,650 - WARNING - Failed to fetch steam database (attempt 6/10): 15 seconds
-2024-10-20 21:24:42,341 - WARNING - Failed to fetch steam database (attempt 7/10): 15 seconds
-2024-10-20 21:25:20,890 - WARNING - Failed to fetch steam database (attempt 8/10): 15 seconds
-2024-10-20 21:25:59,579 - WARNING - Failed to fetch steam database (attempt 9/10): 15 seconds
-2024-10-20 21:26:38,146 - WARNING - Failed to fetch steam database (attempt 10/10): 15 seconds
-2024-10-20 21:26:38,146 - ERROR - Error processing game entry for Stasis: Bone Totem: 15 seconds
+2024-10-22 01:22:12,397 - INFO - Total game translations fetched: 1066
+2024-10-22 01:22:14,399 - INFO - Added steam_id to existing entry for For The King.
+2024-10-22 01:22:14,400 - INFO - Added steam_id to existing entry for For The King II.
+2024-10-22 01:22:14,400 - INFO - Added steam_id to existing entry for Empires of the Undergrowth.
+2024-10-22 01:22:14,550 - INFO - Added 0 new game translations
+2024-10-22 01:22:14,551 - INFO - Fetching recent changes from 2024-10-20 21:16:09.613540 to 2024-10-22 01:22:14.551099
+2024-10-22 01:22:15,339 - INFO - 1. Saved in database: Turok 2: Seeds of Evil (2017)
+2024-10-22 01:22:15,648 - INFO - Found zh_CN for Sonic & Sega All-Stars Racing: 索尼克世嘉全明星赛车
+2024-10-22 01:22:15,649 - INFO - 2. Saved in database: Sonic & Sega All-Stars Racing
+2024-10-22 01:22:15,951 - INFO - Found zh_CN for Ys X: Nordics: 伊苏10：北境历险
+2024-10-22 01:22:15,953 - INFO - 3. Saved in database: Ys X: Nordics
+2024-10-22 01:22:16,276 - INFO - Found zh_CN for Ys VIII: Lacrimosa of DANA: 伊苏8：达娜的安魂曲
+2024-10-22 01:22:16,277 - INFO - 4. Saved in database: Ys VIII: Lacrimosa of DANA
+2024-10-22 01:22:16,565 - INFO - 5. Saved in database: Temtem
+2024-10-22 01:22:16,884 - INFO - 6. Saved in database: Nightmare House 2
+2024-10-22 01:22:17,306 - INFO - 7. Saved in database: Moscow to Berlin: Red Siege
+2024-10-22 01:22:17,487 - INFO - Found zh_CN for 1944: Battle of the Bulge: 1944：凸出部战役
+2024-10-22 01:22:17,489 - INFO - 8. Saved in database: 1944: Battle of the Bulge
+2024-10-22 01:22:18,538 - INFO - Found zh_CN for D-Day: 登陆日
+2024-10-22 01:22:18,540 - INFO - 9. Saved in database: D-Day
+2024-10-22 01:22:18,735 - INFO - Found zh_CN for Desert Rats Vs. Afrika Korps: 非洲军团VS沙漠之鼠
+2024-10-22 01:22:18,736 - INFO - 10. Saved in database: Desert Rats Vs. Afrika Korps
+2024-10-22 01:22:18,959 - INFO - Found zh_CN for Dead Island 2: 死亡岛2
+2024-10-22 01:22:18,961 - INFO - 11. Saved in database: Dead Island 2
+2024-10-22 01:22:20,100 - INFO - Found zh_CN for Halls of Torment: 苦痛殿堂
+2024-10-22 01:22:20,102 - INFO - 12. Saved in database: Halls of Torment
+2024-10-22 01:22:21,655 - INFO - Found zh_CN for Ex-Zodiac: 极限十二宫
+2024-10-22 01:22:21,657 - INFO - 13. Saved in database: Ex-Zodiac
+2024-10-22 01:22:22,710 - INFO - No save locations found: Until Then
+2024-10-22 01:22:22,906 - INFO - Found zh_CN for Dome Keeper: 穹顶守护者
+2024-10-22 01:22:22,908 - INFO - 14. Saved in database: Dome Keeper
+2024-10-22 01:22:24,016 - INFO - Found zh_CN for Buckshot Roulette: 恶魔轮盘
+2024-10-22 01:22:24,017 - INFO - 15. Saved in database: Buckshot Roulette
+2024-10-22 01:22:25,116 - INFO - Found zh_CN for Brotato: 土豆兄弟
+2024-10-22 01:22:25,117 - INFO - 16. Saved in database: Brotato
+2024-10-22 01:22:26,288 - INFO - Found zh_CN for Cassette Beasts: 磁带妖怪
+2024-10-22 01:22:26,290 - INFO - 17. Saved in database: Cassette Beasts
+2024-10-22 01:22:27,248 - INFO - No save locations found: Project Kat - Paper Lily Prologue
+2024-10-22 01:22:27,572 - INFO - 18. Saved in database: Warhammer 40,000: Space Marine II
+2024-10-22 01:22:27,786 - INFO - Found zh_CN for Dragon Ball: Sparking! Zero: 七龙珠 电光炸裂！ZERO
+2024-10-22 01:22:27,787 - INFO - 19. Saved in database: Dragon Ball: Sparking! Zero
+2024-10-22 01:22:28,059 - INFO - 20. Saved in database: MechWarrior 5: Clans
+2024-10-22 01:22:28,363 - INFO - Found zh_CN for Silent Hill 2: 寂静岭2
+2024-10-22 01:22:28,364 - INFO - 21. Saved in database: Silent Hill 2
+2024-10-22 01:22:28,657 - INFO - Found zh_CN for Saints Row 2: 黑道圣徒2
+2024-10-22 01:22:28,658 - INFO - 22. Saved in database: Saints Row 2
+2024-10-22 01:22:28,822 - INFO - No save locations found: Arizona Sunshine 2
+2024-10-22 01:22:28,982 - INFO - No save locations found: Arizona Sunshine Remake
+2024-10-22 01:22:29,163 - INFO - Found zh_CN for Arizona Sunshine: 亚利桑那阳光
+2024-10-22 01:22:29,164 - INFO - 23. Saved in database: Arizona Sunshine
+2024-10-22 01:22:29,333 - INFO - No save locations found: Anne Frank House VR
+2024-10-22 01:22:29,635 - INFO - 24. Saved in database: Silly Polly Beast
+2024-10-22 01:22:29,891 - INFO - Found zh_CN for Penny's Big Breakaway: 佩妮大逃脱
+2024-10-22 01:22:29,893 - INFO - 25. Saved in database: Penny's Big Breakaway
+2024-10-22 01:22:30,163 - INFO - 26. Saved in database: Neva
+2024-10-22 01:22:30,415 - INFO - Found zh_CN for Max Payne: 马克思佩恩
+2024-10-22 01:22:30,417 - INFO - 27. Saved in database: Max Payne
+2024-10-22 01:22:30,717 - INFO - 28. Saved in database: TMNT
+2024-10-22 01:22:30,717 - INFO - Finding game installation folders...
+2024-10-22 01:23:06,207 - WARNING - Failed to fetch steam database (attempt 1/10): 15 seconds
+2024-10-22 01:23:41,890 - WARNING - Failed to fetch steam database (attempt 2/10): 15 seconds
+2024-10-22 01:24:17,235 - WARNING - Failed to fetch steam database (attempt 3/10): 15 seconds
+2024-10-22 01:24:52,466 - WARNING - Failed to fetch steam database (attempt 4/10): 15 seconds
+2024-10-22 01:25:27,794 - WARNING - Failed to fetch steam database (attempt 5/10): 15 seconds
+2024-10-22 01:26:03,089 - WARNING - Failed to fetch steam database (attempt 6/10): 15 seconds
+2024-10-22 01:26:03,782 - INFO - Found installation folder for steam_id 405830
+2024-10-22 01:26:03,785 - INFO - Found installation folder for steam_id 34190
+2024-10-22 01:26:03,788 - INFO - Found installation folder for steam_id 579180
+2024-10-22 01:26:03,791 - INFO - Found installation folder for steam_id 745920
+2024-10-22 01:26:03,794 - INFO - Found installation folder for steam_id 934700
+2024-10-22 01:26:03,796 - INFO - Found installation folder for steam_id 2218750
+2024-10-22 01:26:03,799 - INFO - Found installation folder for steam_id 1249480
+2024-10-22 01:26:03,802 - INFO - Found installation folder for steam_id 1637320
+2024-10-22 01:26:03,805 - INFO - Found installation folder for steam_id 2835570
+2024-10-22 01:26:03,807 - INFO - Found installation folder for steam_id 1942280
+2024-10-22 01:26:03,810 - INFO - Found installation folder for steam_id 1321440
+2024-10-22 01:26:03,813 - INFO - Found installation folder for steam_id 2183900
+2024-10-22 01:26:03,816 - INFO - Found installation folder for steam_id 1790600
+2024-10-22 01:26:03,818 - INFO - Found installation folder for steam_id 2000890
+2024-10-22 01:26:03,821 - INFO - Found installation folder for steam_id 2124490
+2024-10-22 01:26:03,824 - INFO - Found installation folder for steam_id 9480
+2024-10-22 01:26:03,827 - INFO - Found installation folder for steam_id 342180
+2024-10-22 01:26:03,830 - INFO - Found installation folder for steam_id 1955230
+2024-10-22 01:26:03,833 - INFO - Found installation folder for steam_id 2420660
+2024-10-22 01:26:03,836 - INFO - Found installation folder for steam_id 12140
+2024-10-22 01:26:03,839 - INFO - Found installation folder for steam_id 21990
+2024-10-22 01:26:03,839 - INFO - Continue parameter: {'rccontinue': '20241021084355|1897140', 'continue': '-||'}
+2024-10-22 01:26:04,381 - INFO - Found zh_CN for Sid Meier's Civilization: Beyond Earth: 文明 太空
+2024-10-22 01:26:04,383 - INFO - 29. Saved in database: Sid Meier's Civilization: Beyond Earth
+2024-10-22 01:26:04,562 - INFO - No save locations found: Dragon Ball Super Card Game: Fusion World
+2024-10-22 01:26:04,777 - INFO - Found zh_CN for Dead by Daylight: 黎明杀机
+2024-10-22 01:26:04,779 - INFO - 30. Saved in database: Dead by Daylight
+2024-10-22 01:26:05,190 - INFO - No save locations found: Coneru: Dimension Girl
+2024-10-22 01:26:05,343 - INFO - No save locations found: Social Warfare
+2024-10-22 01:26:05,505 - INFO - No save locations found: Overthrown
+2024-10-22 01:26:05,660 - INFO - No save locations found: RAM: Random Access Mayhem
+2024-10-22 01:26:05,921 - INFO - 31. Saved in database: Sonic Robo Blast 2
+2024-10-22 01:26:06,231 - INFO - 32. Saved in database: Red Dead Redemption 2
+2024-10-22 01:26:06,542 - INFO - 33. Saved in database: Star Wars: Bounty Hunter
+2024-10-22 01:26:06,841 - INFO - No save locations found: Aqua Moto Racing Utopia
+2024-10-22 01:26:07,119 - INFO - Found zh_CN for Ghost of Tsushima Director's Cut: 对马之魂 导演剪辑版
+2024-10-22 01:26:07,120 - INFO - 34. Saved in database: Ghost of Tsushima Director's Cut
+2024-10-22 01:26:07,619 - INFO - 35. Saved in database: The Chronicles of Riddick: Escape from Butcher Bay
+2024-10-22 01:26:07,867 - INFO - Found zh_CN for Storage Hunter Simulator: 仓储猎手模拟
+2024-10-22 01:26:07,869 - INFO - 36. Saved in database: Storage Hunter Simulator
+2024-10-22 01:26:08,122 - INFO - Found zh_CN for Need for Speed: Undercover: 极品飞车12：无间风云
+2024-10-22 01:26:08,124 - INFO - 37. Saved in database: Need for Speed: Undercover
+2024-10-22 01:26:09,417 - INFO - 38. Saved in database: Barrage Musical ~ Basic Danmaku Tutorial ~ / 弹幕音乐绘 ~ 基础教学篇 ~
+2024-10-22 01:26:09,647 - INFO - Found zh_CN for SteamWorld Build: 蒸汽世界：建设
+2024-10-22 01:26:09,649 - INFO - 39. Saved in database: SteamWorld Build
+2024-10-22 01:26:09,819 - INFO - Found zh_CN for Fuel: 燃料
+2024-10-22 01:26:09,821 - INFO - 40. Saved in database: Fuel
+2024-10-22 01:26:10,125 - INFO - Found zh_CN for Team Fortress 2: 军团要塞2
+2024-10-22 01:26:10,127 - INFO - 41. Saved in database: Team Fortress 2
+2024-10-22 01:26:10,505 - INFO - Found zh_CN for EFootball PES 2021 Season Update: 实况足球2021赛季更新
+2024-10-22 01:26:10,507 - INFO - 42. Saved in database: EFootball PES 2021 Season Update
+2024-10-22 01:26:10,737 - INFO - Found zh_CN for Beyond Good & Evil: 超越善恶 HD
+2024-10-22 01:26:10,738 - INFO - 43. Saved in database: Beyond Good & Evil
+2024-10-22 01:26:11,081 - INFO - 44. Saved in database: Alpha Protocol
+2024-10-22 01:26:11,371 - INFO - Found zh_CN for Little Racers Street: 街头小车手
+2024-10-22 01:26:11,372 - INFO - 45. Saved in database: Little Racers Street
+2024-10-22 01:26:11,653 - INFO - Found zh_CN for The Binding of Isaac: Rebirth: 以撒的结合：重生
+2024-10-22 01:26:11,655 - INFO - 46. Saved in database: The Binding of Isaac: Rebirth
+2024-10-22 01:26:11,961 - INFO - 47. Saved in database: Barrage Musical - A Fantasy of Tempest
+2024-10-22 01:26:12,174 - INFO - Found zh_CN for Axiom Verge 2: 公理边缘2
+2024-10-22 01:26:12,175 - INFO - 48. Saved in database: Axiom Verge 2
+2024-10-22 01:26:12,396 - INFO - No save locations found: Crusader Kings
+2024-10-22 01:26:12,767 - INFO - 49. Saved in database: Sonic 3 & Knuckles
+2024-10-22 01:26:12,767 - INFO - Finding game installation folders...
+2024-10-22 01:26:48,422 - WARNING - Failed to fetch steam database (attempt 1/10): 15 seconds
+2024-10-22 01:27:23,719 - WARNING - Failed to fetch steam database (attempt 2/10): 15 seconds
+2024-10-22 01:27:59,110 - WARNING - Failed to fetch steam database (attempt 3/10): 15 seconds
+2024-10-22 01:28:34,402 - WARNING - Failed to fetch steam database (attempt 4/10): 15 seconds
+2024-10-22 01:29:09,641 - WARNING - Failed to fetch steam database (attempt 5/10): 15 seconds
+2024-10-22 01:29:44,906 - WARNING - Failed to fetch steam database (attempt 6/10): 15 seconds
+2024-10-22 01:29:45,932 - INFO - Found installation folder for steam_id 65980
+2024-10-22 01:29:45,935 - INFO - Found installation folder for steam_id 381210
+2024-10-22 01:29:45,938 - INFO - Found installation folder for steam_id 1174180
+2024-10-22 01:29:45,941 - INFO - Found installation folder for steam_id 2419090
+2024-10-22 01:29:45,943 - INFO - Found installation folder for steam_id 2215430
+2024-10-22 01:29:45,946 - INFO - Found installation folder for steam_id 1442430
+2024-10-22 01:29:45,949 - INFO - Found installation folder for steam_id 17430
+2024-10-22 01:29:45,952 - INFO - Found installation folder for steam_id 1173940
+2024-10-22 01:29:45,954 - INFO - Found installation folder for steam_id 2134770
+2024-10-22 01:29:45,957 - INFO - Found installation folder for steam_id 12800
+2024-10-22 01:29:45,960 - INFO - Found installation folder for steam_id 440
+2024-10-22 01:29:45,963 - INFO - Found installation folder for steam_id 1259970
+2024-10-22 01:29:45,966 - INFO - Found installation folder for steam_id 15130
+2024-10-22 01:29:45,969 - INFO - Found installation folder for steam_id 34010
+2024-10-22 01:29:45,972 - INFO - Found installation folder for steam_id 262690
+2024-10-22 01:29:45,974 - INFO - Found installation folder for steam_id 250900
+2024-10-22 01:29:45,977 - INFO - Found installation folder for steam_id 665270
+2024-10-22 01:29:45,980 - INFO - Found installation folder for steam_id 946030
+2024-10-22 01:29:45,981 - INFO - Continue parameter: {'rccontinue': '20241021182917|1897203', 'continue': '-||'}
+2024-10-22 01:29:46,491 - INFO - Found zh_CN for Sonic the Hedgehog 2: 索尼克2
+2024-10-22 01:29:46,492 - INFO - 50. Saved in database: Sonic the Hedgehog 2
+2024-10-22 01:29:46,752 - INFO - 51. Saved in database: Sonic the Hedgehog
+2024-10-22 01:29:47,045 - INFO - 52. Saved in database: Sonic Spinball
+2024-10-22 01:29:47,372 - INFO - 53. Saved in database: Dr. Robotnik's Mean Bean Machine
+2024-10-22 01:29:47,680 - INFO - 54. Saved in database: Sonic CD (2012)
+2024-10-22 01:29:47,934 - INFO - 55. Saved in database: Sonic Dash
+2024-10-22 01:29:48,168 - INFO - Found zh_CN for WARNO: 预先号令
+2024-10-22 01:29:48,170 - INFO - 56. Saved in database: WARNO
+2024-10-22 01:29:48,455 - INFO - 57. Saved in database: Wishbone Activity Zone
+2024-10-22 01:29:48,717 - INFO - 58. Saved in database: Rayman Redemption
+2024-10-22 01:29:49,079 - INFO - 59. Saved in database: EA Sports WRC
+2024-10-22 01:29:49,278 - INFO - No save locations found: Call of Duty: Warzone 2.0
+2024-10-22 01:29:49,458 - INFO - Found zh_CN for Call of Duty: Modern Warfare II: 使命召唤 现代战争2（2022）
+2024-10-22 01:29:49,460 - INFO - 60. Saved in database: Call of Duty: Modern Warfare II
+2024-10-22 01:29:49,764 - INFO - 61. Saved in database: Call of Duty: Modern Warfare III
+2024-10-22 01:29:50,078 - INFO - 62. Saved in database: Retro-Sonic
+2024-10-22 01:29:50,243 - INFO - No save locations found: Call of Duty: Black Ops 6
+2024-10-22 01:29:50,504 - INFO - 63. Saved in database: DCS World
+2024-10-22 01:29:50,653 - INFO - No save locations found: Sonic Robo Blast
+2024-10-22 01:29:51,059 - INFO - Found zh_CN for Spyro Reignited Trilogy: 小龙斯派罗：重燃三部曲
+2024-10-22 01:29:51,061 - INFO - 64. Saved in database: Spyro Reignited Trilogy
+2024-10-22 01:29:51,362 - INFO - Found zh_CN for Rise of the Tomb Raider: 古墓丽影 崛起
+2024-10-22 01:29:51,364 - INFO - 65. Saved in database: Rise of the Tomb Raider
+2024-10-22 01:29:51,520 - INFO - No save locations found: Sonic X Shadow Generations
+2024-10-22 01:29:51,770 - INFO - 66. Saved in database: Dark Souls II
+2024-10-22 01:29:51,996 - INFO - 67. Saved in database: Cars
+2024-10-22 01:29:52,228 - INFO - 68. Saved in database: VTOL VR
+2024-10-22 01:29:52,516 - INFO - 69. Saved in database: Beyond Good & Evil: 20th Anniversary Edition
+2024-10-22 01:29:52,677 - INFO - No save locations found: Undawn
+2024-10-22 01:29:52,857 - INFO - No save locations found: The Eminence in Shadow: Master of Garden
+2024-10-22 01:29:53,139 - INFO - 70. Saved in database: Alan Wake II
+2024-10-22 01:29:53,139 - INFO - Finding game installation folders...
+2024-10-22 01:30:28,491 - WARNING - Failed to fetch steam database (attempt 1/10): 15 seconds
+2024-10-22 01:31:03,782 - WARNING - Failed to fetch steam database (attempt 2/10): 15 seconds
+2024-10-22 01:31:39,337 - WARNING - Failed to fetch steam database (attempt 3/10): 15 seconds
+2024-10-22 01:32:14,752 - WARNING - Failed to fetch steam database (attempt 4/10): 15 seconds
+2024-10-22 01:32:50,033 - WARNING - Failed to fetch steam database (attempt 5/10): 15 seconds
+2024-10-22 01:33:25,333 - WARNING - Failed to fetch steam database (attempt 6/10): 15 seconds
+2024-10-22 01:34:00,749 - WARNING - Failed to fetch steam database (attempt 7/10): 15 seconds
+2024-10-22 01:34:36,321 - WARNING - Failed to fetch steam database (attempt 8/10): 15 seconds
+2024-10-22 01:35:11,634 - WARNING - Failed to fetch steam database (attempt 9/10): 15 seconds
+2024-10-22 01:35:46,852 - WARNING - Failed to fetch steam database (attempt 10/10): 15 seconds
+2024-10-22 01:35:46,852 - ERROR - Error processing game entry for Alan Wake II: 15 seconds
 Traceback (most recent call last):
-  File "D:\Resources\Software\Game Save Manager\database\database_fetcher.py", line 247, in process_games
+  File "/home/runner/work/Game-Save-Manager/Game-Save-Manager/./database/database_fetcher.py", line 247, in process_games
     self.find_install_folder_name(steam_ids)
-  File "D:\Resources\Software\Game Save Manager\database\database_fetcher.py", line 467, in find_install_folder_name
+  File "/home/runner/work/Game-Save-Manager/Game-Save-Manager/./database/database_fetcher.py", line 467, in find_install_folder_name
     info = client.get_product_info(apps=steam_ids)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\dyang\AppData\Local\Programs\Python\Python312\Lib\site-packages\steam\client\builtins\apps.py", line 139, in get_product_info
+  File "/opt/hostedtoolcache/Python/3.12.7/x64/lib/python3.12/site-packages/steam/client/builtins/apps.py", line 139, in get_product_info
     chunk = self.wait_event(job_id, timeout=timeout, raises=True)
             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\dyang\AppData\Local\Programs\Python\Python312\Lib\site-packages\eventemitter\__init__.py", line 119, in wait_event
+  File "/opt/hostedtoolcache/Python/3.12.7/x64/lib/python3.12/site-packages/eventemitter/__init__.py", line 119, in wait_event
     return result.get(True, timeout)
            ^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "src\\gevent\\event.py", line 329, in gevent._gevent_cevent.AsyncResult.get
-  File "src\\gevent\\event.py", line 356, in gevent._gevent_cevent.AsyncResult.get
-  File "src\\gevent\\_abstract_linkable.py", line 487, in gevent._gevent_c_abstract_linkable.AbstractLinkable._wait_core
-  File "src\\gevent\\_abstract_linkable.py", line 490, in gevent._gevent_c_abstract_linkable.AbstractLinkable._wait_core
-  File "src\\gevent\\_abstract_linkable.py", line 442, in gevent._gevent_c_abstract_linkable.AbstractLinkable._AbstractLinkable__wait_to_be_notified
-  File "src\\gevent\\_abstract_linkable.py", line 451, in gevent._gevent_c_abstract_linkable.AbstractLinkable._switch_to_hub
-  File "src\\gevent\\_greenlet_primitives.py", line 61, in gevent._gevent_c_greenlet_primitives.SwitchOutGreenletWithLoop.switch
-  File "src\\gevent\\_greenlet_primitives.py", line 65, in gevent._gevent_c_greenlet_primitives.SwitchOutGreenletWithLoop.switch
-  File "src\\gevent\\_gevent_c_greenlet_primitives.pxd", line 35, in gevent._gevent_c_greenlet_primitives._greenlet_switch
+  File "src/gevent/event.py", line 330, in gevent._gevent_cevent.AsyncResult.get
+  File "src/gevent/event.py", line 357, in gevent._gevent_cevent.AsyncResult.get
+  File "src/gevent/_abstract_linkable.py", line 487, in gevent._gevent_c_abstract_linkable.AbstractLinkable._wait_core
+  File "src/gevent/_abstract_linkable.py", line 490, in gevent._gevent_c_abstract_linkable.AbstractLinkable._wait_core
+  File "src/gevent/_abstract_linkable.py", line 442, in gevent._gevent_c_abstract_linkable.AbstractLinkable._AbstractLinkable__wait_to_be_notified
+  File "src/gevent/_abstract_linkable.py", line 451, in gevent._gevent_c_abstract_linkable.AbstractLinkable._switch_to_hub
+  File "src/gevent/_greenlet_primitives.py", line 61, in gevent._gevent_c_greenlet_primitives.SwitchOutGreenletWithLoop.switch
+  File "src/gevent/_greenlet_primitives.py", line 65, in gevent._gevent_c_greenlet_primitives.SwitchOutGreenletWithLoop.switch
+  File "src/gevent/_gevent_c_greenlet_primitives.pxd", line 35, in gevent._gevent_c_greenlet_primitives._greenlet_switch
 gevent.timeout.Timeout: 15 seconds
-2024-10-20 21:26:38,146 - INFO - Continue parameter: {'rccontinue': '20241010174714|1895458', 'continue': '-||'}
-2024-10-20 21:26:38,764 - INFO - Found zh_CN for Morbid: The Seven Acolytes: 病态：七侍者
-2024-10-20 21:26:38,772 - INFO - 53. Saved in database: Morbid: The Seven Acolytes
-2024-10-20 21:26:38,960 - INFO - No save locations found: Pro Evolution Soccer 2012
-2024-10-20 21:26:39,130 - INFO - No save locations found: Pro Evolution Soccer 2013
-2024-10-20 21:26:39,410 - INFO - Found zh_CN for Pro Evolution Soccer 2014: 实况足球 2014
-2024-10-20 21:26:39,424 - INFO - 54. Saved in database: Pro Evolution Soccer 2014
-2024-10-20 21:26:39,671 - INFO - No save locations found: SpongeBob SquarePants: The Patrick Star Game
-2024-10-20 21:26:39,960 - INFO - Found zh_CN for PowerWash Simulator: 冲就完事模拟器
-2024-10-20 21:26:39,988 - INFO - 55. Saved in database: PowerWash Simulator
-2024-10-20 21:26:40,295 - INFO - 56. Saved in database: Moonbase Alpha
-2024-10-20 21:26:41,197 - INFO - Found zh_CN for Fireboy & Watergirl: Elements: 森林冰火人：元素
-2024-10-20 21:26:41,209 - INFO - 57. Saved in database: Fireboy & Watergirl: Elements
-2024-10-20 21:26:41,392 - INFO - No save locations found: F1 World Grand Prix
-2024-10-20 21:26:41,707 - INFO - Found zh_CN for Spyro Reignited Trilogy: 小龙斯派罗：重燃三部曲
-2024-10-20 21:26:41,714 - INFO - 58. Saved in database: Spyro Reignited Trilogy
-2024-10-20 21:26:42,017 - INFO - Found zh_CN for The House of the Dead: Remake: 死亡之屋 重制版
-2024-10-20 21:26:42,031 - INFO - 59. Saved in database: The House of the Dead: Remake
-2024-10-20 21:26:42,265 - INFO - Found zh_CN for Crash Bandicoot N. Sane Trilogy: 古惑狼 疯狂三部曲
-2024-10-20 21:26:42,277 - INFO - 60. Saved in database: Crash Bandicoot N. Sane Trilogy
-2024-10-20 21:26:42,998 - INFO - No save locations found: Korea: Forgotten Conflict
-2024-10-20 21:26:43,164 - INFO - No save locations found: Games for Windows – LIVE
-2024-10-20 21:26:43,505 - INFO - Found zh_CN for Tom Clancy's Rainbow Six: 彩虹六号
-2024-10-20 21:26:43,517 - INFO - 61. Saved in database: Tom Clancy's Rainbow Six
-2024-10-20 21:26:43,686 - INFO - No save locations found: Games for Windows – Live
-2024-10-20 21:26:43,936 - INFO - Found zh_CN for Until Dawn: 直到黎明
-2024-10-20 21:26:43,948 - INFO - 62. Saved in database: Until Dawn
-2024-10-20 21:26:44,277 - INFO - Found zh_CN for Crash Bandicoot 4: It's About Time: 古惑狼4：时机已到
-2024-10-20 21:26:44,289 - INFO - 63. Saved in database: Crash Bandicoot 4: It's About Time
-2024-10-20 21:26:44,680 - INFO - 64. Saved in database: EFLC
-2024-10-20 21:26:44,906 - INFO - Found zh_CN for Resident Evil HD Remaster: 生化危机HD：重制版
-2024-10-20 21:26:44,914 - INFO - 65. Saved in database: Resident Evil HD Remaster
-2024-10-20 21:26:45,118 - INFO - Found zh_CN for OlliOlli World: 奥力奥力世界
-2024-10-20 21:26:45,128 - INFO - 66. Saved in database: OlliOlli World
-2024-10-20 21:26:45,306 - INFO - Found zh_CN for Ghost Song: 鬼魂之歌
-2024-10-20 21:26:45,356 - INFO - 67. Saved in database: Ghost Song
-2024-10-20 21:26:45,552 - INFO - Found zh_CN for Jack Keane: 杰克基恩
-2024-10-20 21:26:45,559 - INFO - 68. Saved in database: Jack Keane
-2024-10-20 21:26:45,792 - INFO - Found zh_CN for Stronghold: Definitive Edition: 要塞：决定版
-2024-10-20 21:26:45,801 - INFO - 69. Saved in database: Stronghold: Definitive Edition
-2024-10-20 21:26:46,822 - INFO - Found zh_CN for OlliOlli2: Welcome to Olliwood: 像素滑板2：欢迎来到奥利坞
-2024-10-20 21:26:46,828 - INFO - 70. Saved in database: OlliOlli2: Welcome to Olliwood
-2024-10-20 21:26:46,995 - INFO - Found zh_CN for Deadlock: 死锁
-2024-10-20 21:26:47,001 - INFO - 71. Saved in database: Deadlock
-2024-10-20 21:26:47,163 - INFO - Found zh_CN for Black Widow: Recharged: 黑寡妇：再充能
-2024-10-20 21:26:47,173 - INFO - 72. Saved in database: Black Widow: Recharged
-2024-10-20 21:26:47,454 - INFO - Found zh_CN for Uncharted: Legacy of Thieves Collection: 神秘海域 盗贼传奇合辑
-2024-10-20 21:26:47,463 - INFO - 73. Saved in database: Uncharted: Legacy of Thieves Collection
-2024-10-20 21:26:47,463 - INFO - Finding game installation folders...
-2024-10-20 21:27:25,986 - WARNING - Failed to fetch steam database (attempt 1/10): 15 seconds
-2024-10-20 21:27:30,264 - INFO - Found installation folder for steam_id 1140890
-2024-10-20 21:27:30,272 - INFO - Found installation folder for steam_id 250870
-2024-10-20 21:27:30,279 - INFO - Found installation folder for steam_id 1290000
-2024-10-20 21:27:30,288 - INFO - Found installation folder for steam_id 39000
-2024-10-20 21:27:30,297 - INFO - Found installation folder for steam_id 1003480
-2024-10-20 21:27:30,305 - INFO - Found installation folder for steam_id 996580
-2024-10-20 21:27:30,313 - INFO - Found installation folder for steam_id 1694600
-2024-10-20 21:27:30,322 - INFO - Found installation folder for steam_id 731490
-2024-10-20 21:27:30,330 - INFO - Found installation folder for steam_id 13650
-2024-10-20 21:27:30,339 - INFO - Found installation folder for steam_id 2172010
-2024-10-20 21:27:30,348 - INFO - Found installation folder for steam_id 1378990
-2024-10-20 21:27:30,358 - INFO - Found installation folder for steam_id 12220
-2024-10-20 21:27:30,366 - INFO - Found installation folder for steam_id 304240
-2024-10-20 21:27:30,374 - INFO - Found installation folder for steam_id 1190170
-2024-10-20 21:27:30,383 - INFO - Found installation folder for steam_id 347800
-2024-10-20 21:27:30,391 - INFO - Found installation folder for steam_id 12340
-2024-10-20 21:27:30,400 - INFO - Found installation folder for steam_id 2140020
-2024-10-20 21:27:30,408 - INFO - Found installation folder for steam_id 365660
-2024-10-20 21:27:30,415 - INFO - Found installation folder for steam_id 1714180
-2024-10-20 21:27:30,424 - INFO - Found installation folder for steam_id 1659420
-2024-10-20 21:27:30,424 - INFO - Continue parameter: {'rccontinue': '20241010233715|1895512', 'continue': '-||'}
-2024-10-20 21:27:31,606 - INFO - 74. Saved in database: Deadlock: Planetary Conquest
-2024-10-20 21:27:31,771 - INFO - No save locations found: Goat Simulator: Remastered
-2024-10-20 21:27:31,935 - INFO - No save locations found: Prison Architect 2
-2024-10-20 21:27:32,150 - INFO - Found zh_CN for Half-Life: 半条命
-2024-10-20 21:27:32,157 - INFO - 75. Saved in database: Half-Life
-2024-10-20 21:27:32,332 - INFO - Found zh_CN for Avatar: Frontiers of Pandora: 阿凡达：潘多拉边境
-2024-10-20 21:27:32,339 - INFO - 76. Saved in database: Avatar: Frontiers of Pandora
-2024-10-20 21:27:32,570 - INFO - Found zh_CN for Star Wars Outlaws: 星球大战：亡命之徒
-2024-10-20 21:27:32,578 - INFO - 77. Saved in database: Star Wars Outlaws
-2024-10-20 21:27:32,821 - INFO - 78. Saved in database: Doom + Doom II
-2024-10-20 21:27:33,061 - INFO - 79. Saved in database: Quake II Enhanced
-2024-10-20 21:27:33,222 - INFO - Found zh_CN for Aperture Desk Job: 光圈科技打工记
-2024-10-20 21:27:33,233 - INFO - 80. Saved in database: Aperture Desk Job
-2024-10-20 21:27:33,481 - INFO - 81. Saved in database: The Finals
-2024-10-20 21:27:33,802 - INFO - 82. Saved in database: Void Scrappers
-2024-10-20 21:27:34,061 - INFO - 83. Saved in database: UFO 50
-2024-10-20 21:27:34,695 - INFO - No save locations found: Top Secret
-2024-10-20 21:27:34,854 - INFO - No save locations found: Metal Slug 5 (2019)
-2024-10-20 21:27:35,063 - INFO - Found zh_CN for Duke Nukem 3D: Megaton Edition: 毁灭公爵3D：超重版
-2024-10-20 21:27:35,070 - INFO - 84. Saved in database: Duke Nukem 3D: Megaton Edition
-2024-10-20 21:27:35,279 - INFO - Found zh_CN for Hitman 2: 杀手2
-2024-10-20 21:27:35,286 - INFO - 85. Saved in database: Hitman 2
-2024-10-20 21:27:35,446 - INFO - No save locations found: Old School RuneScape
-2024-10-20 21:27:35,605 - INFO - No save locations found: Pac-in-Time
-2024-10-20 21:27:36,373 - INFO - No save locations found: Petz Catz 2
-2024-10-20 21:27:36,537 - INFO - No save locations found: Shovel Knight: Shovel of Hope
-2024-10-20 21:27:36,812 - INFO - 86. Saved in database: Sonic Adventure DX
-2024-10-20 21:27:37,063 - INFO - 87. Saved in database: Sonic Adventure DX (2011)
-2024-10-20 21:27:37,347 - INFO - 88. Saved in database: Space Quest II: Roger Wilco in Vohaul's Revenge
-2024-10-20 21:27:37,587 - INFO - Found zh_CN for The Elder Scrolls V: Skyrim VR: 上古卷轴5 天际 VR
-2024-10-20 21:27:37,598 - INFO - 89. Saved in database: The Elder Scrolls V: Skyrim VR
-2024-10-20 21:27:37,746 - INFO - No save locations found: The King of Fighters '97 Global Match
-2024-10-20 21:27:37,927 - INFO - Path not specified from {{p|game}}: The King of Fighters '99: Evolution
-2024-10-20 21:27:37,927 - INFO - Path not specified from {{p|game}}: The King of Fighters '99: Evolution
-2024-10-20 21:27:37,927 - INFO - No save locations found: The King of Fighters '99: Evolution
-2024-10-20 21:27:38,174 - INFO - 90. Saved in database: Dragon's Dogma II
-2024-10-20 21:27:38,381 - INFO - Found zh_CN for It Takes Two: 双人成行
-2024-10-20 21:27:38,391 - INFO - 91. Saved in database: It Takes Two
-2024-10-20 21:27:38,575 - INFO - Found zh_CN for Epic Mickey 2: The Power of Two: 传奇米老鼠2：双重力量
-2024-10-20 21:27:38,584 - INFO - 92. Saved in database: Epic Mickey 2: The Power of Two
-2024-10-20 21:27:38,734 - INFO - No save locations found: Unplagued
-2024-10-20 21:27:38,914 - INFO - Found zh_CN for Endless Space 2: 无尽空间2
-2024-10-20 21:27:38,925 - INFO - 93. Saved in database: Endless Space 2
-2024-10-20 21:27:38,925 - INFO - Finding game installation folders...
-2024-10-20 21:28:14,297 - WARNING - Failed to fetch steam database (attempt 1/10): 15 seconds
-2024-10-20 21:28:52,884 - WARNING - Failed to fetch steam database (attempt 2/10): 15 seconds
-2024-10-20 21:29:31,735 - WARNING - Failed to fetch steam database (attempt 3/10): 15 seconds
-2024-10-20 21:30:10,345 - WARNING - Failed to fetch steam database (attempt 4/10): 15 seconds
-2024-10-20 21:30:48,860 - WARNING - Failed to fetch steam database (attempt 5/10): 15 seconds
-2024-10-20 21:31:27,311 - WARNING - Failed to fetch steam database (attempt 6/10): 15 seconds
-2024-10-20 21:32:05,799 - WARNING - Failed to fetch steam database (attempt 7/10): 15 seconds
-2024-10-20 21:32:44,253 - WARNING - Failed to fetch steam database (attempt 8/10): 15 seconds
-2024-10-20 21:33:22,820 - WARNING - Failed to fetch steam database (attempt 9/10): 15 seconds
-2024-10-20 21:34:01,308 - WARNING - Failed to fetch steam database (attempt 10/10): 15 seconds
-2024-10-20 21:34:01,308 - ERROR - Error processing game entry for Endless Space 2: 15 seconds
+2024-10-22 01:35:46,853 - INFO - Continue parameter: {'rccontinue': '20241022000020|1897260', 'continue': '-||'}
+2024-10-22 01:35:47,510 - INFO - Path not specified from {{p|game}}: Futanari di Funghi
+2024-10-22 01:35:47,510 - INFO - Path not specified from {{p|game}}: Futanari di Funghi
+2024-10-22 01:35:47,510 - INFO - No save locations found: Futanari di Funghi
+2024-10-22 01:35:47,816 - INFO - Found zh_CN for Vampire: The Masquerade - Bloodlines: 吸血鬼：避世血族
+2024-10-22 01:35:47,817 - INFO - 71. Saved in database: Vampire: The Masquerade - Bloodlines
+2024-10-22 01:35:47,817 - INFO - Finding game installation folders...
+2024-10-22 01:36:23,173 - WARNING - Failed to fetch steam database (attempt 1/10): 15 seconds
+2024-10-22 01:36:58,409 - WARNING - Failed to fetch steam database (attempt 2/10): 15 seconds
+2024-10-22 01:37:33,826 - WARNING - Failed to fetch steam database (attempt 3/10): 15 seconds
+2024-10-22 01:38:09,078 - WARNING - Failed to fetch steam database (attempt 4/10): 15 seconds
+2024-10-22 01:38:44,412 - WARNING - Failed to fetch steam database (attempt 5/10): 15 seconds
+2024-10-22 01:39:19,617 - WARNING - Failed to fetch steam database (attempt 6/10): 15 seconds
+2024-10-22 01:39:55,059 - WARNING - Failed to fetch steam database (attempt 7/10): 15 seconds
+2024-10-22 01:40:30,328 - WARNING - Failed to fetch steam database (attempt 8/10): 15 seconds
+2024-10-22 01:41:05,578 - WARNING - Failed to fetch steam database (attempt 9/10): 15 seconds
+2024-10-22 01:41:40,949 - WARNING - Failed to fetch steam database (attempt 10/10): 15 seconds
+2024-10-22 01:41:40,949 - ERROR - Error processing game entry for Vampire: The Masquerade - Bloodlines: 15 seconds
 Traceback (most recent call last):
-  File "D:\Resources\Software\Game Save Manager\database\database_fetcher.py", line 247, in process_games
+  File "/home/runner/work/Game-Save-Manager/Game-Save-Manager/./database/database_fetcher.py", line 247, in process_games
     self.find_install_folder_name(steam_ids)
-  File "D:\Resources\Software\Game Save Manager\database\database_fetcher.py", line 467, in find_install_folder_name
+  File "/home/runner/work/Game-Save-Manager/Game-Save-Manager/./database/database_fetcher.py", line 467, in find_install_folder_name
     info = client.get_product_info(apps=steam_ids)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\dyang\AppData\Local\Programs\Python\Python312\Lib\site-packages\steam\client\builtins\apps.py", line 139, in get_product_info
+  File "/opt/hostedtoolcache/Python/3.12.7/x64/lib/python3.12/site-packages/steam/client/builtins/apps.py", line 139, in get_product_info
     chunk = self.wait_event(job_id, timeout=timeout, raises=True)
             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\dyang\AppData\Local\Programs\Python\Python312\Lib\site-packages\eventemitter\__init__.py", line 119, in wait_event
+  File "/opt/hostedtoolcache/Python/3.12.7/x64/lib/python3.12/site-packages/eventemitter/__init__.py", line 119, in wait_event
     return result.get(True, timeout)
            ^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "src\\gevent\\event.py", line 329, in gevent._gevent_cevent.AsyncResult.get
-  File "src\\gevent\\event.py", line 356, in gevent._gevent_cevent.AsyncResult.get
-  File "src\\gevent\\_abstract_linkable.py", line 487, in gevent._gevent_c_abstract_linkable.AbstractLinkable._wait_core
-  File "src\\gevent\\_abstract_linkable.py", line 490, in gevent._gevent_c_abstract_linkable.AbstractLinkable._wait_core
-  File "src\\gevent\\_abstract_linkable.py", line 442, in gevent._gevent_c_abstract_linkable.AbstractLinkable._AbstractLinkable__wait_to_be_notified
-  File "src\\gevent\\_abstract_linkable.py", line 451, in gevent._gevent_c_abstract_linkable.AbstractLinkable._switch_to_hub
-  File "src\\gevent\\_greenlet_primitives.py", line 61, in gevent._gevent_c_greenlet_primitives.SwitchOutGreenletWithLoop.switch
-  File "src\\gevent\\_greenlet_primitives.py", line 65, in gevent._gevent_c_greenlet_primitives.SwitchOutGreenletWithLoop.switch
-  File "src\\gevent\\_gevent_c_greenlet_primitives.pxd", line 35, in gevent._gevent_c_greenlet_primitives._greenlet_switch
+  File "src/gevent/event.py", line 330, in gevent._gevent_cevent.AsyncResult.get
+  File "src/gevent/event.py", line 357, in gevent._gevent_cevent.AsyncResult.get
+  File "src/gevent/_abstract_linkable.py", line 487, in gevent._gevent_c_abstract_linkable.AbstractLinkable._wait_core
+  File "src/gevent/_abstract_linkable.py", line 490, in gevent._gevent_c_abstract_linkable.AbstractLinkable._wait_core
+  File "src/gevent/_abstract_linkable.py", line 442, in gevent._gevent_c_abstract_linkable.AbstractLinkable._AbstractLinkable__wait_to_be_notified
+  File "src/gevent/_abstract_linkable.py", line 451, in gevent._gevent_c_abstract_linkable.AbstractLinkable._switch_to_hub
+  File "src/gevent/_greenlet_primitives.py", line 61, in gevent._gevent_c_greenlet_primitives.SwitchOutGreenletWithLoop.switch
+  File "src/gevent/_greenlet_primitives.py", line 65, in gevent._gevent_c_greenlet_primitives.SwitchOutGreenletWithLoop.switch
+  File "src/gevent/_gevent_c_greenlet_primitives.pxd", line 35, in gevent._gevent_c_greenlet_primitives._greenlet_switch
 gevent.timeout.Timeout: 15 seconds
-2024-10-20 21:34:01,309 - INFO - Continue parameter: {'rccontinue': '20241011091035|1895571', 'continue': '-||'}
-2024-10-20 21:34:02,335 - INFO - No save locations found: Heartbound
-2024-10-20 21:34:02,528 - INFO - Found zh_CN for Call of Duty: Black Ops III: 使命召唤12：黑色行动3
-2024-10-20 21:34:02,536 - INFO - 94. Saved in database: Call of Duty: Black Ops III
-2024-10-20 21:34:02,820 - INFO - 95. Saved in database: Assassin's Creed Mirage
-2024-10-20 21:34:03,088 - INFO - Found zh_CN for Tomb Raider I-III Remastered: 古墓丽影123：复刻版
-2024-10-20 21:34:03,095 - INFO - 96. Saved in database: Tomb Raider I-III Remastered
-2024-10-20 21:34:03,353 - INFO - 97. Saved in database: Catz
-2024-10-20 21:34:03,554 - INFO - No save locations found: Meme Run 2
-2024-10-20 21:34:03,955 - INFO - 98. Saved in database: Star Wars: Episode I - The Phantom Menace
-2024-10-20 21:34:04,375 - INFO - Found zh_CN for Star Wars: The Clone Wars - Republic Heroes: 星球大战：克隆战争之共和国英雄
-2024-10-20 21:34:04,383 - INFO - 99. Saved in database: Star Wars: The Clone Wars - Republic Heroes
-2024-10-20 21:34:04,693 - INFO - Found zh_CN for Rayman Origins: 雷曼：起源
-2024-10-20 21:34:04,700 - INFO - 100. Saved in database: Rayman Origins
-2024-10-20 21:34:04,992 - INFO - 101. Saved in database: Oneshot: World Machine Edition
-2024-10-20 21:34:06,233 - INFO - No save locations found: Tomb Raider IV-VI Remastered
-2024-10-20 21:34:06,467 - INFO - Found zh_CN for Dragon Ball: Sparking! Zero: 七龙珠 电光炸裂！ZERO
-2024-10-20 21:34:06,474 - INFO - 102. Saved in database: Dragon Ball: Sparking! Zero
-2024-10-20 21:34:06,636 - INFO - Path not specified from {{p|game}}: Tomb Raider Chronicles
-2024-10-20 21:34:06,637 - INFO - Path not specified from {{p|game}}: Tomb Raider Chronicles
-2024-10-20 21:34:06,637 - INFO - No save locations found: Tomb Raider Chronicles
-2024-10-20 21:34:06,804 - INFO - Path not specified from {{p|game}}: Tomb Raider: The Last Revelation
-2024-10-20 21:34:06,804 - INFO - Path not specified from {{p|game}}: Tomb Raider: The Last Revelation
-2024-10-20 21:34:06,805 - INFO - Path not specified from {{p|game}}: Tomb Raider: The Last Revelation
-2024-10-20 21:34:06,805 - INFO - Path not specified from {{p|game}}: Tomb Raider: The Last Revelation
-2024-10-20 21:34:06,806 - INFO - No save locations found: Tomb Raider: The Last Revelation
-2024-10-20 21:34:07,198 - INFO - Found zh_CN for Tomb Raider: The Angel of Darkness: 古墓丽影6：黑暗天使
-2024-10-20 21:34:07,205 - INFO - 103. Saved in database: Tomb Raider: The Angel of Darkness
-2024-10-20 21:34:07,564 - INFO - 104. Saved in database: Star Wars: Bounty Hunter
-2024-10-20 21:34:07,564 - INFO - Finding game installation folders...
-2024-10-20 21:34:46,149 - WARNING - Failed to fetch steam database (attempt 1/10): 15 seconds
-2024-10-20 21:35:24,854 - WARNING - Failed to fetch steam database (attempt 2/10): 15 seconds
-2024-10-20 21:36:03,453 - WARNING - Failed to fetch steam database (attempt 3/10): 15 seconds
-2024-10-20 21:36:07,550 - INFO - Found installation folder for steam_id 311210
-2024-10-20 21:36:07,561 - INFO - Found installation folder for steam_id 3035570
-2024-10-20 21:36:07,572 - INFO - Found installation folder for steam_id 2478970
-2024-10-20 21:36:07,581 - INFO - Found installation folder for steam_id 32420
-2024-10-20 21:36:07,590 - INFO - Found installation folder for steam_id 207490
-2024-10-20 21:36:07,598 - INFO - Found installation folder for steam_id 2915460
-2024-10-20 21:36:07,607 - INFO - Found installation folder for steam_id 1790600
-2024-10-20 21:36:07,615 - INFO - Found installation folder for steam_id 225020
-2024-10-20 21:36:07,623 - INFO - Found installation folder for steam_id 2419090
-2024-10-20 21:36:07,624 - INFO - Continue parameter: {'rccontinue': '20241011162754|1895634', 'continue': '-||'}
-2024-10-20 21:36:08,076 - INFO - Found zh_CN for Kingdoms of Amalur: Reckoning: 阿玛拉王国 惩罚
-2024-10-20 21:36:08,083 - INFO - 105. Saved in database: Kingdoms of Amalur: Reckoning
-2024-10-20 21:36:08,315 - INFO - Found zh_CN for Genshin Impact: 原神
-2024-10-20 21:36:08,323 - INFO - 106. Saved in database: Genshin Impact
-2024-10-20 21:36:08,695 - INFO - 107. Saved in database: Super Crazy Rhythm Castle
-2024-10-20 21:36:08,917 - INFO - No save locations found: Tomb Raider: Definitive Edition
-2024-10-20 21:36:09,213 - INFO - Found zh_CN for Thronefall: 王权陨落
-2024-10-20 21:36:09,220 - INFO - 108. Saved in database: Thronefall
-2024-10-20 21:36:09,486 - INFO - Found zh_CN for Portal 2: 传送门2
-2024-10-20 21:36:09,493 - INFO - 109. Saved in database: Portal 2
-2024-10-20 21:36:09,821 - INFO - 110. Saved in database: Spin Rhythm XD
-2024-10-20 21:36:10,071 - INFO - Found zh_CN for No Man's Sky: 无人深空
-2024-10-20 21:36:10,078 - INFO - 111. Saved in database: No Man's Sky
-2024-10-20 21:36:10,291 - INFO - Found zh_CN for Screencheat: 作弊达人
-2024-10-20 21:36:10,300 - INFO - 112. Saved in database: Screencheat
-2024-10-20 21:36:10,552 - INFO - Found zh_CN for Pro Evolution Soccer 2015: 实况足球2015
-2024-10-20 21:36:10,567 - INFO - 113. Saved in database: Pro Evolution Soccer 2015
-2024-10-20 21:36:10,858 - INFO - 114. Saved in database: Pro Evolution Soccer 2016
-2024-10-20 21:36:11,111 - INFO - Found zh_CN for Pro Evolution Soccer 2017: 实况足球 2017
-2024-10-20 21:36:11,125 - INFO - 115. Saved in database: Pro Evolution Soccer 2017
-2024-10-20 21:36:12,742 - INFO - Found zh_CN for Mighty No. 9: 麦提9号
-2024-10-20 21:36:12,752 - INFO - 116. Saved in database: Mighty No. 9
-2024-10-20 21:36:13,006 - INFO - 117. Saved in database: Sandbox
-2024-10-20 21:36:14,619 - INFO - Found zh_CN for Left 4 Dead 2: 求生之路2
-2024-10-20 21:36:14,626 - INFO - 118. Saved in database: Left 4 Dead 2
-2024-10-20 21:36:14,860 - INFO - Found zh_CN for SiN: 原罪
-2024-10-20 21:36:14,868 - INFO - 119. Saved in database: SiN
-2024-10-20 21:36:15,050 - INFO - No save locations found: List of PC games with features removed compared to their console versions
-2024-10-20 21:36:15,338 - INFO - Found zh_CN for Ori and the Will of the Wisps: 精灵与萤火意志
-2024-10-20 21:36:15,346 - INFO - 120. Saved in database: Ori and the Will of the Wisps
-2024-10-20 21:36:15,565 - INFO - Found zh_CN for Dying Light: 消逝的光芒
-2024-10-20 21:36:15,572 - INFO - 121. Saved in database: Dying Light
-2024-10-20 21:36:15,765 - INFO - Found zh_CN for Dark Souls Remastered: 黑暗之魂 重制版
-2024-10-20 21:36:15,772 - INFO - 122. Saved in database: Dark Souls Remastered
-2024-10-20 21:36:15,966 - INFO - Found zh_CN for Fallout 76: 辐射76
-2024-10-20 21:36:15,972 - INFO - 123. Saved in database: Fallout 76
-2024-10-20 21:36:16,164 - INFO - Found zh_CN for Alien: Isolation: 异形：隔离
-2024-10-20 21:36:16,171 - INFO - 124. Saved in database: Alien: Isolation
-2024-10-20 21:36:16,482 - INFO - 125. Saved in database: Final Fantasy XIV: A Realm Reborn
-2024-10-20 21:36:16,835 - INFO - Found zh_CN for TCG Card Shop Simulator: 卡牌店模拟器
-2024-10-20 21:36:16,842 - INFO - 126. Saved in database: TCG Card Shop Simulator
-2024-10-20 21:36:16,842 - INFO - Finding game installation folders...
-2024-10-20 21:36:52,358 - WARNING - Failed to fetch steam database (attempt 1/10): 15 seconds
-2024-10-20 21:37:30,936 - WARNING - Failed to fetch steam database (attempt 2/10): 15 seconds
-2024-10-20 21:38:09,500 - WARNING - Failed to fetch steam database (attempt 3/10): 15 seconds
-2024-10-20 21:38:48,157 - WARNING - Failed to fetch steam database (attempt 4/10): 15 seconds
-2024-10-20 21:39:26,903 - WARNING - Failed to fetch steam database (attempt 5/10): 15 seconds
-2024-10-20 21:40:05,350 - WARNING - Failed to fetch steam database (attempt 6/10): 15 seconds
-2024-10-20 21:40:09,992 - INFO - Found installation folder for steam_id 102500
-2024-10-20 21:40:10,000 - INFO - Found installation folder for steam_id 1812560
-2024-10-20 21:40:10,008 - INFO - Found installation folder for steam_id 2239150
-2024-10-20 21:40:10,017 - INFO - Found installation folder for steam_id 620
-2024-10-20 21:40:10,025 - INFO - Found installation folder for steam_id 1058830
-2024-10-20 21:40:10,033 - INFO - Found installation folder for steam_id 275850
-2024-10-20 21:40:10,042 - INFO - Found installation folder for steam_id 301970
-2024-10-20 21:40:10,050 - INFO - Found installation folder for steam_id 287680
-2024-10-20 21:40:10,059 - INFO - Found installation folder for steam_id 375960
-2024-10-20 21:40:10,067 - INFO - Found installation folder for steam_id 456610
-2024-10-20 21:40:10,075 - INFO - Found installation folder for steam_id 314710
-2024-10-20 21:40:10,084 - INFO - Found installation folder for steam_id 550
-2024-10-20 21:40:10,093 - INFO - Found installation folder for steam_id 1313
-2024-10-20 21:40:10,101 - INFO - Found installation folder for steam_id 1057090
-2024-10-20 21:40:10,109 - INFO - Found installation folder for steam_id 239140
-2024-10-20 21:40:10,117 - INFO - Found installation folder for steam_id 570940
-2024-10-20 21:40:10,125 - INFO - Found installation folder for steam_id 1151340
-2024-10-20 21:40:10,133 - INFO - Found installation folder for steam_id 214490
-2024-10-20 21:40:10,141 - INFO - Found installation folder for steam_id 39210
-2024-10-20 21:40:10,148 - INFO - Found installation folder for steam_id 3070070
-2024-10-20 21:40:10,149 - INFO - Continue parameter: {'rccontinue': '20241011220218|1895700', 'continue': '-||'}
-2024-10-20 21:40:11,059 - INFO - Found zh_CN for Star Wars: Starfighter: 星球大战：星际战士
-2024-10-20 21:40:11,066 - INFO - 127. Saved in database: Star Wars: Starfighter
-2024-10-20 21:40:11,947 - INFO - Found zh_CN for Minecraft: Java Edition: 我的世界：Java版
-2024-10-20 21:40:11,956 - INFO - 128. Saved in database: Minecraft: Java Edition
-2024-10-20 21:40:12,346 - INFO - Found zh_CN for Fruit Ninja: 水果忍者
-2024-10-20 21:40:12,353 - INFO - 129. Saved in database: Fruit Ninja
-2024-10-20 21:40:12,913 - INFO - 130. Saved in database: Tower Unite
-2024-10-20 21:40:13,455 - INFO - Found zh_CN for Sonic Superstars: 索尼克 超级巨星
-2024-10-20 21:40:13,462 - INFO - 131. Saved in database: Sonic Superstars
-2024-10-20 21:40:13,893 - INFO - 132. Saved in database: The Casting of Frank Stone
-2024-10-20 21:40:14,159 - INFO - Found zh_CN for Dead Rising: 丧尸围城
-2024-10-20 21:40:14,169 - INFO - 133. Saved in database: Dead Rising
-2024-10-20 21:40:14,454 - INFO - Found zh_CN for Atari 50: The Anniversary Celebration: 雅达利50周年纪念合集
-2024-10-20 21:40:14,465 - INFO - 134. Saved in database: Atari 50: The Anniversary Celebration
-2024-10-20 21:40:16,971 - INFO - 135. Saved in database: FIFA 07
-2024-10-20 21:40:17,327 - INFO - 136. Saved in database: NBA Live 07
-2024-10-20 21:40:17,550 - INFO - No save locations found: The Garfield Show: Threat of the Space Lasagna
-2024-10-20 21:40:18,905 - INFO - No save locations found: NHL 07
-2024-10-20 21:40:19,091 - INFO - No save locations found: FIFA 06
-2024-10-20 21:40:19,336 - INFO - 137. Saved in database: Reynatis
-2024-10-20 21:40:20,758 - INFO - 138. Saved in database: Broken Sword: Shadow of the Templars: Director's Cut
-2024-10-20 21:40:21,028 - INFO - 139. Saved in database: Backyard Baseball
-2024-10-20 21:40:21,216 - INFO - Found zh_CN for Advent Rising: 救世主降临
-2024-10-20 21:40:21,223 - INFO - 140. Saved in database: Advent Rising
-2024-10-20 21:40:21,403 - INFO - Found zh_CN for Enclave: 光暗包围战
-2024-10-20 21:40:21,411 - INFO - 141. Saved in database: Enclave
-2024-10-20 21:40:21,686 - INFO - Found zh_CN for FATE: 黑暗史诗
-2024-10-20 21:40:21,692 - INFO - 142. Saved in database: FATE
-2024-10-20 21:40:21,913 - INFO - No save locations found: Ghostbusters: Spirits Unleashed
-2024-10-20 21:40:21,913 - INFO - Finding game installation folders...
-2024-10-20 21:40:57,541 - WARNING - Failed to fetch steam database (attempt 1/10): 15 seconds
-2024-10-20 21:41:36,232 - WARNING - Failed to fetch steam database (attempt 2/10): 15 seconds
-2024-10-20 21:42:14,680 - WARNING - Failed to fetch steam database (attempt 3/10): 15 seconds
-2024-10-20 21:42:53,111 - WARNING - Failed to fetch steam database (attempt 4/10): 15 seconds
-2024-10-20 21:43:31,946 - WARNING - Failed to fetch steam database (attempt 5/10): 15 seconds
-2024-10-20 21:44:10,656 - WARNING - Failed to fetch steam database (attempt 6/10): 15 seconds
-2024-10-20 21:44:15,939 - INFO - Found installation folder for steam_id 32350
-2024-10-20 21:44:15,947 - INFO - Found installation folder for steam_id 394690
-2024-10-20 21:44:15,955 - INFO - Found installation folder for steam_id 2022670
-2024-10-20 21:44:15,963 - INFO - Found installation folder for steam_id 2223840
-2024-10-20 21:44:15,971 - INFO - Found installation folder for steam_id 427190
-2024-10-20 21:44:15,978 - INFO - Found installation folder for steam_id 1919470
-2024-10-20 21:44:15,987 - INFO - Found installation folder for steam_id 2738750
-2024-10-20 21:44:15,995 - INFO - Found installation folder for steam_id 57640
-2024-10-20 21:44:16,003 - INFO - Found installation folder for steam_id 3170540
-2024-10-20 21:44:16,011 - INFO - Found installation folder for steam_id 3800
-2024-10-20 21:44:16,019 - INFO - Found installation folder for steam_id 253980
-2024-10-20 21:44:16,026 - INFO - Found installation folder for steam_id 246840
-2024-10-20 21:44:16,027 - INFO - Continue parameter: {'rccontinue': '20241012113640|1895754', 'continue': '-||'}
-2024-10-20 21:44:16,536 - INFO - Found zh_CN for The Planet Crafter: 星球工匠
-2024-10-20 21:44:16,542 - INFO - 143. Saved in database: The Planet Crafter
-2024-10-20 21:44:16,746 - INFO - Path not specified from {{p|game}}: Evolution GT
-2024-10-20 21:44:16,767 - INFO - Found zh_CN for Evolution GT: 进化GT赛车
-2024-10-20 21:44:16,774 - INFO - 144. Saved in database: Evolution GT
-2024-10-20 21:44:17,024 - INFO - 145. Saved in database: FIFA 16
-2024-10-20 21:44:18,108 - INFO - 146. Saved in database: Islets
-2024-10-20 21:44:19,933 - INFO - Found zh_CN for Fireboy & Watergirl: Fairy Tales: 森林冰火人：童话
-2024-10-20 21:44:19,940 - INFO - 147. Saved in database: Fireboy & Watergirl: Fairy Tales
-2024-10-20 21:44:20,167 - INFO - 148. Saved in database: Ginga Force
-2024-10-20 21:44:20,401 - INFO - 149. Saved in database: Natsuki Chronicles
-2024-10-20 21:44:20,666 - INFO - Found zh_CN for The Witcher 2: Assassins of Kings: 巫师2：刺客之王
-2024-10-20 21:44:20,672 - INFO - 150. Saved in database: The Witcher 2: Assassins of Kings
-2024-10-20 21:44:20,845 - INFO - Found zh_CN for Assassin's Creed: Revelations: 刺客信条 启示录
-2024-10-20 21:44:20,852 - INFO - 151. Saved in database: Assassin's Creed: Revelations
-2024-10-20 21:44:22,075 - INFO - Found zh_CN for Assassin's Creed Unity: 刺客信条：大革命
-2024-10-20 21:44:22,083 - INFO - 152. Saved in database: Assassin's Creed Unity
-2024-10-20 21:44:23,118 - INFO - 153. Saved in database: World War Zero: Iron Storm
-2024-10-20 21:44:23,304 - INFO - Found zh_CN for Atelier Sophie: The Alchemist of the Mysterious Book DX: 苏菲的炼金工房：不可思议书的炼金术士DX
-2024-10-20 21:44:23,310 - INFO - 154. Saved in database: Atelier Sophie: The Alchemist of the Mysterious Book DX
-2024-10-20 21:44:23,477 - INFO - Found zh_CN for Cossacks 3: 哥萨克3
-2024-10-20 21:44:23,484 - INFO - 155. Saved in database: Cossacks 3
-2024-10-20 21:44:23,692 - INFO - Found zh_CN for Middle-earth: Shadow of War: 中土世界：战争之影
-2024-10-20 21:44:23,698 - INFO - 156. Saved in database: Middle-earth: Shadow of War
-2024-10-20 21:44:23,954 - INFO - Found zh_CN for Starship Troopers: Extermination: 星河战队：灭绝
-2024-10-20 21:44:23,964 - INFO - 157. Saved in database: Starship Troopers: Extermination
-2024-10-20 21:44:24,135 - INFO - No save locations found: Grand Touring
-2024-10-20 21:44:24,388 - INFO - 158. Saved in database: Portal RTX
-2024-10-20 21:44:24,606 - INFO - 159. Saved in database: Neuro
-2024-10-20 21:44:25,280 - INFO - No save locations found: TKKG - Die Feuerprobe
-2024-10-20 21:44:25,586 - INFO - 160. Saved in database: Mortal Kombat 4
-2024-10-20 21:44:25,753 - INFO - No save locations found: NBA Live 06
-2024-10-20 21:44:26,017 - INFO - Found zh_CN for Symphony of War: The Nephilim Saga: 战争交响曲：尼菲林传奇
-2024-10-20 21:44:26,024 - INFO - 161. Saved in database: Symphony of War: The Nephilim Saga
-2024-10-20 21:44:26,236 - INFO - Found zh_CN for Pro Evolution Soccer 2008: 实况足球 2008
-2024-10-20 21:44:26,447 - INFO - 162. Saved in database: Pro Evolution Soccer 2008
-2024-10-20 21:44:26,612 - INFO - Path not specified from {{p|game}}: Rage of Mages 2: Necromancer
-2024-10-20 21:44:26,612 - INFO - No save locations found: Rage of Mages 2: Necromancer
-2024-10-20 21:44:26,859 - INFO - 163. Saved in database: Island Xtreme Stunts
-2024-10-20 21:44:27,143 - INFO - 164. Saved in database: Lego Island 2: The Brickster's Revenge
-2024-10-20 21:44:27,143 - INFO - Finding game installation folders...
-2024-10-20 21:45:02,520 - WARNING - Failed to fetch steam database (attempt 1/10): 15 seconds
-2024-10-20 21:45:41,237 - WARNING - Failed to fetch steam database (attempt 2/10): 15 seconds
-2024-10-20 21:45:47,095 - INFO - Found installation folder for steam_id 1284190
-2024-10-20 21:45:47,104 - INFO - Found installation folder for steam_id 1669420
-2024-10-20 21:45:47,112 - INFO - Found installation folder for steam_id 1781350
-2024-10-20 21:45:47,120 - INFO - Found installation folder for steam_id 885910
-2024-10-20 21:45:47,129 - INFO - Found installation folder for steam_id 1175190
-2024-10-20 21:45:47,138 - INFO - Found installation folder for steam_id 20920
-2024-10-20 21:45:47,146 - INFO - Found installation folder for steam_id 201870
-2024-10-20 21:45:47,155 - INFO - Found installation folder for steam_id 289650
-2024-10-20 21:45:47,163 - INFO - Found installation folder for steam_id 1103800
-2024-10-20 21:45:47,171 - INFO - Found installation folder for steam_id 1502970
-2024-10-20 21:45:47,179 - INFO - Found installation folder for steam_id 333420
-2024-10-20 21:45:47,186 - INFO - Found installation folder for steam_id 356190
-2024-10-20 21:45:47,194 - INFO - Found installation folder for steam_id 1268750
-2024-10-20 21:45:47,202 - INFO - Found installation folder for steam_id 400
-2024-10-20 21:45:47,211 - INFO - Found installation folder for steam_id 1488200
-2024-10-20 21:45:47,211 - INFO - Continue parameter: {'rccontinue': '20241012175615|1895815', 'continue': '-||'}
-2024-10-20 21:45:47,635 - INFO - Path not specified from {{p|game}}: Lego Island
-2024-10-20 21:45:47,712 - INFO - 165. Saved in database: Lego Island
-2024-10-20 21:45:47,951 - INFO - 166. Saved in database: Lego Creator
-2024-10-20 21:45:48,247 - INFO - 167. Saved in database: Lego Creator: Knights' Kingdom
-2024-10-20 21:45:48,704 - INFO - 168. Saved in database: Pay Her Tribute! Jo'on-chan!!
-2024-10-20 21:45:48,861 - INFO - No save locations found: Lego Horizon Adventures
-2024-10-20 21:45:49,133 - INFO - 169. Saved in database: Mafia III
-2024-10-20 21:45:49,425 - INFO - 170. Saved in database: Master Detective Archives: Rain Code Plus
-2024-10-20 21:45:50,383 - INFO - No save locations found: TKKG - Katjas Geheimnis
-2024-10-20 21:45:50,576 - INFO - Found zh_CN for Core Keeper: 地心护核者
-2024-10-20 21:45:50,584 - INFO - 171. Saved in database: Core Keeper
-2024-10-20 21:45:50,866 - INFO - Found zh_CN for Silent Hill 3: 寂静岭3
-2024-10-20 21:45:50,872 - INFO - 172. Saved in database: Silent Hill 3
-2024-10-20 21:45:51,093 - INFO - Found zh_CN for Far Cry 3: 孤岛惊魂3
-2024-10-20 21:45:51,105 - INFO - 173. Saved in database: Far Cry 3
-2024-10-20 21:45:51,318 - INFO - Found zh_CN for Galaxy on Fire 2 Full HD: 浴火银河2：全高清版
-2024-10-20 21:45:51,324 - INFO - 174. Saved in database: Galaxy on Fire 2 Full HD
-2024-10-20 21:45:51,557 - INFO - Found zh_CN for F.E.A.R.: 极度恐慌
-2024-10-20 21:45:51,567 - INFO - 175. Saved in database: F.E.A.R.
-2024-10-20 21:45:53,148 - INFO - No save locations found: 3 Minutes to Midnight
-2024-10-20 21:45:53,336 - INFO - No save locations found: Life Is Strange: Double Exposure
-2024-10-20 21:45:53,637 - INFO - 176. Saved in database: Chrono Trigger
-2024-10-20 21:45:53,807 - INFO - No save locations found: Dragon Ball Super Card Game: Fusion World
-2024-10-20 21:45:54,628 - INFO - No save locations found: Hail to the Rainbow
-2024-10-20 21:45:54,829 - INFO - Found zh_CN for Devil May Cry 4: Special Edition: 鬼泣4 特别版
-2024-10-20 21:45:54,837 - INFO - 177. Saved in database: Devil May Cry 4: Special Edition
-2024-10-20 21:45:54,837 - INFO - Finding game installation folders...
-2024-10-20 21:46:30,169 - WARNING - Failed to fetch steam database (attempt 1/10): 15 seconds
-2024-10-20 21:47:08,634 - WARNING - Failed to fetch steam database (attempt 2/10): 15 seconds
-2024-10-20 21:47:47,212 - WARNING - Failed to fetch steam database (attempt 3/10): 15 seconds
-2024-10-20 21:48:25,688 - WARNING - Failed to fetch steam database (attempt 4/10): 15 seconds
-2024-10-20 21:49:04,150 - WARNING - Failed to fetch steam database (attempt 5/10): 15 seconds
-2024-10-20 21:49:42,751 - WARNING - Failed to fetch steam database (attempt 6/10): 15 seconds
-2024-10-20 21:50:21,207 - WARNING - Failed to fetch steam database (attempt 7/10): 15 seconds
-2024-10-20 21:50:59,849 - WARNING - Failed to fetch steam database (attempt 8/10): 15 seconds
-2024-10-20 21:51:38,470 - WARNING - Failed to fetch steam database (attempt 9/10): 15 seconds
-2024-10-20 21:52:17,113 - WARNING - Failed to fetch steam database (attempt 10/10): 15 seconds
-2024-10-20 21:52:17,113 - ERROR - Error processing game entry for Devil May Cry 4: Special Edition: 15 seconds
-Traceback (most recent call last):
-  File "D:\Resources\Software\Game Save Manager\database\database_fetcher.py", line 247, in process_games
-    self.find_install_folder_name(steam_ids)
-  File "D:\Resources\Software\Game Save Manager\database\database_fetcher.py", line 467, in find_install_folder_name
-    info = client.get_product_info(apps=steam_ids)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\dyang\AppData\Local\Programs\Python\Python312\Lib\site-packages\steam\client\builtins\apps.py", line 139, in get_product_info
-    chunk = self.wait_event(job_id, timeout=timeout, raises=True)
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\dyang\AppData\Local\Programs\Python\Python312\Lib\site-packages\eventemitter\__init__.py", line 119, in wait_event
-    return result.get(True, timeout)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "src\\gevent\\event.py", line 329, in gevent._gevent_cevent.AsyncResult.get
-  File "src\\gevent\\event.py", line 356, in gevent._gevent_cevent.AsyncResult.get
-  File "src\\gevent\\_abstract_linkable.py", line 487, in gevent._gevent_c_abstract_linkable.AbstractLinkable._wait_core
-  File "src\\gevent\\_abstract_linkable.py", line 490, in gevent._gevent_c_abstract_linkable.AbstractLinkable._wait_core
-  File "src\\gevent\\_abstract_linkable.py", line 442, in gevent._gevent_c_abstract_linkable.AbstractLinkable._AbstractLinkable__wait_to_be_notified
-  File "src\\gevent\\_abstract_linkable.py", line 451, in gevent._gevent_c_abstract_linkable.AbstractLinkable._switch_to_hub
-  File "src\\gevent\\_greenlet_primitives.py", line 61, in gevent._gevent_c_greenlet_primitives.SwitchOutGreenletWithLoop.switch
-  File "src\\gevent\\_greenlet_primitives.py", line 65, in gevent._gevent_c_greenlet_primitives.SwitchOutGreenletWithLoop.switch
-  File "src\\gevent\\_gevent_c_greenlet_primitives.pxd", line 35, in gevent._gevent_c_greenlet_primitives._greenlet_switch
-gevent.timeout.Timeout: 15 seconds
-2024-10-20 21:52:17,114 - INFO - Continue parameter: {'rccontinue': '20241012232235|1895895', 'continue': '-||'}
-2024-10-20 21:52:17,782 - INFO - 178. Saved in database: (the) Gnorp Apologue
-2024-10-20 21:52:17,997 - INFO - No save locations found: Circuit Superstars
-2024-10-20 21:52:19,508 - INFO - No save locations found: Mewgenics
-2024-10-20 21:52:19,953 - INFO - 179. Saved in database: Master of Magic (2022)
-2024-10-20 21:52:20,467 - INFO - 180. Saved in database: Crazy Chicken Pinball Vol. 1
-2024-10-20 21:52:22,580 - INFO - No save locations found: Tiger Woods PGA Tour 06
-2024-10-20 21:52:23,006 - INFO - Found zh_CN for Kingdom: Two Crowns: 王国：两位君主
-2024-10-20 21:52:23,015 - INFO - 181. Saved in database: Kingdom: Two Crowns
-2024-10-20 21:52:23,545 - INFO - Found zh_CN for Far Cry 4: 孤岛惊魂4
-2024-10-20 21:52:23,553 - INFO - 182. Saved in database: Far Cry 4
-2024-10-20 21:52:23,884 - INFO - No save locations found: Surviving Deponia
-2024-10-20 21:52:24,383 - INFO - Found zh_CN for Star Wars Jedi: Survivor: 星球大战 绝地：幸存者
-2024-10-20 21:52:24,392 - INFO - 183. Saved in database: Star Wars Jedi: Survivor
-2024-10-20 21:52:24,902 - INFO - 184. Saved in database: Resident Evil 3 (2020)
-2024-10-20 21:52:25,246 - INFO - 185. Saved in database: Adaca
-2024-10-20 21:52:25,553 - INFO - Found zh_CN for Evil Dead: The Game: 鬼玩人：游戏
-2024-10-20 21:52:25,562 - INFO - 186. Saved in database: Evil Dead: The Game
-2024-10-20 21:52:25,951 - INFO - Found zh_CN for Ys X: Nordics: 伊苏10：北境历险
-2024-10-20 21:52:25,959 - INFO - 187. Saved in database: Ys X: Nordics
-2024-10-20 21:52:26,354 - INFO - Found zh_CN for Sébastien Loeb Rally EVO: 塞巴斯蒂安拉力赛 进化
-2024-10-20 21:52:26,362 - INFO - 188. Saved in database: Sébastien Loeb Rally EVO
-2024-10-20 21:52:26,581 - INFO - Found zh_CN for Colin McRae Rally 04: 科林麦克雷拉力赛04
-2024-10-20 21:52:26,590 - INFO - 189. Saved in database: Colin McRae Rally 04
-2024-10-20 21:52:26,894 - INFO - Found zh_CN for Colin McRae Rally 3: 科林麦克雷拉力赛3
-2024-10-20 21:52:26,902 - INFO - 190. Saved in database: Colin McRae Rally 3
-2024-10-20 21:52:27,260 - INFO - Found zh_CN for JoJo's Bizarre Adventure: All Star Battle R: JOJO的奇妙冒险 群星之战 重制版
-2024-10-20 21:52:27,269 - INFO - 191. Saved in database: JoJo's Bizarre Adventure: All Star Battle R
-2024-10-20 21:52:27,659 - INFO - Found zh_CN for Colin McRae Rally 2005: 科林麦克雷拉力赛2005
-2024-10-20 21:52:27,668 - INFO - 192. Saved in database: Colin McRae Rally 2005
-2024-10-20 21:52:28,001 - INFO - Found zh_CN for F1 24: F1 24
-2024-10-20 21:52:28,009 - INFO - 193. Saved in database: F1 24
-2024-10-20 21:52:28,428 - INFO - 194. Saved in database: The Waylanders
-2024-10-20 21:52:28,906 - INFO - 195. Saved in database: Marc Eckō's Getting Up: Contents Under Pressure
-2024-10-20 21:52:29,142 - INFO - Found zh_CN for Assetto Corsa Competizione: 神力科莎：竞速
-2024-10-20 21:52:29,259 - INFO - 196. Saved in database: Assetto Corsa Competizione
-2024-10-20 21:52:29,470 - INFO - Found zh_CN for BDSM: Big Drunk Satanic Massacre: 醉杀狂魔
-2024-10-20 21:52:29,477 - INFO - 197. Saved in database: BDSM: Big Drunk Satanic Massacre
-2024-10-20 21:52:29,705 - INFO - Path not specified from {{p|game}}: Silent Hill 4: The Room
-2024-10-20 21:52:29,827 - INFO - Found zh_CN for Silent Hill 4: The Room: 寂静岭4：密室
-2024-10-20 21:52:29,835 - INFO - 198. Saved in database: Silent Hill 4: The Room
-2024-10-20 21:52:31,514 - INFO - 199. Saved in database: MXGP 2019
-2024-10-20 21:52:31,514 - INFO - Finding game installation folders...
-2024-10-20 21:53:10,677 - WARNING - Failed to fetch steam database (attempt 1/10): 15 seconds
-2024-10-20 21:53:49,257 - WARNING - Failed to fetch steam database (attempt 2/10): 15 seconds
-2024-10-20 21:54:27,864 - WARNING - Failed to fetch steam database (attempt 3/10): 15 seconds
-2024-10-20 21:55:06,560 - WARNING - Failed to fetch steam database (attempt 4/10): 15 seconds
-2024-10-20 21:55:45,187 - WARNING - Failed to fetch steam database (attempt 5/10): 15 seconds
-2024-10-20 21:56:23,857 - WARNING - Failed to fetch steam database (attempt 6/10): 15 seconds
-2024-10-20 21:57:02,460 - WARNING - Failed to fetch steam database (attempt 7/10): 15 seconds
-2024-10-20 21:57:41,088 - WARNING - Failed to fetch steam database (attempt 8/10): 15 seconds
-2024-10-20 21:58:19,704 - WARNING - Failed to fetch steam database (attempt 9/10): 15 seconds
-2024-10-20 21:58:58,271 - WARNING - Failed to fetch steam database (attempt 10/10): 15 seconds
-2024-10-20 21:58:58,271 - ERROR - Error processing game entry for MXGP 2019: 15 seconds
-Traceback (most recent call last):
-  File "D:\Resources\Software\Game Save Manager\database\database_fetcher.py", line 247, in process_games
-    self.find_install_folder_name(steam_ids)
-  File "D:\Resources\Software\Game Save Manager\database\database_fetcher.py", line 467, in find_install_folder_name
-    info = client.get_product_info(apps=steam_ids)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\dyang\AppData\Local\Programs\Python\Python312\Lib\site-packages\steam\client\builtins\apps.py", line 139, in get_product_info
-    chunk = self.wait_event(job_id, timeout=timeout, raises=True)
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\dyang\AppData\Local\Programs\Python\Python312\Lib\site-packages\eventemitter\__init__.py", line 119, in wait_event
-    return result.get(True, timeout)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "src\\gevent\\event.py", line 329, in gevent._gevent_cevent.AsyncResult.get
-  File "src\\gevent\\event.py", line 356, in gevent._gevent_cevent.AsyncResult.get
-  File "src\\gevent\\_abstract_linkable.py", line 487, in gevent._gevent_c_abstract_linkable.AbstractLinkable._wait_core
-  File "src\\gevent\\_abstract_linkable.py", line 490, in gevent._gevent_c_abstract_linkable.AbstractLinkable._wait_core
-  File "src\\gevent\\_abstract_linkable.py", line 442, in gevent._gevent_c_abstract_linkable.AbstractLinkable._AbstractLinkable__wait_to_be_notified
-  File "src\\gevent\\_abstract_linkable.py", line 451, in gevent._gevent_c_abstract_linkable.AbstractLinkable._switch_to_hub
-  File "src\\gevent\\_greenlet_primitives.py", line 61, in gevent._gevent_c_greenlet_primitives.SwitchOutGreenletWithLoop.switch
-  File "src\\gevent\\_greenlet_primitives.py", line 65, in gevent._gevent_c_greenlet_primitives.SwitchOutGreenletWithLoop.switch
-  File "src\\gevent\\_gevent_c_greenlet_primitives.pxd", line 35, in gevent._gevent_c_greenlet_primitives._greenlet_switch
-gevent.timeout.Timeout: 15 seconds
-2024-10-20 21:58:58,272 - INFO - Continue parameter: {'rccontinue': '20241013140519|1895959', 'continue': '-||'}
-2024-10-20 21:59:00,039 - INFO - 200. Saved in database: Epic Mickey: Rebrushed
-2024-10-20 21:59:00,477 - INFO - Found zh_CN for Silent Hill: Homecoming: 寂静岭 归乡
-2024-10-20 21:59:00,486 - INFO - 201. Saved in database: Silent Hill: Homecoming
-2024-10-20 21:59:00,838 - INFO - 202. Saved in database: Touhou La La Dui
-2024-10-20 21:59:01,017 - INFO - No save locations found: Bugs Bunny & Taz: Time Busters
-2024-10-20 21:59:01,201 - INFO - Found zh_CN for Age of Empires III: Definitive Edition: 帝国时代3：决定版
-2024-10-20 21:59:01,210 - INFO - 203. Saved in database: Age of Empires III: Definitive Edition
-2024-10-20 21:59:01,562 - INFO - 204. Saved in database: Forsaken Remastered
-2024-10-20 21:59:01,956 - INFO - 205. Saved in database: Homeworld Remastered Edition
-2024-10-20 21:59:02,327 - INFO - 206. Saved in database: Homeworld 2 Remastered Edition
-2024-10-20 21:59:03,453 - INFO - 207. Saved in database: Barrage Musical - A Fantasy of Tempest
-2024-10-20 21:59:03,714 - INFO - Found zh_CN for Half-Life 2: 半条命2
-2024-10-20 21:59:03,722 - INFO - 208. Saved in database: Half-Life 2
-2024-10-20 21:59:03,980 - INFO - Found zh_CN for Half-Life 2: Episode One: 半条命2第一部
-2024-10-20 21:59:03,989 - INFO - 209. Saved in database: Half-Life 2: Episode One
-2024-10-20 21:59:04,250 - INFO - Found zh_CN for Half-Life 2: Episode Two: 半条命2第二部
-2024-10-20 21:59:04,258 - INFO - 210. Saved in database: Half-Life 2: Episode Two
-2024-10-20 21:59:04,613 - INFO - Found zh_CN for Portal: 传送门
-2024-10-20 21:59:04,622 - INFO - 211. Saved in database: Portal
-2024-10-20 21:59:04,859 - INFO - Found zh_CN for Counter-Strike 2: 反恐精英2
-2024-10-20 21:59:04,867 - INFO - 212. Saved in database: Counter-Strike 2
-2024-10-20 21:59:05,114 - INFO - Found zh_CN for Half-Life 2: Lost Coast: 半条命2：消失的海岸线
-2024-10-20 21:59:05,123 - INFO - 213. Saved in database: Half-Life 2: Lost Coast
-2024-10-20 21:59:05,357 - INFO - Found zh_CN for 007 Legends: 007：传奇
-2024-10-20 21:59:05,365 - INFO - 214. Saved in database: 007 Legends
-2024-10-20 21:59:05,652 - INFO - Found zh_CN for Payday 3: 收获日3
-2024-10-20 21:59:05,660 - INFO - 215. Saved in database: Payday 3
-2024-10-20 21:59:06,132 - INFO - 216. Saved in database: TOCA Touring Car Championship
-2024-10-20 21:59:06,415 - INFO - Found zh_CN for Left 4 Dead: 生存之旅
-2024-10-20 21:59:06,423 - INFO - 217. Saved in database: Left 4 Dead
-2024-10-20 21:59:06,671 - INFO - Found zh_CN for Detroit: Become Human: 底特律：化身为人
-2024-10-20 21:59:06,679 - INFO - 218. Saved in database: Detroit: Become Human
-2024-10-20 21:59:08,587 - INFO - 219. Saved in database: Barrage Musical ~ Basic Danmaku Tutorial ~ / 弹幕音乐绘 ~ 基础教学篇 ~
-2024-10-20 21:59:08,994 - INFO - 220. Saved in database: Resident Evil 4 (2023)
-2024-10-20 21:59:09,239 - INFO - Found zh_CN for Final Fantasy XVI: 最终幻想16
-2024-10-20 21:59:09,246 - INFO - 221. Saved in database: Final Fantasy XVI
-2024-10-20 21:59:09,247 - INFO - Finding game installation folders...
-2024-10-20 21:59:47,937 - WARNING - Failed to fetch steam database (attempt 1/10): 15 seconds
-2024-10-20 22:00:26,554 - WARNING - Failed to fetch steam database (attempt 2/10): 15 seconds
-2024-10-20 22:01:05,197 - WARNING - Failed to fetch steam database (attempt 3/10): 15 seconds
-2024-10-20 22:01:43,772 - WARNING - Failed to fetch steam database (attempt 4/10): 15 seconds
-2024-10-20 22:02:22,528 - WARNING - Failed to fetch steam database (attempt 5/10): 15 seconds
-2024-10-20 22:03:01,198 - WARNING - Failed to fetch steam database (attempt 6/10): 15 seconds
-2024-10-20 22:03:39,821 - WARNING - Failed to fetch steam database (attempt 7/10): 15 seconds
-2024-10-20 22:04:18,430 - WARNING - Failed to fetch steam database (attempt 8/10): 15 seconds
-2024-10-20 22:04:57,477 - WARNING - Failed to fetch steam database (attempt 9/10): 15 seconds
-2024-10-20 22:05:36,119 - WARNING - Failed to fetch steam database (attempt 10/10): 15 seconds
-2024-10-20 22:05:36,119 - ERROR - Error processing game entry for Final Fantasy XVI: 15 seconds
-Traceback (most recent call last):
-  File "D:\Resources\Software\Game Save Manager\database\database_fetcher.py", line 247, in process_games
-    self.find_install_folder_name(steam_ids)
-  File "D:\Resources\Software\Game Save Manager\database\database_fetcher.py", line 467, in find_install_folder_name
-    info = client.get_product_info(apps=steam_ids)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\dyang\AppData\Local\Programs\Python\Python312\Lib\site-packages\steam\client\builtins\apps.py", line 139, in get_product_info
-    chunk = self.wait_event(job_id, timeout=timeout, raises=True)
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\dyang\AppData\Local\Programs\Python\Python312\Lib\site-packages\eventemitter\__init__.py", line 119, in wait_event
-    return result.get(True, timeout)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "src\\gevent\\event.py", line 329, in gevent._gevent_cevent.AsyncResult.get
-  File "src\\gevent\\event.py", line 356, in gevent._gevent_cevent.AsyncResult.get
-  File "src\\gevent\\_abstract_linkable.py", line 487, in gevent._gevent_c_abstract_linkable.AbstractLinkable._wait_core
-  File "src\\gevent\\_abstract_linkable.py", line 490, in gevent._gevent_c_abstract_linkable.AbstractLinkable._wait_core
-  File "src\\gevent\\_abstract_linkable.py", line 442, in gevent._gevent_c_abstract_linkable.AbstractLinkable._AbstractLinkable__wait_to_be_notified
-  File "src\\gevent\\_abstract_linkable.py", line 451, in gevent._gevent_c_abstract_linkable.AbstractLinkable._switch_to_hub
-  File "src\\gevent\\_greenlet_primitives.py", line 61, in gevent._gevent_c_greenlet_primitives.SwitchOutGreenletWithLoop.switch
-  File "src\\gevent\\_greenlet_primitives.py", line 65, in gevent._gevent_c_greenlet_primitives.SwitchOutGreenletWithLoop.switch
-  File "src\\gevent\\_gevent_c_greenlet_primitives.pxd", line 35, in gevent._gevent_c_greenlet_primitives._greenlet_switch
-gevent.timeout.Timeout: 15 seconds
-2024-10-20 22:05:36,120 - INFO - Continue parameter: {'rccontinue': '20241013200346|1896016', 'continue': '-||'}
-2024-10-20 22:05:36,545 - INFO - Found zh_CN for Monster Hunter Rise: 怪物猎人 崛起
-2024-10-20 22:05:36,552 - INFO - 222. Saved in database: Monster Hunter Rise
-2024-10-20 22:05:36,781 - INFO - Found zh_CN for Hi-Fi Rush: 完美音浪
-2024-10-20 22:05:36,788 - INFO - 223. Saved in database: Hi-Fi Rush
-2024-10-20 22:05:37,055 - INFO - Found zh_CN for Persona 5 Royal: 女神异闻录5 皇家版
-2024-10-20 22:05:37,063 - INFO - 224. Saved in database: Persona 5 Royal
-2024-10-20 22:05:37,370 - INFO - Found zh_CN for The Last Stand: Aftermath: 最后一战：末日
-2024-10-20 22:05:37,377 - INFO - 225. Saved in database: The Last Stand: Aftermath
-2024-10-20 22:05:37,672 - INFO - Found zh_CN for Sonic Frontiers: 索尼克 未知边境
-2024-10-20 22:05:37,680 - INFO - 226. Saved in database: Sonic Frontiers
-2024-10-20 22:05:37,988 - INFO - 227. Saved in database: Red Ocean
-2024-10-20 22:05:38,313 - INFO - 228. Saved in database: No More Heroes 3
-2024-10-20 22:05:38,604 - INFO - Found zh_CN for Metal Gear Solid V: The Phantom Pain: 合金装备5：幻痛
-2024-10-20 22:05:38,612 - INFO - 229. Saved in database: Metal Gear Solid V: The Phantom Pain
-2024-10-20 22:05:38,794 - INFO - No save locations found: Full Void
-2024-10-20 22:05:39,160 - INFO - 230. Saved in database: Tiny Glade
-2024-10-20 22:05:39,395 - INFO - Found zh_CN for Lego Jurassic World: 乐高侏罗纪世界
-2024-10-20 22:05:39,403 - INFO - 231. Saved in database: Lego Jurassic World
-2024-10-20 22:05:40,307 - INFO - No save locations found: Spirit of the North 2
-2024-10-20 22:05:41,658 - INFO - 232. Saved in database: Walt Disney World Quest: Magical Racing Tour
-2024-10-20 22:05:41,847 - INFO - Found zh_CN for Braid: 时空幻境
-2024-10-20 22:05:41,854 - INFO - 233. Saved in database: Braid
-2024-10-20 22:05:42,145 - INFO - Found zh_CN for Ultrakill: 疯狂连杀
-2024-10-20 22:05:42,153 - INFO - 234. Saved in database: Ultrakill
-2024-10-20 22:05:42,546 - INFO - 235. Saved in database: Ar Nosurge: Ode to an Unborn Star DX
-2024-10-20 22:05:42,794 - INFO - Found zh_CN for Life Is Strange Remastered: 奇异人生：重制版
-2024-10-20 22:05:42,803 - INFO - 236. Saved in database: Life Is Strange Remastered
-2024-10-20 22:05:43,084 - INFO - Found zh_CN for Red Faction: 红色派系
-2024-10-20 22:05:43,092 - INFO - 237. Saved in database: Red Faction
-2024-10-20 22:05:43,355 - INFO - Found zh_CN for Prince of Persia 3D: 波斯王子3D
-2024-10-20 22:05:43,362 - INFO - 238. Saved in database: Prince of Persia 3D
-2024-10-20 22:05:44,411 - INFO - 239. Saved in database: Motocross Madness 2
-2024-10-20 22:05:44,642 - INFO - Found zh_CN for Mobile Forces: 机动部队
-2024-10-20 22:05:44,651 - INFO - 240. Saved in database: Mobile Forces
-2024-10-20 22:05:44,895 - INFO - Found zh_CN for Powerdrome: 超级飞行器
-2024-10-20 22:05:45,197 - INFO - 241. Saved in database: Powerdrome
-2024-10-20 22:05:45,513 - INFO - 242. Saved in database: Need for Speed II
-2024-10-20 22:05:45,713 - INFO - No save locations found: Midtown Madness 2
-2024-10-20 22:05:45,713 - INFO - Finding game installation folders...
-2024-10-20 22:06:24,304 - WARNING - Failed to fetch steam database (attempt 1/10): 15 seconds
-2024-10-20 22:07:02,909 - WARNING - Failed to fetch steam database (attempt 2/10): 15 seconds
-2024-10-20 22:07:41,465 - WARNING - Failed to fetch steam database (attempt 3/10): 15 seconds
-2024-10-20 22:08:20,134 - WARNING - Failed to fetch steam database (attempt 4/10): 15 seconds
-2024-10-20 22:08:58,756 - WARNING - Failed to fetch steam database (attempt 5/10): 15 seconds
-2024-10-20 22:09:37,295 - WARNING - Failed to fetch steam database (attempt 6/10): 15 seconds
-2024-10-20 22:10:15,925 - WARNING - Failed to fetch steam database (attempt 7/10): 15 seconds
-2024-10-20 22:10:54,784 - WARNING - Failed to fetch steam database (attempt 8/10): 15 seconds
-2024-10-20 22:11:33,709 - WARNING - Failed to fetch steam database (attempt 9/10): 15 seconds
-2024-10-20 22:12:12,287 - WARNING - Failed to fetch steam database (attempt 10/10): 15 seconds
-2024-10-20 22:12:12,287 - ERROR - Error processing game entry for Midtown Madness 2: 15 seconds
-Traceback (most recent call last):
-  File "D:\Resources\Software\Game Save Manager\database\database_fetcher.py", line 247, in process_games
-    self.find_install_folder_name(steam_ids)
-  File "D:\Resources\Software\Game Save Manager\database\database_fetcher.py", line 467, in find_install_folder_name
-    info = client.get_product_info(apps=steam_ids)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\dyang\AppData\Local\Programs\Python\Python312\Lib\site-packages\steam\client\builtins\apps.py", line 139, in get_product_info
-    chunk = self.wait_event(job_id, timeout=timeout, raises=True)
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\dyang\AppData\Local\Programs\Python\Python312\Lib\site-packages\eventemitter\__init__.py", line 119, in wait_event
-    return result.get(True, timeout)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "src\\gevent\\event.py", line 329, in gevent._gevent_cevent.AsyncResult.get
-  File "src\\gevent\\event.py", line 356, in gevent._gevent_cevent.AsyncResult.get
-  File "src\\gevent\\_abstract_linkable.py", line 487, in gevent._gevent_c_abstract_linkable.AbstractLinkable._wait_core
-  File "src\\gevent\\_abstract_linkable.py", line 490, in gevent._gevent_c_abstract_linkable.AbstractLinkable._wait_core
-  File "src\\gevent\\_abstract_linkable.py", line 442, in gevent._gevent_c_abstract_linkable.AbstractLinkable._AbstractLinkable__wait_to_be_notified
-  File "src\\gevent\\_abstract_linkable.py", line 451, in gevent._gevent_c_abstract_linkable.AbstractLinkable._switch_to_hub
-  File "src\\gevent\\_greenlet_primitives.py", line 61, in gevent._gevent_c_greenlet_primitives.SwitchOutGreenletWithLoop.switch
-  File "src\\gevent\\_greenlet_primitives.py", line 65, in gevent._gevent_c_greenlet_primitives.SwitchOutGreenletWithLoop.switch
-  File "src\\gevent\\_gevent_c_greenlet_primitives.pxd", line 35, in gevent._gevent_c_greenlet_primitives._greenlet_switch
-gevent.timeout.Timeout: 15 seconds
-2024-10-20 22:12:12,289 - INFO - Continue parameter: {'rccontinue': '20241014101308|1896081', 'continue': '-||'}
-2024-10-20 22:12:12,851 - INFO - Found zh_CN for The Medium: 灵媒
-2024-10-20 22:12:12,859 - INFO - 243. Saved in database: The Medium
-2024-10-20 22:12:13,163 - INFO - Found zh_CN for Dragon Ball: The Breakers: 七龙珠 破界斗士
-2024-10-20 22:12:13,170 - INFO - 244. Saved in database: Dragon Ball: The Breakers
-2024-10-20 22:12:13,605 - INFO - Found zh_CN for Tokyo Ghoul: re Call to Exist: 东京喰种：re CALL to EXIST
-2024-10-20 22:12:13,613 - INFO - 245. Saved in database: Tokyo Ghoul: re Call to Exist
-2024-10-20 22:12:13,908 - INFO - Found zh_CN for Sword Coast Legends: 剑湾传奇
-2024-10-20 22:12:13,916 - INFO - 246. Saved in database: Sword Coast Legends
-2024-10-20 22:12:14,197 - INFO - Found zh_CN for F.E.A.R. 2: Project Origin: 极度恐慌2：起源计划
-2024-10-20 22:12:14,205 - INFO - 247. Saved in database: F.E.A.R. 2: Project Origin
-2024-10-20 22:12:14,551 - INFO - Found zh_CN for Max Payne 3: 马克思佩恩3
-2024-10-20 22:12:14,559 - INFO - 248. Saved in database: Max Payne 3
-2024-10-20 22:12:14,858 - INFO - Found zh_CN for Dungeon Keeper 2: 地下城守护者2
-2024-10-20 22:12:14,866 - INFO - 249. Saved in database: Dungeon Keeper 2
-2024-10-20 22:12:15,119 - INFO - Found zh_CN for Dungeon Keeper: 地下城守护者
-2024-10-20 22:12:15,127 - INFO - 250. Saved in database: Dungeon Keeper
-2024-10-20 22:12:15,412 - INFO - Found zh_CN for Populous: The Beginning: 上帝也疯狂：开天辟地
-2024-10-20 22:12:15,421 - INFO - 251. Saved in database: Populous: The Beginning
-2024-10-20 22:12:15,714 - INFO - Found zh_CN for The Saboteur: 破坏者
-2024-10-20 22:12:15,723 - INFO - 252. Saved in database: The Saboteur
-2024-10-20 22:12:16,569 - INFO - No save locations found: YARG
-2024-10-20 22:12:16,734 - INFO - No save locations found: Beyblade X: Xone
-2024-10-20 22:12:16,920 - INFO - No save locations found: Tenebris Somnia
-2024-10-20 22:12:17,191 - INFO - Found zh_CN for Rayman Raving Rabbids: 雷曼4：疯狂兔子
-2024-10-20 22:12:17,198 - INFO - 253. Saved in database: Rayman Raving Rabbids
-2024-10-20 22:12:18,097 - INFO - Found zh_CN for Cloudy with a Chance of Meatballs: 美食从天降
-2024-10-20 22:12:18,105 - INFO - 254. Saved in database: Cloudy with a Chance of Meatballs
-2024-10-20 22:12:18,550 - INFO - Found zh_CN for The Stanley Parable: Ultra Deluxe: 史丹利寓言：超豪华版
-2024-10-20 22:12:18,557 - INFO - 255. Saved in database: The Stanley Parable: Ultra Deluxe
-2024-10-20 22:12:19,292 - INFO - No save locations found: The Fading of Nicole Wilson
-2024-10-20 22:12:19,557 - INFO - Found zh_CN for Scratches: 惊恐鬼屋
-2024-10-20 22:12:19,564 - INFO - 256. Saved in database: Scratches
-2024-10-20 22:12:19,896 - INFO - 257. Saved in database: Tender Loving Care
-2024-10-20 22:12:20,222 - INFO - Found zh_CN for Total War: Rome Remastered: 罗马：全面战争重制版
-2024-10-20 22:12:20,230 - INFO - 258. Saved in database: Total War: Rome Remastered
-2024-10-20 22:12:20,230 - INFO - Finding game installation folders...
-2024-10-20 22:12:58,857 - WARNING - Failed to fetch steam database (attempt 1/10): 15 seconds
-2024-10-20 22:13:37,723 - WARNING - Failed to fetch steam database (attempt 2/10): 15 seconds
-2024-10-20 22:14:16,854 - WARNING - Failed to fetch steam database (attempt 3/10): 15 seconds
-2024-10-20 22:14:55,879 - WARNING - Failed to fetch steam database (attempt 4/10): 15 seconds
-2024-10-20 22:15:34,657 - WARNING - Failed to fetch steam database (attempt 5/10): 15 seconds
-2024-10-20 22:16:13,220 - WARNING - Failed to fetch steam database (attempt 6/10): 15 seconds
-2024-10-20 22:16:52,007 - WARNING - Failed to fetch steam database (attempt 7/10): 15 seconds
-2024-10-20 22:17:30,700 - WARNING - Failed to fetch steam database (attempt 8/10): 15 seconds
-2024-10-20 22:18:09,289 - WARNING - Failed to fetch steam database (attempt 9/10): 15 seconds
-2024-10-20 22:18:48,026 - WARNING - Failed to fetch steam database (attempt 10/10): 15 seconds
-2024-10-20 22:18:48,026 - ERROR - Error processing game entry for Total War: Rome Remastered: 15 seconds
-Traceback (most recent call last):
-  File "D:\Resources\Software\Game Save Manager\database\database_fetcher.py", line 247, in process_games
-    self.find_install_folder_name(steam_ids)
-  File "D:\Resources\Software\Game Save Manager\database\database_fetcher.py", line 467, in find_install_folder_name
-    info = client.get_product_info(apps=steam_ids)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\dyang\AppData\Local\Programs\Python\Python312\Lib\site-packages\steam\client\builtins\apps.py", line 139, in get_product_info
-    chunk = self.wait_event(job_id, timeout=timeout, raises=True)
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\dyang\AppData\Local\Programs\Python\Python312\Lib\site-packages\eventemitter\__init__.py", line 119, in wait_event
-    return result.get(True, timeout)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "src\\gevent\\event.py", line 329, in gevent._gevent_cevent.AsyncResult.get
-  File "src\\gevent\\event.py", line 356, in gevent._gevent_cevent.AsyncResult.get
-  File "src\\gevent\\_abstract_linkable.py", line 487, in gevent._gevent_c_abstract_linkable.AbstractLinkable._wait_core
-  File "src\\gevent\\_abstract_linkable.py", line 490, in gevent._gevent_c_abstract_linkable.AbstractLinkable._wait_core
-  File "src\\gevent\\_abstract_linkable.py", line 442, in gevent._gevent_c_abstract_linkable.AbstractLinkable._AbstractLinkable__wait_to_be_notified
-  File "src\\gevent\\_abstract_linkable.py", line 451, in gevent._gevent_c_abstract_linkable.AbstractLinkable._switch_to_hub
-  File "src\\gevent\\_greenlet_primitives.py", line 61, in gevent._gevent_c_greenlet_primitives.SwitchOutGreenletWithLoop.switch
-  File "src\\gevent\\_greenlet_primitives.py", line 65, in gevent._gevent_c_greenlet_primitives.SwitchOutGreenletWithLoop.switch
-  File "src\\gevent\\_gevent_c_greenlet_primitives.pxd", line 35, in gevent._gevent_c_greenlet_primitives._greenlet_switch
-gevent.timeout.Timeout: 15 seconds
-2024-10-20 22:18:48,027 - INFO - Continue parameter: {'rccontinue': '20241014224129|1896143', 'continue': '-||'}
-2024-10-20 22:18:48,566 - INFO - Found zh_CN for The Legend of Nayuta: Boundless Trails: 那由多的轨迹：改
-2024-10-20 22:18:48,574 - INFO - 259. Saved in database: The Legend of Nayuta: Boundless Trails
-2024-10-20 22:18:48,993 - INFO - 260. Saved in database: Stubbs the Zombie in Rebel Without a Pulse
-2024-10-20 22:18:49,160 - INFO - No save locations found: Block Fortress 2
-2024-10-20 22:18:49,385 - WARNING - Unknown platform: Steam-bundle
-2024-10-20 22:18:49,500 - INFO - Found zh_CN for Sonic Generations: 索尼克：世代
-2024-10-20 22:18:49,508 - INFO - 261. Saved in database: Sonic Generations
-2024-10-20 22:18:49,710 - INFO - Found zh_CN for Fate of the World: 世界的命运
-2024-10-20 22:18:49,718 - INFO - 262. Saved in database: Fate of the World
-2024-10-20 22:18:49,881 - INFO - No save locations found: Sandy's Circus Adventure
-2024-10-20 22:18:50,500 - INFO - No save locations found: Cartoon Jukebox
-2024-10-20 22:18:50,664 - INFO - No save locations found: The Dark Fables of Aesop
-2024-10-20 22:18:50,828 - INFO - Found zh_CN for Animal Well: 动物井
-2024-10-20 22:18:50,836 - INFO - 263. Saved in database: Animal Well
-2024-10-20 22:18:51,044 - INFO - Found zh_CN for Dorfromantik: 筑梦颂
-2024-10-20 22:18:51,052 - INFO - 264. Saved in database: Dorfromantik
-2024-10-20 22:18:51,381 - INFO - 265. Saved in database: Duke Nukem Forever (2001)
-2024-10-20 22:18:51,537 - INFO - No save locations found: The Darkness
-2024-10-20 22:18:51,920 - INFO - Found zh_CN for The Last Hope: 最后的希望
-2024-10-20 22:18:51,928 - INFO - 266. Saved in database: The Last Hope
-2024-10-20 22:18:52,255 - INFO - 267. Saved in database: Turok (2015)
-2024-10-20 22:18:52,586 - INFO - 268. Saved in database: Gyakuten Saiban 2 PC
-2024-10-20 22:18:52,913 - INFO - 269. Saved in database: Gyakuten Saiban 3 PC
-2024-10-20 22:18:53,160 - INFO - Found zh_CN for Dishonored 2: 耻辱2
-2024-10-20 22:18:53,168 - INFO - 270. Saved in database: Dishonored 2
-2024-10-20 22:18:53,377 - INFO - Found zh_CN for Dishonored: Death of the Outsider: 羞辱：界外魔之死
-2024-10-20 22:18:53,385 - INFO - 271. Saved in database: Dishonored: Death of the Outsider
-2024-10-20 22:18:53,613 - INFO - Found zh_CN for Dishonored: 羞辱
-2024-10-20 22:18:53,621 - INFO - 272. Saved in database: Dishonored
-2024-10-20 22:18:53,790 - INFO - No save locations found: The Precinct
-2024-10-20 22:18:53,965 - INFO - No save locations found: Project Mist
-2024-10-20 22:18:54,126 - INFO - No save locations found: My Femboy Roommate
-2024-10-20 22:18:54,126 - INFO - Finding game installation folders...
-2024-10-20 22:18:58,302 - INFO - Found installation folder for steam_id 1668530
-2024-10-20 22:18:58,314 - INFO - Found installation folder for steam_id 7800
-2024-10-20 22:18:58,325 - INFO - Found installation folder for steam_id 71340
-2024-10-20 22:18:58,336 - INFO - Found installation folder for steam_id 80200
-2024-10-20 22:18:58,347 - INFO - Found installation folder for steam_id 813230
-2024-10-20 22:18:58,359 - INFO - Found installation folder for steam_id 1455840
-2024-10-20 22:18:58,370 - INFO - Found installation folder for steam_id 522570
-2024-10-20 22:18:58,382 - INFO - Found installation folder for steam_id 405820
-2024-10-20 22:18:58,394 - INFO - Found installation folder for steam_id 403640
-2024-10-20 22:18:58,406 - INFO - Found installation folder for steam_id 614570
-2024-10-20 22:18:58,417 - INFO - Found installation folder for steam_id 205100
-2024-10-20 22:18:58,418 - INFO - Continue parameter: {'rccontinue': '20241015032122|1896210', 'continue': '-||'}
-2024-10-20 22:18:58,749 - INFO - No save locations found: Spirit Valley
-2024-10-20 22:19:00,265 - INFO - Found zh_CN for Amanda the Adventurer: 冒险家阿曼达
-2024-10-20 22:19:00,273 - INFO - 273. Saved in database: Amanda the Adventurer
-2024-10-20 22:19:00,702 - INFO - Found zh_CN for The Nameless: Slay Dragon: 无名者：屠龙
-2024-10-20 22:19:00,710 - INFO - 274. Saved in database: The Nameless: Slay Dragon
-2024-10-20 22:19:01,176 - INFO - No save locations found: Ultimate Ride Disney Coaster
-2024-10-20 22:19:01,572 - INFO - Found zh_CN for Darksiders II: 暗黑血统2
-2024-10-20 22:19:01,580 - INFO - 275. Saved in database: Darksiders II
-2024-10-20 22:19:02,062 - INFO - Found zh_CN for Guilty Gear Xrd -SIGN-: 罪恶装备：未知次元-征兆
-2024-10-20 22:19:02,070 - INFO - 276. Saved in database: Guilty Gear Xrd -SIGN-
-2024-10-20 22:19:02,512 - INFO - Found zh_CN for Wuthering Waves: 鸣潮
-2024-10-20 22:19:02,520 - INFO - 277. Saved in database: Wuthering Waves
-2024-10-20 22:19:02,854 - INFO - Found zh_CN for Heroes of Might and Magic IV: 魔法门之英雄无敌4
-2024-10-20 22:19:02,861 - INFO - 278. Saved in database: Heroes of Might and Magic IV
-2024-10-20 22:19:03,223 - INFO - 279. Saved in database: The King of Fighters XIII
-2024-10-20 22:19:03,674 - INFO - 280. Saved in database: Intravenous 2: Mercenarism
-2024-10-20 22:19:04,632 - INFO - No save locations found: Streets of Rogue 2
-2024-10-20 22:19:04,845 - INFO - No save locations found: Pro Evolution Soccer 4
-2024-10-20 22:19:05,187 - INFO - Found zh_CN for The Elder Scrolls Online: 上古卷轴OL
-2024-10-20 22:19:05,195 - INFO - 281. Saved in database: The Elder Scrolls Online
-2024-10-20 22:19:05,411 - INFO - No save locations found: Copa Petrobras de Marcas
-2024-10-20 22:19:05,731 - INFO - 282. Saved in database: Formula Truck 2013
-2024-10-20 22:19:05,942 - INFO - No save locations found: Classic Car Racing
-2024-10-20 22:19:06,147 - INFO - Found zh_CN for Fallout: 辐射
-2024-10-20 22:19:06,618 - INFO - 283. Saved in database: Fallout
-2024-10-20 22:19:07,964 - INFO - Found zh_CN for Slime Rancher 2: 史莱姆牧场2
-2024-10-20 22:19:07,972 - INFO - 284. Saved in database: Slime Rancher 2
-2024-10-20 22:19:08,341 - INFO - 285. Saved in database: Magic Carpet 2: The Netherworlds
-2024-10-20 22:19:08,613 - INFO - Found zh_CN for Satisfactory: 幸福工厂
-2024-10-20 22:19:08,621 - INFO - 286. Saved in database: Satisfactory
-2024-10-20 22:19:08,946 - INFO - Found zh_CN for Race Driver: Grid: 超级房车赛 起跑点
-2024-10-20 22:19:08,953 - INFO - 287. Saved in database: Race Driver: Grid
-2024-10-20 22:19:09,138 - INFO - Found zh_CN for Age of Empires II: Definitive Edition: 帝国时代2：决定版
-2024-10-20 22:19:09,146 - INFO - 288. Saved in database: Age of Empires II: Definitive Edition
-2024-10-20 22:19:09,146 - INFO - Finding game installation folders...
-2024-10-20 22:19:44,642 - WARNING - Failed to fetch steam database (attempt 1/10): 15 seconds
-2024-10-20 22:20:23,213 - WARNING - Failed to fetch steam database (attempt 2/10): 15 seconds
-2024-10-20 22:21:01,757 - WARNING - Failed to fetch steam database (attempt 3/10): 15 seconds
-2024-10-20 22:21:40,496 - WARNING - Failed to fetch steam database (attempt 4/10): 15 seconds
-2024-10-20 22:22:19,071 - WARNING - Failed to fetch steam database (attempt 5/10): 15 seconds
-2024-10-20 22:22:57,658 - WARNING - Failed to fetch steam database (attempt 6/10): 15 seconds
-2024-10-20 22:23:36,346 - WARNING - Failed to fetch steam database (attempt 7/10): 15 seconds
-2024-10-20 22:23:40,746 - INFO - Found installation folder for steam_id 2166060
-2024-10-20 22:23:40,758 - INFO - Found installation folder for steam_id 2410170
-2024-10-20 22:23:40,769 - INFO - Found installation folder for steam_id 50650
-2024-10-20 22:23:40,781 - INFO - Found installation folder for steam_id 376300
-2024-10-20 22:23:40,793 - INFO - Found installation folder for steam_id 222940
-2024-10-20 22:23:40,806 - INFO - Found installation folder for steam_id 2651330
-2024-10-20 22:23:40,818 - INFO - Found installation folder for steam_id 306130
-2024-10-20 22:23:40,830 - INFO - Found installation folder for steam_id 273750
-2024-10-20 22:23:40,842 - INFO - Found installation folder for steam_id 38400
-2024-10-20 22:23:40,854 - INFO - Found installation folder for steam_id 1657630
-2024-10-20 22:23:40,866 - INFO - Found installation folder for steam_id 526870
-2024-10-20 22:23:40,878 - INFO - Found installation folder for steam_id 12750
-2024-10-20 22:23:40,890 - INFO - Found installation folder for steam_id 813780
-2024-10-20 22:23:40,891 - INFO - Continue parameter: {'rccontinue': '20241015180310|1896273', 'continue': '-||'}
-2024-10-20 22:23:41,389 - INFO - 289. Saved in database: Man of Medan
-2024-10-20 22:23:41,688 - INFO - 290. Saved in database: Little Hope
-2024-10-20 22:23:42,012 - INFO - 291. Saved in database: House of Ashes
-2024-10-20 22:23:42,220 - INFO - Found zh_CN for Dead Space 3: 死亡空间3
-2024-10-20 22:23:42,228 - INFO - 292. Saved in database: Dead Space 3
-2024-10-20 22:23:43,193 - INFO - 293. Saved in database: Goblin Cleanup
-2024-10-20 22:23:43,499 - INFO - 294. Saved in database: Lust from Beyond
-2024-10-20 22:23:43,668 - INFO - No save locations found: Tetris Forever
-2024-10-20 22:23:44,727 - INFO - Found zh_CN for Steins;Gate Elite: 命运石之门 ELITE
-2024-10-20 22:23:44,736 - INFO - 295. Saved in database: Steins;Gate Elite
-2024-10-20 22:23:45,122 - INFO - 296. Saved in database: Steins;Gate: Linear Bounded Phenogram
-2024-10-20 22:23:45,342 - INFO - Found zh_CN for Frostpunk 2: 冰汽时代2
-2024-10-20 22:23:45,351 - INFO - 297. Saved in database: Frostpunk 2
-2024-10-20 22:23:45,533 - INFO - No save locations found: Llamasoft: The Jeff Minter Story
-2024-10-20 22:23:45,702 - INFO - No save locations found: Gregory Horror Show: Soul of Roses
-2024-10-20 22:23:45,986 - INFO - Found zh_CN for The Quarry: 采石场惊魂
-2024-10-20 22:23:45,993 - INFO - 298. Saved in database: The Quarry
-2024-10-20 22:23:46,153 - INFO - No save locations found: Tiger Woods PGA Tour 2004
-2024-10-20 22:23:46,410 - INFO - Found zh_CN for NASCAR Thunder 2004: 雷霆纳斯卡赛车2004
-2024-10-20 22:23:46,418 - INFO - 299. Saved in database: NASCAR Thunder 2004
-2024-10-20 22:23:46,596 - INFO - No save locations found: NASCAR Thunder 2003
-2024-10-20 22:23:47,325 - INFO - No save locations found: The Escaper
-2024-10-20 22:23:47,471 - INFO - No save locations found: F1 2002
-2024-10-20 22:23:47,624 - INFO - No save locations found: Tiger Woods PGA Tour 2002
-2024-10-20 22:23:47,899 - INFO - Found zh_CN for OutRun 2006: Coast 2 Coast: 超越2006：海岸
-2024-10-20 22:23:47,908 - INFO - 300. Saved in database: OutRun 2006: Coast 2 Coast
-2024-10-20 22:23:48,087 - INFO - No save locations found: Teenage Mutant Ninja Turtles: Splintered Fate
-2024-10-20 22:23:48,326 - INFO - Found zh_CN for RayStorm: 射线风暴
-2024-10-20 22:23:48,334 - INFO - 301. Saved in database: RayStorm
-2024-10-20 22:23:48,507 - INFO - No save locations found: The Axis Unseen
-2024-10-20 22:23:48,783 - INFO - Found zh_CN for Need for Speed: Undercover: 极品飞车12：无间风云
-2024-10-20 22:23:48,791 - INFO - 302. Saved in database: Need for Speed: Undercover
-2024-10-20 22:23:49,053 - INFO - Found zh_CN for Sonic Forces: 索尼克 力量
-2024-10-20 22:23:49,061 - INFO - 303. Saved in database: Sonic Forces
-2024-10-20 22:23:49,298 - INFO - Found zh_CN for Ice Age: Dawn of the Dinosaurs: 冰河世纪3：恐龙的黎明
-2024-10-20 22:23:49,306 - INFO - 304. Saved in database: Ice Age: Dawn of the Dinosaurs
-2024-10-20 22:23:49,533 - INFO - Found zh_CN for MultiVersus: 多元宇宙大乱斗
-2024-10-20 22:23:49,542 - INFO - 305. Saved in database: MultiVersus
-2024-10-20 22:23:50,339 - INFO - 306. Saved in database: Rayman Fiesta Run
-2024-10-20 22:23:50,722 - INFO - 307. Saved in database: Symphonia
-2024-10-20 22:23:51,754 - INFO - 308. Saved in database: Rayman Jungle Run
-2024-10-20 22:23:51,754 - INFO - Finding game installation folders...
-2024-10-20 22:24:27,270 - WARNING - Failed to fetch steam database (attempt 1/10): 15 seconds
-2024-10-20 22:25:05,812 - WARNING - Failed to fetch steam database (attempt 2/10): 15 seconds
-2024-10-20 22:25:09,959 - INFO - Found installation folder for steam_id 939850
-2024-10-20 22:25:09,971 - INFO - Found installation folder for steam_id 1194630
-2024-10-20 22:25:09,984 - INFO - Found installation folder for steam_id 1281590
-2024-10-20 22:25:09,995 - INFO - Found installation folder for steam_id 1238060
-2024-10-20 22:25:10,006 - INFO - Found installation folder for steam_id 1035120
-2024-10-20 22:25:10,018 - INFO - Found installation folder for steam_id 819030
-2024-10-20 22:25:10,031 - INFO - Found installation folder for steam_id 930910
-2024-10-20 22:25:10,043 - INFO - Found installation folder for steam_id 1601580
-2024-10-20 22:25:10,055 - INFO - Found installation folder for steam_id 1577120
-2024-10-20 22:25:10,067 - INFO - Found installation folder for steam_id 4730
-2024-10-20 22:25:10,080 - INFO - Found installation folder for steam_id 17430
-2024-10-20 22:25:10,092 - INFO - Found installation folder for steam_id 637100
-2024-10-20 22:25:10,103 - INFO - Found installation folder for steam_id 1818750
-2024-10-20 22:25:10,103 - INFO - Continue parameter: {'rccontinue': '20241016045010|1896336', 'continue': '-||'}
-2024-10-20 22:25:10,606 - INFO - Found zh_CN for Wavetale: 海浪物语
-2024-10-20 22:25:10,615 - INFO - 309. Saved in database: Wavetale
-2024-10-20 22:25:10,789 - INFO - No save locations found: Kaku Ancient Seal / 卡库远古封印
-2024-10-20 22:25:11,105 - INFO - Found zh_CN for Tales of Kenzera: ZAU: 肯泽拉传说：扎乌
-2024-10-20 22:25:11,113 - INFO - 310. Saved in database: Tales of Kenzera: ZAU
-2024-10-20 22:25:11,347 - INFO - Found zh_CN for Ravenswatch: 鸦卫奇旅
-2024-10-20 22:25:11,355 - INFO - 311. Saved in database: Ravenswatch
-2024-10-20 22:25:11,545 - INFO - No save locations found: Delta Force: Hawk Ops
-2024-10-20 22:25:11,719 - INFO - No save locations found: Ufouria: The Saga 2
-2024-10-20 22:25:11,905 - INFO - No save locations found: Lost in Sky: Violent Seed
-2024-10-20 22:25:12,667 - INFO - No save locations found: Kanon
-2024-10-20 22:25:12,966 - INFO - 312. Saved in database: Neva
-2024-10-20 22:25:13,929 - INFO - No save locations found: Max Mustard
-2024-10-20 22:25:14,847 - INFO - No save locations found: Trombone Champ: Unflattened
-2024-10-20 22:25:15,111 - INFO - Found zh_CN for Magic: The Gathering Arena: 万智牌：竞技场
-2024-10-20 22:25:15,120 - INFO - 313. Saved in database: Magic: The Gathering Arena
-2024-10-20 22:25:15,309 - INFO - No save locations found: Absolute Tactics: Daughters of Mercy
-2024-10-20 22:25:15,595 - INFO - Found zh_CN for Panzer General 3D Assault: 装甲元帅3D：袭击
-2024-10-20 22:25:15,943 - INFO - 314. Saved in database: Panzer General 3D Assault
-2024-10-20 22:25:16,302 - INFO - 315. Saved in database: MechWarrior 5: Clans
-2024-10-20 22:25:16,671 - INFO - Found zh_CN for South Park: The Fractured but Whole: 南方公园：完整破碎
-2024-10-20 22:25:16,681 - INFO - 316. Saved in database: South Park: The Fractured but Whole
-2024-10-20 22:25:16,930 - INFO - Found zh_CN for Donut County: 怪圈小镇
-2024-10-20 22:25:16,939 - INFO - 317. Saved in database: Donut County
-2024-10-20 22:25:17,164 - INFO - Found zh_CN for Dyson Sphere Program: 戴森球计划
-2024-10-20 22:25:17,173 - INFO - 318. Saved in database: Dyson Sphere Program
-2024-10-20 22:25:17,399 - INFO - Found zh_CN for Everspace 2: 永恒空间2
-2024-10-20 22:25:17,406 - INFO - 319. Saved in database: Everspace 2
-2024-10-20 22:25:17,699 - INFO - Found zh_CN for F1 Manager 2023: F1车队经理2023
-2024-10-20 22:25:17,707 - INFO - 320. Saved in database: F1 Manager 2023
-2024-10-20 22:25:17,967 - INFO - No save locations found: From Space
-2024-10-20 22:25:18,304 - INFO - Found zh_CN for Scorn: 蔑视
-2024-10-20 22:25:18,316 - INFO - 321. Saved in database: Scorn
-2024-10-20 22:25:18,740 - INFO - 322. Saved in database: War and Peace: 1796-1815
-2024-10-20 22:25:19,069 - INFO - No save locations found: Have a N.I.C.E. day!
-2024-10-20 22:25:19,070 - INFO - Finding game installation folders...
-2024-10-20 22:25:20,090 - INFO - Found installation folder for steam_id 1823930
-2024-10-20 22:25:20,101 - INFO - Found installation folder for steam_id 2316580
-2024-10-20 22:25:20,114 - INFO - Found installation folder for steam_id 2071280
-2024-10-20 22:25:20,126 - INFO - Found installation folder for steam_id 2420660
-2024-10-20 22:25:20,137 - INFO - Found installation folder for steam_id 2141910
-2024-10-20 22:25:20,148 - INFO - Found installation folder for steam_id 2000890
-2024-10-20 22:25:20,160 - INFO - Found installation folder for steam_id 488790
-2024-10-20 22:25:20,172 - INFO - Found installation folder for steam_id 702670
-2024-10-20 22:25:20,184 - INFO - Found installation folder for steam_id 1366540
-2024-10-20 22:25:20,194 - INFO - Found installation folder for steam_id 1128920
-2024-10-20 22:25:20,206 - INFO - Found installation folder for steam_id 2287220
-2024-10-20 22:25:20,217 - INFO - Found installation folder for steam_id 698670
-2024-10-20 22:25:20,218 - INFO - Continue parameter: {'rccontinue': '20241016170033|1896393', 'continue': '-||'}
-2024-10-20 22:25:20,682 - INFO - Found zh_CN for NecroVisioN: Lost Company: 死灵幻象：迷失连队
-2024-10-20 22:25:20,691 - INFO - 323. Saved in database: NecroVisioN: Lost Company
-2024-10-20 22:25:21,026 - INFO - Found zh_CN for Shadow Warrior 2: 影子武士2
-2024-10-20 22:25:21,034 - INFO - 324. Saved in database: Shadow Warrior 2
-2024-10-20 22:25:21,212 - INFO - Found zh_CN for Astral Ascent: 星界战士
-2024-10-20 22:25:21,219 - INFO - 325. Saved in database: Astral Ascent
-2024-10-20 22:25:21,522 - INFO - 326. Saved in database: IS Defense
-2024-10-20 22:25:21,737 - INFO - No save locations found: List of games that use Unreal Engine 4
-2024-10-20 22:25:22,764 - INFO - Found zh_CN for Berserk and the Band of the Hawk: 剑风传奇无双
-2024-10-20 22:25:22,772 - INFO - 327. Saved in database: Berserk and the Band of the Hawk
-2024-10-20 22:25:24,421 - INFO - Found zh_CN for Warriors Orochi 4: 无双大蛇3
-2024-10-20 22:25:24,430 - INFO - 328. Saved in database: Warriors Orochi 4
-2024-10-20 22:25:24,616 - INFO - No save locations found: Adventures of Beetlejuice: Skeletons in the Closet
-2024-10-20 22:25:24,794 - INFO - No save locations found: Daffy Duck, P.I.: The Case of the Missing Letters
-2024-10-20 22:25:24,966 - INFO - No save locations found: The Bugs Bunny Hare-Brained Adventure
-2024-10-20 22:25:25,123 - INFO - No save locations found: Chip 'n Dale Rescue Rangers: The Adventures in Nimnul's Castle
-2024-10-20 22:25:25,442 - INFO - Found zh_CN for Grand Theft Auto: Vice City: 侠盗猎车手：罪恶都市
-2024-10-20 22:25:26,242 - INFO - 329. Saved in database: Grand Theft Auto: Vice City
-2024-10-20 22:25:26,851 - INFO - 330. Saved in database: Grand Theft Auto III
-2024-10-20 22:25:27,184 - INFO - 331. Saved in database: Spider-Man 2: The Game
-2024-10-20 22:25:27,495 - INFO - Found zh_CN for Wolfenstein: 德军总部
-2024-10-20 22:25:27,503 - INFO - 332. Saved in database: Wolfenstein
-2024-10-20 22:25:27,980 - INFO - 333. Saved in database: Metal Gear Solid 2: Sons of Liberty - Master Collection Version
-2024-10-20 22:25:29,426 - INFO - 334. Saved in database: Metal Gear Solid 3: Snake Eater - Master Collection Version
-2024-10-20 22:25:29,922 - INFO - 335. Saved in database: Metal Gear & Metal Gear 2: Solid Snake - Master Collection Version
-2024-10-20 22:25:30,098 - INFO - No save locations found: Unknown9: Awakening
-2024-10-20 22:25:30,280 - INFO - No save locations found: Dragon Age: The Veilguard
-2024-10-20 22:25:30,528 - INFO - Found zh_CN for Deus Ex: Human Revolution - Director's Cut: 杀出重围 人类革命 导演剪辑版
-2024-10-20 22:25:30,659 - INFO - 336. Saved in database: Deus Ex: Human Revolution - Director's Cut
-2024-10-20 22:25:30,941 - INFO - No save locations found: Rift of the NecroDancer
-2024-10-20 22:25:31,218 - INFO - Found zh_CN for RAGE: 狂怒
-2024-10-20 22:25:31,226 - INFO - 337. Saved in database: RAGE
-2024-10-20 22:25:31,392 - INFO - No save locations found: Emulation
-2024-10-20 22:25:31,392 - INFO - Finding game installation folders...
-2024-10-20 22:26:10,144 - WARNING - Failed to fetch steam database (attempt 1/10): 15 seconds
-2024-10-20 22:26:48,755 - WARNING - Failed to fetch steam database (attempt 2/10): 15 seconds
-2024-10-20 22:27:27,325 - WARNING - Failed to fetch steam database (attempt 3/10): 15 seconds
-2024-10-20 22:28:05,894 - WARNING - Failed to fetch steam database (attempt 4/10): 15 seconds
-2024-10-20 22:28:44,984 - WARNING - Failed to fetch steam database (attempt 5/10): 15 seconds
-2024-10-20 22:29:23,732 - WARNING - Failed to fetch steam database (attempt 6/10): 15 seconds
-2024-10-20 22:30:02,448 - WARNING - Failed to fetch steam database (attempt 7/10): 15 seconds
-2024-10-20 22:30:41,028 - WARNING - Failed to fetch steam database (attempt 8/10): 15 seconds
-2024-10-20 22:31:19,800 - WARNING - Failed to fetch steam database (attempt 9/10): 15 seconds
-2024-10-20 22:31:58,698 - WARNING - Failed to fetch steam database (attempt 10/10): 15 seconds
-2024-10-20 22:31:58,699 - ERROR - Error processing game entry for Emulation: 15 seconds
-Traceback (most recent call last):
-  File "D:\Resources\Software\Game Save Manager\database\database_fetcher.py", line 247, in process_games
-    self.find_install_folder_name(steam_ids)
-  File "D:\Resources\Software\Game Save Manager\database\database_fetcher.py", line 467, in find_install_folder_name
-    info = client.get_product_info(apps=steam_ids)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\dyang\AppData\Local\Programs\Python\Python312\Lib\site-packages\steam\client\builtins\apps.py", line 139, in get_product_info
-    chunk = self.wait_event(job_id, timeout=timeout, raises=True)
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\dyang\AppData\Local\Programs\Python\Python312\Lib\site-packages\eventemitter\__init__.py", line 119, in wait_event
-    return result.get(True, timeout)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "src\\gevent\\event.py", line 329, in gevent._gevent_cevent.AsyncResult.get
-  File "src\\gevent\\event.py", line 356, in gevent._gevent_cevent.AsyncResult.get
-  File "src\\gevent\\_abstract_linkable.py", line 487, in gevent._gevent_c_abstract_linkable.AbstractLinkable._wait_core
-  File "src\\gevent\\_abstract_linkable.py", line 490, in gevent._gevent_c_abstract_linkable.AbstractLinkable._wait_core
-  File "src\\gevent\\_abstract_linkable.py", line 442, in gevent._gevent_c_abstract_linkable.AbstractLinkable._AbstractLinkable__wait_to_be_notified
-  File "src\\gevent\\_abstract_linkable.py", line 451, in gevent._gevent_c_abstract_linkable.AbstractLinkable._switch_to_hub
-  File "src\\gevent\\_greenlet_primitives.py", line 61, in gevent._gevent_c_greenlet_primitives.SwitchOutGreenletWithLoop.switch
-  File "src\\gevent\\_greenlet_primitives.py", line 65, in gevent._gevent_c_greenlet_primitives.SwitchOutGreenletWithLoop.switch
-  File "src\\gevent\\_gevent_c_greenlet_primitives.pxd", line 35, in gevent._gevent_c_greenlet_primitives._greenlet_switch
-gevent.timeout.Timeout: 15 seconds
-2024-10-20 22:31:58,700 - INFO - Continue parameter: {'rccontinue': '20241017104540|1896448', 'continue': '-||'}
-2024-10-20 22:32:00,071 - INFO - 338. Saved in database: If on a Winter's Night, Four Travelers
-2024-10-20 22:32:00,454 - INFO - Found zh_CN for Tom Clancy's Splinter Cell: 细胞分裂
-2024-10-20 22:32:00,462 - INFO - 339. Saved in database: Tom Clancy's Splinter Cell
-2024-10-20 22:32:00,645 - INFO - Path not specified from {{p|game}}: Area 51 (2005)
-2024-10-20 22:32:00,787 - INFO - 340. Saved in database: Area 51 (2005)
-2024-10-20 22:32:00,947 - INFO - No save locations found: Kardboard Kings
-2024-10-20 22:32:01,363 - INFO - Found zh_CN for The Talos Principle 2: 塔罗斯的法则2
-2024-10-20 22:32:01,371 - INFO - 341. Saved in database: The Talos Principle 2
-2024-10-20 22:32:01,603 - INFO - Found zh_CN for Governor of Poker 2: 扑克总督2
-2024-10-20 22:32:01,611 - INFO - 342. Saved in database: Governor of Poker 2
-2024-10-20 22:32:03,019 - INFO - No save locations found: Neptunia Game Maker R:Evolution
-2024-10-20 22:32:03,383 - INFO - 343. Saved in database: Neptunia: Sisters VS Sisters
-2024-10-20 22:32:03,606 - INFO - Found zh_CN for Call of Duty: Advanced Warfare: 使命召唤11：高级战争
-2024-10-20 22:32:03,614 - INFO - 344. Saved in database: Call of Duty: Advanced Warfare
-2024-10-20 22:32:04,958 - INFO - No save locations found: Citadel Stormer 2
-2024-10-20 22:32:05,118 - INFO - No save locations found: Subnautica 2
-2024-10-20 22:32:05,347 - INFO - No save locations found: Like a Dragon: Pirate Yakuza in Hawaii
-2024-10-20 22:32:06,078 - INFO - No save locations found: Discolored
-2024-10-20 22:32:06,242 - INFO - No save locations found: Guildlings
-2024-10-20 22:32:06,949 - INFO - No save locations found: Star Fetched
-2024-10-20 22:32:07,873 - INFO - No save locations found: Takeshi and Hiroshi
-2024-10-20 22:32:08,469 - INFO - No save locations found: UFO on Tape: First Contact
-2024-10-20 22:32:08,684 - INFO - Found zh_CN for Gris: 色灰
-2024-10-20 22:32:08,692 - INFO - 345. Saved in database: Gris
-2024-10-20 22:32:08,995 - INFO - Found zh_CN for Return to Monkey Island: 重返猴岛
-2024-10-20 22:32:09,003 - INFO - 346. Saved in database: Return to Monkey Island
-2024-10-20 22:32:09,279 - INFO - Found zh_CN for Metro 2033 Redux: 地铁2033：回归
-2024-10-20 22:32:09,288 - INFO - 347. Saved in database: Metro 2033 Redux
-2024-10-20 22:32:09,540 - INFO - Found zh_CN for Mini Metro: 迷你地铁
-2024-10-20 22:32:09,548 - INFO - 348. Saved in database: Mini Metro
-2024-10-20 22:32:09,548 - INFO - Finding game installation folders...
-2024-10-20 22:32:48,162 - WARNING - Failed to fetch steam database (attempt 1/10): 15 seconds
-2024-10-20 22:33:26,769 - WARNING - Failed to fetch steam database (attempt 2/10): 15 seconds
-2024-10-20 22:34:05,379 - WARNING - Failed to fetch steam database (attempt 3/10): 15 seconds
-2024-10-20 22:34:43,972 - WARNING - Failed to fetch steam database (attempt 4/10): 15 seconds
-2024-10-20 22:35:22,668 - WARNING - Failed to fetch steam database (attempt 5/10): 15 seconds
-2024-10-20 22:36:01,428 - WARNING - Failed to fetch steam database (attempt 6/10): 15 seconds
-2024-10-20 22:36:40,027 - WARNING - Failed to fetch steam database (attempt 7/10): 15 seconds
-2024-10-20 22:37:18,627 - WARNING - Failed to fetch steam database (attempt 8/10): 15 seconds
-2024-10-20 22:37:57,227 - WARNING - Failed to fetch steam database (attempt 9/10): 15 seconds
-2024-10-20 22:38:35,838 - WARNING - Failed to fetch steam database (attempt 10/10): 15 seconds
-2024-10-20 22:38:35,838 - ERROR - Error processing game entry for Mini Metro: 15 seconds
-Traceback (most recent call last):
-  File "D:\Resources\Software\Game Save Manager\database\database_fetcher.py", line 247, in process_games
-    self.find_install_folder_name(steam_ids)
-  File "D:\Resources\Software\Game Save Manager\database\database_fetcher.py", line 467, in find_install_folder_name
-    info = client.get_product_info(apps=steam_ids)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\dyang\AppData\Local\Programs\Python\Python312\Lib\site-packages\steam\client\builtins\apps.py", line 139, in get_product_info
-    chunk = self.wait_event(job_id, timeout=timeout, raises=True)
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\dyang\AppData\Local\Programs\Python\Python312\Lib\site-packages\eventemitter\__init__.py", line 119, in wait_event
-    return result.get(True, timeout)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "src\\gevent\\event.py", line 329, in gevent._gevent_cevent.AsyncResult.get
-  File "src\\gevent\\event.py", line 356, in gevent._gevent_cevent.AsyncResult.get
-  File "src\\gevent\\_abstract_linkable.py", line 487, in gevent._gevent_c_abstract_linkable.AbstractLinkable._wait_core
-  File "src\\gevent\\_abstract_linkable.py", line 490, in gevent._gevent_c_abstract_linkable.AbstractLinkable._wait_core
-  File "src\\gevent\\_abstract_linkable.py", line 442, in gevent._gevent_c_abstract_linkable.AbstractLinkable._AbstractLinkable__wait_to_be_notified
-  File "src\\gevent\\_abstract_linkable.py", line 451, in gevent._gevent_c_abstract_linkable.AbstractLinkable._switch_to_hub
-  File "src\\gevent\\_greenlet_primitives.py", line 61, in gevent._gevent_c_greenlet_primitives.SwitchOutGreenletWithLoop.switch
-  File "src\\gevent\\_greenlet_primitives.py", line 65, in gevent._gevent_c_greenlet_primitives.SwitchOutGreenletWithLoop.switch
-  File "src\\gevent\\_gevent_c_greenlet_primitives.pxd", line 35, in gevent._gevent_c_greenlet_primitives._greenlet_switch
-gevent.timeout.Timeout: 15 seconds
-2024-10-20 22:38:35,840 - INFO - Continue parameter: {'rccontinue': '20241017195723|1896502', 'continue': '-||'}
-2024-10-20 22:38:36,238 - INFO - Found zh_CN for Ruiner: 堕灭暴徒
-2024-10-20 22:38:36,246 - INFO - 349. Saved in database: Ruiner
-2024-10-20 22:38:36,530 - INFO - Found zh_CN for Tunic: 丘尼卡传说
-2024-10-20 22:38:36,538 - INFO - 350. Saved in database: Tunic
-2024-10-20 22:38:37,707 - INFO - 351. Saved in database: Lunistice
-2024-10-20 22:38:38,087 - INFO - 352. Saved in database: A Quiet Place: The Road Ahead
-2024-10-20 22:38:38,406 - INFO - Found zh_CN for Mirror's Edge: 镜之边缘
-2024-10-20 22:38:38,415 - INFO - 353. Saved in database: Mirror's Edge
-2024-10-20 22:38:39,335 - INFO - No save locations found: Dashing Dinos
-2024-10-20 22:38:39,682 - INFO - 354. Saved in database: Shadows of the Afterland
-2024-10-20 22:38:40,024 - INFO - 355. Saved in database: Vivisector - Beast Within
-2024-10-20 22:38:40,390 - INFO - Found zh_CN for Mass Effect 2: 质量效应2
-2024-10-20 22:38:40,398 - INFO - 356. Saved in database: Mass Effect 2
-2024-10-20 22:38:40,559 - INFO - No save locations found: List of games with offline bots
-2024-10-20 22:38:40,726 - INFO - No save locations found: Unknown 9: Awakening
-2024-10-20 22:38:41,044 - INFO - 357. Saved in database: Killing Time
-2024-10-20 22:38:41,386 - INFO - 358. Saved in database: Killing Time: Resurrected
-2024-10-20 22:38:42,591 - INFO - Found zh_CN for South Park: The Stick of Truth: 南方公园：真理之杖
-2024-10-20 22:38:42,599 - INFO - 359. Saved in database: South Park: The Stick of Truth
-2024-10-20 22:38:43,762 - INFO - Found zh_CN for Colin McRae: DiRT 2: 科林麦克雷拉力赛：尘埃2
-2024-10-20 22:38:43,770 - INFO - 360. Saved in database: Colin McRae: DiRT 2
-2024-10-20 22:38:43,980 - INFO - Found zh_CN for Disney Universe: 迪士尼宇宙
-2024-10-20 22:38:43,988 - INFO - 361. Saved in database: Disney Universe
-2024-10-20 22:38:44,274 - INFO - Found zh_CN for Spider-Man: Friend or Foe: 蜘蛛侠：敌友难辨
-2024-10-20 22:38:44,282 - INFO - 362. Saved in database: Spider-Man: Friend or Foe
-2024-10-20 22:38:44,522 - INFO - Found zh_CN for Deus Ex: 杀出重围
-2024-10-20 22:38:44,529 - INFO - 363. Saved in database: Deus Ex
-2024-10-20 22:38:45,036 - INFO - 364. Saved in database: Leisure Suit Larry: Box Office Bust
-2024-10-20 22:38:45,036 - INFO - Finding game installation folders...
-2024-10-20 22:39:23,645 - WARNING - Failed to fetch steam database (attempt 1/10): 15 seconds
-2024-10-20 22:40:02,647 - WARNING - Failed to fetch steam database (attempt 2/10): 15 seconds
-2024-10-20 22:40:41,223 - WARNING - Failed to fetch steam database (attempt 3/10): 15 seconds
-2024-10-20 22:41:19,838 - WARNING - Failed to fetch steam database (attempt 4/10): 15 seconds
-2024-10-20 22:41:58,618 - WARNING - Failed to fetch steam database (attempt 5/10): 15 seconds
-2024-10-20 22:42:37,184 - WARNING - Failed to fetch steam database (attempt 6/10): 15 seconds
-2024-10-20 22:43:15,754 - WARNING - Failed to fetch steam database (attempt 7/10): 15 seconds
-2024-10-20 22:43:54,380 - WARNING - Failed to fetch steam database (attempt 8/10): 15 seconds
-2024-10-20 22:44:33,072 - WARNING - Failed to fetch steam database (attempt 9/10): 15 seconds
-2024-10-20 22:45:11,789 - WARNING - Failed to fetch steam database (attempt 10/10): 15 seconds
-2024-10-20 22:45:11,789 - ERROR - Error processing game entry for Leisure Suit Larry: Box Office Bust: 15 seconds
-Traceback (most recent call last):
-  File "D:\Resources\Software\Game Save Manager\database\database_fetcher.py", line 247, in process_games
-    self.find_install_folder_name(steam_ids)
-  File "D:\Resources\Software\Game Save Manager\database\database_fetcher.py", line 467, in find_install_folder_name
-    info = client.get_product_info(apps=steam_ids)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\dyang\AppData\Local\Programs\Python\Python312\Lib\site-packages\steam\client\builtins\apps.py", line 139, in get_product_info
-    chunk = self.wait_event(job_id, timeout=timeout, raises=True)
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\dyang\AppData\Local\Programs\Python\Python312\Lib\site-packages\eventemitter\__init__.py", line 119, in wait_event
-    return result.get(True, timeout)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "src\\gevent\\event.py", line 329, in gevent._gevent_cevent.AsyncResult.get
-  File "src\\gevent\\event.py", line 356, in gevent._gevent_cevent.AsyncResult.get
-  File "src\\gevent\\_abstract_linkable.py", line 487, in gevent._gevent_c_abstract_linkable.AbstractLinkable._wait_core
-  File "src\\gevent\\_abstract_linkable.py", line 490, in gevent._gevent_c_abstract_linkable.AbstractLinkable._wait_core
-  File "src\\gevent\\_abstract_linkable.py", line 442, in gevent._gevent_c_abstract_linkable.AbstractLinkable._AbstractLinkable__wait_to_be_notified
-  File "src\\gevent\\_abstract_linkable.py", line 451, in gevent._gevent_c_abstract_linkable.AbstractLinkable._switch_to_hub
-  File "src\\gevent\\_greenlet_primitives.py", line 61, in gevent._gevent_c_greenlet_primitives.SwitchOutGreenletWithLoop.switch
-  File "src\\gevent\\_greenlet_primitives.py", line 65, in gevent._gevent_c_greenlet_primitives.SwitchOutGreenletWithLoop.switch
-  File "src\\gevent\\_gevent_c_greenlet_primitives.pxd", line 35, in gevent._gevent_c_greenlet_primitives._greenlet_switch
-gevent.timeout.Timeout: 15 seconds
-2024-10-20 22:45:11,790 - INFO - Continue parameter: {'rccontinue': '20241018052730|1896569', 'continue': '-||'}
-2024-10-20 22:45:12,340 - INFO - Found zh_CN for Fez: 菲斯
-2024-10-20 22:45:12,349 - INFO - 365. Saved in database: Fez
-2024-10-20 22:45:12,529 - INFO - No save locations found: Rack and Slay
-2024-10-20 22:45:12,705 - INFO - No save locations found: FBC: Firebreak
-2024-10-20 22:45:13,002 - INFO - Found zh_CN for Max Payne: 马克思佩恩
-2024-10-20 22:45:13,010 - INFO - 366. Saved in database: Max Payne
-2024-10-20 22:45:13,418 - INFO - 367. Saved in database: Entropy: Zero 2
-2024-10-20 22:45:13,828 - INFO - 368. Saved in database: Need for Speed: Most Wanted (2012)
-2024-10-20 22:45:14,127 - INFO - Found zh_CN for Skull and Bones: 碧海黑帆
-2024-10-20 22:45:14,136 - INFO - 369. Saved in database: Skull and Bones
-2024-10-20 22:45:15,277 - INFO - 370. Saved in database: The Fruit of Grisaia
-2024-10-20 22:45:15,495 - INFO - No save locations found: NTRaholic Remix
-2024-10-20 22:45:15,894 - INFO - 371. Saved in database: While We Wait Here
-2024-10-20 22:45:16,367 - INFO - 372. Saved in database: Billy Hatcher and the Giant Egg
-2024-10-20 22:45:16,367 - INFO - Finding game installation folders...
-2024-10-20 22:45:55,111 - WARNING - Failed to fetch steam database (attempt 1/10): 15 seconds
-2024-10-20 22:46:33,712 - WARNING - Failed to fetch steam database (attempt 2/10): 15 seconds
-2024-10-20 22:47:12,337 - WARNING - Failed to fetch steam database (attempt 3/10): 15 seconds
-2024-10-20 22:47:50,930 - WARNING - Failed to fetch steam database (attempt 4/10): 15 seconds
-2024-10-20 22:48:29,725 - WARNING - Failed to fetch steam database (attempt 5/10): 15 seconds
-2024-10-20 22:49:08,453 - WARNING - Failed to fetch steam database (attempt 6/10): 15 seconds
-2024-10-20 22:49:47,169 - WARNING - Failed to fetch steam database (attempt 7/10): 15 seconds
-2024-10-20 22:50:25,791 - WARNING - Failed to fetch steam database (attempt 8/10): 15 seconds
-2024-10-20 22:51:04,453 - WARNING - Failed to fetch steam database (attempt 9/10): 15 seconds
-2024-10-20 22:51:43,181 - WARNING - Failed to fetch steam database (attempt 10/10): 15 seconds
-2024-10-20 22:51:43,181 - ERROR - Error processing game entry for Billy Hatcher and the Giant Egg: 15 seconds
-Traceback (most recent call last):
-  File "D:\Resources\Software\Game Save Manager\database\database_fetcher.py", line 247, in process_games
-    self.find_install_folder_name(steam_ids)
-  File "D:\Resources\Software\Game Save Manager\database\database_fetcher.py", line 467, in find_install_folder_name
-    info = client.get_product_info(apps=steam_ids)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\dyang\AppData\Local\Programs\Python\Python312\Lib\site-packages\steam\client\builtins\apps.py", line 139, in get_product_info
-    chunk = self.wait_event(job_id, timeout=timeout, raises=True)
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\dyang\AppData\Local\Programs\Python\Python312\Lib\site-packages\eventemitter\__init__.py", line 119, in wait_event
-    return result.get(True, timeout)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "src\\gevent\\event.py", line 329, in gevent._gevent_cevent.AsyncResult.get
-  File "src\\gevent\\event.py", line 356, in gevent._gevent_cevent.AsyncResult.get
-  File "src\\gevent\\_abstract_linkable.py", line 487, in gevent._gevent_c_abstract_linkable.AbstractLinkable._wait_core
-  File "src\\gevent\\_abstract_linkable.py", line 490, in gevent._gevent_c_abstract_linkable.AbstractLinkable._wait_core
-  File "src\\gevent\\_abstract_linkable.py", line 442, in gevent._gevent_c_abstract_linkable.AbstractLinkable._AbstractLinkable__wait_to_be_notified
-  File "src\\gevent\\_abstract_linkable.py", line 451, in gevent._gevent_c_abstract_linkable.AbstractLinkable._switch_to_hub
-  File "src\\gevent\\_greenlet_primitives.py", line 61, in gevent._gevent_c_greenlet_primitives.SwitchOutGreenletWithLoop.switch
-  File "src\\gevent\\_greenlet_primitives.py", line 65, in gevent._gevent_c_greenlet_primitives.SwitchOutGreenletWithLoop.switch
-  File "src\\gevent\\_gevent_c_greenlet_primitives.pxd", line 35, in gevent._gevent_c_greenlet_primitives._greenlet_switch
-gevent.timeout.Timeout: 15 seconds
-2024-10-20 22:51:43,182 - INFO - Continue parameter: {'rccontinue': '20241018171017|1896637', 'continue': '-||'}
-2024-10-20 22:51:43,750 - INFO - 373. Saved in database: SteamWorld Heist II
-2024-10-20 22:51:44,070 - INFO - 374. Saved in database: Crow Country
-2024-10-20 22:51:45,133 - INFO - 375. Saved in database: El Shaddai: Ascension of the Metatron HD Remaster
-2024-10-20 22:51:45,306 - INFO - Found zh_CN for Castlevania: Lords of Shadow: 恶魔城 暗影之王
-2024-10-20 22:51:45,312 - INFO - 376. Saved in database: Castlevania: Lords of Shadow
-2024-10-20 22:51:45,615 - INFO - Found zh_CN for TOCA Race Driver 3: 超级房车赛3
-2024-10-20 22:51:45,633 - INFO - 377. Saved in database: TOCA Race Driver 3
-2024-10-20 22:51:45,792 - INFO - No save locations found: Cronos: The New Dawn
-2024-10-20 22:51:46,113 - INFO - 378. Saved in database: Need for Speed (2016)
-2024-10-20 22:51:46,355 - INFO - 379. Saved in database: Kamikaze Lassplanes
-2024-10-20 22:51:46,948 - INFO - No save locations found: The big list of DRM-free games on Steam
-2024-10-20 22:51:47,246 - INFO - Found zh_CN for The Elder Scrolls IV: Oblivion: 上古卷轴IV 湮灭
-2024-10-20 22:51:47,256 - INFO - 380. Saved in database: The Elder Scrolls IV: Oblivion
-2024-10-20 22:51:47,411 - INFO - No save locations found: Marvel's Spider-Man 2
-2024-10-20 22:51:47,613 - INFO - Found zh_CN for For the King II: 为了吾王2
-2024-10-20 22:51:47,622 - INFO - 381. Saved in database: For the King II
-2024-10-20 22:51:47,623 - INFO - Finding game installation folders...
-2024-10-20 22:52:26,095 - WARNING - Failed to fetch steam database (attempt 1/10): 15 seconds
-2024-10-20 22:53:04,849 - WARNING - Failed to fetch steam database (attempt 2/10): 15 seconds
-2024-10-20 22:53:43,477 - WARNING - Failed to fetch steam database (attempt 3/10): 15 seconds
-2024-10-20 22:54:22,002 - WARNING - Failed to fetch steam database (attempt 4/10): 15 seconds
-2024-10-20 22:55:00,781 - WARNING - Failed to fetch steam database (attempt 5/10): 15 seconds
-2024-10-20 22:55:39,282 - WARNING - Failed to fetch steam database (attempt 6/10): 15 seconds
-2024-10-20 22:56:17,761 - WARNING - Failed to fetch steam database (attempt 7/10): 15 seconds
-2024-10-20 22:56:56,417 - WARNING - Failed to fetch steam database (attempt 8/10): 15 seconds
-2024-10-20 22:57:34,854 - WARNING - Failed to fetch steam database (attempt 9/10): 15 seconds
-2024-10-20 22:58:13,369 - WARNING - Failed to fetch steam database (attempt 10/10): 15 seconds
-2024-10-20 22:58:13,369 - ERROR - Error processing game entry for For the King II: 15 seconds
-Traceback (most recent call last):
-  File "D:\Resources\Software\Game Save Manager\database\database_fetcher.py", line 247, in process_games
-    self.find_install_folder_name(steam_ids)
-  File "D:\Resources\Software\Game Save Manager\database\database_fetcher.py", line 467, in find_install_folder_name
-    info = client.get_product_info(apps=steam_ids)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\dyang\AppData\Local\Programs\Python\Python312\Lib\site-packages\steam\client\builtins\apps.py", line 139, in get_product_info
-    chunk = self.wait_event(job_id, timeout=timeout, raises=True)
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\dyang\AppData\Local\Programs\Python\Python312\Lib\site-packages\eventemitter\__init__.py", line 119, in wait_event
-    return result.get(True, timeout)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "src\\gevent\\event.py", line 329, in gevent._gevent_cevent.AsyncResult.get
-  File "src\\gevent\\event.py", line 356, in gevent._gevent_cevent.AsyncResult.get
-  File "src\\gevent\\_abstract_linkable.py", line 487, in gevent._gevent_c_abstract_linkable.AbstractLinkable._wait_core
-  File "src\\gevent\\_abstract_linkable.py", line 490, in gevent._gevent_c_abstract_linkable.AbstractLinkable._wait_core
-  File "src\\gevent\\_abstract_linkable.py", line 442, in gevent._gevent_c_abstract_linkable.AbstractLinkable._AbstractLinkable__wait_to_be_notified
-  File "src\\gevent\\_abstract_linkable.py", line 451, in gevent._gevent_c_abstract_linkable.AbstractLinkable._switch_to_hub
-  File "src\\gevent\\_greenlet_primitives.py", line 61, in gevent._gevent_c_greenlet_primitives.SwitchOutGreenletWithLoop.switch
-  File "src\\gevent\\_greenlet_primitives.py", line 65, in gevent._gevent_c_greenlet_primitives.SwitchOutGreenletWithLoop.switch
-  File "src\\gevent\\_gevent_c_greenlet_primitives.pxd", line 35, in gevent._gevent_c_greenlet_primitives._greenlet_switch
-gevent.timeout.Timeout: 15 seconds
-2024-10-20 22:58:13,371 - INFO - Continue parameter: {'rccontinue': '20241019005035|1896701', 'continue': '-||'}
-2024-10-20 22:58:14,667 - INFO - Found zh_CN for The Dishwasher: Vampire Smile: 洗碗工 吸血鬼的微笑
-2024-10-20 22:58:14,675 - INFO - 382. Saved in database: The Dishwasher: Vampire Smile
-2024-10-20 22:58:14,834 - INFO - No save locations found: Sonic X Shadow Generations
-2024-10-20 22:58:15,007 - INFO - Found zh_CN for Gears 5: 战争机器5
-2024-10-20 22:58:15,015 - INFO - 383. Saved in database: Gears 5
-2024-10-20 22:58:15,285 - INFO - Found zh_CN for Transformers: Rise of the Dark Spark: 变形金刚：暗火燎原
-2024-10-20 22:58:15,293 - INFO - 384. Saved in database: Transformers: Rise of the Dark Spark
-2024-10-20 22:58:15,566 - INFO - Found zh_CN for The Legend of Heroes: Trails through Daybreak: 英雄传说：黎之轨迹
-2024-10-20 22:58:15,574 - INFO - 385. Saved in database: The Legend of Heroes: Trails through Daybreak
-2024-10-20 22:58:15,878 - INFO - 386. Saved in database: The Legend of Heroes: Trails through Daybreak II
-2024-10-20 22:58:16,057 - INFO - No save locations found: Assetto Corsa EVO
-2024-10-20 22:58:16,309 - INFO - 387. Saved in database: Passport to Peril
-2024-10-20 22:58:17,511 - INFO - 388. Saved in database: Hokus Pokus Pink
-2024-10-20 22:58:17,786 - INFO - 389. Saved in database: Pinkadelic Pursuit
-2024-10-20 22:58:17,969 - INFO - Found zh_CN for Crisis Core: Final Fantasy VII Reunion: 最终幻想7 核心危机 重聚
-2024-10-20 22:58:17,976 - INFO - 390. Saved in database: Crisis Core: Final Fantasy VII Reunion
-2024-10-20 22:58:18,395 - INFO - 391. Saved in database: Still Wakes the Deep
-2024-10-20 22:58:18,572 - INFO - No save locations found: Monster Hunter Wilds
-2024-10-20 22:58:18,845 - INFO - 392. Saved in database: Scania Truck Driving Simulator
-2024-10-20 22:58:19,129 - INFO - 393. Saved in database: Trucks & Trailers
-2024-10-20 22:58:19,313 - INFO - Found zh_CN for Bus Driver: 巴士驾驶员
-2024-10-20 22:58:19,321 - INFO - 394. Saved in database: Bus Driver
-2024-10-20 22:58:19,549 - INFO - Found zh_CN for UK Truck Simulator: 英国卡车模拟
-2024-10-20 22:58:19,556 - INFO - 395. Saved in database: UK Truck Simulator
-2024-10-20 22:58:19,839 - INFO - Found zh_CN for German Truck Simulator: 德国卡车模拟
-2024-10-20 22:58:19,846 - INFO - 396. Saved in database: German Truck Simulator
-2024-10-20 22:58:20,068 - INFO - Found zh_CN for Euro Truck Simulator: 欧洲卡车模拟
-2024-10-20 22:58:20,075 - INFO - 397. Saved in database: Euro Truck Simulator
-2024-10-20 22:58:20,279 - INFO - Found zh_CN for Kingdom: New Lands: 王国：新大陆
-2024-10-20 22:58:20,286 - INFO - 398. Saved in database: Kingdom: New Lands
-2024-10-20 22:58:20,474 - INFO - No save locations found: Rubber Bandits
-2024-10-20 22:58:20,860 - INFO - Found zh_CN for Grand Theft Auto V: 侠盗猎车手5
-2024-10-20 22:58:20,866 - INFO - 399. Saved in database: Grand Theft Auto V
-2024-10-20 22:58:21,068 - INFO - No save locations found: N.I.C.E. 2
-2024-10-20 22:58:21,250 - INFO - No save locations found: Director of Football
-2024-10-20 22:58:21,542 - INFO - 400. Saved in database: Lost in Vivo
-2024-10-20 22:58:21,542 - INFO - Finding game installation folders...
-2024-10-20 22:59:00,243 - WARNING - Failed to fetch steam database (attempt 1/10): 15 seconds
-2024-10-20 22:59:38,720 - WARNING - Failed to fetch steam database (attempt 2/10): 15 seconds
-2024-10-20 23:00:17,252 - WARNING - Failed to fetch steam database (attempt 3/10): 15 seconds
-2024-10-20 23:00:55,730 - WARNING - Failed to fetch steam database (attempt 4/10): 15 seconds
-2024-10-20 23:01:34,157 - WARNING - Failed to fetch steam database (attempt 5/10): 15 seconds
-2024-10-20 23:02:12,577 - WARNING - Failed to fetch steam database (attempt 6/10): 15 seconds
-2024-10-20 23:02:51,259 - WARNING - Failed to fetch steam database (attempt 7/10): 15 seconds
-2024-10-20 23:03:30,053 - WARNING - Failed to fetch steam database (attempt 8/10): 15 seconds
-2024-10-20 23:04:08,745 - WARNING - Failed to fetch steam database (attempt 9/10): 15 seconds
-2024-10-20 23:04:47,233 - WARNING - Failed to fetch steam database (attempt 10/10): 15 seconds
-2024-10-20 23:04:47,233 - ERROR - Error processing game entry for Lost in Vivo: 15 seconds
-Traceback (most recent call last):
-  File "D:\Resources\Software\Game Save Manager\database\database_fetcher.py", line 247, in process_games
-    self.find_install_folder_name(steam_ids)
-  File "D:\Resources\Software\Game Save Manager\database\database_fetcher.py", line 467, in find_install_folder_name
-    info = client.get_product_info(apps=steam_ids)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\dyang\AppData\Local\Programs\Python\Python312\Lib\site-packages\steam\client\builtins\apps.py", line 139, in get_product_info
-    chunk = self.wait_event(job_id, timeout=timeout, raises=True)
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\dyang\AppData\Local\Programs\Python\Python312\Lib\site-packages\eventemitter\__init__.py", line 119, in wait_event
-    return result.get(True, timeout)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "src\\gevent\\event.py", line 329, in gevent._gevent_cevent.AsyncResult.get
-  File "src\\gevent\\event.py", line 356, in gevent._gevent_cevent.AsyncResult.get
-  File "src\\gevent\\_abstract_linkable.py", line 487, in gevent._gevent_c_abstract_linkable.AbstractLinkable._wait_core
-  File "src\\gevent\\_abstract_linkable.py", line 490, in gevent._gevent_c_abstract_linkable.AbstractLinkable._wait_core
-  File "src\\gevent\\_abstract_linkable.py", line 442, in gevent._gevent_c_abstract_linkable.AbstractLinkable._AbstractLinkable__wait_to_be_notified
-  File "src\\gevent\\_abstract_linkable.py", line 451, in gevent._gevent_c_abstract_linkable.AbstractLinkable._switch_to_hub
-  File "src\\gevent\\_greenlet_primitives.py", line 61, in gevent._gevent_c_greenlet_primitives.SwitchOutGreenletWithLoop.switch
-  File "src\\gevent\\_greenlet_primitives.py", line 65, in gevent._gevent_c_greenlet_primitives.SwitchOutGreenletWithLoop.switch
-  File "src\\gevent\\_gevent_c_greenlet_primitives.pxd", line 35, in gevent._gevent_c_greenlet_primitives._greenlet_switch
-gevent.timeout.Timeout: 15 seconds
-2024-10-20 23:04:47,234 - INFO - Continue parameter: {'rccontinue': '20241019134023|1896755', 'continue': '-||'}
-2024-10-20 23:04:47,608 - INFO - No save locations found: 4 Elements II
-2024-10-20 23:04:47,872 - INFO - 401. Saved in database: The Inquisitor (2024)
-2024-10-20 23:04:48,125 - INFO - 402. Saved in database: Like Clay
-2024-10-20 23:04:48,372 - INFO - Found zh_CN for Songs of Conquest: 征服之歌
-2024-10-20 23:04:48,378 - INFO - 403. Saved in database: Songs of Conquest
-2024-10-20 23:04:48,637 - INFO - 404. Saved in database: 4 Elements
-2024-10-20 23:04:48,888 - INFO - Found zh_CN for James Bond 007: Nightfire: 詹姆斯邦德007：夜火
-2024-10-20 23:04:48,895 - INFO - 405. Saved in database: James Bond 007: Nightfire
-2024-10-20 23:04:49,091 - INFO - Found zh_CN for Just Cause 3: 正当防卫3
-2024-10-20 23:04:49,098 - INFO - 406. Saved in database: Just Cause 3
-2024-10-20 23:04:49,329 - INFO - Found zh_CN for Sky: Children of the Light: Sky光·遇
-2024-10-20 23:04:49,336 - INFO - 407. Saved in database: Sky: Children of the Light
-2024-10-20 23:04:49,498 - INFO - No save locations found: Max Payne 1&2 Remake
-2024-10-20 23:04:49,819 - INFO - 408. Saved in database: RetroRealms Arcade
-2024-10-20 23:04:49,999 - INFO - No save locations found: Art Shop Simulator
-2024-10-20 23:04:50,178 - INFO - No save locations found: Don't Escape
-2024-10-20 23:04:50,390 - INFO - Found zh_CN for A Plague Tale: Requiem: 瘟疫传说：安魂曲
-2024-10-20 23:04:50,397 - INFO - 409. Saved in database: A Plague Tale: Requiem
-2024-10-20 23:04:50,719 - INFO - 410. Saved in database: American McGee's Alice (2011)
-2024-10-20 23:04:51,024 - INFO - 411. Saved in database: Rise of the Triad: Dark War
-2024-10-20 23:04:51,224 - INFO - No save locations found: Hot Rod: American Street Drag
-2024-10-20 23:04:51,224 - INFO - Finding game installation folders...
-2024-10-20 23:05:29,846 - WARNING - Failed to fetch steam database (attempt 1/10): 15 seconds
-2024-10-20 23:06:08,371 - WARNING - Failed to fetch steam database (attempt 2/10): 15 seconds
-2024-10-20 23:06:46,850 - WARNING - Failed to fetch steam database (attempt 3/10): 15 seconds
-2024-10-20 23:07:25,519 - WARNING - Failed to fetch steam database (attempt 4/10): 15 seconds
-2024-10-20 23:08:04,002 - WARNING - Failed to fetch steam database (attempt 5/10): 15 seconds
-2024-10-20 23:08:09,397 - INFO - Found installation folder for steam_id 1880470
-2024-10-20 23:08:09,406 - INFO - Found installation folder for steam_id 604000
-2024-10-20 23:08:09,416 - INFO - Found installation folder for steam_id 867210
-2024-10-20 23:08:09,425 - INFO - Found installation folder for steam_id 47000
-2024-10-20 23:08:09,434 - INFO - Found installation folder for steam_id 225540
-2024-10-20 23:08:09,442 - INFO - Found installation folder for steam_id 2325290
-2024-10-20 23:08:09,451 - INFO - Found installation folder for steam_id 2158030
-2024-10-20 23:08:09,459 - INFO - Found installation folder for steam_id 1182900
-2024-10-20 23:08:09,468 - INFO - Found installation folder for steam_id 358410
-2024-10-20 23:08:09,468 - INFO - Continue parameter: {'rccontinue': '20241020001556|1896858', 'continue': '-||'}
-2024-10-20 23:08:10,787 - INFO - Found zh_CN for Synthetik: Legion Rising: 合成人 军团崛起
-2024-10-20 23:08:10,794 - INFO - 412. Saved in database: Synthetik: Legion Rising
-2024-10-20 23:08:11,050 - INFO - 413. Saved in database: Sonic 3D Blast (Genesis)
-2024-10-20 23:08:11,901 - INFO - 414. Saved in database: Sonic 3D Blast
-2024-10-20 23:08:13,122 - INFO - No save locations found: Concord
-2024-10-20 23:08:13,362 - INFO - 415. Saved in database: Sonic R
-2024-10-20 23:08:13,628 - INFO - 416. Saved in database: Sonic R (2004)
-2024-10-20 23:08:14,373 - INFO - 417. Saved in database: Shady Knight
-2024-10-20 23:08:14,641 - INFO - Found zh_CN for Sonic & Sega All-Stars Racing: 索尼克世嘉全明星赛车
-2024-10-20 23:08:14,649 - INFO - 418. Saved in database: Sonic & Sega All-Stars Racing
-2024-10-20 23:08:14,857 - INFO - Found zh_CN for Half-Life: Source: 半条命：起源
-2024-10-20 23:08:14,864 - INFO - 419. Saved in database: Half-Life: Source
-2024-10-20 23:08:15,038 - INFO - No save locations found: CatboyZOOM
-2024-10-20 23:08:15,205 - INFO - No save locations found: Silly Polly Beast
-2024-10-20 23:08:15,389 - INFO - No save locations found: Symphonia (upcoming)
-2024-10-20 23:08:15,628 - INFO - 420. Saved in database: En Garde!
-2024-10-20 23:08:15,847 - INFO - Found zh_CN for Baldur's Gate: Dark Alliance II: 博德之门：黑暗联盟2
-2024-10-20 23:08:15,854 - INFO - 421. Saved in database: Baldur's Gate: Dark Alliance II
-2024-10-20 23:08:16,056 - INFO - Found zh_CN for Baldur's Gate: Dark Alliance: 博德之门：黑暗联盟
-2024-10-20 23:08:16,067 - INFO - 422. Saved in database: Baldur's Gate: Dark Alliance
-2024-10-20 23:08:16,266 - INFO - Found zh_CN for Chris Sawyer's Locomotion: 运输帝国
-2024-10-20 23:08:16,276 - INFO - 423. Saved in database: Chris Sawyer's Locomotion
-2024-10-20 23:08:16,529 - INFO - Found zh_CN for RollerCoaster Tycoon 2: 过山车大亨2
-2024-10-20 23:08:16,539 - INFO - 424. Saved in database: RollerCoaster Tycoon 2
-2024-10-20 23:08:16,787 - INFO - Found zh_CN for RollerCoaster Tycoon: 过山车大亨
-2024-10-20 23:08:16,799 - INFO - 425. Saved in database: RollerCoaster Tycoon
-2024-10-20 23:08:17,032 - INFO - 426. Saved in database: OpenLoco
-2024-10-20 23:08:17,275 - INFO - 427. Saved in database: OpenRCT2
-2024-10-20 23:08:17,599 - INFO - 428. Saved in database: OpenTTD
-2024-10-20 23:08:17,815 - INFO - No save locations found: Transport Tycoon Deluxe
-2024-10-20 23:08:18,078 - INFO - Found zh_CN for RollerCoaster Tycoon 3: 过山车大亨3
-2024-10-20 23:08:18,088 - INFO - 429. Saved in database: RollerCoaster Tycoon 3
-2024-10-20 23:08:18,246 - INFO - No save locations found: Transport Tycoon
-2024-10-20 23:08:18,523 - INFO - 430. Saved in database: Dune II: The Building of a Dynasty
-2024-10-20 23:08:19,119 - INFO - 431. Saved in database: Emperor: Battle for Dune
-2024-10-20 23:08:19,411 - INFO - 432. Saved in database: Command & Conquer: Red Alert
-2024-10-20 23:08:19,689 - INFO - 433. Saved in database: Command & Conquer: Sole Survivor
-2024-10-20 23:08:19,946 - INFO - 434. Saved in database: Command & Conquer
-2024-10-20 23:08:20,132 - INFO - Found zh_CN for Command & Conquer: Tiberian Sun: 命令与征服 泰伯利亚之日
-2024-10-20 23:08:20,140 - INFO - 435. Saved in database: Command & Conquer: Tiberian Sun
-2024-10-20 23:08:20,346 - INFO - Found zh_CN for Command & Conquer: Red Alert 2: 红色警戒2：共和国之辉
-2024-10-20 23:08:20,354 - INFO - 436. Saved in database: Command & Conquer: Red Alert 2
-2024-10-20 23:08:20,627 - INFO - 437. Saved in database: Command & Conquer: Renegade
-2024-10-20 23:08:20,627 - INFO - Finding game installation folders...
-2024-10-20 23:08:56,073 - WARNING - Failed to fetch steam database (attempt 1/10): 15 seconds
-2024-10-20 23:09:34,590 - WARNING - Failed to fetch steam database (attempt 2/10): 15 seconds
-2024-10-20 23:10:13,037 - WARNING - Failed to fetch steam database (attempt 3/10): 15 seconds
-2024-10-20 23:10:51,495 - WARNING - Failed to fetch steam database (attempt 4/10): 15 seconds
-2024-10-20 23:11:29,992 - WARNING - Failed to fetch steam database (attempt 5/10): 15 seconds
-2024-10-20 23:12:08,679 - WARNING - Failed to fetch steam database (attempt 6/10): 15 seconds
-2024-10-20 23:12:47,290 - WARNING - Failed to fetch steam database (attempt 7/10): 15 seconds
-2024-10-20 23:13:25,776 - WARNING - Failed to fetch steam database (attempt 8/10): 15 seconds
-2024-10-20 23:14:04,212 - WARNING - Failed to fetch steam database (attempt 9/10): 15 seconds
-2024-10-20 23:14:42,674 - WARNING - Failed to fetch steam database (attempt 10/10): 15 seconds
-2024-10-20 23:14:42,674 - ERROR - Error processing game entry for Command & Conquer: Renegade: 15 seconds
-Traceback (most recent call last):
-  File "D:\Resources\Software\Game Save Manager\database\database_fetcher.py", line 247, in process_games
-    self.find_install_folder_name(steam_ids)
-  File "D:\Resources\Software\Game Save Manager\database\database_fetcher.py", line 467, in find_install_folder_name
-    info = client.get_product_info(apps=steam_ids)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\dyang\AppData\Local\Programs\Python\Python312\Lib\site-packages\steam\client\builtins\apps.py", line 139, in get_product_info
-    chunk = self.wait_event(job_id, timeout=timeout, raises=True)
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\dyang\AppData\Local\Programs\Python\Python312\Lib\site-packages\eventemitter\__init__.py", line 119, in wait_event
-    return result.get(True, timeout)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "src\\gevent\\event.py", line 329, in gevent._gevent_cevent.AsyncResult.get
-  File "src\\gevent\\event.py", line 356, in gevent._gevent_cevent.AsyncResult.get
-  File "src\\gevent\\_abstract_linkable.py", line 487, in gevent._gevent_c_abstract_linkable.AbstractLinkable._wait_core
-  File "src\\gevent\\_abstract_linkable.py", line 490, in gevent._gevent_c_abstract_linkable.AbstractLinkable._wait_core
-  File "src\\gevent\\_abstract_linkable.py", line 442, in gevent._gevent_c_abstract_linkable.AbstractLinkable._AbstractLinkable__wait_to_be_notified
-  File "src\\gevent\\_abstract_linkable.py", line 451, in gevent._gevent_c_abstract_linkable.AbstractLinkable._switch_to_hub
-  File "src\\gevent\\_greenlet_primitives.py", line 61, in gevent._gevent_c_greenlet_primitives.SwitchOutGreenletWithLoop.switch
-  File "src\\gevent\\_greenlet_primitives.py", line 65, in gevent._gevent_c_greenlet_primitives.SwitchOutGreenletWithLoop.switch
-  File "src\\gevent\\_gevent_c_greenlet_primitives.pxd", line 35, in gevent._gevent_c_greenlet_primitives._greenlet_switch
-gevent.timeout.Timeout: 15 seconds
-2024-10-20 23:14:42,675 - INFO - Continue parameter: {'rccontinue': '20241020084944|1896930', 'continue': '-||'}
-2024-10-20 23:14:43,159 - INFO - 438. Saved in database: Populous II: Trials of the Olympian Gods
-2024-10-20 23:14:43,370 - INFO - Found zh_CN for Populous: 上帝也疯狂
-2024-10-20 23:14:43,377 - INFO - 439. Saved in database: Populous
-2024-10-20 23:14:43,627 - INFO - Found zh_CN for Sid Meier's Alpha Centauri: 半人马座阿尔发星
-2024-10-20 23:14:43,633 - INFO - 440. Saved in database: Sid Meier's Alpha Centauri
-2024-10-20 23:14:43,798 - INFO - Found zh_CN for Age of Wonders: 奇迹时代
-2024-10-20 23:14:43,806 - INFO - 441. Saved in database: Age of Wonders
-2024-10-20 23:14:44,019 - INFO - Found zh_CN for Age of Wonders II: The Wizard's Throne: 奇迹时代2 巫师王座
-2024-10-20 23:14:44,026 - INFO - 442. Saved in database: Age of Wonders II: The Wizard's Throne
-2024-10-20 23:14:44,294 - INFO - 443. Saved in database: Sid Meier's Civilization III
-2024-10-20 23:14:44,470 - INFO - Found zh_CN for Age of Wonders: Shadow Magic: 奇迹时代：暗影魔法
-2024-10-20 23:14:44,477 - INFO - 444. Saved in database: Age of Wonders: Shadow Magic
-2024-10-20 23:14:44,750 - INFO - 445. Saved in database: Civilization II: Test of Time
-2024-10-20 23:14:44,918 - INFO - No save locations found: Sid Meier's Civilization II
-2024-10-20 23:14:45,086 - INFO - Found zh_CN for Age of Wonders III: 奇迹时代3
-2024-10-20 23:14:45,093 - INFO - 446. Saved in database: Age of Wonders III
-2024-10-20 23:14:45,286 - INFO - Found zh_CN for Age of Wonders 4: 奇迹时代4
-2024-10-20 23:14:45,293 - INFO - 447. Saved in database: Age of Wonders 4
-2024-10-20 23:14:45,615 - INFO - 448. Saved in database: Sid Meier's Civilization IV
-2024-10-20 23:14:45,795 - INFO - Found zh_CN for CivCity: Rome: 文明城市：罗马
-2024-10-20 23:14:45,802 - INFO - 449. Saved in database: CivCity: Rome
-2024-10-20 23:14:46,110 - INFO - 450. Saved in database: Sid Meier's Civilization IV: Colonization
-2024-10-20 23:14:46,420 - INFO - 451. Saved in database: Sid Meier's Civilization V
-2024-10-20 23:14:46,656 - INFO - Found zh_CN for Space Colony: 太空殖民地
-2024-10-20 23:14:46,663 - INFO - 452. Saved in database: Space Colony
-2024-10-20 23:14:46,916 - INFO - Found zh_CN for Stronghold 2: 要塞2
-2024-10-20 23:14:46,922 - INFO - 453. Saved in database: Stronghold 2
-2024-10-20 23:14:47,198 - INFO - Found zh_CN for Sid Meier's Civilization: Beyond Earth: 文明 太空
-2024-10-20 23:14:47,205 - INFO - 454. Saved in database: Sid Meier's Civilization: Beyond Earth
-2024-10-20 23:14:47,454 - INFO - Found zh_CN for Stronghold Legends: 要塞传奇
-2024-10-20 23:14:47,461 - INFO - 455. Saved in database: Stronghold Legends
-2024-10-20 23:14:47,801 - INFO - Found zh_CN for Stronghold Crusader: 要塞：十字军东征
-2024-10-20 23:14:47,808 - INFO - 456. Saved in database: Stronghold Crusader
-2024-10-20 23:14:48,054 - INFO - 457. Saved in database: Stronghold
-2024-10-20 23:14:48,219 - INFO - Path not specified from {{p|game}}: Caesar III
-2024-10-20 23:14:48,297 - INFO - 458. Saved in database: Caesar III
-2024-10-20 23:14:48,468 - INFO - Path not specified from {{p|game}}: Pharaoh
-2024-10-20 23:14:48,540 - INFO - 459. Saved in database: Pharaoh
-2024-10-20 23:14:48,783 - INFO - Path not specified from {{p|game}}: Emperor: Rise of the Middle Kingdom
-2024-10-20 23:14:48,814 - INFO - Found zh_CN for Emperor: Rise of the Middle Kingdom: 皇帝：中国的崛起
-2024-10-20 23:14:48,820 - INFO - 460. Saved in database: Emperor: Rise of the Middle Kingdom
-2024-10-20 23:14:49,081 - INFO - Path not specified from {{p|game}}: Zeus: Master of Olympus
-2024-10-20 23:14:49,172 - INFO - Found zh_CN for Zeus: Master of Olympus: 宙斯：奥林匹斯之主
-2024-10-20 23:14:49,180 - INFO - 461. Saved in database: Zeus: Master of Olympus
-2024-10-20 23:14:49,484 - INFO - 462. Saved in database: Heroes of Might and Magic III - HD Edition
-2024-10-20 23:14:49,689 - INFO - Found zh_CN for Heroes Chronicles: 英雄无敌历代记
-2024-10-20 23:14:49,697 - INFO - 463. Saved in database: Heroes Chronicles
-2024-10-20 23:14:49,909 - INFO - Found zh_CN for Heroes of Might and Magic III: 魔法门之英雄无敌3
-2024-10-20 23:14:49,916 - INFO - 464. Saved in database: Heroes of Might and Magic III
-2024-10-20 23:14:50,187 - INFO - 465. Saved in database: Heroes of Might and Magic II
-2024-10-20 23:14:50,447 - INFO - Found zh_CN for Heroes of Might and Magic: A Strategic Quest: 魔法门之英雄无敌：战略任务
-2024-10-20 23:14:50,454 - INFO - 466. Saved in database: Heroes of Might and Magic: A Strategic Quest
-2024-10-20 23:14:50,623 - INFO - No save locations found: Don't Escape Trilogy
-2024-10-20 23:14:50,803 - INFO - Found zh_CN for ANNO: Mutationem: 纪元：变异
-2024-10-20 23:14:51,141 - INFO - 467. Saved in database: ANNO: Mutationem
-2024-10-20 23:14:51,402 - INFO - 468. Saved in database: Jagged Alliance 2
-2024-10-20 23:14:51,708 - INFO - 469. Saved in database: Jagged Alliance 2: Unfinished Business
-2024-10-20 23:14:51,916 - INFO - Found zh_CN for Jagged Alliance 2: Wildfire: 铁血联盟2：野火
-2024-10-20 23:14:51,923 - INFO - 470. Saved in database: Jagged Alliance 2: Wildfire
-2024-10-20 23:14:52,119 - INFO - Found zh_CN for Jagged Alliance: 铁血联盟
-2024-10-20 23:14:52,130 - INFO - 471. Saved in database: Jagged Alliance
-2024-10-20 23:14:52,411 - INFO - 472. Saved in database: Jagged Alliance: Deadly Games
-2024-10-20 23:14:52,673 - INFO - Found zh_CN for Total Annihilation: Kingdoms: 横扫千军：王国风云
-2024-10-20 23:14:52,680 - INFO - 473. Saved in database: Total Annihilation: Kingdoms
-2024-10-20 23:14:52,931 - INFO - Found zh_CN for Total Annihilation: 横扫千军
-2024-10-20 23:14:52,938 - INFO - 474. Saved in database: Total Annihilation
-2024-10-20 23:14:53,217 - INFO - 475. Saved in database: The Settlers III
-2024-10-20 23:14:53,505 - INFO - 476. Saved in database: The Settlers III: History Edition
-2024-10-20 23:14:53,505 - INFO - Finding game installation folders...
-2024-10-20 23:15:32,005 - WARNING - Failed to fetch steam database (attempt 1/10): 15 seconds
-2024-10-20 23:16:10,463 - WARNING - Failed to fetch steam database (attempt 2/10): 15 seconds
-2024-10-20 23:16:48,939 - WARNING - Failed to fetch steam database (attempt 3/10): 15 seconds
-2024-10-20 23:17:27,434 - WARNING - Failed to fetch steam database (attempt 4/10): 15 seconds
-2024-10-20 23:18:06,083 - WARNING - Failed to fetch steam database (attempt 5/10): 15 seconds
-2024-10-20 23:18:44,731 - WARNING - Failed to fetch steam database (attempt 6/10): 15 seconds
-2024-10-20 23:19:23,252 - WARNING - Failed to fetch steam database (attempt 7/10): 15 seconds
-2024-10-20 23:20:02,162 - WARNING - Failed to fetch steam database (attempt 8/10): 15 seconds
-2024-10-20 23:20:40,827 - WARNING - Failed to fetch steam database (attempt 9/10): 15 seconds
-2024-10-20 23:21:19,393 - WARNING - Failed to fetch steam database (attempt 10/10): 15 seconds
-2024-10-20 23:21:19,393 - ERROR - Error processing game entry for The Settlers III: History Edition: 15 seconds
-Traceback (most recent call last):
-  File "D:\Resources\Software\Game Save Manager\database\database_fetcher.py", line 247, in process_games
-    self.find_install_folder_name(steam_ids)
-  File "D:\Resources\Software\Game Save Manager\database\database_fetcher.py", line 467, in find_install_folder_name
-    info = client.get_product_info(apps=steam_ids)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\dyang\AppData\Local\Programs\Python\Python312\Lib\site-packages\steam\client\builtins\apps.py", line 139, in get_product_info
-    chunk = self.wait_event(job_id, timeout=timeout, raises=True)
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\dyang\AppData\Local\Programs\Python\Python312\Lib\site-packages\eventemitter\__init__.py", line 119, in wait_event
-    return result.get(True, timeout)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "src\\gevent\\event.py", line 329, in gevent._gevent_cevent.AsyncResult.get
-  File "src\\gevent\\event.py", line 356, in gevent._gevent_cevent.AsyncResult.get
-  File "src\\gevent\\_abstract_linkable.py", line 487, in gevent._gevent_c_abstract_linkable.AbstractLinkable._wait_core
-  File "src\\gevent\\_abstract_linkable.py", line 490, in gevent._gevent_c_abstract_linkable.AbstractLinkable._wait_core
-  File "src\\gevent\\_abstract_linkable.py", line 442, in gevent._gevent_c_abstract_linkable.AbstractLinkable._AbstractLinkable__wait_to_be_notified
-  File "src\\gevent\\_abstract_linkable.py", line 451, in gevent._gevent_c_abstract_linkable.AbstractLinkable._switch_to_hub
-  File "src\\gevent\\_greenlet_primitives.py", line 61, in gevent._gevent_c_greenlet_primitives.SwitchOutGreenletWithLoop.switch
-  File "src\\gevent\\_greenlet_primitives.py", line 65, in gevent._gevent_c_greenlet_primitives.SwitchOutGreenletWithLoop.switch
-  File "src\\gevent\\_gevent_c_greenlet_primitives.pxd", line 35, in gevent._gevent_c_greenlet_primitives._greenlet_switch
-gevent.timeout.Timeout: 15 seconds
-2024-10-20 23:21:19,394 - INFO - Continue parameter: {'rccontinue': '20241020115357|1896980', 'continue': '-||'}
-2024-10-20 23:21:19,871 - INFO - 477. Saved in database: The Settlers IV - History Edition
-2024-10-20 23:21:20,221 - INFO - 478. Saved in database: The Settlers II: Veni, Vidi, Vici - History Edition
-2024-10-20 23:21:20,490 - INFO - 479. Saved in database: The Settlers - History Edition
-2024-10-20 23:21:20,737 - INFO - 480. Saved in database: The Settlers IV
-2024-10-20 23:21:21,023 - INFO - 481. Saved in database: The Settlers II: Veni, Vidi, Vici
-2024-10-20 23:21:21,279 - INFO - 482. Saved in database: The Settlers
-2024-10-20 23:21:21,466 - INFO - Found zh_CN for Dragon Age: Origins: 龙腾世纪 起源
-2024-10-20 23:21:21,476 - INFO - 483. Saved in database: Dragon Age: Origins
-2024-10-20 23:21:21,670 - INFO - Found zh_CN for Dragon Age II: 龙腾世纪2
-2024-10-20 23:21:21,677 - INFO - 484. Saved in database: Dragon Age II
-2024-10-20 23:21:21,872 - INFO - Found zh_CN for Jagged Alliance: Rage!: 铁血联盟：狂怒
-2024-10-20 23:21:21,879 - INFO - 485. Saved in database: Jagged Alliance: Rage!
-2024-10-20 23:21:22,107 - INFO - Found zh_CN for Pathfinder: Kingmaker: 开拓者：拥王者
-2024-10-20 23:21:22,115 - INFO - 486. Saved in database: Pathfinder: Kingmaker
-2024-10-20 23:21:22,293 - INFO - Found zh_CN for Bridge Constructor: The Walking Dead: 桥梁构造者：行尸走肉
-2024-10-20 23:21:22,301 - INFO - 487. Saved in database: Bridge Constructor: The Walking Dead
-2024-10-20 23:21:22,566 - INFO - 488. Saved in database: Star Trek: Armada II
-2024-10-20 23:21:22,810 - INFO - Found zh_CN for Star Trek: Bridge Commander: 星际迷航：舰桥指挥官
-2024-10-20 23:21:22,817 - INFO - 489. Saved in database: Star Trek: Bridge Commander
-2024-10-20 23:21:23,064 - INFO - 490. Saved in database: Star Trek: Armada
-2024-10-20 23:21:23,216 - INFO - Path not specified from {{p|game}}: Star Trek: Starfleet Command - Orion Pirates
-2024-10-20 23:21:23,352 - INFO - 491. Saved in database: Star Trek: Starfleet Command - Orion Pirates
-2024-10-20 23:21:23,521 - INFO - Path not specified from {{p|game}}: Star Trek: Starfleet Command II - Empires at War
-2024-10-20 23:21:23,661 - INFO - 492. Saved in database: Star Trek: Starfleet Command II - Empires at War
-2024-10-20 23:21:23,889 - INFO - Path not specified from {{p|game}}: Star Trek: Starfleet Command
-2024-10-20 23:21:23,998 - INFO - 493. Saved in database: Star Trek: Starfleet Command
-2024-10-20 23:21:24,273 - INFO - Found zh_CN for Dark Colony: 暗黑殖民地
-2024-10-20 23:21:24,280 - INFO - 494. Saved in database: Dark Colony
-2024-10-20 23:21:24,555 - INFO - 495. Saved in database: Star Trek: Starfleet Command III
-2024-10-20 23:21:24,864 - INFO - Found zh_CN for Street Fighter Alpha 2: 少年街霸2
-2024-10-20 23:21:24,871 - INFO - 496. Saved in database: Street Fighter Alpha 2
-2024-10-20 23:21:25,041 - INFO - No save locations found: Street Fighter Alpha: Warriors' Dreams
-2024-10-20 23:21:25,228 - INFO - Found zh_CN for Gestalt: Steam & Cinder: 格式塔：蒸汽&煤渣
-2024-10-20 23:21:25,235 - INFO - 497. Saved in database: Gestalt: Steam & Cinder
-2024-10-20 23:21:25,504 - INFO - 498. Saved in database: Super Street Fighter II
-2024-10-20 23:21:25,767 - INFO - Path not specified from {{p|game}}: Super Street Fighter II Turbo
-2024-10-20 23:21:25,880 - INFO - 499. Saved in database: Super Street Fighter II Turbo
-2024-10-20 23:21:26,159 - INFO - 500. Saved in database: Rise of Nations: Extended Edition
-2024-10-20 23:21:26,376 - INFO - Found zh_CN for Rise of Nations: 国家的崛起
-2024-10-20 23:21:26,383 - INFO - 501. Saved in database: Rise of Nations
-2024-10-20 23:21:26,607 - INFO - Found zh_CN for Rise of Nations: Rise of Legends: 国家的崛起：传说再现
-2024-10-20 23:21:26,614 - INFO - 502. Saved in database: Rise of Nations: Rise of Legends
-2024-10-20 23:21:26,873 - INFO - 503. Saved in database: Tom Clancy's ruthless.com
-2024-10-20 23:21:27,113 - INFO - 504. Saved in database: EA Sports FC 25
-2024-10-20 23:21:27,365 - INFO - Found zh_CN for Tron: Evolution: 特隆：进化
-2024-10-20 23:21:27,372 - INFO - 505. Saved in database: Tron: Evolution
-2024-10-20 23:21:27,570 - INFO - Found zh_CN for Crysis 3 Remastered: 孤岛危机3：复刻版
-2024-10-20 23:21:27,578 - INFO - 506. Saved in database: Crysis 3 Remastered
-2024-10-20 23:21:27,762 - INFO - Path not specified from {{p|game}}: Rugrats: Adventures in Gameland
-2024-10-20 23:21:27,762 - INFO - Path not specified from {{p|game}}: Rugrats: Adventures in Gameland
-2024-10-20 23:21:27,762 - INFO - No save locations found: Rugrats: Adventures in Gameland
-2024-10-20 23:21:28,023 - INFO - Found zh_CN for Ultimate Marvel vs. Capcom 3: 终极漫画英雄vs卡普空3
-2024-10-20 23:21:28,294 - INFO - 507. Saved in database: Ultimate Marvel vs. Capcom 3
-2024-10-20 23:21:28,504 - INFO - Found zh_CN for Of Orcs and Men: 妖兽与人类
-2024-10-20 23:21:28,511 - INFO - 508. Saved in database: Of Orcs and Men
-2024-10-20 23:21:28,694 - INFO - Found zh_CN for Bound by Flame: 烈焰契约
-2024-10-20 23:21:28,701 - INFO - 509. Saved in database: Bound by Flame
-2024-10-20 23:21:28,910 - INFO - Found zh_CN for Mars: War Logs: 火星战记
-2024-10-20 23:21:28,917 - INFO - 510. Saved in database: Mars: War Logs
-2024-10-20 23:21:29,114 - INFO - Found zh_CN for Faery: Legends of Avalon: 妖精：阿瓦隆传奇
-2024-10-20 23:21:29,121 - INFO - 511. Saved in database: Faery: Legends of Avalon
-2024-10-20 23:21:29,389 - INFO - 512. Saved in database: Resident Evil 2 (2019)
-2024-10-20 23:21:29,389 - INFO - Finding game installation folders...
-2024-10-20 23:22:08,188 - WARNING - Failed to fetch steam database (attempt 1/10): 15 seconds
-2024-10-20 23:22:46,648 - WARNING - Failed to fetch steam database (attempt 2/10): 15 seconds
-2024-10-20 23:23:25,391 - WARNING - Failed to fetch steam database (attempt 3/10): 15 seconds
-2024-10-20 23:24:03,857 - WARNING - Failed to fetch steam database (attempt 4/10): 15 seconds
-2024-10-20 23:24:42,379 - WARNING - Failed to fetch steam database (attempt 5/10): 15 seconds
-2024-10-20 23:24:46,446 - INFO - Found installation folder for steam_id 47810
-2024-10-20 23:24:46,455 - INFO - Found installation folder for steam_id 1238040
-2024-10-20 23:24:46,463 - INFO - Found installation folder for steam_id 463170
-2024-10-20 23:24:46,472 - INFO - Found installation folder for steam_id 640820
-2024-10-20 23:24:46,480 - INFO - Found installation folder for steam_id 1336120
-2024-10-20 23:24:46,490 - INFO - Found installation folder for steam_id 364820
-2024-10-20 23:24:46,498 - INFO - Found installation folder for steam_id 1231990
-2024-10-20 23:24:46,507 - INFO - Found installation folder for steam_id 287450
-2024-10-20 23:24:46,516 - INFO - Found installation folder for steam_id 2669320
-2024-10-20 23:24:46,525 - INFO - Found installation folder for steam_id 315440
-2024-10-20 23:24:46,534 - INFO - Found installation folder for steam_id 2096610
-2024-10-20 23:24:46,543 - INFO - Found installation folder for steam_id 357190
-2024-10-20 23:24:46,552 - INFO - Found installation folder for steam_id 216910
-2024-10-20 23:24:46,560 - INFO - Found installation folder for steam_id 243930
-2024-10-20 23:24:46,568 - INFO - Found installation folder for steam_id 232750
-2024-10-20 23:24:46,577 - INFO - Found installation folder for steam_id 303790
-2024-10-20 23:24:46,586 - INFO - Found installation folder for steam_id 883710
-2024-10-20 23:24:46,586 - INFO - Continue parameter: {'rccontinue': '20241020180244|1897036', 'continue': '-||'}
-2024-10-20 23:24:47,009 - INFO - 513. Saved in database: Jak II (OpenGOAL)
-2024-10-20 23:24:47,325 - INFO - 514. Saved in database: Jak and Daxter: The Precursor Legacy (OpenGOAL)
-2024-10-20 23:24:47,525 - INFO - Found zh_CN for Elden Ring: 艾尔登法环
-2024-10-20 23:24:47,532 - INFO - 515. Saved in database: Elden Ring
-2024-10-20 23:24:47,773 - INFO - 516. Saved in database: Autobahn
-2024-10-20 23:24:47,983 - INFO - Found zh_CN for Persona 4 Golden: 女神异闻录4：黄金版
-2024-10-20 23:24:47,989 - INFO - 517. Saved in database: Persona 4 Golden
-2024-10-20 23:24:48,297 - INFO - Found zh_CN for Ys IX: Monstrum Nox: 伊苏9
-2024-10-20 23:24:48,305 - INFO - 518. Saved in database: Ys IX: Monstrum Nox
-2024-10-20 23:24:48,466 - INFO - No save locations found: Horizon Zero Dawn Remastered
-2024-10-20 23:24:48,755 - INFO - 519. Saved in database: Resident Evil Zero HD Remaster
-2024-10-20 23:24:49,034 - INFO - 520. Saved in database: PowerSlave Exhumed
-2024-10-20 23:24:49,034 - INFO - Finding game installation folders...
-2024-10-20 23:25:24,613 - WARNING - Failed to fetch steam database (attempt 1/10): 15 seconds
-2024-10-20 23:26:03,048 - WARNING - Failed to fetch steam database (attempt 2/10): 15 seconds
-2024-10-20 23:26:41,505 - WARNING - Failed to fetch steam database (attempt 3/10): 15 seconds
-2024-10-20 23:27:20,029 - WARNING - Failed to fetch steam database (attempt 4/10): 15 seconds
-2024-10-20 23:27:58,537 - WARNING - Failed to fetch steam database (attempt 5/10): 15 seconds
-2024-10-20 23:28:37,129 - WARNING - Failed to fetch steam database (attempt 6/10): 15 seconds
-2024-10-20 23:29:15,806 - WARNING - Failed to fetch steam database (attempt 7/10): 15 seconds
-2024-10-20 23:29:54,325 - WARNING - Failed to fetch steam database (attempt 8/10): 15 seconds
-2024-10-20 23:30:33,334 - WARNING - Failed to fetch steam database (attempt 9/10): 15 seconds
-2024-10-20 23:31:11,812 - WARNING - Failed to fetch steam database (attempt 10/10): 15 seconds
-2024-10-20 23:31:11,812 - ERROR - Error processing game entry for PowerSlave Exhumed: 15 seconds
-Traceback (most recent call last):
-  File "D:\Resources\Software\Game Save Manager\database\database_fetcher.py", line 247, in process_games
-    self.find_install_folder_name(steam_ids)
-  File "D:\Resources\Software\Game Save Manager\database\database_fetcher.py", line 467, in find_install_folder_name
-    info = client.get_product_info(apps=steam_ids)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\dyang\AppData\Local\Programs\Python\Python312\Lib\site-packages\steam\client\builtins\apps.py", line 139, in get_product_info
-    chunk = self.wait_event(job_id, timeout=timeout, raises=True)
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\dyang\AppData\Local\Programs\Python\Python312\Lib\site-packages\eventemitter\__init__.py", line 119, in wait_event
-    return result.get(True, timeout)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "src\\gevent\\event.py", line 329, in gevent._gevent_cevent.AsyncResult.get
-  File "src\\gevent\\event.py", line 356, in gevent._gevent_cevent.AsyncResult.get
-  File "src\\gevent\\_abstract_linkable.py", line 487, in gevent._gevent_c_abstract_linkable.AbstractLinkable._wait_core
-  File "src\\gevent\\_abstract_linkable.py", line 490, in gevent._gevent_c_abstract_linkable.AbstractLinkable._wait_core
-  File "src\\gevent\\_abstract_linkable.py", line 442, in gevent._gevent_c_abstract_linkable.AbstractLinkable._AbstractLinkable__wait_to_be_notified
-  File "src\\gevent\\_abstract_linkable.py", line 451, in gevent._gevent_c_abstract_linkable.AbstractLinkable._switch_to_hub
-  File "src\\gevent\\_greenlet_primitives.py", line 61, in gevent._gevent_c_greenlet_primitives.SwitchOutGreenletWithLoop.switch
-  File "src\\gevent\\_greenlet_primitives.py", line 65, in gevent._gevent_c_greenlet_primitives.SwitchOutGreenletWithLoop.switch
-  File "src\\gevent\\_gevent_c_greenlet_primitives.pxd", line 35, in gevent._gevent_c_greenlet_primitives._greenlet_switch
-gevent.timeout.Timeout: 15 seconds
-2024-10-20 23:31:11,813 - INFO - All recent changes fetched!
+2024-10-22 01:41:40,950 - INFO - All recent changes fetched!
