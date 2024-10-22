@@ -10,7 +10,7 @@ const i18next = require('i18next');
 const Backend = require('i18next-fs-backend');
 const { pinyin } = require('pinyin');
 
-const { createMainWindow, getMainWin, getNewestBackup, osKeyMap, loadSettings, saveSettings, getSettings, moveFilesWithProgress } = require('./global');
+const { createMainWindow, getMainWin, getNewestBackup, getStatus, updateStatus, osKeyMap, loadSettings, saveSettings, getSettings, moveFilesWithProgress } = require('./global');
 const { getGameData, initializeGameData, detectGamePaths } = require('./gameData');
 const { getGameDataFromDB, getAllGameDataFromDB, backupGame } = require('./backup');
 const { getGameDataForRestore, restoreGame } = require("./restore");
@@ -176,8 +176,24 @@ ipcMain.handle('sort-games', (event, games) => {
 });
 
 ipcMain.handle('save-custom-entries', async (event, jsonObj) => {
-    console.log(jsonObj)
-    await fse.writeJson(path.join(getSettings().backupPath, "custom_entries.json"), jsonObj, { spaces: 4 });
+    try {
+        const filePath = path.join(getSettings().backupPath, "custom_entries.json");
+        let currentData = {};
+
+        if (fs.existsSync(filePath)) {
+            currentData = await fse.readJson(filePath);
+        }
+
+        if (JSON.stringify(currentData) !== JSON.stringify(jsonObj)) {
+            await fse.writeJson(filePath, jsonObj, { spaces: 4 });
+            getMainWin().webContents.send('show-alert', 'success', i18next.t('alert.save_custom_success'));
+            getMainWin().webContents.send('update-backup-table');
+        }
+
+    } catch (error) {
+        console.error(`Error saving custom games: ${error.stack}`);
+        getMainWin().webContents.send('show-alert', 'modal', i18next.t('alert.save_custom_error'), error.message);
+    }
 });
 
 ipcMain.handle('load-custom-entries', async () => {
@@ -193,7 +209,8 @@ ipcMain.handle('load-custom-entries', async () => {
         return jsonData;
 
     } catch (error) {
-        console.error('Error loading custom entries:', error);
+        console.error(`Error loading custom games: ${error.stack}`);
+        getMainWin().webContents.send('show-alert', 'modal', i18next.t('alert.load_custom_error'), error.message);
         return [];
     }
 });
@@ -250,4 +267,12 @@ ipcMain.handle('restore-game', async (event, gameObj, userActionForAll) => {
 ipcMain.on('migrate-backups', (event, newBackupPath) => {
     const currentBackupPath = getSettings().backupPath;
     moveFilesWithProgress(currentBackupPath, newBackupPath);
+});
+
+ipcMain.handle('get-status', () => {
+    return getStatus();
+});
+
+ipcMain.on('update-status', (event, statusKey, statusValue) => {
+    updateStatus(statusKey, statusValue);
 });

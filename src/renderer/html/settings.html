@@ -18,16 +18,7 @@
     class="bg-white dark:bg-gray-900 p-8 pt-5 flex flex-col items-center min-h-screen scrollbar scrollbar-w-2 scrollbar-h-2 scrollbar-track-rounded-full scrollbar-thumb-rounded-full scrollbar-track-white scrollbar-thumb-slate-300 dark:scrollbar-track-gray-800 dark:scrollbar-thumb-slate-600">
     <div id="alert-container" class="fixed top-5 right-5 z-50 space-y-2"></div>
 
-    <div class="flex items-center mb-3 mt-1">
-        <svg class="w-4 h-4 text-yellow-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
-            <path
-                d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-        </svg>
-        <span class="ml-2 text-yellow-500 text-sm font-medium text-content"
-            data-i18n="settings.auto_save_settings">Settings will be automatically saved upon closing the window</span>
-    </div>
-
-    <form class="max-w-sm mx-auto w-full">
+    <form class="max-w-sm mx-auto w-full mb-20">
         <!-- Theme selection -->
         <label for="theme" data-i18n="settings.theme"
             class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
@@ -96,6 +87,16 @@
             </div>
         </fieldset>
     </form>
+
+    <!-- Save settings button -->
+    <div
+        class="fixed inset-x-0 bottom-0 bg-gray-200 dark:bg-gray-800 border-t border-gray-300 dark:border-gray-600 py-4 text-center">
+        <button id="save-settings" data-i18n="settings.save_settings"
+            class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700">
+            <i class="fas fa-save mr-1"></i>
+            <span class="text-content">Save Settings</span>
+        </button>
+    </div>
 
 </body>
 

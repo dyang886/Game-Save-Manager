@@ -14,7 +14,8 @@
         "gameInstallExists": "Game installation path already exists",
         "select_backup_path": "Select backup save path",
         "select_path": "Select a path",
-        "auto_save_settings": "Settings will be automatically saved upon closing the window"
+        "save_settings": "Save Settings",
+        "save-settings-success": "Successfully saved settings"
     },
     "main": {
         "title": "Game Save Manager",
@@ -88,6 +89,12 @@
         "migrate_backups": "Migrating backup files...",
         "backup_migration_success": "Backup migration success",
         "error_during_backup_migration": "Something went wrong during backup migration",
-        "learn_more": "Learn More"
+        "learn_more": "Learn More",
+        "wait_for_backup": "Please wait for backup to complete",
+        "wait_for_restore": "Please wait for restore to complete",
+        "wait_for_migrate": "Please wait for backup files migration to complete",
+        "save_custom_error": "Error saving custom games",
+        "load_custom_error": "Error loading custom games",
+        "save_custom_success": "Successfully saved custom games"
     }
 }

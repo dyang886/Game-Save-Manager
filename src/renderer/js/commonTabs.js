@@ -424,7 +424,7 @@ async function unpinGameFromTop(tabName, wikiId) {
         }));
 
         unpinnedGames.push({ row: rowToMove, titleToSort: rowToMove.querySelector('th[scope="row"]').textContent.trim() });
-        const sortedUnpinnedGames = await window.api.invoke('sort-games', pinnedGames);
+        const sortedUnpinnedGames = await window.api.invoke('sort-games', unpinnedGames);
         const indexToInsert = sortedUnpinnedGames.findIndex(game => game.row === rowToMove);
 
         // Insert the row in the correct sorted position

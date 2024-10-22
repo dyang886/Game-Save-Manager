@@ -142,7 +142,14 @@ function setupBackupButton() {
     const backupText = document.getElementById('backup-text');
 
     backupButton.addEventListener('click', async () => {
+        const selectedGames = getSelectedWikiIds('backup');
+
         if (backupButton.disabled) return;
+        if (selectedGames.length === 0) {
+            showAlert('warning', await window.i18n.translate('alert.no_games_selected'));
+            return;
+        }
+        await window.api.send('update-status', 'backuping', true);
 
         // Disable the button and change the appearance
         backupButton.disabled = true;
@@ -159,10 +166,9 @@ function setupBackupButton() {
         backupText.textContent = await window.i18n.translate('main.backup_in_progress');
 
         await performBackup();
-        getSelectedWikiIds('backup').forEach(async wikiId => {
+        selectedGames.forEach(async wikiId => {
             await updateNewestBackupTime('backup', wikiId);
         });
-        await updateRestoreTable(true);
         document.querySelector('#backup-summary-done').classList.remove('hidden');
 
         // Re-enable the button and revert to the original state
@@ -172,6 +178,7 @@ function setupBackupButton() {
         backupIcon.classList.add('fa-arrow-right-long');
         backupButton.setAttribute('data-i18n', 'main.backup_selected');
         backupText.textContent = await window.i18n.translate('main.backup_selected');
+        await window.api.send('update-status', 'backuping', false);
     });
 }
 
@@ -182,37 +189,36 @@ async function performBackup() {
     const progressText = document.getElementById('backup-progress-text');
     const totalGames = selectedWikiIds.length;
 
-    if (totalGames === 0) {
-        showAlert('warning', await window.i18n.translate('alert.no_games_selected'));
-        return;
-    }
+    const start = await operationStartCheck('backup');
+    if (start) {
+        progressContainer.classList.remove('hidden');
 
-    progressContainer.classList.remove('hidden');
+        let backupCount = 0;
+        let backupFailed = 0;
+        let backupSize = 0;
+        let errors = [];
 
-    let backupCount = 0;
-    let backupFailed = 0;
-    let backupSize = 0;
-    let errors = [];
+        for (const wikiId of selectedWikiIds) {
+            const gameData = backupTableDataMap.get(wikiId);
+            const newError = await window.api.invoke('backup-game', gameData);
 
-    for (const wikiId of selectedWikiIds) {
-        const gameData = backupTableDataMap.get(wikiId);
-        const newError = await window.api.invoke('backup-game', gameData);
+            if (newError) {
+                backupFailed += 1;
+                errors.push(newError);
+            } else {
+                backupSize += gameData.backup_size;
+            }
 
-        if (newError) {
-            backupFailed += 1;
-            errors.push(newError);
-        } else {
-            backupSize += gameData.backup_size;
+            backupCount++;
+            const progressPercentage = Math.round((backupCount / totalGames) * 100);
+            progressBar.style.width = `${progressPercentage}%`;
+            progressText.innerText = `${progressPercentage}%`;
         }
 
-        backupCount++;
-        const progressPercentage = Math.round((backupCount / totalGames) * 100);
-        progressBar.style.width = `${progressPercentage}%`;
-        progressText.innerText = `${progressPercentage}%`;
+        progressContainer.classList.add('hidden');
+        showBackupSummary(backupCount, backupFailed, errors, backupSize);
+        await updateRestoreTable(true);
     }
-
-    progressContainer.classList.add('hidden');
-    showBackupSummary(backupCount, backupFailed, errors, backupSize);
 }
 
 function showBackupSummary(backupCount, backupFailed, errors, backupSize) {

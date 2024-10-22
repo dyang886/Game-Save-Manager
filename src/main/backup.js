@@ -494,7 +494,7 @@ async function backupGame(gameObj) {
 
     } catch (error) {
         console.error(`Error during backup for game ${getGameDisplayName(gameObj)}: ${error.stack}`);
-        return `${i18next.t('alert.backup_game_error', { game_name: getGameDisplayName(gameObj) })}: ${err.message}`;
+        return `${i18next.t('alert.backup_game_error', { game_name: getGameDisplayName(gameObj) })}: ${error.message}`;
     }
 
     return null;
