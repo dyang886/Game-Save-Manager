@@ -13,6 +13,12 @@ let settingsWin;
 let settings;
 let writeQueue = Promise.resolve();
 
+let status = {
+    backuping: false,
+    restoring: false,
+    migrating: false,
+}
+
 // Main window
 const createMainWindow = async () => {
     const primaryDisplay = screen.getPrimaryDisplay();
@@ -170,6 +176,10 @@ function getNewestBackup(wiki_page_id) {
     return moment(latestBackup, 'YYYY-MM-DD_HH-mm').format('YYYY/MM/DD HH:mm');
 }
 
+function updateStatus(statusKey, statusValue) {
+    status[statusKey] = statusValue;
+}
+
 const placeholder_mapping = {
     // Windows
     '{{p|username}}': os.userInfo().username,
@@ -315,6 +325,7 @@ async function moveFilesWithProgress(sourceDir, destinationDir) {
     let totalSize = 0;
     let movedSize = 0;
     let errors = [];
+    status.migrating = true;
 
     const moveAndTrackProgress = async (srcDir, destDir) => {
         try {
@@ -374,13 +385,16 @@ async function moveFilesWithProgress(sourceDir, destinationDir) {
         }
     }
     saveSettings('backupPath', destinationDir);
-    getMainWin().webContents.send('update-restore-table');
+    win.webContents.send('update-restore-table');
+    status.migrating = false;
 }
 
 module.exports = {
     createMainWindow,
     getMainWin: () => win,
     getSettingsWin: () => settingsWin,
+    getStatus: () => status,
+    updateStatus,
     getGameDisplayName,
     calculateDirectorySize,
     ensureWritable,

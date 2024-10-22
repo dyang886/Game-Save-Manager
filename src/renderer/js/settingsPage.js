@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const autoDetectButton = document.getElementById('auto-detect-paths');
     const gamePathsContainer = document.getElementById('game-paths-container');
     const addNewPathButton = document.getElementById('add-new-path');
+    const saveSettingsButton = document.getElementById('save-settings');
 
     let previousSettings = '';
 
@@ -53,38 +54,42 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    window.addEventListener('beforeunload', () => {
-        // Check if game install paths changed
-        const newGameInstallPaths = [];
-        document.querySelectorAll('.game-path-item .display-path').forEach((input) => {
-            const path = input.value.trim();
-            if (path) {
-                newGameInstallPaths.push(path);
+    saveSettingsButton.addEventListener('click', async () => {
+        const start = await operationStartCheck('change-settings');
+        if (start) {
+            // Check if game install paths changed
+            const newGameInstallPaths = [];
+            document.querySelectorAll('.game-path-item .display-path').forEach((input) => {
+                const path = input.value.trim();
+                if (path) {
+                    newGameInstallPaths.push(path);
+                }
+            });
+
+            const areArraysEqual = (arr1, arr2) => {
+                if (arr1.length !== arr2.length) {
+                    return false;
+                }
+                const sortedArr1 = [...arr1].sort();
+                const sortedArr2 = [...arr2].sort();
+
+                return sortedArr1.every((value, index) => value === sortedArr2[index]);
+            };
+
+            if (!areArraysEqual(previousSettings.gameInstalls, newGameInstallPaths)) {
+                window.api.send('save-settings', 'gameInstalls', newGameInstallPaths);
+                window.api.send('post-settings-close-update', 'backup');
             }
-        });
 
-        const areArraysEqual = (arr1, arr2) => {
-            if (arr1.length !== arr2.length) {
-                return false;
+            // Check if backup path changed
+            const newBackupPath = backupPathInput.value.trim();
+            if (previousSettings.backupPath.trim() !== newBackupPath) {
+                window.api.send('migrate-backups', newBackupPath);
             }
-            const sortedArr1 = [...arr1].sort();
-            const sortedArr2 = [...arr2].sort();
 
-            return sortedArr1.every((value, index) => value === sortedArr2[index]);
-        };
-
-        if (!areArraysEqual(previousSettings.gameInstalls, newGameInstallPaths)) {
-            window.api.send('save-settings', 'gameInstalls', newGameInstallPaths);
-            window.api.send('post-settings-close-update', 'backup');
+            window.api.send('save-settings', 'maxBackups', maxBackupsInput.value);
+            showAlert('success', await window.i18n.translate('settings.save-settings-success'));
         }
-
-        // Check if backup path changed
-        const newBackupPath = backupPathInput.value.trim();
-        if (previousSettings.backupPath.trim() !== newBackupPath) {
-            window.api.send('migrate-backups', newBackupPath);
-        }
-
-        window.api.send('save-settings', 'maxBackups', maxBackupsInput.value);
     });
 
     autoDetectButton.addEventListener('click', () => {

@@ -241,7 +241,7 @@ class DatabaseFetcher:
 
             # Process steam database
             retry = 0
-            max_retry = 10
+            max_retry = 30
             while retry < max_retry:
                 try:
                     self.find_install_folder_name(steam_ids)

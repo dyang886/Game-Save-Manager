@@ -2,7 +2,7 @@ function setupCustomPage() {
     const addGameButton = document.querySelector('#custom-add-game');
     const saveAllButton = document.querySelector('#custom-save-all');
 
-    addGameButton.addEventListener('click', async (event) => {
+    addGameButton.addEventListener('click', async () => {
         const allTitles = document.querySelectorAll('.custom-entry-title');
         const foundEmptyEntry = Array.from(allTitles).some(title => {
             if (!title.innerText.trim()) {
@@ -20,8 +20,9 @@ function setupCustomPage() {
         }
     });
 
-    saveAllButton.addEventListener('click', (event) => {
-        saveEntriesToJson(saveAllButton);
+    saveAllButton.addEventListener('click', () => {
+        const start = operationStartCheck('save-custom');
+        if (start) saveEntriesToJson(saveAllButton);
     });
 
     loadEntriesFromJson();

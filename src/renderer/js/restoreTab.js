@@ -137,7 +137,14 @@ function setupRestoreButton() {
     const restoreText = document.getElementById('restore-text');
 
     restoreButton.addEventListener('click', async () => {
+        const selectedGames = getSelectedWikiIds('restore');
+
         if (restoreButton.disabled) return;
+        if (selectedGames.length === 0) {
+            showAlert('warning', await window.i18n.translate('alert.no_games_selected'));
+            return;
+        }
+        await window.api.send('update-status', 'restoring', true);
 
         // Disable the button and change the appearance
         restoreButton.disabled = true;
@@ -163,6 +170,7 @@ function setupRestoreButton() {
         restoreIcon.classList.add('fa-arrow-right-long');
         restoreButton.setAttribute('data-i18n', 'main.restore_selected');
         restoreText.textContent = await window.i18n.translate('main.restore_selected');
+        await window.api.send('update-status', 'restoring', false);
     });
 }
 
@@ -173,44 +181,42 @@ async function performRestore() {
     const progressText = document.getElementById('restore-progress-text');
     const totalGames = selectedWikiIds.length;
 
-    if (totalGames === 0) {
-        showAlert('warning', await window.i18n.translate('alert.no_games_selected'));
-        return;
-    }
+    const start = await operationStartCheck('restore');
+    if (start) {
+        progressContainer.classList.remove('hidden');
 
-    progressContainer.classList.remove('hidden');
+        let restoreCount = 0;
+        let restoreFailed = 0;
+        let restoreSize = 0;
+        let errors = [];
+        let globalAction = null;
 
-    let restoreCount = 0;
-    let restoreFailed = 0;
-    let restoreSize = 0;
-    let errors = [];
-    let globalAction = null;
+        for (const wikiId of selectedWikiIds) {
+            const gameData = restoreTableDataMap.get(wikiId);
+            const { action: actionForAll, error: newError } = await window.api.invoke('restore-game', gameData, globalAction);
 
-    for (const wikiId of selectedWikiIds) {
-        const gameData = restoreTableDataMap.get(wikiId);
-        const { action: actionForAll, error: newError } = await window.api.invoke('restore-game', gameData, globalAction);
+            // Not counting games that are skipped
+            if (newError) {
+                restoreFailed += 1;
+                restoreCount++;
+                errors.push(newError);
+            } else if (actionForAll !== 'skip') {
+                restoreSize += gameData.backup_size;
+                restoreCount++;
+            }
 
-        // Not counting games that are skipped
-        if (newError) {
-            restoreFailed += 1;
-            restoreCount++;
-            errors.push(newError);
-        } else if (actionForAll !== 'skip') {
-            restoreSize += gameData.backup_size;
-            restoreCount++;
+            const progressPercentage = Math.round((restoreCount / totalGames) * 100);
+            progressBar.style.width = `${progressPercentage}%`;
+            progressText.innerText = `${progressPercentage}%`;
+
+            if (actionForAll) {
+                globalAction = actionForAll;
+            }
         }
 
-        const progressPercentage = Math.round((restoreCount / totalGames) * 100);
-        progressBar.style.width = `${progressPercentage}%`;
-        progressText.innerText = `${progressPercentage}%`;
-
-        if (actionForAll) {
-            globalAction = actionForAll;
-        }
+        progressContainer.classList.add('hidden');
+        showRestoreSummary(restoreCount, restoreFailed, errors, restoreSize);
     }
-
-    progressContainer.classList.add('hidden');
-    showRestoreSummary(restoreCount, restoreFailed, errors, restoreSize);
 }
 
 function showRestoreSummary(restoreCount, restoreFailed, errors, restoreSize) {

@@ -147,8 +147,43 @@ function showModal(modalTitle, modalContent) {
 function closeModal() {
     const modal = document.getElementById('modal');
     const modalOverlay = document.getElementById('modal-overlay');
-    
+
     modal.classList.add('hidden');
     modal.classList.remove('flex');
     modalOverlay.classList.add('hidden');
+}
+
+async function operationStartCheck(operation) {
+    const status = await window.api.invoke('get-status');
+
+    const statusChecks = {
+        'backup': {
+            restoring: 'alert.wait_for_restore',
+            migrating: 'alert.wait_for_migrate'
+        },
+        'restore': {
+            backuping: 'alert.wait_for_backup',
+            migrating: 'alert.wait_for_migrate'
+        },
+        'change-settings': {
+            backuping: 'alert.wait_for_backup',
+            restoring: 'alert.wait_for_restore',
+            migrating: 'alert.wait_for_migrate'
+        },
+        'save-custom': {
+            backuping: 'alert.wait_for_backup',
+            restoring: 'alert.wait_for_restore',
+            migrating: 'alert.wait_for_migrate'
+        }
+    };
+
+    const alerts = statusChecks[operation];
+    for (const [key, message] of Object.entries(alerts)) {
+        if (status[key]) {
+            showAlert('warning', await window.i18n.translate(message));
+            return false;
+        }
+    }
+
+    return true;
 }
