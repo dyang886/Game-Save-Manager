@@ -17,6 +17,14 @@
         "save_settings": "Save Settings",
         "save-settings-success": "Successfully saved settings"
     },
+    "about": {
+        "title": "About",
+        "current_version": "Current version: ",
+        "newest_version": "Newest version: ",
+        "github": "GitHub: ",
+        "bilibili": "Bilibili author home page: ",
+        "load_failed": "Failed to load"
+    },
     "main": {
         "title": "Game Save Manager",
         "loading": "Loading...",
@@ -95,6 +103,11 @@
         "wait_for_migrate": "Please wait for backup files migration to complete",
         "save_custom_error": "Error saving custom games",
         "load_custom_error": "Error loading custom games",
-        "save_custom_success": "Successfully saved custom games"
+        "save_custom_success": "Successfully saved custom games",
+        "update_available": "Update Available",
+        "new_version_found": "New Version Found: {{old_version}} ➜ {{new_version}}",
+        "new_version_found_text": "Please navigate to `Options` ➜ `About` to download the latest version.",
+        "update_check_failed": "Update Check Failed",
+        "update_check_failed_text": "Failed to check for software update. You can navigate to 'Options' ➜ 'About' to check for updates manually."
     }
 }

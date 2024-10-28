@@ -17,6 +17,14 @@
         "save_settings": "保存设置",
         "save-settings-success": "设置保存成功"
     },
+    "about": {
+        "title": "关于",
+        "current_version": "当前版本：",
+        "newest_version": "最新版本：",
+        "github": "GitHub：",
+        "bilibili": "B站作者主页：",
+        "load_failed": "加载失败"
+    },
     "main": {
         "title": "游戏存档管理器",
         "loading": "加载中...",
@@ -95,6 +103,11 @@
         "wait_for_migrate": "请等待备份文件转移完成",
         "save_custom_error": "保存自定义游戏时出错",
         "load_custom_error": "加载自定义游戏时出错",
-        "save_custom_success": "保存自定义游戏成功"
+        "save_custom_success": "保存自定义游戏成功",
+        "update_available": "可用更新",
+        "new_version_found": "发现新版本：{{old_version}} ➜ {{new_version}}",
+        "new_version_found_text": "请移至 `选项` ➜ `关于` 下载最新版本。",
+        "update_check_failed": "检查更新失败",
+        "update_check_failed_text": "无法检查软件更新，请移至 `选项` ➜ `关于` 以手动检查更新。"
     }
 }

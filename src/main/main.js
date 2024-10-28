@@ -10,7 +10,7 @@ const i18next = require('i18next');
 const Backend = require('i18next-fs-backend');
 const { pinyin } = require('pinyin');
 
-const { createMainWindow, getMainWin, getNewestBackup, getStatus, updateStatus, osKeyMap, loadSettings, saveSettings, getSettings, moveFilesWithProgress } = require('./global');
+const { createMainWindow, getMainWin, getNewestBackup, getStatus, updateStatus, checkAppUpdate, osKeyMap, loadSettings, saveSettings, getSettings, moveFilesWithProgress, getVersions } = require('./global');
 const { getGameData, initializeGameData, detectGamePaths } = require('./gameData');
 const { getGameDataFromDB, getAllGameDataFromDB, backupGame } = require('./backup');
 const { getGameDataForRestore, restoreGame } = require("./restore");
@@ -26,6 +26,10 @@ app.whenReady().then(async () => {
     if (getSettings().gameInstalls === 'uninitialized') {
         await detectGamePaths();
         saveSettings('gameInstalls', getGameData().detectedGamePaths);
+    }
+
+    if (getSettings().autoAppUpdate) {
+        checkAppUpdate();
     }
 
     createMainWindow();
@@ -275,4 +279,8 @@ ipcMain.handle('get-status', () => {
 
 ipcMain.on('update-status', (event, statusKey, statusValue) => {
     updateStatus(statusKey, statusValue);
+});
+
+ipcMain.handle('get-versions', () => {
+    return getVersions();
 });
