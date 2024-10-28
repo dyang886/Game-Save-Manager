@@ -4,12 +4,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const backupPathInput = document.getElementById('backup-path');
     const backupPathButton = document.getElementById('select-path');
     const maxBackupsInput = document.getElementById('max-backups');
+    const autoAppUpdateCheckbox = document.getElementById('auto-app-update');
+    const autoDbUpdateCheckbox = document.getElementById('auto-db-update');
     const autoDetectButton = document.getElementById('auto-detect-paths');
     const gamePathsContainer = document.getElementById('game-paths-container');
     const addNewPathButton = document.getElementById('add-new-path');
     const saveSettingsButton = document.getElementById('save-settings');
-
-    let previousSettings = '';
 
     window.api.invoke('get-settings').then((settings) => {
         if (settings) {
@@ -17,8 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
             languageSelect.value = settings.language;
             backupPathInput.value = settings.backupPath;
             maxBackupsInput.value = settings.maxBackups;
-
-            previousSettings = settings;
+            autoAppUpdateCheckbox.checked = settings.autoAppUpdate;
+            autoDbUpdateCheckbox.checked = settings.autoDbUpdate;
 
             if (settings.gameInstalls && settings.gameInstalls.length > 0) {
                 settings.gameInstalls.forEach((installPath) => {
@@ -57,6 +57,8 @@ document.addEventListener('DOMContentLoaded', () => {
     saveSettingsButton.addEventListener('click', async () => {
         const start = await operationStartCheck('change-settings');
         if (start) {
+            previousSettings = await window.api.invoke('get-settings');
+
             // Check if game install paths changed
             const newGameInstallPaths = [];
             document.querySelectorAll('.game-path-item .display-path').forEach((input) => {
@@ -88,6 +90,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             window.api.send('save-settings', 'maxBackups', maxBackupsInput.value);
+            window.api.send('save-settings', 'autoAppUpdate', autoAppUpdateCheckbox.checked);
+            window.api.send('save-settings', 'autoDbUpdate', autoDbUpdateCheckbox.checked);
             showAlert('success', await window.i18n.translate('settings.save-settings-success'));
         }
     });

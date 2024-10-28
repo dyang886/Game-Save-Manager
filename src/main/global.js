@@ -1,4 +1,4 @@
-const { BrowserWindow, Menu, app, screen } = require('electron');
+const { BrowserWindow, Menu, Notification, app, screen } = require('electron');
 
 const fs = require('fs');
 const os = require('os');
@@ -10,9 +10,13 @@ const moment = require('moment');
 
 let win;
 let settingsWin;
+let aboutWin;
 let settings;
 let writeQueue = Promise.resolve();
 
+const appVersion = "2.0.0";
+const updateLink = "https://api.github.com/repos/dyang886/Game-Save-Manager/releases/latest";
+const databaseLink = "https://raw.githubusercontent.com/dyang886/Game-Save-Manager/main/database/database.db";
 let status = {
     backuping: false,
     restoring: false,
@@ -85,11 +89,94 @@ const menuTemplate = [
                     }
                 },
             },
+            {
+                label: "About",
+                click() {
+                    let about_window_size = [480, 290];
+                    if (!aboutWin || aboutWin.isDestroyed()) {
+                        aboutWin = new BrowserWindow({
+                            width: about_window_size[0],
+                            height: about_window_size[1],
+                            minWidth: about_window_size[0],
+                            minHeight: about_window_size[1],
+                            resizable: false,
+                            icon: path.join(__dirname, "../assets/logo.ico"),
+                            parent: win,
+                            modal: true,
+                            webPreferences: {
+                                preload: path.join(__dirname, "preload.js"),
+                            },
+                        });
+
+                        aboutWin.setMenuBarVisibility(false);
+                        aboutWin.loadFile(path.join(__dirname, "../renderer/html/about.html"));
+
+                        aboutWin.on("closed", () => {
+                            aboutWin = null;
+                        });
+                    } else {
+                        aboutWin.focus();
+                    }
+                },
+            },
         ],
     },
 ];
 const menu = Menu.buildFromTemplate(menuTemplate);
 Menu.setApplicationMenu(menu);
+
+async function getVersions() {
+    try {
+        const response = await fetch(updateLink);
+        const data = await response.json();
+        const latestVersion = data.tag_name ? data.tag_name.replace(/^v/, "") : null;
+
+        return { currentVersion: appVersion, latestVersion: latestVersion }
+
+    } catch (error) {
+        console.error("Error checking for update:", error.stack);
+        return { currentVersion: appVersion, latestVersion: null }
+    }
+}
+
+async function checkAppUpdate() {
+    try {
+        const response = await fetch(updateLink);
+        const data = await response.json();
+        const latestVersion = data.tag_name ? data.tag_name.replace(/^v/, "") : appVersion;
+
+        if (latestVersion > appVersion) {
+            showNotification(
+                "info",
+                i18next.t('alert.update_available'),
+                `${i18next.t('alert.new_version_found', {old_version: appVersion, new_version: latestVersion})}\n` +
+                `${i18next.t('alert.new_version_found_text')}`
+            );
+        }
+
+    } catch (error) {
+        console.error("Error checking for update:", error.stack);
+        showNotification(
+            "warning",
+            i18next.t('alert.update_check_failed'),
+            i18next.t('alert.update_check_failed_text')
+        );
+    }
+}
+
+function showNotification(type, title, body) {
+    icon_map = {
+        'info': path.join(__dirname, "../assets/information.png"),
+        'warning': path.join(__dirname, "../assets/warning.png"),
+        'critical': path.join(__dirname, "../assets/critical.png")
+    }
+
+    new Notification({
+        title: title,
+        body: body,
+        icon: icon_map[type],
+    }).show()
+}
 
 function getGameDisplayName(gameObj) {
     if (settings.language === "en_US") {
@@ -264,6 +351,8 @@ const loadSettings = () => {
         language: detectedLanguage,
         backupPath: path.join(appDataPath, "GSM Backups"),
         maxBackups: 5,
+        autoAppUpdate: true,
+        autoDbUpdate: true,
         gameInstalls: 'uninitialized',
         pinnedGames: []
     };
@@ -395,6 +484,8 @@ module.exports = {
     getSettingsWin: () => settingsWin,
     getStatus: () => status,
     updateStatus,
+    getVersions,
+    checkAppUpdate,
     getGameDisplayName,
     calculateDirectorySize,
     ensureWritable,

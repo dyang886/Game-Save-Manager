@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; connect-src 'self' https://api.github.com;">
+    <title class="text-content" data-i18n="about.title">About</title>
+    <link href="../../../node_modules/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+    <link href="../css/styles_addition.css" rel="stylesheet">
+    <script defer src="../js/utility.js"></script>
+    <script defer src="../js/aboutPage.js"></script>
+</head>
+
+<body class="bg-white dark:bg-gray-900 p-3 flex flex-col items-center justify-center h-screen select-none">
+
+    <div class="flex flex-row max-w-sm mx-auto w-full text-center items-center justify-center mb-7">
+        <img src="../../assets/logo.png" alt="App Logo" class="w-32 rounded mr-5">
+
+        <div class="text-gray-900 dark:text-white">
+            <h1 class="text-2xl mb-4" data-i18n="main.title">
+                <span class="text-content">Game Save manager</span>
+            </h1>
+            <p class="text-sm">
+                <span class="text-content" data-i18n="about.current_version">Current version: </span>
+                <span id="current-version">2.0.0</span><br>
+                <span class="text-content" data-i18n="about.newest_version">Newest version: </span>
+                <span id="newest-version" class="text-content" data-i18n="main.loading">Loading...</span>
+            </p>
+        </div>
+    </div>
+
+    <div class="text-sm text-gray-900 dark:text-white flex flex-col gap-2 items-center mb-2">
+        <p data-i18n="about.github">
+            <span class="text-content">GitHub: </span>
+            <a id="github-link"
+                class="text-blue-600 dark:text-blue-400 cursor-pointer">https://github.com/dyang886/Game-Save-Manager</a>
+        </p>
+        <p data-i18n="about.bilibili">
+            <span class="text-content">Bilibili author homepage: </span>
+            <a id="bilibili-link"
+                class="text-blue-600 dark:text-blue-400 cursor-pointer">https://space.bilibili.com/256673766</a>
+        </p>
+    </div>
+
+</body>
+
+</html>
