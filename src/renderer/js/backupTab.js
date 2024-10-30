@@ -149,19 +149,13 @@ function setupBackupButton() {
             showAlert('warning', await window.i18n.translate('alert.no_games_selected'));
             return;
         }
-        await window.api.send('update-status', 'backuping', true);
+        window.api.send('update-status', 'backuping', true);
 
         // Disable the button and change the appearance
         backupButton.disabled = true;
         backupButton.classList.add('cursor-not-allowed');
         backupIcon.classList.remove('fa-arrow-right-long');
-        backupIcon.innerHTML = `
-            <svg aria-hidden="true" role="status" class="inline w-4 h-4 text-white animate-spin"
-                viewBox="0 0 100 101" fill="none">
-                <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-                    fill="#E5E7EB" />
-                <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentColor" />
-            </svg>`;
+        backupIcon.innerHTML = spinner;
         backupButton.setAttribute('data-i18n', 'main.backup_in_progress');
         backupText.textContent = await window.i18n.translate('main.backup_in_progress');
 
@@ -178,20 +172,19 @@ function setupBackupButton() {
         backupIcon.classList.add('fa-arrow-right-long');
         backupButton.setAttribute('data-i18n', 'main.backup_selected');
         backupText.textContent = await window.i18n.translate('main.backup_selected');
-        await window.api.send('update-status', 'backuping', false);
+        window.api.send('update-status', 'backuping', false);
     });
 }
 
 async function performBackup() {
     const selectedWikiIds = getSelectedWikiIds('backup');
-    const progressContainer = document.getElementById('backup-progress');
-    const progressBar = document.getElementById('backup-progress-bar');
-    const progressText = document.getElementById('backup-progress-text');
+    const backupProgressId = 'backup-progress';
+    const backupProgressTitle = await window.api.invoke('translate', 'main.backup_in_progress');
     const totalGames = selectedWikiIds.length;
 
     const start = await operationStartCheck('backup');
     if (start) {
-        progressContainer.classList.remove('hidden');
+        updateProgress(backupProgressId, backupProgressTitle, 'start');
 
         let backupCount = 0;
         let backupFailed = 0;
@@ -211,11 +204,10 @@ async function performBackup() {
 
             backupCount++;
             const progressPercentage = Math.round((backupCount / totalGames) * 100);
-            progressBar.style.width = `${progressPercentage}%`;
-            progressText.innerText = `${progressPercentage}%`;
+            updateProgress(backupProgressId, backupProgressTitle, progressPercentage);
         }
 
-        progressContainer.classList.add('hidden');
+        updateProgress(backupProgressId, backupProgressTitle, 'end');
         showBackupSummary(backupCount, backupFailed, errors, backupSize);
         await updateRestoreTable(true);
     }
@@ -254,5 +246,36 @@ function showBackupSummary(backupCount, backupFailed, errors, backupSize) {
         backupSummary.classList.add('hidden');
         backupContent.classList.remove('hidden');
         event.target.closest('button').classList.add('hidden');
+    });
+}
+
+function setupDbUpdateButton() {
+    const updateButton = document.getElementById('update-database');
+    const updateButtonIcon = document.getElementById('update-database-icon');
+    const updateButtonText = document.getElementById('update-database-text');
+
+    updateButton.addEventListener('click', async () => {
+        if (updateButton.disabled) return;
+
+        const start = await operationStartCheck('update-db');
+        if (start) {
+            window.api.send('update-status', 'updating_db', true);
+            updateButton.disabled = true;
+            updateButton.classList.add('cursor-not-allowed');
+            updateButtonIcon.innerHTML = spinner;
+            updateButtonIcon.classList.remove('fa-rotate');
+            updateButton.setAttribute('data-i18n', 'alert.updating_database');
+            updateButtonText.textContent = await window.i18n.translate('alert.updating_database');
+
+            await window.api.invoke('update-database');
+
+            window.api.send('update-status', 'updating_db', false);
+            updateButton.disabled = false;
+            updateButton.classList.remove('cursor-not-allowed');
+            updateButtonIcon.innerHTML = '';
+            updateButtonIcon.classList.add('fa-rotate');
+            updateButton.setAttribute('data-i18n', 'main.update_database');
+            updateButtonText.textContent = await window.i18n.translate('main.update_database');
+        }
     });
 }

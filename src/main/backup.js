@@ -2,6 +2,7 @@ const { app } = require('electron');
 
 const { exec } = require('child_process');
 const fs = require('fs');
+const https = require('https');
 const os = require('os');
 const path = require('path');
 const util = require('util');
@@ -562,8 +563,77 @@ function findKeyByValue(obj, value) {
     return Object.keys(obj).find(key => obj[key] === value);
 }
 
+async function updateDatabase() {
+    const progressId = 'update-db';
+    const progressTitle = i18next.t('alert.updating_database');
+    const databaseLink = "https://raw.githubusercontent.com/dyang886/Game-Save-Manager/main/database/database.db";
+    let dbPath;
+    if (app.isPackaged) {
+        dbPath = path.join('./database', 'database.db');
+    } else {
+        dbPath = path.join(__dirname, '../../database/database.db');
+    }
+    const backupPath = `${dbPath}.backup`;
+
+    getMainWin().webContents.send('update-progress', progressId, progressTitle, 'start');
+
+    try {
+        if (fs.existsSync(dbPath)) {
+            fs.copyFileSync(dbPath, backupPath);
+        }
+
+        await new Promise((resolve, reject) => {
+            const request = https.get(databaseLink, (response) => {
+                const totalSize = parseInt(response.headers['content-length'], 10);
+                let downloadedSize = 0;
+
+                const fileStream = fs.createWriteStream(dbPath);
+
+                response.on('data', (chunk) => {
+                    downloadedSize += chunk.length;
+                    const progressPercentage = Math.round((downloadedSize / totalSize) * 100);
+                    getMainWin().webContents.send('update-progress', progressId, progressTitle, progressPercentage);
+                });
+
+                response.pipe(fileStream);
+
+                fileStream.on('finish', () => {
+                    fileStream.close(() => {
+                        resolve();
+                    });
+                });
+
+                response.on('error', (error) => {
+                    reject(error);
+                });
+            });
+
+            request.on('error', (error) => {
+                reject(error);
+            });
+        });
+
+        if (fs.existsSync(backupPath)) {
+            fs.unlinkSync(backupPath);
+        }
+        getMainWin().webContents.send('update-progress', progressId, progressTitle, 'end');
+        getMainWin().webContents.send('show-alert', 'success', i18next.t('alert.update_db_success'));
+
+    } catch (error) {
+        console.error(`An error occurred while updating the database: ${error.message}`);
+        getMainWin().webContents.send('show-alert', 'modal', i18next.t('alert.error_during_db_update'), error.message);
+        getMainWin().webContents.send('update-progress', progressId, progressTitle, 'end');
+
+        if (fs.existsSync(backupPath)) {
+            fs.copyFileSync(backupPath, dbPath);
+            fs.unlinkSync(backupPath);
+        }
+    }
+}
+
 module.exports = {
     getGameDataFromDB,
     getAllGameDataFromDB,
     backupGame,
+    updateDatabase
 };

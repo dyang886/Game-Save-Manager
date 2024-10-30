@@ -1,3 +1,17 @@
+window.api.send('load-theme');
+
+window.api.receive('apply-theme', (theme) => {
+    changeTheme(theme);
+});
+
+window.api.receive('show-alert', (type, message, modalContent) => {
+    showAlert(type, message, modalContent);
+});
+
+window.api.receive('update-progress', (progressId, progressTitle, percentage) => {
+    updateProgress(progressId, progressTitle, percentage);
+});
+
 async function updateTranslations(container) {
     container.querySelectorAll("[data-i18n]").forEach(async (el) => {
         const key = el.getAttribute("data-i18n");
@@ -31,12 +45,6 @@ function changeTheme(theme) {
         document.documentElement.classList.remove('dark');
     }
 }
-
-window.api.receive('apply-theme', (theme) => {
-    changeTheme(theme);
-});
-
-window.api.send('load-theme');
 
 async function showAlert(type, message, modalContent) {
     const alertContainer = document.getElementById('alert-container');
@@ -118,10 +126,6 @@ async function showAlert(type, message, modalContent) {
     }, 5000);
 }
 
-window.api.receive('show-alert', (type, message, modalContent) => {
-    showAlert(type, message, modalContent);
-});
-
 function showModal(modalTitle, modalContent) {
     const modal = document.getElementById('modal');
     const modalOverlay = document.getElementById('modal-overlay');
@@ -153,13 +157,47 @@ function closeModal() {
     modalOverlay.classList.add('hidden');
 }
 
+function updateProgress(progressId, progressTitle, percentage) {
+    const progressContainer = document.getElementById('progress-container');
+
+    if (percentage === 'start') {
+        const progressElement = document.createElement('div');
+        progressElement.id = progressId;
+        progressElement.className = "ml-auto max-w-max p-4 mb-2 rounded-lg bg-blue-50 dark:bg-gray-800 animate-fadeIn";
+        progressElement.innerHTML = `
+            <div class="flex justify-between mb-1 text-sm font-medium text-blue-700 dark:text-white">
+                <span >${progressTitle}</span>
+                <span id="${progressId}-percentage">0%</span>
+            </div>
+            <div class="w-60 bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                <div id="${progressId}-bar" class="bg-blue-600 w-0 h-2.5 rounded-full"></div>
+            </div>
+        `;
+
+        progressContainer.appendChild(progressElement);
+        return;
+
+    } else if (percentage === 'end') {
+        const progressElement = document.getElementById(progressId);
+        if (progressElement) progressElement.remove();
+        return;
+    }
+
+    const progressBar = document.getElementById(`${progressId}-bar`);
+    const progressPercentage = document.getElementById(`${progressId}-percentage`);
+    progressBar.style.width = `${percentage}%`;
+    progressPercentage.innerText = `${percentage}%`;
+}
+
 async function operationStartCheck(operation) {
     const status = await window.api.invoke('get-status');
 
+    // Define contradicting operations
     const statusChecks = {
         'backup': {
             restoring: 'alert.wait_for_restore',
-            migrating: 'alert.wait_for_migrate'
+            migrating: 'alert.wait_for_migrate',
+            updating_db: 'alert.wait_for_updating_db'
         },
         'restore': {
             backuping: 'alert.wait_for_backup',
@@ -174,6 +212,9 @@ async function operationStartCheck(operation) {
             backuping: 'alert.wait_for_backup',
             restoring: 'alert.wait_for_restore',
             migrating: 'alert.wait_for_migrate'
+        },
+        'update-db': {
+            backuping: 'alert.wait_for_backup',
         }
     };
 
