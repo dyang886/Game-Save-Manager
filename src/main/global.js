@@ -16,11 +16,11 @@ let writeQueue = Promise.resolve();
 
 const appVersion = "2.0.0";
 const updateLink = "https://api.github.com/repos/dyang886/Game-Save-Manager/releases/latest";
-const databaseLink = "https://raw.githubusercontent.com/dyang886/Game-Save-Manager/main/database/database.db";
 let status = {
     backuping: false,
     restoring: false,
     migrating: false,
+    updating_db: false
 }
 
 // Main window
@@ -77,7 +77,6 @@ const menuTemplate = [
                             },
                         });
 
-                        // settingsWin.webContents.openDevTools();
                         settingsWin.setMenuBarVisibility(false);
                         settingsWin.loadFile(path.join(__dirname, "../renderer/html/settings.html"));
 
@@ -415,6 +414,8 @@ async function moveFilesWithProgress(sourceDir, destinationDir) {
     let movedSize = 0;
     let errors = [];
     status.migrating = true;
+    const progressId = 'migrate-backups';
+    const progressTitle = i18next.t('alert.migrate_backups');
 
     const moveAndTrackProgress = async (srcDir, destDir) => {
         try {
@@ -435,7 +436,7 @@ async function moveFilesWithProgress(sourceDir, destinationDir) {
                     readStream.on('data', (chunk) => {
                         movedSize += chunk.length;
                         const progressPercentage = Math.round((movedSize / totalSize) * 100);
-                        win.webContents.send('migrate-backup-progress', progressPercentage);
+                        win.webContents.send('update-progress', progressId, progressTitle, progressPercentage);
                     });
 
                     await new Promise((resolve, reject) => {
@@ -461,10 +462,10 @@ async function moveFilesWithProgress(sourceDir, destinationDir) {
     if (fs.existsSync(sourceDir)) {
         totalSize = calculateDirectorySize(sourceDir, false);
 
-        win.webContents.send('migrate-backup-progress', 'start');
+        win.webContents.send('update-progress', progressId, progressTitle, 'start');
         await moveAndTrackProgress(sourceDir, destinationDir);
 
-        win.webContents.send('migrate-backup-progress', 'end');
+        win.webContents.send('update-progress', progressId, progressTitle, 'end');
 
         if (errors.length > 0) {
             console.log(errors);

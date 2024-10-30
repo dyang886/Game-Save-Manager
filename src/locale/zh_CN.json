@@ -15,7 +15,9 @@
         "select_backup_path": "选择备份保存路径",
         "select_path": "选择一个路径",
         "save_settings": "保存设置",
-        "save-settings-success": "设置保存成功"
+        "save-settings-success": "设置保存成功",
+        "auto_app_update": "自动检查软件更新",
+        "auto_db_update": "自动更新数据库"
     },
     "about": {
         "title": "关于",
@@ -52,7 +54,8 @@
         "total_backup_size": "总备份大小：{{size}}",
         "total_restore_size": "总还原大小：{{size}}",
         "backup_count": "备份个数",
-        "restore_selected": "还原选中的游戏"
+        "restore_selected": "还原选中的游戏",
+        "update_database": "更新数据库"
     },
     "summary": {
         "done": "完成",
@@ -101,6 +104,7 @@
         "wait_for_backup": "请等待备份完成",
         "wait_for_restore": "请等待还原完成",
         "wait_for_migrate": "请等待备份文件转移完成",
+        "wait_for_updating_db": "请等待数据库更新完成",
         "save_custom_error": "保存自定义游戏时出错",
         "load_custom_error": "加载自定义游戏时出错",
         "save_custom_success": "保存自定义游戏成功",
@@ -108,6 +112,9 @@
         "new_version_found": "发现新版本：{{old_version}} ➜ {{new_version}}",
         "new_version_found_text": "请移至 `选项` ➜ `关于` 下载最新版本。",
         "update_check_failed": "检查更新失败",
-        "update_check_failed_text": "无法检查软件更新，请移至 `选项` ➜ `关于` 以手动检查更新。"
+        "update_check_failed_text": "无法检查软件更新，请移至 `选项` ➜ `关于` 以手动检查更新。",
+        "updating_database": "正在更新数据库...",
+        "error_during_db_update": "更新数据库时出错",
+        "update_db_success": "更新数据库成功"
     }
 }

@@ -20,17 +20,7 @@
 <body class="bg-white dark:bg-gray-900 p-8 pt-2 overflow-hidden">
     <!-- Top right alerts and progresses -->
     <div class="fixed top-3 right-5 z-30">
-        <div id="migrate-progress" class="hidden w-full mb-2 animate-fadeIn">
-            <div class="flex justify-between mb-1">
-                <span class="text-base font-medium text-blue-700 dark:text-white text-content"
-                    data-i18n="alert.migrate_backups">Migrating backup files...</span>
-                <span id="migrate-progress-text" class="text-sm font-medium text-blue-700 dark:text-white"></span>
-            </div>
-            <div class="w-96 bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                <div id="migrate-progress-bar" class="bg-blue-600 h-2.5 rounded-full"></div>
-            </div>
-        </div>
-
+        <div id="progress-container"></div>
         <div id="alert-container"></div>
     </div>
 
@@ -65,7 +55,8 @@
         </div>
     </div>
 
-    <div class="mb-4 border-b border-gray-200 dark:border-gray-700">
+    <!-- Tab selections -->
+    <div class="mb-4 border-b border-gray-200 dark:border-gray-700 flex flex-row">
         <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="main-tab"
             data-tabs-toggle="#main-tab-content" role="tablist">
             <li class="me-2" role="presentation">
@@ -119,7 +110,8 @@
                         <span id="backup-summary-total-games"
                             class="font-semibold text-gray-900 dark:text-white text-xl"></span>
                     </p>
-                    <p id="backup-summary-total-failed-container" class="hidden mb-4" data-i18n="summary.total_backup_failed">
+                    <p id="backup-summary-total-failed-container" class="hidden mb-4"
+                        data-i18n="summary.total_backup_failed">
                         <i class="fa-solid fa-xmark mr-1 text-red-700"></i>
                         <span id="backup-summary-total-failed" class="text-content">Failed to backup x games</span>
                         <button id="backup-failed-learn-more" type="button"
@@ -208,7 +200,7 @@
                     </table>
                 </div>
 
-                <!-- Backup button and progress bar -->
+                <!-- Backup and database update button -->
                 <div class="mt-4 mb-2 flex flex-row items-center">
                     <button id="backup-button" type="button" data-i18n="main.backup_selected"
                         class="whitespace-nowrap text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 dark:bg-blue-600 dark:hover:bg-blue-700">
@@ -216,17 +208,11 @@
                         <span id="backup-text" class="text-content">Backup Selected Games</span>
                     </button>
 
-                    <div id="backup-progress" class="hidden w-full ml-10 animate-fadeIn">
-                        <div class="flex justify-between mb-1">
-                            <span class="text-base font-medium text-blue-700 dark:text-white text-content"
-                                data-i18n="main.backup_in_progress">Backup in progress...</span>
-                            <span id="backup-progress-text"
-                                class="text-sm font-medium text-blue-700 dark:text-white"></span>
-                        </div>
-                        <div class="w-full bg-gray-200 rounded-full h-3 dark:bg-gray-700">
-                            <div id="backup-progress-bar" class="bg-blue-600 h-3 rounded-full"></div>
-                        </div>
-                    </div>
+                    <button id="update-database" type="button" data-i18n="main.update_database"
+                        class="ml-auto text-white bg-green-600 hover:bg-green-700 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-green-500 dark:hover:bg-green-600">
+                        <i id="update-database-icon" class="fa-solid fa-rotate mr-1"></i>
+                        <span id="update-database-text" class="text-content">Update Database</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -251,7 +237,8 @@
                         <span id="restore-summary-total-games"
                             class="font-semibold text-gray-900 dark:text-white text-xl"></span>
                     </p>
-                    <p id="restore-summary-total-failed-container" class="hidden mb-4" data-i18n="summary.total_restore_failed">
+                    <p id="restore-summary-total-failed-container" class="hidden mb-4"
+                        data-i18n="summary.total_restore_failed">
                         <i class="fa-solid fa-xmark mr-1 text-red-700"></i>
                         <span id="restore-summary-total-failed" class="text-content">Failed to restore x games</span>
                         <button id="restore-failed-learn-more" type="button"
@@ -340,25 +327,13 @@
                     </table>
                 </div>
 
-                <!-- Restore button and progress bar -->
+                <!-- Restore button -->
                 <div class="mt-4 mb-2 flex flex-row items-center">
                     <button id="restore-button" type="button" data-i18n="main.restore_selected"
                         class="whitespace-nowrap text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 dark:bg-blue-600 dark:hover:bg-blue-700">
                         <i id="restore-icon" class="fa-solid fa-arrow-right-long mr-1"></i>
                         <span id="restore-text" class="text-content">Restore Selected Games</span>
                     </button>
-
-                    <div id="restore-progress" class="hidden w-full ml-10 animate-fadeIn">
-                        <div class="flex justify-between mb-1">
-                            <span class="text-base font-medium text-blue-700 dark:text-white text-content"
-                                data-i18n="main.restore_in_progress">Restore in progress...</span>
-                            <span id="restore-progress-text"
-                                class="text-sm font-medium text-blue-700 dark:text-white"></span>
-                        </div>
-                        <div class="w-full bg-gray-200 rounded-full h-3 dark:bg-gray-700">
-                            <div id="restore-progress-bar" class="bg-blue-600 h-3 rounded-full"></div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

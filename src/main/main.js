@@ -12,7 +12,7 @@ const { pinyin } = require('pinyin');
 
 const { createMainWindow, getMainWin, getNewestBackup, getStatus, updateStatus, checkAppUpdate, osKeyMap, loadSettings, saveSettings, getSettings, moveFilesWithProgress, getVersions } = require('./global');
 const { getGameData, initializeGameData, detectGamePaths } = require('./gameData');
-const { getGameDataFromDB, getAllGameDataFromDB, backupGame } = require('./backup');
+const { getGameDataFromDB, getAllGameDataFromDB, backupGame, updateDatabase } = require('./backup');
 const { getGameDataForRestore, restoreGame } = require("./restore");
 
 
@@ -33,6 +33,7 @@ app.whenReady().then(async () => {
     }
 
     createMainWindow();
+    app.setAppUserModelId(i18next.t('main.title'));
 
     app.on("activate", () => {
         if (BrowserWindow.getAllWindows().length === 0) createWindow();
@@ -283,4 +284,9 @@ ipcMain.on('update-status', (event, statusKey, statusValue) => {
 
 ipcMain.handle('get-versions', () => {
     return getVersions();
+});
+
+ipcMain.handle('update-database', async () => {
+    await updateDatabase();
+    return;
 });

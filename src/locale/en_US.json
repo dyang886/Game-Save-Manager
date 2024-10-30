@@ -15,7 +15,9 @@
         "select_backup_path": "Select backup save path",
         "select_path": "Select a path",
         "save_settings": "Save Settings",
-        "save-settings-success": "Successfully saved settings"
+        "save-settings-success": "Successfully saved settings",
+        "auto_app_update": "Check software update automatically",
+        "auto_db_update": "Update database automatically"
     },
     "about": {
         "title": "About",
@@ -52,7 +54,8 @@
         "total_backup_size": "Total backup size: {{size}}",
         "total_restore_size": "Total restore size: {{size}}",
         "backup_count": "Number of Backups",
-        "restore_selected": "Restore Selected Games"
+        "restore_selected": "Restore Selected Games",
+        "update_database": "Update Database"
     },
     "summary": {
         "done": "Done",
@@ -101,6 +104,7 @@
         "wait_for_backup": "Please wait for backup to complete",
         "wait_for_restore": "Please wait for restore to complete",
         "wait_for_migrate": "Please wait for backup files migration to complete",
+        "wait_for_updating_db": "Please wait for database update to complete",
         "save_custom_error": "Error saving custom games",
         "load_custom_error": "Error loading custom games",
         "save_custom_success": "Successfully saved custom games",
@@ -108,6 +112,9 @@
         "new_version_found": "New Version Found: {{old_version}} ➜ {{new_version}}",
         "new_version_found_text": "Please navigate to `Options` ➜ `About` to download the latest version.",
         "update_check_failed": "Update Check Failed",
-        "update_check_failed_text": "Failed to check for software update. You can navigate to 'Options' ➜ 'About' to check for updates manually."
+        "update_check_failed_text": "Failed to check for software update. You can navigate to 'Options' ➜ 'About' to check for updates manually.",
+        "updating_database": "Updating database...",
+        "error_during_db_update": "An error occurred while updating database",
+        "update_db_success": "Successfully updated database"
     }
 }
