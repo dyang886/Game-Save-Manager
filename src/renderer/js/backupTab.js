@@ -2,8 +2,8 @@ const backupTableDataMap = new Map();
 let backup_total_size = 0;
 let backup_total_selected = 0;
 
-window.api.receive('update-backup-table', async () => {
-    await updateBackupTable(true);
+window.api.receive('update-backup-table', () => {
+    updateBackupTable(true);
 });
 
 async function updateBackupTable(loader) {
@@ -86,7 +86,7 @@ async function populateBackupTable(data, iconMap) {
 
             // Check if pinned
             if (isPinned) {
-                row = addPinIcon(row);
+                addPinIcon(row);
             }
 
             tableBody.appendChild(row);

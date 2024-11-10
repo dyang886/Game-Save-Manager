@@ -2,8 +2,8 @@ const restoreTableDataMap = new Map();
 let restore_total_size = 0;
 let restore_total_selected = 0;
 
-window.api.receive('update-restore-table', async () => {
-    await updateRestoreTable(true);
+window.api.receive('update-restore-table', () => {
+    updateRestoreTable(true);
 });
 
 async function updateRestoreTable(loader) {
@@ -82,7 +82,7 @@ async function populateRestoreTable(data) {
 
             // Check if pinned
             if (isPinned) {
-                row = addPinIcon(row);
+                addPinIcon(row);
             }
 
             tableBody.appendChild(row);

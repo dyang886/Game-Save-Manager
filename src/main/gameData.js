@@ -32,8 +32,8 @@ class GameData {
 
             regKey.get(valueName, (err, item) => {
                 if (err) {
-                    console.error(`Error reading registry key: ${key}`, err);
-                    resolve(null);
+                    console.log(`Error reading registry key: ${key}`, err.message);
+                    resolve('');
                 } else {
                     resolve(item.value);
                 }
@@ -104,74 +104,82 @@ class GameData {
     }
 
     async getCurrentUserIds() {
-        // Get current Steam user id64 and user name
-        const loginUsersPath = path.join(this.steamPath, 'config', 'loginusers.vdf');
-        if (fs.existsSync(loginUsersPath)) {
-            const vdfContent = fs.readFileSync(loginUsersPath, 'utf-8');
-            const parsedData = vdf.parse(vdfContent);
+        if (this.steamPath) {
+            // Get current Steam user id64 and user name
+            const loginUsersPath = path.join(this.steamPath, 'config', 'loginusers.vdf');
+            if (fs.existsSync(loginUsersPath)) {
+                const vdfContent = fs.readFileSync(loginUsersPath, 'utf-8');
+                const parsedData = vdf.parse(vdfContent);
 
-            if (parsedData.users) {
-                for (const userId64 in parsedData.users) {
-                    const userData = parsedData.users[userId64];
-                    if (userData.MostRecent == 1) {
-                        this.currentSteamUserId64 = userId64;
-                        this.currentSteamAccountName = userData.AccountName;
-                        this.currentSteamUserName = userData.PersonaName;
-                        break;
-                    }
-                }
-            } else {
-                console.log(`No users found in ${loginUsersPath}`);
-            }
-        } else {
-            console.log(`Steam loginusers.vdf file not found at: ${loginUsersPath}`);
-        }
-
-        // Get current Steam user id3
-        const userdataPath = path.join(this.steamPath, 'userdata');
-        const userDirectories = fs.readdirSync(userdataPath, { withFileTypes: true })
-            .filter(dirent => dirent.isDirectory())
-            .map(dirent => dirent.name);
-
-        for (const userId3 of userDirectories) {
-            const configPath = path.join(userdataPath, userId3, 'config', 'localconfig.vdf');
-            if (fs.existsSync(configPath)) {
-                const localConfigContent = fs.readFileSync(configPath, 'utf-8');
-                const localConfigData = vdf.parse(localConfigContent);
-
-                if (localConfigData.UserLocalConfigStore && localConfigData.UserLocalConfigStore.friends) {
-                    const personaName = localConfigData.UserLocalConfigStore.friends.PersonaName;
-                    if (personaName === this.currentSteamUserName) {
-                        this.currentSteamUserId3 = userId3;
-                        break;
+                if (parsedData.users) {
+                    for (const userId64 in parsedData.users) {
+                        const userData = parsedData.users[userId64];
+                        if (userData.MostRecent == 1) {
+                            this.currentSteamUserId64 = userId64;
+                            this.currentSteamAccountName = userData.AccountName;
+                            this.currentSteamUserName = userData.PersonaName;
+                            break;
+                        }
                     }
                 } else {
-                    console.log(`No persona name found in ${configPath}`);
+                    console.log(`No users found in ${loginUsersPath}`);
                 }
             } else {
-                console.log(`Steam localconfig.vdf file not found at: ${configPath}`);
+                console.log(`Steam loginusers.vdf file not found at: ${loginUsersPath}`);
             }
+
+            // Get current Steam user id3
+            const userdataPath = path.join(this.steamPath, 'userdata');
+            const userDirectories = fs.readdirSync(userdataPath, { withFileTypes: true })
+                .filter(dirent => dirent.isDirectory())
+                .map(dirent => dirent.name);
+
+            for (const userId3 of userDirectories) {
+                const configPath = path.join(userdataPath, userId3, 'config', 'localconfig.vdf');
+                if (fs.existsSync(configPath)) {
+                    const localConfigContent = fs.readFileSync(configPath, 'utf-8');
+                    const localConfigData = vdf.parse(localConfigContent);
+
+                    if (localConfigData.UserLocalConfigStore && localConfigData.UserLocalConfigStore.friends) {
+                        const personaName = localConfigData.UserLocalConfigStore.friends.PersonaName;
+                        if (personaName === this.currentSteamUserName) {
+                            this.currentSteamUserId3 = userId3;
+                            break;
+                        }
+                    } else {
+                        console.log(`No persona name found in ${configPath}`);
+                    }
+                } else {
+                    console.log(`Steam localconfig.vdf file not found at: ${configPath}`);
+                }
+            }
+        } else {
+            console.log('Steam not installed');
         }
 
         // Get current Ubisoft user id
         const saveGamesPath = path.join(this.ubisoftPath, 'savegames');
-        const userFolders = fs.readdirSync(saveGamesPath, { withFileTypes: true })
-            .filter(dirent => dirent.isDirectory())
-            .map(dirent => dirent.name);
+        if (fs.existsSync(saveGamesPath)) {
+            const userFolders = fs.readdirSync(saveGamesPath, { withFileTypes: true })
+                .filter(dirent => dirent.isDirectory())
+                .map(dirent => dirent.name);
 
-        let latestUserId = null;
-        let latestTime = 0;
+            let latestUserId = null;
+            let latestTime = 0;
 
-        for (const userId of userFolders) {
-            const userFolderPath = path.join(saveGamesPath, userId);
-            const userFolderTime = this.getLatestModificationTime(userFolderPath);
+            for (const userId of userFolders) {
+                const userFolderPath = path.join(saveGamesPath, userId);
+                const userFolderTime = this.getLatestModificationTime(userFolderPath);
 
-            if (userFolderTime > latestTime) {
-                latestTime = userFolderTime;
-                latestUserId = userId;
+                if (userFolderTime > latestTime) {
+                    latestTime = userFolderTime;
+                    latestUserId = userId;
+                }
             }
+            this.currentUbisoftUserId = latestUserId;
+        } else {
+            console.log(`No Ubisoft users found at: ${saveGamesPath}`);
         }
-        this.currentUbisoftUserId = latestUserId;
     }
 
     async detectGamePaths() {

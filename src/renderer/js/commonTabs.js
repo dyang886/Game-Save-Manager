@@ -107,16 +107,15 @@ async function showLoadingIndicator(tabName) {
         contentContainer.classList.remove('animate-fadeInShift');
         contentContainer.classList.add('animate-fadeOut');
 
-        setTimeout(async () => {
-            contentContainer.classList.add('hidden');
+        await new Promise(resolve => setTimeout(resolve, 300));
+        contentContainer.classList.add('hidden');
 
-            if (loadingContainer) {
-                loadingContainer.innerHTML = loader;
-                const loadingTextKey = loadingContainer.getAttribute('data-i18n');
-                loadingContainer.querySelector('.text-content').textContent = await window.i18n.translate(loadingTextKey);
-                loadingContainer.classList.remove('hidden');
-            }
-        }, 300);
+        if (loadingContainer) {
+            loadingContainer.innerHTML = loader;
+            const loadingTextKey = loadingContainer.getAttribute('data-i18n');
+            loadingContainer.querySelector('.text-content').textContent = await window.i18n.translate(loadingTextKey);
+            loadingContainer.classList.remove('hidden');
+        }
 
         // First time showing loader without table content
     } else {
@@ -195,8 +194,6 @@ function addPinIcon(row) {
 
         titleCell.prepend(pinIcon);
     }
-
-    return row;
 }
 
 function getPlatformIcon(platform, iconMap) {
@@ -374,25 +371,25 @@ async function pinGameOnTop(tabName, wikiId) {
 
     if (rowToMove) {
         tableBody.removeChild(rowToMove);
-        const newRow = addPinIcon(rowToMove);
+        addPinIcon(rowToMove);
 
-        const pinnedGames = Array.from(tableBody.querySelectorAll('tr')).filter(row => {
-            return row.querySelector('i.fa-thumbtack');
-        }).map(row => ({
-            row,
-            titleToSort: row.querySelector('th[scope="row"]').textContent.trim()
-        }));
+        const pinnedGames = Array.from(tableBody.querySelectorAll('tr'))
+            .filter(row => row.querySelector('i.fa-thumbtack'))
+            .concat(rowToMove)
+            .map(row => ({
+                wikiId: row.getAttribute('data-wiki-id'),
+                titleToSort: row.querySelector('th[scope="row"]').textContent.trim()
+            }));
 
-        pinnedGames.push({ row: newRow, titleToSort: newRow.querySelector('th[scope="row"]').textContent.trim() });
         const sortedPinnedGames = await window.api.invoke('sort-games', pinnedGames);
-        const indexToInsert = sortedPinnedGames.findIndex(game => game.row === newRow);
+        const targetIndex = sortedPinnedGames.findIndex(game => game.wikiId === wikiId);
 
-        // Insert the row in the correct sorted position
-        if (indexToInsert === 0) {
-            tableBody.insertBefore(newRow, tableBody.firstChild);
+        if (targetIndex === 0) {
+            tableBody.insertBefore(rowToMove, tableBody.firstChild);
         } else {
-            const previousRow = sortedPinnedGames[indexToInsert - 1].row;
-            tableBody.insertBefore(newRow, previousRow.nextSibling);
+            const previousRowId = sortedPinnedGames[targetIndex - 1].wikiId;
+            const previousRow = tableBody.querySelector(`tr[data-wiki-id="${previousRowId}"]`);
+            tableBody.insertBefore(rowToMove, previousRow.nextSibling);
         }
     }
 }
@@ -408,27 +405,30 @@ async function unpinGameFromTop(tabName, wikiId) {
         }
         tableBody.removeChild(rowToMove);
 
-        const unpinnedGames = Array.from(tableBody.querySelectorAll('tr')).filter(row => {
-            return !row.querySelector('i.fa-thumbtack');
-        }).map(row => ({
-            row,
-            titleToSort: row.querySelector('th[scope="row"]').textContent.trim()
-        }));
+        const unpinnedGames = Array.from(tableBody.querySelectorAll('tr'))
+            .filter(row => !row.querySelector('i.fa-thumbtack'))
+            .concat(rowToMove)
+            .map(row => ({
+                wikiId: row.getAttribute('data-wiki-id'),
+                titleToSort: row.querySelector('th[scope="row"]').textContent.trim()
+            }));
 
-        unpinnedGames.push({ row: rowToMove, titleToSort: rowToMove.querySelector('th[scope="row"]').textContent.trim() });
         const sortedUnpinnedGames = await window.api.invoke('sort-games', unpinnedGames);
-        const indexToInsert = sortedUnpinnedGames.findIndex(game => game.row === rowToMove);
+        const targetIndex = sortedUnpinnedGames.findIndex(game => game.wikiId === wikiId);
 
-        // Insert the row in the correct sorted position
-        const lastPinnedRow = Array.from(tableBody.querySelectorAll('tr')).reverse().find(row => row.querySelector('i.fa-thumbtack'));
-        if (indexToInsert === 0) {
+        const lastPinnedRow = Array.from(tableBody.querySelectorAll('tr'))
+            .reverse()
+            .find(row => row.querySelector('i.fa-thumbtack'));
+
+        if (targetIndex === 0) {
             if (lastPinnedRow) {
                 tableBody.insertBefore(rowToMove, lastPinnedRow.nextSibling);
             } else {
-                tableBody.appendChild(rowToMove);
+                tableBody.insertBefore(rowToMove, tableBody.firstChild);
             }
         } else {
-            const previousRow = sortedUnpinnedGames[indexToInsert - 1].row;
+            const previousRowId = sortedUnpinnedGames[targetIndex - 1].wikiId;
+            const previousRow = tableBody.querySelector(`tr[data-wiki-id="${previousRowId}"]`);
             tableBody.insertBefore(rowToMove, previousRow.nextSibling);
         }
     }

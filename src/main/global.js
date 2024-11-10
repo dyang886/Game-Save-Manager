@@ -391,6 +391,10 @@ function saveSettings(key, value) {
                         });
                     }
 
+                    if (key === 'gameInstalls') {
+                        win.webContents.send('update-backup-table');
+                    }
+
                     if (key === 'language') {
                         i18next.changeLanguage(value).then(() => {
                             BrowserWindow.getAllWindows().forEach((window) => {
