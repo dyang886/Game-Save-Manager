@@ -149,14 +149,6 @@ ipcMain.handle('select-path', async (event, fileType) => {
     return null;
 });
 
-ipcMain.on('post-settings-close-update', (event, table_name) => {
-    if (table_name === 'backup') {
-        getMainWin().webContents.send('update-backup-table');
-    } else if (table_name === 'restore') {
-        getMainWin().webContents.send('update-restore-table');
-    }
-});
-
 ipcMain.handle('get-newest-backup-time', (event, wiki_page_id) => {
     return getNewestBackup(wiki_page_id);
 });
@@ -166,8 +158,11 @@ ipcMain.handle('sort-games', (event, games) => {
     const gamesWithSortedTitles = games.map((game) => {
         try {
             const isChinese = /[\u4e00-\u9fff]/.test(game.titleToSort);
-            const titleToSort = isChinese ? pinyin(game.titleToSort, { style: pinyin.STYLE_NORMAL }).join(' ') : game.titleToSort.toLowerCase();
+            const titleToSort = isChinese
+                ? pinyin(game.titleToSort, { style: pinyin.STYLE_NORMAL }).join(' ')
+                : game.titleToSort.toLowerCase();
             return { ...game, titleToSort };
+
         } catch (error) {
             console.error(`Error sorting game ${game.titleToSort}: ${error.stack}`);
             getMainWin().webContents.send('show-alert', 'modal', `${i18next.t('alert.sort_failed', { game_name: game.titleToSort })}`, error.message);

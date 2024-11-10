@@ -80,7 +80,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!areArraysEqual(previousSettings.gameInstalls, newGameInstallPaths)) {
                 window.api.send('save-settings', 'gameInstalls', newGameInstallPaths);
-                window.api.send('post-settings-close-update', 'backup');
             }
 
             // Check if backup path changed
