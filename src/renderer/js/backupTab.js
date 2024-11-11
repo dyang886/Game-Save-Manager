@@ -136,7 +136,7 @@ function createBackupTableRow(gameTitle, platformIcons, backupSize, newestBackup
     return row;
 }
 
-function setupBackupButton() {
+function setupBackupTabButtons() {
     const backupButton = document.getElementById('backup-button');
     const backupIcon = document.getElementById('backup-icon');
     const backupText = document.getElementById('backup-text');
@@ -173,6 +173,10 @@ function setupBackupButton() {
         backupButton.setAttribute('data-i18n', 'main.backup_selected');
         backupText.textContent = await window.i18n.translate('main.backup_selected');
         window.api.send('update-status', 'backuping', false);
+    });
+
+    document.getElementById('update-database').addEventListener('click', () => {
+        updateDatabase();
     });
 }
 
@@ -249,33 +253,31 @@ function showBackupSummary(backupCount, backupFailed, errors, backupSize) {
     });
 }
 
-function setupDbUpdateButton() {
+async function updateDatabase() {
     const updateButton = document.getElementById('update-database');
     const updateButtonIcon = document.getElementById('update-database-icon');
     const updateButtonText = document.getElementById('update-database-text');
 
-    updateButton.addEventListener('click', async () => {
-        if (updateButton.disabled) return;
+    if (updateButton.disabled) return;
 
-        const start = await operationStartCheck('update-db');
-        if (start) {
-            window.api.send('update-status', 'updating_db', true);
-            updateButton.disabled = true;
-            updateButton.classList.add('cursor-not-allowed');
-            updateButtonIcon.innerHTML = spinner;
-            updateButtonIcon.classList.remove('fa-rotate');
-            updateButton.setAttribute('data-i18n', 'alert.updating_database');
-            updateButtonText.textContent = await window.i18n.translate('alert.updating_database');
+    const start = await operationStartCheck('update-db');
+    if (start) {
+        window.api.send('update-status', 'updating_db', true);
+        updateButton.disabled = true;
+        updateButton.classList.add('cursor-not-allowed');
+        updateButtonIcon.innerHTML = spinner;
+        updateButtonIcon.classList.remove('fa-rotate');
+        updateButton.setAttribute('data-i18n', 'alert.updating_database');
+        updateButtonText.textContent = await window.i18n.translate('alert.updating_database');
 
-            await window.api.invoke('update-database');
+        await window.api.invoke('update-database');
 
-            window.api.send('update-status', 'updating_db', false);
-            updateButton.disabled = false;
-            updateButton.classList.remove('cursor-not-allowed');
-            updateButtonIcon.innerHTML = '';
-            updateButtonIcon.classList.add('fa-rotate');
-            updateButton.setAttribute('data-i18n', 'main.update_database');
-            updateButtonText.textContent = await window.i18n.translate('main.update_database');
-        }
-    });
+        window.api.send('update-status', 'updating_db', false);
+        updateButton.disabled = false;
+        updateButton.classList.remove('cursor-not-allowed');
+        updateButtonIcon.innerHTML = '';
+        updateButtonIcon.classList.add('fa-rotate');
+        updateButton.setAttribute('data-i18n', 'main.update_database');
+        updateButtonText.textContent = await window.i18n.translate('main.update_database');
+    }
 }

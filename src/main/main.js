@@ -23,6 +23,9 @@ app.whenReady().then(async () => {
     await initializeI18next(getSettings().language);
     await initializeGameData();
 
+    createMainWindow();
+    app.setAppUserModelId(i18next.t('main.title'));
+
     if (getSettings().gameInstalls === 'uninitialized') {
         await detectGamePaths();
         saveSettings('gameInstalls', getGameData().detectedGamePaths);
@@ -31,9 +34,6 @@ app.whenReady().then(async () => {
     if (getSettings().autoAppUpdate) {
         checkAppUpdate();
     }
-
-    createMainWindow();
-    app.setAppUserModelId(i18next.t('main.title'));
 
     app.on("activate", () => {
         if (BrowserWindow.getAllWindows().length === 0) createWindow();

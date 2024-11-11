@@ -3,14 +3,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     initializeTabs();
     setupSearchFilter('backup');
     setupSearchFilter('restore');
-    setupBackupButton();
-    setupDbUpdateButton();
+    setupBackupTabButtons();
     setupRestoreButton();
     setupCustomPage();
     setDropDownAction();
 
-    updateBackupTable(true);
     updateRestoreTable(true);
+    await updateBackupTable(true);
+    const settings = await window.api.invoke('get-settings');
+    if (settings.autoDbUpdate) {
+        updateDatabase();
+    }
 });
 
 window.api.receive('apply-language', () => {

@@ -29,8 +29,12 @@ const createMainWindow = async () => {
     const dimensions = primaryDisplay.size;
 
     win = new BrowserWindow({
-        width: dimensions.width * 0.4,
-        height: dimensions.height * 0.5,
+        // width: dimensions.width * 0.4,
+        // height: dimensions.height * 0.5,
+        width: 1000,
+        height: 750,
+        minWidth: 1000,
+        minHeight: 750,
         icon: path.join(__dirname, "../assets/logo.ico"),
         webPreferences: {
             preload: path.join(__dirname, "preload.js"),
@@ -96,8 +100,6 @@ const menuTemplate = [
                         aboutWin = new BrowserWindow({
                             width: about_window_size[0],
                             height: about_window_size[1],
-                            minWidth: about_window_size[0],
-                            minHeight: about_window_size[1],
                             resizable: false,
                             icon: path.join(__dirname, "../assets/logo.ico"),
                             parent: win,
@@ -351,7 +353,7 @@ const loadSettings = () => {
         backupPath: path.join(appDataPath, "GSM Backups"),
         maxBackups: 5,
         autoAppUpdate: true,
-        autoDbUpdate: true,
+        autoDbUpdate: false,
         gameInstalls: 'uninitialized',
         pinnedGames: []
     };
