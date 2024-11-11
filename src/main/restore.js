@@ -115,6 +115,9 @@ async function getGameDataForRestore() {
 async function restoreGame(gameObj, userActionForAll) {
     let localActionForAll = userActionForAll;
     const pathsToCheck = [];
+    let gameNotInstalled = false;
+    let steamNotInstalled = false;
+    let ubisoftNotInstalled = false;
 
     try {
         const gameBackupPath = path.join(getSettings().backupPath, gameObj.wiki_page_id.toString());
@@ -132,7 +135,17 @@ async function restoreGame(gameObj, userActionForAll) {
                 continue;
             }
 
-            if (backupPath.type !== 'reg' && !path.isAbsolute(destinationPath)) {
+            if (backupPath.type !== 'reg' && !path.isAbsolute(destinationPath.replace(/^[/\\]+/, ''))) {
+                const normalizedTemplate = backupPath.template.toLowerCase();
+
+                if (normalizedTemplate.includes('{{p|game}}')) {
+                    gameNotInstalled = true;
+                } else if (normalizedTemplate.includes('{{p|steam}}')) {
+                    steamNotInstalled = true;
+                } else if (normalizedTemplate.includes('{{p|ubisoftconnect}}') || normalizedTemplate.includes('{{p|uplay}}')) {
+                    ubisoftNotInstalled = true;
+                }
+
                 console.warn(`Destination path is not absolute: ${destinationPath}`);
                 continue;
             }
@@ -169,6 +182,14 @@ async function restoreGame(gameObj, userActionForAll) {
             } else {
                 console.warn(`Unknown backup type: ${backupType}`);
             }
+        }
+
+        if (gameNotInstalled) {
+            throw Error(i18next.t('alert.game_not_installed'));
+        } else if (steamNotInstalled) {
+            throw Error(i18next.t('alert.steam_not_installed'));
+        } else if (ubisoftNotInstalled) {
+            throw Error(i18next.t('alert.ubisoft_not_installed'));
         }
 
         return { action: localActionForAll, error: null };

@@ -6,6 +6,7 @@ English | [简体中文](./README_CN.md) | [繁體中文](./README_TW.md)
 <div align="center">
     <img src="src/assets/logo.png" alt="Game Save Manager logo" width="250" />
 </div>
+
 Game Save Manager is an easy-to-use application that allows gamers to back up, restore, and export their game save files. It uses a save location database primarily sourced from [PCGamingWiki](https://www.pcgamingwiki.com), supporting over 12,000 games. The app also allows users to add custom entries for files, folders, and registry data.
 
 ## Usage
