@@ -1,24 +1,26 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const newestVersionSpan = document.getElementById('newest-version');
+    const latestVersionSpan = document.getElementById('latest-version');
     const currentVersionSpan = document.getElementById('current-version');
     const githubLink = document.getElementById('github-link');
     const bilibiliLink = document.getElementById('bilibili-link');
 
     const fetchLatestVersion = async () => {
+        const currentVersion = await window.api.invoke('get-current-version');
+        currentVersionSpan.innerText = currentVersion;
+
         const failedMessage = await window.api.invoke('translate', 'about.load_failed');
-        const { currentVersion, latestVersion } = await window.api.invoke('get-versions');
+        const latestVersion = await window.api.invoke('get-latest-version');
 
         if (latestVersion) {
-            newestVersionSpan.innerText = latestVersion;
+            latestVersionSpan.innerText = latestVersion;
         } else {
-            newestVersionSpan.innerText = failedMessage;
-            newestVersionSpan.style.color = 'red';
+            latestVersionSpan.innerText = failedMessage;
+            latestVersionSpan.style.color = 'red';
         }
-        currentVersionSpan.innerText = currentVersion;
 
         if (latestVersion && latestVersion > currentVersion) {
             currentVersionSpan.style.color = 'red';
-            newestVersionSpan.style.color = 'green';
+            latestVersionSpan.style.color = 'green';
         }
     };
 

@@ -22,13 +22,14 @@
     "about": {
         "title": "About",
         "current_version": "Current version: ",
-        "newest_version": "Newest version: ",
+        "latest_version": "Latest version: ",
         "github": "GitHub: ",
         "bilibili": "Bilibili author home page: ",
         "load_failed": "Failed to load"
     },
     "main": {
         "title": "Game Save Manager",
+        "options": "Options",
         "loading": "Loading...",
         "backup": "Backup",
         "restore": "Restore",
