@@ -218,8 +218,11 @@ async function addTemplate(renameTitleFocus = true, wikiId = null) {
     });
 
     updateCustomEntryStyles();
+
+    // If not loaded from json
     if (renameTitleFocus) {
         renameEntry();
+        addCollapsedRow(newEntry);
     }
 }
 

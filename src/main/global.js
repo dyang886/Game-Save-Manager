@@ -23,18 +23,83 @@ let status = {
     updating_db: false
 }
 
+// Menu settings
+const initializeMenu = () => {
+    return [
+        {
+            label: i18next.t("main.options"),
+            submenu: [
+                {
+                    label: i18next.t("settings.title"),
+                    click() {
+                        let settings_window_size = [650, 700];
+                        // Check if settingsWin is already open
+                        if (!settingsWin || settingsWin.isDestroyed()) {
+                            settingsWin = new BrowserWindow({
+                                width: settings_window_size[0],
+                                height: settings_window_size[1],
+                                minWidth: settings_window_size[0],
+                                minHeight: settings_window_size[1],
+                                icon: path.join(__dirname, "../assets/setting.ico"),
+                                parent: win,
+                                modal: true,
+                                webPreferences: {
+                                    preload: path.join(__dirname, "preload.js"),
+                                },
+                            });
+
+                            settingsWin.setMenuBarVisibility(false);
+                            settingsWin.loadFile(path.join(__dirname, "../renderer/html/settings.html"));
+
+                            settingsWin.on("closed", () => {
+                                settingsWin = null;
+                            });
+                        } else {
+                            settingsWin.focus();
+                        }
+                    },
+                },
+                {
+                    label: i18next.t("about.title"),
+                    click() {
+                        let about_window_size = [480, 290];
+                        if (!aboutWin || aboutWin.isDestroyed()) {
+                            aboutWin = new BrowserWindow({
+                                width: about_window_size[0],
+                                height: about_window_size[1],
+                                resizable: false,
+                                icon: path.join(__dirname, "../assets/logo.ico"),
+                                parent: win,
+                                modal: true,
+                                webPreferences: {
+                                    preload: path.join(__dirname, "preload.js"),
+                                },
+                            });
+
+                            aboutWin.setMenuBarVisibility(false);
+                            aboutWin.loadFile(path.join(__dirname, "../renderer/html/about.html"));
+
+                            aboutWin.on("closed", () => {
+                                aboutWin = null;
+                            });
+                        } else {
+                            aboutWin.focus();
+                        }
+                    },
+                },
+            ],
+        },
+    ];
+}
+
 // Main window
 const createMainWindow = async () => {
-    const primaryDisplay = screen.getPrimaryDisplay();
-    const dimensions = primaryDisplay.size;
-
+    let main_window_size = [1100, 750];
     win = new BrowserWindow({
-        // width: dimensions.width * 0.4,
-        // height: dimensions.height * 0.5,
-        width: 1000,
-        height: 750,
-        minWidth: 1000,
-        minHeight: 750,
+        width: main_window_size[0],
+        height: main_window_size[1],
+        minWidth: main_window_size[0],
+        minHeight: main_window_size[1],
         icon: path.join(__dirname, "../assets/logo.ico"),
         webPreferences: {
             preload: path.join(__dirname, "preload.js"),
@@ -43,6 +108,8 @@ const createMainWindow = async () => {
 
     // win.webContents.openDevTools();
     win.loadFile(path.join(__dirname, "../renderer/html/index.html"));
+    const menu = Menu.buildFromTemplate(initializeMenu());
+    Menu.setApplicationMenu(menu);
 
     win.on("closed", () => {
         BrowserWindow.getAllWindows().forEach((window) => {
@@ -57,86 +124,17 @@ const createMainWindow = async () => {
     });
 };
 
-// Menu settings
-const menuTemplate = [
-    {
-        label: "Options",
-        submenu: [
-            {
-                label: "Settings",
-                click() {
-                    let settings_window_size = [650, 700];
-                    // Check if settingsWin is already open
-                    if (!settingsWin || settingsWin.isDestroyed()) {
-                        settingsWin = new BrowserWindow({
-                            width: settings_window_size[0],
-                            height: settings_window_size[1],
-                            minWidth: settings_window_size[0],
-                            minHeight: settings_window_size[1],
-                            icon: path.join(__dirname, "../assets/setting.ico"),
-                            parent: win,
-                            modal: true,
-                            webPreferences: {
-                                preload: path.join(__dirname, "preload.js"),
-                            },
-                        });
-
-                        settingsWin.setMenuBarVisibility(false);
-                        settingsWin.loadFile(path.join(__dirname, "../renderer/html/settings.html"));
-
-                        settingsWin.on("closed", () => {
-                            settingsWin = null;
-                        });
-                    } else {
-                        settingsWin.focus();
-                    }
-                },
-            },
-            {
-                label: "About",
-                click() {
-                    let about_window_size = [480, 290];
-                    if (!aboutWin || aboutWin.isDestroyed()) {
-                        aboutWin = new BrowserWindow({
-                            width: about_window_size[0],
-                            height: about_window_size[1],
-                            resizable: false,
-                            icon: path.join(__dirname, "../assets/logo.ico"),
-                            parent: win,
-                            modal: true,
-                            webPreferences: {
-                                preload: path.join(__dirname, "preload.js"),
-                            },
-                        });
-
-                        aboutWin.setMenuBarVisibility(false);
-                        aboutWin.loadFile(path.join(__dirname, "../renderer/html/about.html"));
-
-                        aboutWin.on("closed", () => {
-                            aboutWin = null;
-                        });
-                    } else {
-                        aboutWin.focus();
-                    }
-                },
-            },
-        ],
-    },
-];
-const menu = Menu.buildFromTemplate(menuTemplate);
-Menu.setApplicationMenu(menu);
-
-async function getVersions() {
+async function getLatestVersion() {
     try {
         const response = await fetch(updateLink);
         const data = await response.json();
         const latestVersion = data.tag_name ? data.tag_name.replace(/^v/, "") : null;
 
-        return { currentVersion: appVersion, latestVersion: latestVersion }
+        return latestVersion;
 
     } catch (error) {
         console.error("Error checking for update:", error.stack);
-        return { currentVersion: appVersion, latestVersion: null }
+        return null;
     }
 }
 
@@ -150,7 +148,7 @@ async function checkAppUpdate() {
             showNotification(
                 "info",
                 i18next.t('alert.update_available'),
-                `${i18next.t('alert.new_version_found', {old_version: appVersion, new_version: latestVersion})}\n` +
+                `${i18next.t('alert.new_version_found', { old_version: appVersion, new_version: latestVersion })}\n` +
                 `${i18next.t('alert.new_version_found_text')}`
             );
         }
@@ -402,6 +400,8 @@ function saveSettings(key, value) {
                             BrowserWindow.getAllWindows().forEach((window) => {
                                 window.webContents.send('apply-language');
                             });
+                            const menu = Menu.buildFromTemplate(initializeMenu());
+                            Menu.setApplicationMenu(menu);
                             resolve();
                         }).catch(reject);
                     } else {
@@ -491,7 +491,8 @@ module.exports = {
     getSettingsWin: () => settingsWin,
     getStatus: () => status,
     updateStatus,
-    getVersions,
+    getCurrentVersion: () => appVersion,
+    getLatestVersion,
     checkAppUpdate,
     getGameDisplayName,
     calculateDirectorySize,

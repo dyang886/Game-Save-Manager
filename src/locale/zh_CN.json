@@ -22,13 +22,14 @@
     "about": {
         "title": "关于",
         "current_version": "当前版本：",
-        "newest_version": "最新版本：",
+        "latest_version": "最新版本：",
         "github": "GitHub：",
         "bilibili": "B站作者主页：",
         "load_failed": "加载失败"
     },
     "main": {
         "title": "游戏存档管理器",
+        "options": "选项",
         "loading": "加载中...",
         "backup": "备份",
         "restore": "还原",
