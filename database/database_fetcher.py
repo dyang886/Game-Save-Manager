@@ -417,7 +417,7 @@ class DatabaseFetcher:
                                 '{{p|xdgdatahome}}',
                                 '{{p|linuxhome}}',
                             ]
-                            cleaned_path_check = os.path.normpath(cleaned_path).lower()
+                            cleaned_path_check = os.path.normpath(cleaned_path).strip('\\/').lower()
 
                             # Only keep the most general path, any subdirectories should not be separate paths
                             if cleaned_path and cleaned_path_check not in standalonePaths:
