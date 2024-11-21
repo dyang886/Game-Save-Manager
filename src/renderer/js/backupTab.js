@@ -175,8 +175,9 @@ function setupBackupTabButtons() {
         window.api.send('update-status', 'backuping', false);
     });
 
-    document.getElementById('update-database').addEventListener('click', () => {
-        updateDatabase();
+    document.getElementById('update-database').addEventListener('click', async () => {
+        await updateDatabase();
+        updateBackupTable(true);
     });
 }
 

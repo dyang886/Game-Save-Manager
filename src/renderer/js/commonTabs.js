@@ -9,11 +9,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     setDropDownAction();
 
     updateRestoreTable(true);
-    await updateBackupTable(true);
     const settings = await window.api.invoke('get-settings');
     if (settings.autoDbUpdate) {
-        updateDatabase();
+        await updateDatabase();
     }
+    await updateBackupTable(true);
 });
 
 window.api.receive('apply-language', () => {
