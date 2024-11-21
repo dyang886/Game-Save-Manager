@@ -1,4 +1,4 @@
-const { app } = require('electron');
+const { app, dialog } = require('electron');
 
 const { exec } = require('child_process');
 const fs = require('fs');
@@ -57,19 +57,25 @@ const execPromise = util.promisify(exec);
 // }
 
 async function getGameDataFromDB() {
-    return new Promise(async (resolve, reject) => {
-        let dbPath;
-        if (app.isPackaged) {
-            dbPath = path.join('./database', 'database.db');
+    const games = [];
+    const errors = [];
+    const dbPath = path.join(app.getPath("userData"), "GSM Database", "database.db");
+    if (!fs.existsSync(dbPath)) {
+        const installedDbPath = path.join('./database', 'database.db');
+        if (!fs.existsSync(installedDbPath)) {
+            dialog.showErrorBox(
+                i18next.t('alert.missing_database_file'),
+                i18next.t('alert.missing_database_file_message')
+            );
+            return { games, errors };
         } else {
-            dbPath = path.join(__dirname, '../../database/database.db');
+            await fse.copy(installedDbPath, dbPath);
         }
+    }
+    const db = new sqlite3.Database(dbPath, sqlite3.OPEN_READONLY);
+    let stmtInstallFolder;
 
-        const games = [];
-        const errors = [];
-        const db = new sqlite3.Database(dbPath, sqlite3.OPEN_READONLY);
-        let stmtInstallFolder;
-
+    return new Promise(async (resolve, reject) => {
         try {
             stmtInstallFolder = db.prepare("SELECT * FROM games WHERE install_folder = ?");
             const gameInstallPaths = getSettings().gameInstalls;
@@ -167,12 +173,7 @@ async function processCustomEntries(customJsonPath) {
 
 async function getAllGameDataFromDB() {
     return new Promise((resolve, reject) => {
-        let dbPath;
-        if (app.isPackaged) {
-            dbPath = path.join('./database', 'database.db');
-        } else {
-            dbPath = path.join(__dirname, '../../database/database.db');
-        }
+        const dbPath = path.join(app.getPath("userData"), "GSM Database", "database.db");
         const db = new sqlite3.Database(dbPath, sqlite3.OPEN_READONLY);
 
         const games = [];
@@ -567,17 +568,15 @@ async function updateDatabase() {
     const progressId = 'update-db';
     const progressTitle = i18next.t('alert.updating_database');
     const databaseLink = "https://raw.githubusercontent.com/dyang886/Game-Save-Manager/main/database/database.db";
-    let dbPath;
-    if (app.isPackaged) {
-        dbPath = path.join('./database', 'database.db');
-    } else {
-        dbPath = path.join(__dirname, '../../database/database.db');
-    }
+    const dbPath = path.join(app.getPath("userData"), "GSM Database", "database.db");
     const backupPath = `${dbPath}.backup`;
 
     getMainWin().webContents.send('update-progress', progressId, progressTitle, 'start');
 
     try {
+        if (!fs.existsSync(path.dirname(dbPath))) {
+            fs.mkdirSync(path.dirname(dbPath), { recursive: true });
+        }
         if (fs.existsSync(dbPath)) {
             fs.copyFileSync(dbPath, backupPath);
         }
