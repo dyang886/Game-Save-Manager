@@ -23,7 +23,7 @@ app.whenReady().then(async () => {
     await initializeI18next(getSettings().language);
     await initializeGameData();
 
-    createMainWindow();
+    await createMainWindow();
     app.setAppUserModelId(i18next.t('main.title'));
 
     if (getSettings().gameInstalls === 'uninitialized') {
@@ -37,6 +37,12 @@ app.whenReady().then(async () => {
 
     app.on("activate", () => {
         if (BrowserWindow.getAllWindows().length === 0) createWindow();
+    });
+
+    getMainWin().webContents.once('did-finish-load', () => {
+        getMainWin().webContents.send('show-alert', 'info', `Steam id64: ${getGameData().currentSteamUserId64}`);
+        getMainWin().webContents.send('show-alert', 'info', `Steam id3: ${getGameData().currentSteamUserId3}`);
+        getMainWin().webContents.send('show-alert', 'info', `Ubisoft id: ${getGameData().currentUbisoftUserId}`);
     });
 });
 
