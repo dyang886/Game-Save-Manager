@@ -1,4 +1,4 @@
-const { BrowserWindow, Menu, Notification, app, screen } = require('electron');
+const { BrowserWindow, Menu, Notification, app } = require('electron');
 
 const fs = require('fs');
 const os = require('os');
@@ -14,7 +14,7 @@ let aboutWin;
 let settings;
 let writeQueue = Promise.resolve();
 
-const appVersion = "2.0.0";
+const appVersion = "2.0.0-beta";
 const updateLink = "https://api.github.com/repos/dyang886/Game-Save-Manager/releases/latest";
 let status = {
     backuping: false,
