@@ -1,160 +1,561 @@
-2024-11-30 01:25:03,911 - INFO - Total game translations fetched: 1147
-2024-11-30 01:25:06,057 - INFO - Added steam_id to existing entry for Void Crew.
-2024-11-30 01:25:06,144 - INFO - Added 1 new game translations
-2024-11-30 01:25:06,145 - INFO - Fetching recent changes from 2024-11-29 01:26:07.278854 to 2024-11-30 01:25:06.145394
-2024-11-30 01:25:06,717 - INFO - Found zh_CN for S.T.A.L.K.E.R.: Shadow of Chernobyl: 潜行者：切尔诺贝利的阴影
-2024-11-30 01:25:06,726 - INFO - 1. Saved in database: S.T.A.L.K.E.R.: Shadow of Chernobyl
-2024-11-30 01:25:06,978 - INFO - Found zh_CN for Monster Hunter Stories: 怪物猎人物语
-2024-11-30 01:25:06,980 - INFO - 2. Saved in database: Monster Hunter Stories
-2024-11-30 01:25:07,245 - INFO - Found zh_CN for Microsoft Flight Simulator (2020): 微软飞行模拟 (2020)
-2024-11-30 01:25:07,246 - INFO - 3. Saved in database: Microsoft Flight Simulator (2020)
-2024-11-30 01:25:07,533 - INFO - Found zh_CN for Sonic X Shadow Generations: 索尼克×夏特 世代重启
-2024-11-30 01:25:07,535 - INFO - 4. Saved in database: Sonic X Shadow Generations
-2024-11-30 01:25:07,727 - INFO - No save locations found: Steam Deck
-2024-11-30 01:25:07,987 - INFO - 5. Saved in database: Half Sword
-2024-11-30 01:25:08,248 - INFO - 6. Saved in database: Toontown Online
-2024-11-30 01:25:08,535 - INFO - Found zh_CN for The Settlers 7: Paths to a Kingdom: 工人物语7：王国之路
-2024-11-30 01:25:08,537 - INFO - 7. Saved in database: The Settlers 7: Paths to a Kingdom
-2024-11-30 01:25:09,266 - INFO - Found zh_CN for False Myth: 谋欲的牺牲
-2024-11-30 01:25:09,267 - INFO - 8. Saved in database: False Myth
-2024-11-30 01:25:09,556 - INFO - 9. Saved in database: The Muppet CD-ROM: Muppets Inside
-2024-11-30 01:25:09,818 - INFO - 10. Saved in database: Enigma of Fear
-2024-11-30 01:25:10,036 - INFO - Found zh_CN for Restricted Area: 限制区
-2024-11-30 01:25:10,037 - INFO - 11. Saved in database: Restricted Area
-2024-11-30 01:25:10,322 - INFO - 12. Saved in database: Hazumi and the Pregnation
-2024-11-30 01:25:10,627 - INFO - 13. Saved in database: Postal 2
-2024-11-30 01:25:10,873 - INFO - 14. Saved in database: Rat Hunter
-2024-11-30 01:25:11,152 - INFO - 15. Saved in database: EraToho The World
-2024-11-30 01:25:11,309 - INFO - No save locations found: Nexagon Deathmatch
-2024-11-30 01:25:11,557 - INFO - 16. Saved in database: Utopia City
-2024-11-30 01:25:11,712 - INFO - No save locations found: Space Empires: Starfury
-2024-11-30 01:25:11,860 - INFO - No save locations found: They're Alive!
-2024-11-30 01:25:12,696 - INFO - 17. Saved in database: EratohoTW
-2024-11-30 01:25:12,870 - INFO - No save locations found: Mutant
-2024-11-30 01:25:13,024 - INFO - No save locations found: Phantasy Star Online: Blue Burst
-2024-11-30 01:25:13,282 - INFO - 18. Saved in database: Diorama Builder
-2024-11-30 01:25:14,078 - INFO - 19. Saved in database: Survivor Mercs
-2024-11-30 01:25:14,298 - INFO - Found zh_CN for Ice Age: Scrat's Nutty Adventure: 冰川时代：斯克莱特的疯狂冒险
-2024-11-30 01:25:14,300 - INFO - 20. Saved in database: Ice Age: Scrat's Nutty Adventure
-2024-11-30 01:25:14,545 - INFO - Found zh_CN for Ultrakill: 疯狂连杀
-2024-11-30 01:25:14,547 - INFO - 21. Saved in database: Ultrakill
-2024-11-30 01:25:14,547 - INFO - Finding game installation folders...
-2024-11-30 01:25:15,294 - INFO - Found installation folder for steam_id 4500
-2024-11-30 01:25:15,297 - INFO - Found installation folder for steam_id 2356560
-2024-11-30 01:25:15,300 - INFO - Found installation folder for steam_id 1250410
-2024-11-30 01:25:15,304 - INFO - Found installation folder for steam_id 2513280
-2024-11-30 01:25:15,307 - INFO - Found installation folder for steam_id 48120
-2024-11-30 01:25:15,310 - INFO - Found installation folder for steam_id 1257200
-2024-11-30 01:25:15,313 - INFO - Found installation folder for steam_id 1507580
-2024-11-30 01:25:15,316 - INFO - Found installation folder for steam_id 1136330
-2024-11-30 01:25:15,320 - INFO - Found installation folder for steam_id 223470
-2024-11-30 01:25:15,323 - INFO - Found installation folder for steam_id 3341450
-2024-11-30 01:25:15,326 - INFO - Found installation folder for steam_id 3341440
-2024-11-30 01:25:15,329 - INFO - Found installation folder for steam_id 1370170
-2024-11-30 01:25:15,332 - INFO - Found installation folder for steam_id 2141520
-2024-11-30 01:25:15,335 - INFO - Found installation folder for steam_id 751060
-2024-11-30 01:25:15,338 - INFO - Found installation folder for steam_id 1229490
-2024-11-30 01:25:15,338 - INFO - Continue parameter: {'rccontinue': '20241129112107|1905899', 'continue': '-||'}
-2024-11-30 01:25:15,747 - INFO - Found zh_CN for Warhammer 40,000: Dawn of War II: 战锤40K：战争黎明2
-2024-11-30 01:25:15,750 - INFO - 22. Saved in database: Warhammer 40,000: Dawn of War II
-2024-11-30 01:25:16,068 - INFO - 23. Saved in database: Warhammer 40,000: Dawn of War II: Chaos Rising
-2024-11-30 01:25:16,217 - INFO - Found zh_CN for Age of Empires: Definitive Edition: 帝国时代：终极版
-2024-11-30 01:25:16,218 - INFO - 24. Saved in database: Age of Empires: Definitive Edition
-2024-11-30 01:25:16,361 - INFO - Path not specified from {{p|game}}: Ultimate Yahtzee
-2024-11-30 01:25:16,454 - INFO - 25. Saved in database: Ultimate Yahtzee
-2024-11-30 01:25:16,722 - INFO - Found zh_CN for Saints Row 2: 黑道圣徒2
-2024-11-30 01:25:16,725 - INFO - 26. Saved in database: Saints Row 2
-2024-11-30 01:25:16,895 - INFO - Found zh_CN for Brotato: 土豆兄弟
-2024-11-30 01:25:16,897 - INFO - 27. Saved in database: Brotato
-2024-11-30 01:25:17,142 - INFO - Found zh_CN for Art of Rally: 拉力赛艺术
-2024-11-30 01:25:17,143 - INFO - 28. Saved in database: Art of Rally
-2024-11-30 01:25:17,401 - INFO - Found zh_CN for Tom Clancy's Rainbow Six Siege: 彩虹六号：围攻
-2024-11-30 01:25:17,403 - INFO - 29. Saved in database: Tom Clancy's Rainbow Six Siege
-2024-11-30 01:25:17,655 - INFO - 30. Saved in database: SPACE/MECH/PILOT
-2024-11-30 01:25:17,901 - INFO - Found zh_CN for S.T.A.L.K.E.R. 2: Heart of Chornobyl: 潜行者2：切尔诺贝利之心
-2024-11-30 01:25:17,903 - INFO - 31. Saved in database: S.T.A.L.K.E.R. 2: Heart of Chornobyl
-2024-11-30 01:25:18,211 - INFO - 32. Saved in database: Shiren the Wanderer: The Tower of Fortune and the Dice of Fate
-2024-11-30 01:25:18,380 - INFO - Path not specified from {{p|game}}: Airships: Conquer the Skies
-2024-11-30 01:25:18,385 - INFO - Found zh_CN for Airships: Conquer the Skies: 飞艇：征服天空
-2024-11-30 01:25:18,386 - INFO - 33. Saved in database: Airships: Conquer the Skies
-2024-11-30 01:25:18,551 - INFO - No save locations found: Pronty
-2024-11-30 01:25:18,833 - INFO - Found zh_CN for Doom Eternal: 毁灭战士 永恒
-2024-11-30 01:25:18,835 - INFO - 34. Saved in database: Doom Eternal
-2024-11-30 01:25:19,000 - INFO - No save locations found: Digital rights management (DRM)
-2024-11-30 01:25:19,250 - INFO - 35. Saved in database: Das Geisterschiff
-2024-11-30 01:25:19,413 - INFO - No save locations found: Origin
-2024-11-30 01:25:19,592 - INFO - No save locations found: (Delete) eFootball
-2024-11-30 01:25:19,757 - INFO - No save locations found: Blue Heat: The Case of the Cover Girl Murders
-2024-11-30 01:25:19,893 - INFO - No save locations found: DOOM + DOOM II
-2024-11-30 01:25:20,028 - INFO - No save locations found: Wishbone: Activity Zone
-2024-11-30 01:25:20,164 - INFO - No save locations found: Spring & Flow
-2024-11-30 01:25:20,430 - INFO - 36. Saved in database: Der Geisterturm / The Ghost Tower
-2024-11-30 01:25:20,584 - INFO - No save locations found: EA app
-2024-11-30 01:25:20,737 - INFO - No save locations found: SpiderHeck
-2024-11-30 01:25:21,014 - INFO - 37. Saved in database: MotoGP 3: Ultimate Racing Technology
-2024-11-30 01:25:21,295 - INFO - 38. Saved in database: Der Geisterjäger / The Ghost Hunter
-2024-11-30 01:25:21,579 - INFO - 39. Saved in database: Postal
-2024-11-30 01:25:21,819 - INFO - 40. Saved in database: Bubsy Two-Fur
-2024-11-30 01:25:21,819 - INFO - Finding game installation folders...
-2024-11-30 01:25:22,976 - INFO - Found installation folder for steam_id 15620
-2024-11-30 01:25:22,979 - INFO - Found installation folder for steam_id 20570
-2024-11-30 01:25:22,983 - INFO - Found installation folder for steam_id 1017900
-2024-11-30 01:25:22,986 - INFO - Found installation folder for steam_id 9480
-2024-11-30 01:25:22,990 - INFO - Found installation folder for steam_id 1942280
-2024-11-30 01:25:22,993 - INFO - Found installation folder for steam_id 550320
-2024-11-30 01:25:22,996 - INFO - Found installation folder for steam_id 359550
-2024-11-30 01:25:22,999 - INFO - Found installation folder for steam_id 1398390
-2024-11-30 01:25:23,003 - INFO - Found installation folder for steam_id 1643320
-2024-11-30 01:25:23,006 - INFO - Found installation folder for steam_id 1178790
-2024-11-30 01:25:23,009 - INFO - Found installation folder for steam_id 342560
-2024-11-30 01:25:23,012 - INFO - Found installation folder for steam_id 782330
-2024-11-30 01:25:23,015 - INFO - Found installation folder for steam_id 975230
-2024-11-30 01:25:23,018 - INFO - Found installation folder for steam_id 1217070
-2024-11-30 01:25:23,022 - INFO - Found installation folder for steam_id 1581240
-2024-11-30 01:25:23,025 - INFO - Found installation folder for steam_id 232770
-2024-11-30 01:25:23,028 - INFO - Found installation folder for steam_id 426630
-2024-11-30 01:25:23,029 - INFO - Continue parameter: {'rccontinue': '20241129190636|1905974', 'continue': '-||'}
-2024-11-30 01:25:23,446 - INFO - 41. Saved in database: Blood Omen: Legacy of Kain
-2024-11-30 01:25:23,712 - INFO - 42. Saved in database: Demon Lord Reincarnation
-2024-11-30 01:25:23,861 - INFO - No save locations found: PT for PC
-2024-11-30 01:25:24,019 - INFO - No save locations found: Endless Zone
-2024-11-30 01:25:24,279 - INFO - 43. Saved in database: Ringlorn Saga Gaiden
-2024-11-30 01:25:24,482 - INFO - Found zh_CN for Hitman 2: Silent Assassin: 杀手2：沉默刺客
-2024-11-30 01:25:24,483 - INFO - 44. Saved in database: Hitman 2: Silent Assassin
-2024-11-30 01:25:24,698 - INFO - No save locations found: List of unofficial ports
-2024-11-30 01:25:24,835 - INFO - No save locations found: Mystical Ninja Starring Goemon
-2024-11-30 01:25:24,998 - INFO - No save locations found: Link: The Faces of Evil
-2024-11-30 01:25:25,272 - INFO - 45. Saved in database: MotoGP: Ultimate Racing Technology
-2024-11-30 01:25:25,492 - INFO - Found zh_CN for MotoGP 2: 摩托GP 2
-2024-11-30 01:25:25,496 - INFO - 46. Saved in database: MotoGP 2
-2024-11-30 01:25:25,646 - INFO - No save locations found: Zelda: The Wand of Gamelon
-2024-11-30 01:25:25,790 - INFO - No save locations found: ZIIAOL
-2024-11-30 01:25:26,005 - INFO - Found zh_CN for Deus Ex: 杀出重围
-2024-11-30 01:25:26,006 - INFO - 47. Saved in database: Deus Ex
-2024-11-30 01:25:26,253 - INFO - 48. Saved in database: Sonic's Schoolhouse
-2024-11-30 01:25:26,401 - INFO - No save locations found: War Planet Online: Global Conquest
-2024-11-30 01:25:26,401 - INFO - Finding game installation folders...
-2024-11-30 01:25:28,056 - INFO - Found installation folder for steam_id 2395150
-2024-11-30 01:25:28,065 - INFO - Found installation folder for steam_id 2262980
-2024-11-30 01:25:28,068 - INFO - Found installation folder for steam_id 6850
-2024-11-30 01:25:28,071 - INFO - Found installation folder for steam_id 6910
-2024-11-30 01:25:28,071 - INFO - Continue parameter: {'rccontinue': '20241129211314|1906043', 'continue': '-||'}
-2024-11-30 01:25:28,526 - INFO - 49. Saved in database: Doom + Doom II
-2024-11-30 01:25:28,793 - INFO - 50. Saved in database: Resident Evil 4 (2023)
-2024-11-30 01:25:29,013 - INFO - Found zh_CN for Legacy of Kain: Soul Reaver 2: 凯恩的遗产：勾魂使者2
-2024-11-30 01:25:29,015 - INFO - 51. Saved in database: Legacy of Kain: Soul Reaver 2
-2024-11-30 01:25:29,262 - INFO - Found zh_CN for The Callisto Protocol: 木卫四协议
-2024-11-30 01:25:29,263 - INFO - 52. Saved in database: The Callisto Protocol
-2024-11-30 01:25:29,417 - INFO - Found zh_CN for Armies of Exigo: 幻魔霸主
-2024-11-30 01:25:29,418 - INFO - 53. Saved in database: Armies of Exigo
-2024-11-30 01:25:29,744 - INFO - Found zh_CN for NieR: Automata: 尼尔 自动人形
-2024-11-30 01:25:29,746 - INFO - 54. Saved in database: NieR: Automata
-2024-11-30 01:25:29,930 - INFO - Found zh_CN for Hot Wheels World Race: 风火轮赛车：世界比赛
-2024-11-30 01:25:29,932 - INFO - 55. Saved in database: Hot Wheels World Race
-2024-11-30 01:25:29,932 - INFO - Finding game installation folders...
-2024-11-30 01:25:31,049 - INFO - Found installation folder for steam_id 2280
-2024-11-30 01:25:31,052 - INFO - Found installation folder for steam_id 2050650
-2024-11-30 01:25:31,056 - INFO - Found installation folder for steam_id 224940
-2024-11-30 01:25:31,060 - INFO - Found installation folder for steam_id 1544020
-2024-11-30 01:25:31,063 - INFO - Found installation folder for steam_id 524220
-2024-11-30 01:25:31,064 - INFO - All recent changes fetched!
+2024-12-01 01:48:04,501 - INFO - Total game translations fetched: 1148
+2024-12-01 01:48:07,332 - INFO - Added 1 new game translations
+2024-12-01 01:48:07,333 - INFO - Fetching recent changes from 2024-11-30 01:24:06.145394 to 2024-12-01 01:48:07.333319
+2024-12-01 01:48:07,550 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:07,652 - INFO - Found zh_CN for Star Wars: The Old Republic: 星球大战：旧共和国
+2024-12-01 01:48:07,660 - INFO - 1. Saved in database: Star Wars: The Old Republic
+2024-12-01 01:48:08,578 - INFO - Found zh_CN for Rayman: 雷曼
+2024-12-01 01:48:08,580 - INFO - 2. Saved in database: Rayman
+2024-12-01 01:48:08,680 - INFO - No save locations found: Dungeon Hunter Champions
+2024-12-01 01:48:08,763 - INFO - Found zh_CN for Armies of Exigo: 幻魔霸主
+2024-12-01 01:48:08,765 - INFO - 3. Saved in database: Armies of Exigo
+2024-12-01 01:48:09,491 - INFO - No save locations found: Disney Princess Majestic Quest
+2024-12-01 01:48:09,642 - INFO - Found zh_CN for Cyberpunk 2077: 赛博朋克2077
+2024-12-01 01:48:09,643 - INFO - 4. Saved in database: Cyberpunk 2077
+2024-12-01 01:48:09,740 - INFO - Found zh_CN for Balatro: 小丑牌
+2024-12-01 01:48:09,741 - INFO - 5. Saved in database: Balatro
+2024-12-01 01:48:10,487 - INFO - No save locations found: Order & Chaos Online
+2024-12-01 01:48:10,577 - INFO - No save locations found: Six-Guns
+2024-12-01 01:48:10,779 - INFO - Found zh_CN for NieR: Automata: 尼尔 自动人形
+2024-12-01 01:48:10,781 - INFO - 6. Saved in database: NieR: Automata
+2024-12-01 01:48:10,892 - INFO - Found zh_CN for Drake of the 99 Dragons: 龙人德里克传奇
+2024-12-01 01:48:10,894 - INFO - 7. Saved in database: Drake of the 99 Dragons
+2024-12-01 01:48:10,976 - INFO - No save locations found: Acts of Blood
+2024-12-01 01:48:11,693 - INFO - Found zh_CN for Global Ops: Commando Libya: 全球行动：突袭利比亚
+2024-12-01 01:48:11,695 - INFO - 8. Saved in database: Global Ops: Commando Libya
+2024-12-01 01:48:11,786 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:11,880 - INFO - Found zh_CN for Theme Hospital: 主题医院
+2024-12-01 01:48:11,881 - INFO - 9. Saved in database: Theme Hospital
+2024-12-01 01:48:12,714 - INFO - No save locations found: Asphalt 7: Heat
+2024-12-01 01:48:13,468 - INFO - No save locations found: Dungeon Hunter 4
+2024-12-01 01:48:14,227 - INFO - No save locations found: Despicable Me: Minion Rush
+2024-12-01 01:48:14,350 - INFO - Found zh_CN for Counter-Strike: Source: 反恐精英：起源
+2024-12-01 01:48:14,352 - INFO - 10. Saved in database: Counter-Strike: Source
+2024-12-01 01:48:14,442 - INFO - No save locations found: Strinova
+2024-12-01 01:48:14,681 - INFO - 11. Saved in database: Hero of the Kingdom: The Lost Tales 3
+2024-12-01 01:48:15,204 - INFO - No save locations found: List of games that support high-fidelity upscaling
+2024-12-01 01:48:15,308 - INFO - No save locations found: Phantasy Star Online: Blue Burst
+2024-12-01 01:48:15,506 - INFO - 12. Saved in database: Sheep, Dog, 'n' Wolf
+2024-12-01 01:48:15,586 - INFO - No save locations found: Conv/rgence: A League of Legends Story
+2024-12-01 01:48:15,810 - INFO - 13. Saved in database: Loco Motive
+2024-12-01 01:48:16,644 - INFO - Found zh_CN for Crackdown 3: 除暴战警3
+2024-12-01 01:48:16,646 - INFO - 14. Saved in database: Crackdown 3
+2024-12-01 01:48:16,833 - INFO - Found zh_CN for XDefiant: 不羁联盟
+2024-12-01 01:48:16,835 - INFO - 15. Saved in database: XDefiant
+2024-12-01 01:48:17,029 - INFO - 16. Saved in database: The Captain
+2024-12-01 01:48:17,029 - INFO - Finding game installation folders...
+2024-12-01 01:48:19,420 - INFO - Found installation folder for steam_id 1286830
+2024-12-01 01:48:19,423 - INFO - Found installation folder for steam_id 1091500
+2024-12-01 01:48:19,427 - INFO - Found installation folder for steam_id 2379780
+2024-12-01 01:48:19,430 - INFO - Found installation folder for steam_id 524220
+2024-12-01 01:48:19,433 - INFO - Found installation folder for steam_id 755630
+2024-12-01 01:48:19,436 - INFO - Found installation folder for steam_id 200020
+2024-12-01 01:48:19,440 - INFO - Found installation folder for steam_id 240
+2024-12-01 01:48:19,443 - INFO - Found installation folder for steam_id 3340810
+2024-12-01 01:48:19,446 - INFO - Found installation folder for steam_id 1709880
+2024-12-01 01:48:19,449 - INFO - Found installation folder for steam_id 1721530
+2024-12-01 01:48:19,450 - INFO - Continue parameter: {'rccontinue': '20241130134052|1906132', 'continue': '-||'}
+2024-12-01 01:48:19,605 - INFO - No save locations found: Heartbound
+2024-12-01 01:48:20,111 - INFO - No save locations found: Kill The Moon
+2024-12-01 01:48:20,279 - INFO - Found zh_CN for Resident Evil 7: Biohazard: 生化危机7
+2024-12-01 01:48:20,281 - INFO - 17. Saved in database: Resident Evil 7: Biohazard
+2024-12-01 01:48:20,482 - INFO - Found zh_CN for Tron: Evolution: 特隆：进化
+2024-12-01 01:48:20,484 - INFO - 18. Saved in database: Tron: Evolution
+2024-12-01 01:48:20,607 - INFO - Found zh_CN for Hollow Knight: 空洞骑士
+2024-12-01 01:48:20,609 - INFO - 19. Saved in database: Hollow Knight
+2024-12-01 01:48:21,207 - INFO - No save locations found: Romance of the Three Kingdoms IX
+2024-12-01 01:48:21,386 - INFO - 20. Saved in database: Prey (2017)
+2024-12-01 01:48:22,289 - INFO - 21. Saved in database: Hidden & Dangerous Deluxe
+2024-12-01 01:48:22,809 - INFO - No save locations found: Ski Doo X-Team Racing
+2024-12-01 01:48:23,022 - INFO - 22. Saved in database: MotoGP: Ultimate Racing Technology 3
+2024-12-01 01:48:23,662 - INFO - No save locations found: Hidden & Dangerous
+2024-12-01 01:48:23,802 - INFO - Found zh_CN for Kingdom Hearts HD 1.5 + 2.5 ReMIX: 王国之心HD 1.5+2.5 Remix
+2024-12-01 01:48:23,804 - INFO - 23. Saved in database: Kingdom Hearts HD 1.5 + 2.5 ReMIX
+2024-12-01 01:48:23,974 - INFO - 24. Saved in database: Toontown Rewritten
+2024-12-01 01:48:24,197 - INFO - Found zh_CN for Roblox: 罗布乐思
+2024-12-01 01:48:24,198 - INFO - 25. Saved in database: Roblox
+2024-12-01 01:48:24,355 - INFO - Found zh_CN for Sniper Elite: 狙击精英
+2024-12-01 01:48:24,358 - INFO - 26. Saved in database: Sniper Elite
+2024-12-01 01:48:24,557 - INFO - 27. Saved in database: Sonic's Schoolhouse
+2024-12-01 01:48:24,724 - INFO - 28. Saved in database: ÜberSoldier
+2024-12-01 01:48:24,839 - INFO - No save locations found: Meta Store
+2024-12-01 01:48:25,034 - INFO - 29. Saved in database: Sonic Adventure DX (2011)
+2024-12-01 01:48:25,324 - INFO - 30. Saved in database: Sonic Adventure DX (Steam)
+2024-12-01 01:48:25,520 - INFO - 31. Saved in database: Sonic Adventure DX
+2024-12-01 01:48:25,614 - INFO - No save locations found: Evil Dead: Regeneration
+2024-12-01 01:48:26,687 - INFO - 32. Saved in database: Asphalt 8: Airborne
+2024-12-01 01:48:26,763 - INFO - No save locations found: Total Conquest
+2024-12-01 01:48:26,864 - INFO - No save locations found: Digital rights management (DRM)
+2024-12-01 01:48:26,938 - WARNING - Unknown system: EA app
+2024-12-01 01:48:26,940 - WARNING - Unknown system: EA app
+2024-12-01 01:48:26,969 - INFO - Found zh_CN for Final Fantasy XV: 最终幻想15
+2024-12-01 01:48:26,972 - INFO - 33. Saved in database: Final Fantasy XV
+2024-12-01 01:48:27,175 - INFO - 34. Saved in database: GT Racing 2: The Real Car Experience
+2024-12-01 01:48:27,261 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:27,284 - INFO - Found zh_CN for Command & Conquer: Red Alert 2: 红色警戒2：共和国之辉
+2024-12-01 01:48:27,286 - INFO - 35. Saved in database: Command & Conquer: Red Alert 2
+2024-12-01 01:48:28,259 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:28,282 - INFO - Found zh_CN for Command & Conquer: Tiberian Sun: 命令与征服 泰伯利亚之日
+2024-12-01 01:48:28,284 - INFO - 36. Saved in database: Command & Conquer: Tiberian Sun
+2024-12-01 01:48:28,284 - INFO - Finding game installation folders...
+2024-12-01 01:48:29,214 - INFO - Found installation folder for steam_id 418370
+2024-12-01 01:48:29,217 - INFO - Found installation folder for steam_id 315440
+2024-12-01 01:48:29,220 - INFO - Found installation folder for steam_id 367520
+2024-12-01 01:48:29,223 - INFO - Found installation folder for steam_id 480490
+2024-12-01 01:48:29,226 - INFO - Found installation folder for steam_id 703310
+2024-12-01 01:48:29,230 - INFO - Found installation folder for steam_id 2552430
+2024-12-01 01:48:29,233 - INFO - Found installation folder for steam_id 3700
+2024-12-01 01:48:29,236 - INFO - Found installation folder for steam_id 2905090
+2024-12-01 01:48:29,239 - INFO - Found installation folder for steam_id 71250
+2024-12-01 01:48:29,242 - INFO - Found installation folder for steam_id 637650
+2024-12-01 01:48:29,245 - INFO - Found installation folder for steam_id 2229850
+2024-12-01 01:48:29,248 - INFO - Found installation folder for steam_id 2229880
+2024-12-01 01:48:29,249 - INFO - Continue parameter: {'rccontinue': '20241130221745|1906219', 'continue': '-||'}
+2024-12-01 01:48:29,419 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:29,533 - INFO - 37. Saved in database: Command & Conquer: Red Alert
+2024-12-01 01:48:29,641 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:29,745 - INFO - 38. Saved in database: Command & Conquer
+2024-12-01 01:48:29,850 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:29,965 - INFO - 39. Saved in database: Command & Conquer: Renegade
+2024-12-01 01:48:30,078 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:30,195 - INFO - 40. Saved in database: Command & Conquer: Generals
+2024-12-01 01:48:30,296 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:30,321 - INFO - Found zh_CN for Command & Conquer 3: Tiberium Wars: 命运与征服3 泰伯利亚之战
+2024-12-01 01:48:30,323 - INFO - 41. Saved in database: Command & Conquer 3: Tiberium Wars
+2024-12-01 01:48:30,421 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:30,443 - INFO - Found zh_CN for Command & Conquer: Red Alert 3: 命令与征服：红色警戒3
+2024-12-01 01:48:30,445 - INFO - 42. Saved in database: Command & Conquer: Red Alert 3
+2024-12-01 01:48:30,547 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:30,547 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:30,571 - INFO - Found zh_CN for Command & Conquer: Red Alert 3 - Uprising: 红色警戒3：起义时刻
+2024-12-01 01:48:30,573 - INFO - 43. Saved in database: Command & Conquer: Red Alert 3 - Uprising
+2024-12-01 01:48:30,761 - INFO - 44. Saved in database: Halo Wars: Definitive Edition
+2024-12-01 01:48:31,578 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:31,578 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:31,709 - INFO - 45. Saved in database: Command & Conquer 4: Tiberian Twilight
+2024-12-01 01:48:31,795 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:31,819 - INFO - Found zh_CN for Command & Conquer Remastered Collection: 命令与征服：重制版
+2024-12-01 01:48:31,822 - INFO - 46. Saved in database: Command & Conquer Remastered Collection
+2024-12-01 01:48:31,916 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:31,959 - INFO - Found zh_CN for Nox: 救世传说
+2024-12-01 01:48:31,961 - INFO - 47. Saved in database: Nox
+2024-12-01 01:48:32,040 - INFO - No save locations found: List of EA Play games
+2024-12-01 01:48:32,119 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:32,203 - INFO - Found zh_CN for Sid Meier's Alpha Centauri: 半人马座阿尔发星
+2024-12-01 01:48:32,204 - INFO - 48. Saved in database: Sid Meier's Alpha Centauri
+2024-12-01 01:48:32,963 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:33,056 - INFO - 49. Saved in database: SimCity 2000
+2024-12-01 01:48:33,149 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:33,219 - INFO - Found zh_CN for SimCity 3000: 模拟城市3000
+2024-12-01 01:48:33,221 - INFO - 50. Saved in database: SimCity 3000
+2024-12-01 01:48:33,309 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:33,373 - INFO - Found zh_CN for SimCity 4: 模拟城市4
+2024-12-01 01:48:33,375 - INFO - 51. Saved in database: SimCity 4
+2024-12-01 01:48:34,127 - INFO - No save locations found: List of games available on the EA app
+2024-12-01 01:48:34,299 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:34,393 - INFO - 52. Saved in database: SimCity (2013)
+2024-12-01 01:48:34,545 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:34,597 - INFO - Found zh_CN for Mass Effect: 质量效应
+2024-12-01 01:48:34,599 - INFO - 53. Saved in database: Mass Effect
+2024-12-01 01:48:34,715 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:34,769 - INFO - Found zh_CN for Mass Effect 2: 质量效应2
+2024-12-01 01:48:34,771 - INFO - 54. Saved in database: Mass Effect 2
+2024-12-01 01:48:34,870 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:34,921 - INFO - Found zh_CN for Mass Effect 3: 质量效应3
+2024-12-01 01:48:34,922 - INFO - 55. Saved in database: Mass Effect 3
+2024-12-01 01:48:35,009 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:35,063 - INFO - Found zh_CN for Mass Effect: Andromeda: 质量效应：仙女座
+2024-12-01 01:48:35,065 - INFO - 56. Saved in database: Mass Effect: Andromeda
+2024-12-01 01:48:35,157 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:35,220 - INFO - Found zh_CN for Mass Effect Legendary Edition: 质量效应：传奇版
+2024-12-01 01:48:35,222 - INFO - 57. Saved in database: Mass Effect Legendary Edition
+2024-12-01 01:48:35,299 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:35,305 - INFO - Found zh_CN for Anthem: 圣歌
+2024-12-01 01:48:35,307 - INFO - 58. Saved in database: Anthem
+2024-12-01 01:48:36,175 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:36,256 - INFO - Found zh_CN for Titanfall 2: 泰坦陨落2
+2024-12-01 01:48:36,257 - INFO - 59. Saved in database: Titanfall 2
+2024-12-01 01:48:36,342 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:36,351 - INFO - Found zh_CN for Apex Legends: Apex英雄
+2024-12-01 01:48:36,352 - INFO - 60. Saved in database: Apex Legends
+2024-12-01 01:48:36,518 - INFO - 61. Saved in database: Enigma of Fear
+2024-12-01 01:48:36,637 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:36,666 - INFO - Found zh_CN for Dragon Age: Origins: 龙腾世纪 起源
+2024-12-01 01:48:36,672 - INFO - 62. Saved in database: Dragon Age: Origins
+2024-12-01 01:48:36,768 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:36,792 - INFO - Found zh_CN for Dragon Age II: 龙腾世纪2
+2024-12-01 01:48:36,794 - INFO - 63. Saved in database: Dragon Age II
+2024-12-01 01:48:36,992 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:37,021 - INFO - Found zh_CN for Dragon Age: Inquisition: 龙腾世纪：审判
+2024-12-01 01:48:37,023 - INFO - 64. Saved in database: Dragon Age: Inquisition
+2024-12-01 01:48:37,122 - INFO - No save locations found: OpenAL Soft HRTF
+2024-12-01 01:48:37,239 - INFO - Path not specified from {{p|game}}: Psychonauts
+2024-12-01 01:48:37,298 - INFO - Found zh_CN for Psychonauts: 脑航员
+2024-12-01 01:48:37,300 - INFO - 65. Saved in database: Psychonauts
+2024-12-01 01:48:37,385 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:37,497 - INFO - 66. Saved in database: Dragon Age: The Veilguard
+2024-12-01 01:48:37,600 - INFO - Path not specified from {{p|game}}: Far Cry
+2024-12-01 01:48:37,625 - INFO - Found zh_CN for Far Cry: 孤岛惊魂
+2024-12-01 01:48:37,627 - INFO - 67. Saved in database: Far Cry
+2024-12-01 01:48:37,694 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:37,792 - INFO - 68. Saved in database: Lands of Lore III
+2024-12-01 01:48:37,955 - INFO - Found zh_CN for Star Wars: Battlefront: 星球大战 战争前线
+2024-12-01 01:48:37,956 - INFO - 69. Saved in database: Star Wars: Battlefront
+2024-12-01 01:48:38,754 - INFO - Found zh_CN for Indiana Jones and the Infernal Machine: 印第安纳琼斯与恶魔机器
+2024-12-01 01:48:38,755 - INFO - 70. Saved in database: Indiana Jones and the Infernal Machine
+2024-12-01 01:48:38,755 - INFO - Finding game installation folders...
+2024-12-01 01:48:40,706 - INFO - Found installation folder for steam_id 2229840
+2024-12-01 01:48:40,710 - INFO - Found installation folder for steam_id 2229830
+2024-12-01 01:48:40,713 - INFO - Found installation folder for steam_id 2229890
+2024-12-01 01:48:40,717 - INFO - Found installation folder for steam_id 2229870
+2024-12-01 01:48:40,720 - INFO - Found installation folder for steam_id 24790
+2024-12-01 01:48:40,724 - INFO - Found installation folder for steam_id 17480
+2024-12-01 01:48:40,727 - INFO - Found installation folder for steam_id 24800
+2024-12-01 01:48:40,731 - INFO - Found installation folder for steam_id 459220
+2024-12-01 01:48:40,735 - INFO - Found installation folder for steam_id 47700
+2024-12-01 01:48:40,738 - INFO - Found installation folder for steam_id 1213210
+2024-12-01 01:48:40,741 - INFO - Found installation folder for steam_id 2204130
+2024-12-01 01:48:40,745 - INFO - Found installation folder for steam_id 2741560
+2024-12-01 01:48:40,748 - INFO - Found installation folder for steam_id 24780
+2024-12-01 01:48:40,751 - INFO - Found installation folder for steam_id 17460
+2024-12-01 01:48:40,755 - INFO - Found installation folder for steam_id 2362420
+2024-12-01 01:48:40,758 - INFO - Found installation folder for steam_id 1238020
+2024-12-01 01:48:40,761 - INFO - Found installation folder for steam_id 1238000
+2024-12-01 01:48:40,764 - INFO - Found installation folder for steam_id 1328670
+2024-12-01 01:48:40,768 - INFO - Found installation folder for steam_id 1237970
+2024-12-01 01:48:40,772 - INFO - Found installation folder for steam_id 1172470
+2024-12-01 01:48:40,775 - INFO - Found installation folder for steam_id 1507580
+2024-12-01 01:48:40,778 - INFO - Found installation folder for steam_id 47810
+2024-12-01 01:48:40,781 - INFO - Found installation folder for steam_id 1238040
+2024-12-01 01:48:40,785 - INFO - Found installation folder for steam_id 1222690
+2024-12-01 01:48:40,788 - INFO - Found installation folder for steam_id 3830
+2024-12-01 01:48:40,791 - INFO - Found installation folder for steam_id 1845910
+2024-12-01 01:48:40,794 - INFO - Found installation folder for steam_id 13520
+2024-12-01 01:48:40,797 - INFO - Found installation folder for steam_id 1058020
+2024-12-01 01:48:40,801 - INFO - Found installation folder for steam_id 904540
+2024-12-01 01:48:40,802 - INFO - Continue parameter: {'rccontinue': '20241130225739|1906275', 'continue': '-||'}
+2024-12-01 01:48:40,956 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:40,957 - INFO - Path not specified from {{p|game}}: Lands of Lore: The Throne of Chaos
+2024-12-01 01:48:41,081 - INFO - 71. Saved in database: Lands of Lore: The Throne of Chaos
+2024-12-01 01:48:41,800 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:41,852 - INFO - Found zh_CN for Populous: 上帝也疯狂
+2024-12-01 01:48:41,854 - INFO - 72. Saved in database: Populous
+2024-12-01 01:48:42,519 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:42,656 - INFO - 73. Saved in database: Populous II: Trials of the Olympian Gods
+2024-12-01 01:48:43,344 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:43,422 - INFO - Found zh_CN for Populous: The Beginning: 上帝也疯狂：开天辟地
+2024-12-01 01:48:43,424 - INFO - 74. Saved in database: Populous: The Beginning
+2024-12-01 01:48:43,523 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:43,532 - INFO - Found zh_CN for Alice: Madness Returns: 爱丽丝：疯狂回归
+2024-12-01 01:48:43,534 - INFO - 75. Saved in database: Alice: Madness Returns
+2024-12-01 01:48:43,629 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:43,656 - INFO - Found zh_CN for Dungeon Keeper 2: 地下城守护者2
+2024-12-01 01:48:43,657 - INFO - 76. Saved in database: Dungeon Keeper 2
+2024-12-01 01:48:43,734 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:43,759 - INFO - Found zh_CN for Dungeon Keeper: 地下城守护者
+2024-12-01 01:48:43,761 - INFO - 77. Saved in database: Dungeon Keeper
+2024-12-01 01:48:43,828 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:43,898 - INFO - Found zh_CN for Syndicate: 暴力辛迪加
+2024-12-01 01:48:43,899 - INFO - 78. Saved in database: Syndicate
+2024-12-01 01:48:44,576 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:44,577 - INFO - Path not specified from {{p|game}}: Magic Carpet
+2024-12-01 01:48:44,668 - INFO - 79. Saved in database: Magic Carpet
+2024-12-01 01:48:44,783 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:44,800 - INFO - Found zh_CN for Burnout Paradise Remastered: 火爆狂飙 天堂 重制版
+2024-12-01 01:48:44,801 - INFO - 80. Saved in database: Burnout Paradise Remastered
+2024-12-01 01:48:44,896 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:44,909 - INFO - Found zh_CN for Battlefield 3: 战地3
+2024-12-01 01:48:44,911 - INFO - 81. Saved in database: Battlefield 3
+2024-12-01 01:48:44,998 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:45,010 - INFO - Found zh_CN for Battlefield 4: 战地4
+2024-12-01 01:48:45,012 - INFO - 82. Saved in database: Battlefield 4
+2024-12-01 01:48:45,919 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:45,931 - INFO - Found zh_CN for Battlefield Hardline: 战地：硬仗
+2024-12-01 01:48:45,933 - INFO - 83. Saved in database: Battlefield Hardline
+2024-12-01 01:48:46,917 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:46,928 - INFO - Found zh_CN for Battlefield 1: 战地1
+2024-12-01 01:48:46,930 - INFO - 84. Saved in database: Battlefield 1
+2024-12-01 01:48:47,016 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:47,117 - INFO - 85. Saved in database: Crusader: No Regret
+2024-12-01 01:48:47,187 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:47,207 - INFO - Found zh_CN for Crusader: No Remorse: 无悔的十字军战士
+2024-12-01 01:48:47,219 - INFO - 86. Saved in database: Crusader: No Remorse
+2024-12-01 01:48:47,303 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:47,314 - INFO - Found zh_CN for Battlefield V: 战地5
+2024-12-01 01:48:47,316 - INFO - 87. Saved in database: Battlefield V
+2024-12-01 01:48:47,391 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:47,402 - INFO - Found zh_CN for Battlefield 2042: 战地2042
+2024-12-01 01:48:47,404 - INFO - 88. Saved in database: Battlefield 2042
+2024-12-01 01:48:47,540 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:47,560 - INFO - Found zh_CN for Crysis 3 Remastered: 孤岛危机3：复刻版
+2024-12-01 01:48:47,562 - INFO - 89. Saved in database: Crysis 3 Remastered
+2024-12-01 01:48:47,640 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:47,660 - INFO - Found zh_CN for Crysis 2 Remastered: 孤岛危机2：复刻版
+2024-12-01 01:48:47,662 - INFO - 90. Saved in database: Crysis 2 Remastered
+2024-12-01 01:48:47,741 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:47,761 - INFO - Found zh_CN for Crysis Remastered: 孤岛危机：复刻版
+2024-12-01 01:48:47,764 - INFO - 91. Saved in database: Crysis Remastered
+2024-12-01 01:48:47,850 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:47,872 - INFO - Found zh_CN for Dead Space: 死亡空间 重制版
+2024-12-01 01:48:47,874 - INFO - 92. Saved in database: Dead Space
+2024-12-01 01:48:47,982 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:48,005 - INFO - Found zh_CN for Dead Space 2: 死亡空间2
+2024-12-01 01:48:48,006 - INFO - 93. Saved in database: Dead Space 2
+2024-12-01 01:48:48,298 - INFO - Found zh_CN for Unreal Tournament: 虚幻竞技场2014
+2024-12-01 01:48:48,299 - INFO - 94. Saved in database: Unreal Tournament
+2024-12-01 01:48:48,374 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:48,425 - INFO - Found zh_CN for Jade Empire: Special Edition: 翡翠帝国特别版
+2024-12-01 01:48:48,427 - INFO - 95. Saved in database: Jade Empire: Special Edition
+2024-12-01 01:48:48,501 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:48,522 - INFO - Found zh_CN for Dead Space 3: 死亡空间3
+2024-12-01 01:48:48,524 - INFO - 96. Saved in database: Dead Space 3
+2024-12-01 01:48:48,645 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:48,667 - INFO - Found zh_CN for Crysis Warhead: 孤岛危机：弹头
+2024-12-01 01:48:48,672 - INFO - 97. Saved in database: Crysis Warhead
+2024-12-01 01:48:48,672 - INFO - Finding game installation folders...
+2024-12-01 01:48:50,586 - INFO - Found installation folder for steam_id 2203860
+2024-12-01 01:48:50,590 - INFO - Found installation folder for steam_id 2616450
+2024-12-01 01:48:50,593 - INFO - Found installation folder for steam_id 2616430
+2024-12-01 01:48:50,597 - INFO - Found installation folder for steam_id 19680
+2024-12-01 01:48:50,600 - INFO - Found installation folder for steam_id 2616460
+2024-12-01 01:48:50,604 - INFO - Found installation folder for steam_id 1996630
+2024-12-01 01:48:50,608 - INFO - Found installation folder for steam_id 1238080
+2024-12-01 01:48:50,611 - INFO - Found installation folder for steam_id 1238820
+2024-12-01 01:48:50,614 - INFO - Found installation folder for steam_id 1238860
+2024-12-01 01:48:50,618 - INFO - Found installation folder for steam_id 1238880
+2024-12-01 01:48:50,622 - INFO - Found installation folder for steam_id 1238840
+2024-12-01 01:48:50,625 - INFO - Found installation folder for steam_id 1238810
+2024-12-01 01:48:50,628 - INFO - Found installation folder for steam_id 1517290
+2024-12-01 01:48:50,632 - INFO - Found installation folder for steam_id 2096610
+2024-12-01 01:48:50,635 - INFO - Found installation folder for steam_id 2096600
+2024-12-01 01:48:50,638 - INFO - Found installation folder for steam_id 1715130
+2024-12-01 01:48:50,642 - INFO - Found installation folder for steam_id 17470
+2024-12-01 01:48:50,645 - INFO - Found installation folder for steam_id 47780
+2024-12-01 01:48:50,648 - INFO - Found installation folder for steam_id 13240
+2024-12-01 01:48:50,652 - INFO - Found installation folder for steam_id 7110
+2024-12-01 01:48:50,655 - INFO - Found installation folder for steam_id 1238060
+2024-12-01 01:48:50,658 - INFO - Found installation folder for steam_id 17330
+2024-12-01 01:48:50,659 - INFO - Continue parameter: {'rccontinue': '20241130234957|1906326', 'continue': '-||'}
+2024-12-01 01:48:50,834 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:50,857 - INFO - Found zh_CN for Dead Space (2023): 死亡空间 (2023)
+2024-12-01 01:48:50,859 - INFO - 98. Saved in database: Dead Space (2023)
+2024-12-01 01:48:51,992 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:52,046 - INFO - Found zh_CN for Mirror's Edge: 镜之边缘
+2024-12-01 01:48:52,048 - INFO - 99. Saved in database: Mirror's Edge
+2024-12-01 01:48:52,980 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:53,038 - INFO - Found zh_CN for Mirror's Edge Catalyst: 镜之边缘 催化剂
+2024-12-01 01:48:53,040 - INFO - 100. Saved in database: Mirror's Edge Catalyst
+2024-12-01 01:48:53,198 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:53,216 - INFO - Found zh_CN for Crysis 3: 孤岛危机3
+2024-12-01 01:48:53,217 - INFO - 101. Saved in database: Crysis 3
+2024-12-01 01:48:53,318 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:53,337 - INFO - Found zh_CN for Crysis 2: 孤岛危机2
+2024-12-01 01:48:53,338 - INFO - 102. Saved in database: Crysis 2
+2024-12-01 01:48:53,460 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:53,480 - INFO - Found zh_CN for Crysis: 孤岛危机
+2024-12-01 01:48:53,483 - INFO - 103. Saved in database: Crysis
+2024-12-01 01:48:54,216 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:54,261 - INFO - Found zh_CN for Lost in Random: 迷失随机
+2024-12-01 01:48:54,263 - INFO - 104. Saved in database: Lost in Random
+2024-12-01 01:48:54,476 - INFO - 105. Saved in database: Star Wars: Dark Forces Remaster
+2024-12-01 01:48:54,574 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:54,639 - INFO - Found zh_CN for Medal of Honor: Allied Assault: 荣誉勋章：联合袭击
+2024-12-01 01:48:54,641 - INFO - 106. Saved in database: Medal of Honor: Allied Assault
+2024-12-01 01:48:54,737 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:54,818 - INFO - Found zh_CN for The Saboteur: 破坏者
+2024-12-01 01:48:54,819 - INFO - 107. Saved in database: The Saboteur
+2024-12-01 01:48:54,912 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:54,976 - INFO - Found zh_CN for Medal of Honor: Pacific Assault: 荣誉勋章：血战太平洋
+2024-12-01 01:48:54,978 - INFO - 108. Saved in database: Medal of Honor: Pacific Assault
+2024-12-01 01:48:55,055 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:55,114 - INFO - Found zh_CN for Medal of Honor: Airborne: 荣誉勋章：空降神兵
+2024-12-01 01:48:55,116 - INFO - 109. Saved in database: Medal of Honor: Airborne
+2024-12-01 01:48:55,211 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:55,317 - INFO - 110. Saved in database: Medal of Honor (2010)
+2024-12-01 01:48:55,391 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:55,448 - INFO - Found zh_CN for Medal of Honor: Warfighter: 荣誉勋章 战士
+2024-12-01 01:48:55,450 - INFO - 111. Saved in database: Medal of Honor: Warfighter
+2024-12-01 01:48:55,532 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:55,613 - INFO - Found zh_CN for Unravel Two: 毛线小精灵2
+2024-12-01 01:48:55,614 - INFO - 112. Saved in database: Unravel Two
+2024-12-01 01:48:55,742 - INFO - Found zh_CN for Monopoly Plus: 大富翁:加强版
+2024-12-01 01:48:55,743 - INFO - 113. Saved in database: Monopoly Plus
+2024-12-01 01:48:56,551 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:56,626 - INFO - Found zh_CN for Unravel: 毛线小精灵
+2024-12-01 01:48:56,627 - INFO - 114. Saved in database: Unravel
+2024-12-01 01:48:56,745 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:56,822 - INFO - Found zh_CN for The Sims 4: 模拟人生4
+2024-12-01 01:48:56,824 - INFO - 115. Saved in database: The Sims 4
+2024-12-01 01:48:56,898 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:56,983 - INFO - Found zh_CN for The Sims Medieval: 模拟人生：中世纪
+2024-12-01 01:48:56,985 - INFO - 116. Saved in database: The Sims Medieval
+2024-12-01 01:48:57,088 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:57,169 - INFO - Found zh_CN for Star Wars: Squadrons: 星球大战：战机中队
+2024-12-01 01:48:57,171 - INFO - 117. Saved in database: Star Wars: Squadrons
+2024-12-01 01:48:57,289 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:57,368 - INFO - Found zh_CN for The Sims 3: 模拟人生3
+2024-12-01 01:48:57,370 - INFO - 118. Saved in database: The Sims 3
+2024-12-01 01:48:57,455 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:57,551 - INFO - Found zh_CN for Star Wars Battlefront II (2017): 星球大战：前线2 (2017)
+2024-12-01 01:48:57,555 - INFO - 119. Saved in database: Star Wars Battlefront II (2017)
+2024-12-01 01:48:58,596 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:58,712 - INFO - 120. Saved in database: Star Wars Battlefront (2015)
+2024-12-01 01:48:58,792 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:58,860 - INFO - Found zh_CN for Sea of Solitude: 孤独之海
+2024-12-01 01:48:58,861 - INFO - 121. Saved in database: Sea of Solitude
+2024-12-01 01:48:58,941 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:59,003 - INFO - Found zh_CN for Need for Speed Unbound: 极品飞车 不羁
+2024-12-01 01:48:59,005 - INFO - 122. Saved in database: Need for Speed Unbound
+2024-12-01 01:48:59,097 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:59,156 - INFO - Found zh_CN for Need for Speed Heat: 极品飞车 热度
+2024-12-01 01:48:59,158 - INFO - 123. Saved in database: Need for Speed Heat
+2024-12-01 01:48:59,242 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:59,303 - INFO - Found zh_CN for Need for Speed Payback: 极品飞车 复仇
+2024-12-01 01:48:59,305 - INFO - 124. Saved in database: Need for Speed Payback
+2024-12-01 01:48:59,393 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:59,456 - INFO - Found zh_CN for Plants vs. Zombies: 植物大战僵尸
+2024-12-01 01:48:59,458 - INFO - 125. Saved in database: Plants vs. Zombies
+2024-12-01 01:48:59,537 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:59,644 - INFO - 126. Saved in database: Need for Speed (2016)
+2024-12-01 01:48:59,723 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:59,799 - INFO - Found zh_CN for Plants vs. Zombies: Garden Warfare: 植物大战僵尸：花园战争
+2024-12-01 01:48:59,801 - INFO - 127. Saved in database: Plants vs. Zombies: Garden Warfare
+2024-12-01 01:48:59,899 - WARNING - Unknown platform: EA app
+2024-12-01 01:48:59,959 - INFO - Found zh_CN for Need for Speed Rivals: 极品飞车18：宿敌
+2024-12-01 01:48:59,961 - INFO - 128. Saved in database: Need for Speed Rivals
+2024-12-01 01:49:00,074 - WARNING - Unknown platform: EA app
+2024-12-01 01:49:00,156 - INFO - Found zh_CN for Plants vs. Zombies: Garden Warfare 2: 植物大战僵尸：花园战争2
+2024-12-01 01:49:00,157 - INFO - 129. Saved in database: Plants vs. Zombies: Garden Warfare 2
+2024-12-01 01:49:01,111 - WARNING - Unknown platform: EA app
+2024-12-01 01:49:01,201 - INFO - Found zh_CN for Plants vs. Zombies: Battle for Neighborville: 植物大战僵尸：为好邻镇而战
+2024-12-01 01:49:01,202 - INFO - 130. Saved in database: Plants vs. Zombies: Battle for Neighborville
+2024-12-01 01:49:01,326 - WARNING - Unknown platform: EA app
+2024-12-01 01:49:01,452 - INFO - 131. Saved in database: Need for Speed: Most Wanted (2012)
+2024-12-01 01:49:01,549 - WARNING - Unknown platform: EA app
+2024-12-01 01:49:01,622 - INFO - Found zh_CN for Need for Speed: Hot Pursuit Remastered: 极品飞车14：热力追踪重制版
+2024-12-01 01:49:01,624 - INFO - 132. Saved in database: Need for Speed: Hot Pursuit Remastered
+2024-12-01 01:49:02,895 - WARNING - Unknown platform: EA app
+2024-12-01 01:49:02,929 - INFO - Found zh_CN for GRID Legends: 超级房车赛：传奇
+2024-12-01 01:49:02,930 - INFO - 133. Saved in database: GRID Legends
+2024-12-01 01:49:03,879 - WARNING - Unknown platform: EA app
+2024-12-01 01:49:03,955 - INFO - 134. Saved in database: Fe
+2024-12-01 01:49:04,090 - WARNING - Unknown platform: EA app
+2024-12-01 01:49:04,192 - INFO - 135. Saved in database: EA Sports WRC
+2024-12-01 01:49:04,296 - WARNING - Unknown platform: EA app
+2024-12-01 01:49:04,300 - INFO - Found zh_CN for A Way Out: 逃出生天
+2024-12-01 01:49:04,302 - INFO - 136. Saved in database: A Way Out
+2024-12-01 01:49:04,383 - WARNING - Unknown platform: EA app
+2024-12-01 01:49:04,424 - INFO - Found zh_CN for It Takes Two: 双人成行
+2024-12-01 01:49:04,426 - INFO - 137. Saved in database: It Takes Two
+2024-12-01 01:49:04,548 - WARNING - Unknown platform: EA App
+2024-12-01 01:49:04,644 - INFO - 138. Saved in database: EA Sports FC 25
+2024-12-01 01:49:04,728 - WARNING - Unknown platform: EA app
+2024-12-01 01:49:04,731 - INFO - No save locations found: EA Sports FC 24
+2024-12-01 01:49:04,810 - WARNING - Unknown platform: EA app
+2024-12-01 01:49:04,811 - INFO - No save locations found: Starflight 2: Trade Routes of the Cloud Nebula
+2024-12-01 01:49:04,893 - WARNING - Unknown platform: EA app
+2024-12-01 01:49:04,982 - INFO - Found zh_CN for The Bard's Tale Trilogy: 冰城传奇三部曲
+2024-12-01 01:49:04,987 - INFO - 139. Saved in database: The Bard's Tale Trilogy
+2024-12-01 01:49:04,987 - INFO - Finding game installation folders...
+2024-12-01 01:49:08,432 - INFO - Found installation folder for steam_id 1693980
+2024-12-01 01:49:08,436 - INFO - Found installation folder for steam_id 17410
+2024-12-01 01:49:08,442 - INFO - Found installation folder for steam_id 1233570
+2024-12-01 01:49:08,445 - INFO - Found installation folder for steam_id 1282690
+2024-12-01 01:49:08,448 - INFO - Found installation folder for steam_id 108800
+2024-12-01 01:49:08,451 - INFO - Found installation folder for steam_id 17300
+2024-12-01 01:49:08,454 - INFO - Found installation folder for steam_id 1462570
+2024-12-01 01:49:08,458 - INFO - Found installation folder for steam_id 2292260
+2024-12-01 01:49:08,461 - INFO - Found installation folder for steam_id 24880
+2024-12-01 01:49:08,464 - INFO - Found installation folder for steam_id 24840
+2024-12-01 01:49:08,467 - INFO - Found installation folder for steam_id 47790
+2024-12-01 01:49:08,470 - INFO - Found installation folder for steam_id 1225570
+2024-12-01 01:49:08,473 - INFO - Found installation folder for steam_id 562810
+2024-12-01 01:49:08,476 - INFO - Found installation folder for steam_id 1225560
+2024-12-01 01:49:08,479 - INFO - Found installation folder for steam_id 1222670
+2024-12-01 01:49:08,482 - INFO - Found installation folder for steam_id 102820
+2024-12-01 01:49:08,485 - INFO - Found installation folder for steam_id 1222730
+2024-12-01 01:49:08,488 - INFO - Found installation folder for steam_id 47890
+2024-12-01 01:49:08,492 - INFO - Found installation folder for steam_id 1237950
+2024-12-01 01:49:08,495 - INFO - Found installation folder for steam_id 1237980
+2024-12-01 01:49:08,498 - INFO - Found installation folder for steam_id 1225590
+2024-12-01 01:49:08,501 - INFO - Found installation folder for steam_id 1846380
+2024-12-01 01:49:08,504 - INFO - Found installation folder for steam_id 1222680
+2024-12-01 01:49:08,508 - INFO - Found installation folder for steam_id 1262580
+2024-12-01 01:49:08,511 - INFO - Found installation folder for steam_id 3590
+2024-12-01 01:49:08,514 - INFO - Found installation folder for steam_id 1262540
+2024-12-01 01:49:08,517 - INFO - Found installation folder for steam_id 1262600
+2024-12-01 01:49:08,520 - INFO - Found installation folder for steam_id 1922560
+2024-12-01 01:49:08,523 - INFO - Found installation folder for steam_id 1262240
+2024-12-01 01:49:08,526 - INFO - Found installation folder for steam_id 1262560
+2024-12-01 01:49:08,529 - INFO - Found installation folder for steam_id 1328660
+2024-12-01 01:49:08,533 - INFO - Found installation folder for steam_id 1307710
+2024-12-01 01:49:08,536 - INFO - Found installation folder for steam_id 1225580
+2024-12-01 01:49:08,540 - INFO - Found installation folder for steam_id 1849250
+2024-12-01 01:49:08,543 - INFO - Found installation folder for steam_id 1222700
+2024-12-01 01:49:08,547 - INFO - Found installation folder for steam_id 1426210
+2024-12-01 01:49:08,550 - INFO - Found installation folder for steam_id 2669320
+2024-12-01 01:49:08,555 - INFO - Found installation folder for steam_id 843260
+2024-12-01 01:49:08,557 - INFO - Continue parameter: {'rccontinue': '20241201004537|1906380', 'continue': '-||'}
+2024-12-01 01:49:08,744 - WARNING - Unknown platform: EA app
+2024-12-01 01:49:08,745 - INFO - No save locations found: Starflight
+2024-12-01 01:49:08,833 - INFO - Found zh_CN for Capcom Arcade Stadium: 卡普空街机合集
+2024-12-01 01:49:08,834 - INFO - 140. Saved in database: Capcom Arcade Stadium
+2024-12-01 01:49:08,905 - WARNING - Unknown platform: EA app
+2024-12-01 01:49:09,014 - INFO - 141. Saved in database: Wing Commander: Privateer
+2024-12-01 01:49:09,088 - WARNING - Unknown platform: EA app
+2024-12-01 01:49:09,221 - INFO - 142. Saved in database: Wing Commander IV: The Price of Freedom
+2024-12-01 01:49:09,296 - WARNING - Unknown platform: EA app
+2024-12-01 01:49:09,427 - INFO - 143. Saved in database: Wing Commander III: Heart of the Tiger
+2024-12-01 01:49:09,504 - WARNING - Unknown platform: EA app
+2024-12-01 01:49:09,648 - INFO - 144. Saved in database: Wing Commander II: Vengeance of the Kilrathi
+2024-12-01 01:49:09,719 - WARNING - Unknown platform: EA app
+2024-12-01 01:49:09,823 - INFO - 145. Saved in database: Ultima IX: Ascension
+2024-12-01 01:49:09,897 - WARNING - Unknown platform: EA app
+2024-12-01 01:49:09,989 - INFO - 146. Saved in database: Wing Commander
+2024-12-01 01:49:10,067 - INFO - No save locations found: Orbo's Odyssey
+2024-12-01 01:49:10,156 - WARNING - Unknown platform: EA app
+2024-12-01 01:49:10,245 - INFO - Found zh_CN for Ultima VIII: Pagan: 创世纪8：异教徒
+2024-12-01 01:49:10,247 - INFO - 147. Saved in database: Ultima VIII: Pagan
+2024-12-01 01:49:10,419 - WARNING - Unknown platform: EA app
+2024-12-01 01:49:10,546 - INFO - 148. Saved in database: Ultima Underworld: The Stygian Abyss
+2024-12-01 01:49:10,650 - WARNING - Unknown platform: EA app
+2024-12-01 01:49:10,774 - INFO - 149. Saved in database: Ultima VII Part Two: Serpent Isle
+2024-12-01 01:49:10,849 - WARNING - Unknown platform: EA app
+2024-12-01 01:49:10,988 - INFO - 150. Saved in database: Ultima Underworld II: Labyrinth of Worlds
+2024-12-01 01:49:11,068 - WARNING - Unknown platform: EA app
+2024-12-01 01:49:11,178 - INFO - 151. Saved in database: Ultima VII: The Black Gate
+2024-12-01 01:49:11,265 - WARNING - Unknown platform: EA app
+2024-12-01 01:49:11,369 - INFO - Found zh_CN for Ultima VI: The False Prophet: 创世纪6 虚假先知
+2024-12-01 01:49:11,371 - INFO - 152. Saved in database: Ultima VI: The False Prophet
+2024-12-01 01:49:11,442 - WARNING - Unknown platform: EA app
+2024-12-01 01:49:11,557 - INFO - 153. Saved in database: Ultima V: Warriors of Destiny
+2024-12-01 01:49:11,624 - WARNING - Unknown platform: EA app
+2024-12-01 01:49:11,749 - INFO - 154. Saved in database: Ultima I: The First Age of Darkness
+2024-12-01 01:49:11,845 - WARNING - Unknown platform: EA app
+2024-12-01 01:49:11,963 - INFO - 155. Saved in database: Ultima IV: Quest of the Avatar
+2024-12-01 01:49:12,041 - WARNING - Unknown platform: EA app
+2024-12-01 01:49:12,151 - INFO - 156. Saved in database: Super Mega Baseball 4
+2024-12-01 01:49:12,228 - WARNING - Unknown platform: EA app
+2024-12-01 01:49:12,327 - INFO - 157. Saved in database: Ultima III: Exodus
+2024-12-01 01:49:12,407 - WARNING - Unknown platform: EA app
+2024-12-01 01:49:12,409 - INFO - No save locations found: Super Mega Baseball 3
+2024-12-01 01:49:12,481 - WARNING - Unknown platform: EA app
+2024-12-01 01:49:12,616 - INFO - 158. Saved in database: Ultima II: The Revenge of the Enchantress
+2024-12-01 01:49:12,747 - INFO - Found zh_CN for Rail Simulator: 模拟火车
+2024-12-01 01:49:12,749 - INFO - 159. Saved in database: Rail Simulator
+2024-12-01 01:49:12,849 - INFO - Found zh_CN for Gigantosaurus: The Game: 巨龙游戏
+2024-12-01 01:49:12,851 - INFO - 160. Saved in database: Gigantosaurus: The Game
+2024-12-01 01:49:12,988 - INFO - Found zh_CN for One Step from Eden: 伊甸之路
+2024-12-01 01:49:12,990 - INFO - 161. Saved in database: One Step from Eden
+2024-12-01 01:49:13,153 - INFO - Found zh_CN for Ice Age: Scrat's Nutty Adventure: 冰川时代：斯克莱特的疯狂冒险
+2024-12-01 01:49:13,159 - INFO - 162. Saved in database: Ice Age: Scrat's Nutty Adventure
+2024-12-01 01:49:13,227 - INFO - No save locations found: DreamWorks Dragons: Dawn of New Riders
+2024-12-01 01:49:13,385 - INFO - 163. Saved in database: Oaken
+2024-12-01 01:49:13,386 - INFO - Finding game installation folders...
+2024-12-01 01:49:14,270 - INFO - Found installation folder for steam_id 1515950
+2024-12-01 01:49:14,274 - INFO - Found installation folder for steam_id 1487210
+2024-12-01 01:49:14,277 - INFO - Found installation folder for steam_id 1177020
+2024-12-01 01:49:14,281 - INFO - Found installation folder for steam_id 960690
+2024-12-01 01:49:14,284 - INFO - Found installation folder for steam_id 751060
+2024-12-01 01:49:14,287 - INFO - Found installation folder for steam_id 1348690
+2024-12-01 01:49:14,288 - INFO - All recent changes fetched!
