@@ -14,7 +14,7 @@ let aboutWin;
 let settings;
 let writeQueue = Promise.resolve();
 
-const appVersion = "2.0.0-beta";
+const appVersion = "2.0.0";
 const updateLink = "https://api.github.com/repos/dyang886/Game-Save-Manager/releases/latest";
 let status = {
     backuping: false,

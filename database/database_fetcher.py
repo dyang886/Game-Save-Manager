@@ -307,6 +307,7 @@ class DatabaseFetcher:
             'uplay': 'Ubisoft',
             'origin': 'EA',
             'ea desktop': 'EA',
+            'ea app': 'EA',
             'epic games store': 'Epic',
             'epic': 'Epic',
             'egs': 'Epic',

@@ -171,6 +171,8 @@ async function addTemplate(renameTitleFocus = true, wikiId = null) {
     const deleteButton = newEntry.querySelector('.custom-entry-delete');
     const dropdownIcon = newEntry.querySelector('.custom-entry-dropdown');
 
+    let hasToggled = false;
+
     // Toggle collapsed content when the dropdown icon is clicked
     dropdownIcon.addEventListener('click', () => {
         if (!entryTitle.innerHTML.trim()) {
@@ -199,6 +201,11 @@ async function addTemplate(renameTitleFocus = true, wikiId = null) {
         }
         titleInput.classList.add('hidden');
         entryTitle.classList.remove('hidden');
+
+        if (entryTitle.innerHTML.trim() && !hasToggled) {
+            toggleEntry(newEntry);
+            hasToggled = true;
+        }
     });
 
     titleInput.addEventListener('keypress', (event) => {
