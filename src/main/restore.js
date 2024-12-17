@@ -156,10 +156,11 @@ async function restoreGame(gameObj, userActionForAll) {
         // Check for any conflicts before proceeding with the restore
         const shouldProceed = await shouldSkip(pathsToCheck, getGameDisplayName(gameObj), localActionForAll);
 
-        if (shouldProceed.skip) {
-            return { action: null, error: null };
-        } else if (shouldProceed.actionForAll) {
+        if (shouldProceed.actionForAll) {
             localActionForAll = shouldProceed.actionForAll;
+        }
+        if (shouldProceed.skip) {
+            return { action: localActionForAll, error: `${i18next.t('alert.restore_game_error', { game_name: getGameDisplayName(gameObj) })}: ${i18next.t('alert.manually_skipped')}` };
         }
 
         // Proceed with restoring all paths based on user's decision
@@ -252,7 +253,7 @@ async function shouldSkip(pathsToCheck, gameDisplayName, userActionForAll) {
 }
 
 async function getLatestModificationTime(directory) {
-    if (!fs.existsSync(path)) {
+    if (!fs.existsSync(directory)) {
         return new Date(0);
     }
 
