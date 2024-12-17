@@ -38,12 +38,6 @@ app.whenReady().then(async () => {
     app.on("activate", () => {
         if (BrowserWindow.getAllWindows().length === 0) createWindow();
     });
-
-    getMainWin().webContents.once('did-finish-load', () => {
-        getMainWin().webContents.send('show-alert', 'info', `Steam id64: ${getGameData().currentSteamUserId64}`);
-        getMainWin().webContents.send('show-alert', 'info', `Steam id3: ${getGameData().currentSteamUserId3}`);
-        getMainWin().webContents.send('show-alert', 'info', `Ubisoft id: ${getGameData().currentUbisoftUserId}`);
-    });
 });
 
 // Language settings
