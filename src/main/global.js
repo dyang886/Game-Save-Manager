@@ -14,7 +14,7 @@ let aboutWin;
 let settings;
 let writeQueue = Promise.resolve();
 
-const appVersion = "2.0.0";
+const appVersion = "2.0.1";
 const updateLink = "https://api.github.com/repos/dyang886/Game-Save-Manager/releases/latest";
 let status = {
     backuping: false,
@@ -335,13 +335,14 @@ const loadSettings = () => {
     const locale_mapping = {
         'en-US': 'en_US',
         'zh-Hans-CN': 'zh_CN',
-        'zh-Hant-HK': 'zh_CN',
-        'zh-Hant-MO': 'zh_CN',
-        'zh-Hant-TW': 'zh_CN',
+        'zh-Hans-SG': 'zh_CN',
+        'zh-Hant-HK': 'zh_TW',
+        'zh-Hant-MO': 'zh_TW',
+        'zh-Hant-TW': 'zh_TW',
     };
 
     const systemLocale = app.getLocale();
-    // console.log(app.getPreferredSystemLanguages());
+    // console.log(`Current locale: ${systemLocale}; Preferred languages: ${app.getPreferredSystemLanguages()}`);
     const detectedLanguage = locale_mapping[systemLocale] || 'en_US';
 
     // Default settings
