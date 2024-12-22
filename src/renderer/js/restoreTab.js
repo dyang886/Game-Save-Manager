@@ -56,7 +56,7 @@ async function populateRestoreTable(data) {
     // Append rows to the table body
     const appendRowsToTable = (games, isPinned) => {
         games.forEach((game) => {
-            const wikiId = parseInt(game.wiki_page_id);
+            const wikiId = game.wiki_page_id;
             restoreTableDataMap.set(wikiId, game);
 
             let gameTitle = game.title;

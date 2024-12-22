@@ -22,7 +22,7 @@ const execPromise = util.promisify(exec);
 
 // A sample backup game object: {
 //     title: 'Worms W.M.D',
-//     wiki_page_id: 35700,
+//     wiki_page_id: '35700',
 //     install_folder: 'WormsWMD',
 //     steam_id: 327030,
 //     gog_id: 1448620034,
@@ -100,6 +100,7 @@ async function getGameDataFromDB() {
                     if (rows && rows.length > 0) {
                         for (const row of rows) {
                             try {
+                                row.wiki_page_id = row.wiki_page_id.toString();
                                 row.platform = JSON.parse(row.platform);
                                 row.save_location = JSON.parse(row.save_location);
                                 row.install_path = path.join(installPath, dir);

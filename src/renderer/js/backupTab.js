@@ -59,7 +59,7 @@ async function populateBackupTable(data, iconMap) {
     // Append rows to the table body
     const appendRowsToTable = (games, isPinned) => {
         games.forEach((game) => {
-            const wikiId = parseInt(game.wiki_page_id);
+            const wikiId = game.wiki_page_id;
             backupTableDataMap.set(wikiId, game);
 
             let gameTitle = game.title;
