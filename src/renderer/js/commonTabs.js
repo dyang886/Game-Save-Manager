@@ -506,6 +506,6 @@ function getSelectedWikiIds(tabName) {
     const selectedRows = table.querySelectorAll('.row-checkbox:checked');
     return Array.from(selectedRows).map(checkbox => {
         const row = checkbox.closest('tr');
-        return parseInt(row.getAttribute('data-wiki-id'));
+        return row.getAttribute('data-wiki-id').trim();
     });
 }
