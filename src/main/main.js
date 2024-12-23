@@ -16,7 +16,6 @@ const { getGameDataFromDB, getAllGameDataFromDB, backupGame, updateDatabase } = 
 const { getGameDataForRestore, restoreGame } = require("./restore");
 
 
-process.noAsar = true;
 app.commandLine.appendSwitch("lang", "en");
 
 app.whenReady().then(async () => {

@@ -12,6 +12,7 @@ let win;
 let settingsWin;
 let aboutWin;
 let settings;
+let asarProcessCount = 0;
 let writeQueue = Promise.resolve();
 
 const appVersion = "2.0.2";
@@ -183,6 +184,21 @@ function getGameDisplayName(gameObj) {
     } else if (settings.language === "zh_CN") {
         return gameObj.zh_CN || gameObj.title;
     }
+}
+
+function enableAsar() {
+    asarProcessCount--;
+    if (asarProcessCount <= 0) {
+        asarProcessCount = 0;
+        process.noAsar = false;
+    }
+}
+
+function disableAsar() {
+    if (asarProcessCount === 0) {
+        process.noAsar = true;
+    }
+    asarProcessCount++;
 }
 
 // Calculates the total size of a directory or file
@@ -417,6 +433,7 @@ function saveSettings(key, value) {
 }
 
 async function moveFilesWithProgress(sourceDir, destinationDir) {
+    disableAsar();
     let totalSize = 0;
     let movedSize = 0;
     let errors = [];
@@ -471,7 +488,6 @@ async function moveFilesWithProgress(sourceDir, destinationDir) {
 
         win.webContents.send('update-progress', progressId, progressTitle, 'start');
         await moveAndTrackProgress(sourceDir, destinationDir);
-
         win.webContents.send('update-progress', progressId, progressTitle, 'end');
 
         if (errors.length > 0) {
@@ -484,6 +500,7 @@ async function moveFilesWithProgress(sourceDir, destinationDir) {
     saveSettings('backupPath', destinationDir);
     win.webContents.send('update-restore-table');
     status.migrating = false;
+    enableAsar();
 }
 
 module.exports = {
@@ -496,6 +513,8 @@ module.exports = {
     getLatestVersion,
     checkAppUpdate,
     getGameDisplayName,
+    enableAsar,
+    disableAsar,
     calculateDirectorySize,
     ensureWritable,
     getNewestBackup,
