@@ -11,8 +11,8 @@ async function updateBackupTable(loader) {
         await showLoadingIndicator('backup');
     }
 
-    const gameData = await window.api.invoke('fetch-backup-table-data');
     const iconMap = await window.api.invoke('get-icon-map');
+    const gameData = await window.api.invoke('fetch-backup-table-data');
     await populateBackupTable(gameData, iconMap);
     updateSelectedCountAndSize('backup');
 

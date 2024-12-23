@@ -1,6 +1,7 @@
 const { BrowserWindow, Menu, Notification, app } = require('electron');
 
 const fs = require('fs');
+const fsOriginal = require('original-fs');
 const os = require('os');
 const path = require('path');
 
@@ -12,10 +13,9 @@ let win;
 let settingsWin;
 let aboutWin;
 let settings;
-let asarProcessCount = 0;
 let writeQueue = Promise.resolve();
 
-const appVersion = "2.0.2";
+const appVersion = "2.0.3";
 const updateLink = "https://api.github.com/repos/dyang886/Game-Save-Manager/releases/latest";
 let status = {
     backuping: false,
@@ -186,42 +186,27 @@ function getGameDisplayName(gameObj) {
     }
 }
 
-function enableAsar() {
-    asarProcessCount--;
-    if (asarProcessCount <= 0) {
-        asarProcessCount = 0;
-        process.noAsar = false;
-    }
-}
-
-function disableAsar() {
-    if (asarProcessCount === 0) {
-        process.noAsar = true;
-    }
-    asarProcessCount++;
-}
-
 // Calculates the total size of a directory or file
 function calculateDirectorySize(directoryPath, ignoreConfig = true) {
     let totalSize = 0;
 
     try {
-        if (fs.lstatSync(directoryPath).isDirectory()) {
-            const files = fs.readdirSync(directoryPath);
+        if (fsOriginal.statSync(directoryPath).isDirectory()) {
+            const files = fsOriginal.readdirSync(directoryPath);
             files.forEach(file => {
                 if (ignoreConfig && file === 'backup_info.json') {
                     return;
                 }
                 const filePath = path.join(directoryPath, file);
-                if (fs.lstatSync(filePath).isDirectory()) {
+                if (fsOriginal.statSync(filePath).isDirectory()) {
                     totalSize += calculateDirectorySize(filePath);
                 } else {
-                    totalSize += fs.lstatSync(filePath).size;
+                    totalSize += fsOriginal.statSync(filePath).size;
                 }
             });
 
         } else {
-            totalSize += fs.lstatSync(directoryPath).size;
+            totalSize += fsOriginal.statSync(directoryPath).size;
         }
 
     } catch (error) {
@@ -232,24 +217,24 @@ function calculateDirectorySize(directoryPath, ignoreConfig = true) {
 }
 
 // Ensure all files under a path have writable permission
-async function ensureWritable(pathToCheck) {
-    if (!fs.existsSync(pathToCheck)) {
+function ensureWritable(pathToCheck) {
+    if (!fsOriginal.existsSync(pathToCheck)) {
         return;
     }
 
-    const stats = await fse.stat(pathToCheck);
+    const stats = fsOriginal.statSync(pathToCheck);
 
     if (stats.isDirectory()) {
-        const items = await fse.readdir(pathToCheck);
+        const items = fsOriginal.readdirSync(pathToCheck);
 
         for (const item of items) {
             const fullPath = path.join(pathToCheck, item);
-            await ensureWritable(fullPath);
+            ensureWritable(fullPath);
         }
 
     } else {
         if (!(stats.mode & 0o200)) {
-            await fse.chmod(pathToCheck, 0o666);
+            fsOriginal.chmod(pathToCheck, 0o666);
             console.log(`Changed permissions for file: ${pathToCheck}`);
         }
     }
@@ -258,13 +243,13 @@ async function ensureWritable(pathToCheck) {
 function getNewestBackup(wiki_page_id) {
     const backupDir = path.join(settings.backupPath, wiki_page_id.toString());
 
-    if (!fs.existsSync(backupDir)) {
+    if (!fsOriginal.existsSync(backupDir)) {
         return i18next.t('main.no_backups');
     }
 
-    const backups = fs.readdirSync(backupDir).filter(file => {
+    const backups = fsOriginal.readdirSync(backupDir).filter(file => {
         const fullPath = path.join(backupDir, file);
-        return fs.statSync(fullPath).isDirectory();
+        return fsOriginal.statSync(fullPath).isDirectory();
     });
 
     if (backups.length === 0) {
@@ -280,6 +265,25 @@ function getNewestBackup(wiki_page_id) {
 
 function updateStatus(statusKey, statusValue) {
     status[statusKey] = statusValue;
+}
+
+function fsOriginalCopyFolder(source, target) {
+    fsOriginal.mkdirSync(target, { recursive: true });
+
+    const items = fsOriginal.readdirSync(source);
+
+    for (const item of items) {
+        const sourcePath = path.join(source, item);
+        const destinationPath = path.join(target, item);
+
+        const stats = fsOriginal.statSync(sourcePath);
+
+        if (stats.isDirectory()) {
+            fsOriginalCopyFolder(sourcePath, destinationPath);
+        } else {
+            fsOriginal.copyFileSync(sourcePath, destinationPath);
+        }
+    }
 }
 
 const placeholder_mapping = {
@@ -433,7 +437,6 @@ function saveSettings(key, value) {
 }
 
 async function moveFilesWithProgress(sourceDir, destinationDir) {
-    disableAsar();
     let totalSize = 0;
     let movedSize = 0;
     let errors = [];
@@ -443,7 +446,7 @@ async function moveFilesWithProgress(sourceDir, destinationDir) {
 
     const moveAndTrackProgress = async (srcDir, destDir) => {
         try {
-            const items = fs.readdirSync(srcDir, { withFileTypes: true });
+            const items = fsOriginal.readdirSync(srcDir, { withFileTypes: true });
 
             for (const item of items) {
                 const srcPath = path.join(srcDir, item.name);
@@ -453,9 +456,9 @@ async function moveFilesWithProgress(sourceDir, destinationDir) {
                     fse.ensureDirSync(destPath);
                     await moveAndTrackProgress(srcPath, destPath);
                 } else {
-                    const fileStats = fs.statSync(srcPath);
-                    const readStream = fs.createReadStream(srcPath);
-                    const writeStream = fs.createWriteStream(destPath);
+                    const fileStats = fsOriginal.statSync(srcPath);
+                    const readStream = fsOriginal.createReadStream(srcPath);
+                    const writeStream = fsOriginal.createWriteStream(destPath);
 
                     readStream.on('data', (chunk) => {
                         movedSize += chunk.length;
@@ -468,22 +471,22 @@ async function moveFilesWithProgress(sourceDir, destinationDir) {
                         readStream.on('error', reject);
                         writeStream.on('error', reject);
                         writeStream.on('finish', () => {
-                            fs.promises.utimes(destPath, fileStats.atime, fileStats.mtime)
-                                .then(() => fs.promises.rm(srcPath))
+                            fsOriginal.promises.utimes(destPath, fileStats.atime, fileStats.mtime)
+                                .then(() => fsOriginal.promises.rm(srcPath))
                                 .then(resolve)
                                 .catch(reject);
                         });
                     });
                 }
             }
-            await fs.promises.rm(srcDir, { recursive: true });
+            await fsOriginal.promises.rm(srcDir, { recursive: true });
 
         } catch (err) {
             errors.push(`Error moving file or directory: ${err.message}`);
         }
     };
 
-    if (fs.existsSync(sourceDir)) {
+    if (fsOriginal.existsSync(sourceDir)) {
         totalSize = calculateDirectorySize(sourceDir, false);
 
         win.webContents.send('update-progress', progressId, progressTitle, 'start');
@@ -500,7 +503,6 @@ async function moveFilesWithProgress(sourceDir, destinationDir) {
     saveSettings('backupPath', destinationDir);
     win.webContents.send('update-restore-table');
     status.migrating = false;
-    enableAsar();
 }
 
 module.exports = {
@@ -513,11 +515,10 @@ module.exports = {
     getLatestVersion,
     checkAppUpdate,
     getGameDisplayName,
-    enableAsar,
-    disableAsar,
     calculateDirectorySize,
     ensureWritable,
     getNewestBackup,
+    fsOriginalCopyFolder,
     placeholder_mapping,
     placeholder_identifier,
     osKeyMap,

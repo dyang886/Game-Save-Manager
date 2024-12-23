@@ -2,6 +2,7 @@ const { BrowserWindow, app, dialog, ipcMain, shell } = require('electron');
 
 const { randomUUID } = require('crypto');
 const fs = require('fs');
+const fsOriginal = require('original-fs');
 const os = require('os');
 const path = require('path');
 
@@ -83,7 +84,7 @@ ipcMain.handle('open-url', async (event, url) => {
 
 ipcMain.handle('open-backup-folder', async (event, wikiId) => {
     const backupPath = path.join(getSettings().backupPath, wikiId.toString());
-    if (fs.existsSync(backupPath) && fs.readdirSync(backupPath).length > 0) {
+    if (fsOriginal.existsSync(backupPath) && fsOriginal.readdirSync(backupPath).length > 0) {
         await shell.openPath(backupPath);
     } else {
         getMainWin().webContents.send('show-alert', 'warning', i18next.t('alert.no_backups_found'));
