@@ -82,39 +82,41 @@ async function getGameDataFromDB() {
             const gameInstallPaths = getSettings().gameInstalls;
 
             // Process database entries
-            for (const installPath of gameInstallPaths) {
-                const directories = fsOriginal.readdirSync(installPath, { withFileTypes: true })
-                    .filter(dirent => dirent.isDirectory())
-                    .map(dirent => dirent.name);
+            if (gameInstallPaths.length > 0) {
+                for (const installPath of gameInstallPaths) {
+                    const directories = fsOriginal.readdirSync(installPath, { withFileTypes: true })
+                        .filter(dirent => dirent.isDirectory())
+                        .map(dirent => dirent.name);
 
-                for (const dir of directories) {
-                    const rows = await new Promise((resolve, reject) => {
-                        stmtInstallFolder.all(dir, (err, rows) => {
-                            if (err) {
-                                reject(err);
-                            } else {
-                                resolve(rows);
-                            }
-                        });
-                    });
-
-                    if (rows && rows.length > 0) {
-                        for (const row of rows) {
-                            try {
-                                row.wiki_page_id = row.wiki_page_id.toString();
-                                row.platform = JSON.parse(row.platform);
-                                row.save_location = JSON.parse(row.save_location);
-                                row.install_path = path.join(installPath, dir);
-                                row.latest_backup = getNewestBackup(row.wiki_page_id);
-
-                                const processed_game = await process_game(row);
-                                if (processed_game.resolved_paths.length !== 0) {
-                                    games.push(processed_game);
+                    for (const dir of directories) {
+                        const rows = await new Promise((resolve, reject) => {
+                            stmtInstallFolder.all(dir, (err, rows) => {
+                                if (err) {
+                                    reject(err);
+                                } else {
+                                    resolve(rows);
                                 }
+                            });
+                        });
 
-                            } catch (err) {
-                                console.error(`Error processing database game ${getGameDisplayName(row)}: ${err.stack}`);
-                                errors.push(`${i18next.t('alert.backup_process_error_db', { game_name: getGameDisplayName(row) })}: ${err.message}`);
+                        if (rows && rows.length > 0) {
+                            for (const row of rows) {
+                                try {
+                                    row.wiki_page_id = row.wiki_page_id.toString();
+                                    row.platform = JSON.parse(row.platform);
+                                    row.save_location = JSON.parse(row.save_location);
+                                    row.install_path = path.join(installPath, dir);
+                                    row.latest_backup = getNewestBackup(row.wiki_page_id);
+
+                                    const processed_game = await process_game(row);
+                                    if (processed_game.resolved_paths.length !== 0) {
+                                        games.push(processed_game);
+                                    }
+
+                                } catch (err) {
+                                    console.error(`Error processing database game ${getGameDisplayName(row)}: ${err.stack}`);
+                                    errors.push(`${i18next.t('alert.backup_process_error_db', { game_name: getGameDisplayName(row) })}: ${err.message}`);
+                                }
                             }
                         }
                     }

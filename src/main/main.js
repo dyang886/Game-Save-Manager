@@ -24,13 +24,13 @@ app.whenReady().then(async () => {
     await initializeI18next(getSettings().language);
     await initializeGameData();
 
-    await createMainWindow();
-    app.setAppUserModelId(i18next.t('main.title'));
-
     if (getSettings().gameInstalls === 'uninitialized') {
         await detectGamePaths();
         saveSettings('gameInstalls', getGameData().detectedGamePaths);
     }
+
+    await createMainWindow();
+    app.setAppUserModelId(i18next.t('main.title'));
 
     if (getSettings().autoAppUpdate) {
         checkAppUpdate();
