@@ -10,7 +10,7 @@ const i18next = require('i18next');
 const moment = require('moment');
 
 const { getGameData } = require('./gameData');
-const { getGameDisplayName, calculateDirectorySize, ensureWritable, placeholder_mapping, getSettings } = require('./global');
+const { getGameDisplayName, enableAsar, disableAsar, calculateDirectorySize, ensureWritable, placeholder_mapping, getSettings } = require('./global');
 
 const execPromise = util.promisify(exec);
 
@@ -46,6 +46,7 @@ const execPromise = util.promisify(exec);
 // }
 
 async function getGameDataForRestore() {
+    disableAsar();
     const backupPath = getSettings().backupPath;
     fse.ensureDir(backupPath);
     const gameFolders = await fse.readdir(backupPath);
@@ -109,10 +110,12 @@ async function getGameDataForRestore() {
         }
     }
 
+    enableAsar();
     return { games, errors };
 }
 
 async function restoreGame(gameObj, userActionForAll) {
+    disableAsar();
     let localActionForAll = userActionForAll;
     const pathsToCheck = [];
     let gameNotInstalled = false;
@@ -198,6 +201,9 @@ async function restoreGame(gameObj, userActionForAll) {
     } catch (error) {
         console.error(`Error during restore for game: ${getGameDisplayName(gameObj)}`, error.stack);
         return { action: localActionForAll, error: `${i18next.t('alert.restore_game_error', { game_name: getGameDisplayName(gameObj) })}: ${error.message}` };
+
+    } finally {
+        enableAsar();
     }
 }
 

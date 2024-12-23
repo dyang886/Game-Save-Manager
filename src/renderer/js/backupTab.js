@@ -177,7 +177,6 @@ function setupBackupTabButtons() {
 
     document.getElementById('update-database').addEventListener('click', async () => {
         await updateDatabase();
-        updateBackupTable(true);
     });
 }
 
@@ -280,5 +279,7 @@ async function updateDatabase() {
         updateButtonIcon.classList.add('fa-rotate');
         updateButton.setAttribute('data-i18n', 'main.update_database');
         updateButtonText.textContent = await window.i18n.translate('main.update_database');
+
+        updateBackupTable(true);
     }
 }

@@ -14,7 +14,7 @@ const moment = require('moment');
 const sqlite3 = require('sqlite3');
 const WinReg = require('winreg');
 
-const { getMainWin, getGameDisplayName, calculateDirectorySize, ensureWritable, getNewestBackup, placeholder_mapping, placeholder_identifier, osKeyMap, getSettings } = require('./global');
+const { getMainWin, getGameDisplayName, enableAsar, disableAsar, calculateDirectorySize, ensureWritable, getNewestBackup, placeholder_mapping, placeholder_identifier, osKeyMap, getSettings } = require('./global');
 const { getGameData } = require('./gameData');
 
 const execPromise = util.promisify(exec);
@@ -57,6 +57,7 @@ const execPromise = util.promisify(exec);
 // }
 
 async function getGameDataFromDB() {
+    disableAsar();
     const games = [];
     const errors = [];
     const dbPath = path.join(app.getPath("userData"), "GSM Database", "database.db");
@@ -67,6 +68,7 @@ async function getGameDataFromDB() {
                 i18next.t('alert.missing_database_file'),
                 i18next.t('alert.missing_database_file_message')
             );
+            enableAsar();
             return { games, errors };
         } else {
             await fse.copy(installedDbPath, dbPath);
@@ -131,16 +133,16 @@ async function getGameDataFromDB() {
                 errors.push(...customGameErrors);
             }
 
-            db.close();
-            resolve({ games, errors });
-
         } catch (error) {
             console.error(`Error displaying backup table: ${error.stack}`);
             errors.push(`${i18next.t('alert.backup_process_error_display')}: ${error.message}`);
             if (stmtInstallFolder) {
                 stmtInstallFolder.finalize();
             }
+
+        } finally {
             db.close();
+            enableAsar();
             resolve({ games, errors });
         }
     });
@@ -419,6 +421,7 @@ function extractUidFromPath(templatePath, resolvedPath) {
 }
 
 async function backupGame(gameObj) {
+    disableAsar();
     const gameBackupPath = path.join(getSettings().backupPath, gameObj.wiki_page_id.toString());
 
     // Create a new backup instance folder based on the current date and time
@@ -498,6 +501,9 @@ async function backupGame(gameObj) {
     } catch (error) {
         console.error(`Error during backup for game ${getGameDisplayName(gameObj)}: ${error.stack}`);
         return `${i18next.t('alert.backup_game_error', { game_name: getGameDisplayName(gameObj) })}: ${error.message}`;
+
+    } finally {
+        enableAsar();
     }
 
     return null;
