@@ -1,6 +1,6 @@
 {
   "name": "game-save-manager",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Easily backup and restore your game saves anytime",
   "main": "src/main/main.js",
   "scripts": {
@@ -15,7 +15,7 @@
     "icon": "./src/assets/logo.ico",
     "appId": "com.dyang.game-save-manager",
     "productName": "Game Save Manager",
-    "copyright": "Copyright © 2024 Yongcan Yang",
+    "copyright": "Copyright © 2024-2025 Yongcan Yang",
     "files": [
       "src/**/*",
       "node_modules/**/*"

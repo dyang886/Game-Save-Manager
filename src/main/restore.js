@@ -1,7 +1,7 @@
 const { BrowserWindow, dialog } = require('electron');
 
 const { exec } = require('child_process');
-const fs = require('fs');
+const fsOriginal = require('original-fs');
 const path = require('path');
 const util = require('util');
 
@@ -10,7 +10,7 @@ const i18next = require('i18next');
 const moment = require('moment');
 
 const { getGameData } = require('./gameData');
-const { getGameDisplayName, enableAsar, disableAsar, calculateDirectorySize, ensureWritable, placeholder_mapping, getSettings } = require('./global');
+const { getGameDisplayName, calculateDirectorySize, ensureWritable, fsOriginalCopyFolder, placeholder_mapping, getSettings } = require('./global');
 
 const execPromise = util.promisify(exec);
 
@@ -46,31 +46,30 @@ const execPromise = util.promisify(exec);
 // }
 
 async function getGameDataForRestore() {
-    disableAsar();
     const backupPath = getSettings().backupPath;
-    fse.ensureDir(backupPath);
-    const gameFolders = await fse.readdir(backupPath);
+    fsOriginal.mkdirSync(backupPath, { recursive: true });
+    const gameFolders = fsOriginal.readdirSync(backupPath);
 
     const games = [];
     const errors = [];
 
     for (const gameFolder of gameFolders) {
         const wikiIdFolderPath = path.join(backupPath, gameFolder);
-        const stats = await fse.stat(wikiIdFolderPath);
+        const stats = fsOriginal.statSync(wikiIdFolderPath);
 
         try {
             if (stats.isDirectory()) {
                 const backups = [];
 
                 // Read all backup instance folders inside this game folder
-                const backupFolders = await fse.readdir(wikiIdFolderPath);
+                const backupFolders = fsOriginal.readdirSync(wikiIdFolderPath);
                 for (const backupFolder of backupFolders) {
                     const backupFolderPath = path.join(wikiIdFolderPath, backupFolder);
                     const configFilePath = path.join(backupFolderPath, 'backup_info.json');
                     const backupSize = calculateDirectorySize(backupFolderPath);
 
                     // Check if the backup instance contains a config file
-                    if (fs.existsSync(configFilePath)) {
+                    if (fsOriginal.existsSync(configFilePath)) {
                         try {
                             const backupConfig = await fse.readJson(configFilePath);
                             backups.push({
@@ -110,12 +109,10 @@ async function getGameDataForRestore() {
         }
     }
 
-    enableAsar();
     return { games, errors };
 }
 
 async function restoreGame(gameObj, userActionForAll) {
-    disableAsar();
     let localActionForAll = userActionForAll;
     const pathsToCheck = [];
     let gameNotInstalled = false;
@@ -133,7 +130,7 @@ async function restoreGame(gameObj, userActionForAll) {
             const sourcePath = path.join(latestBackupPath, backupPath.folder_name);
             const destinationPath = resolveTemplatedRestorePath(backupPath.template, backupPath.install_folder);
 
-            if (!await fse.pathExists(sourcePath)) {
+            if (!fsOriginal.existsSync(sourcePath)) {
                 console.warn(`Source path does not exist: ${sourcePath}`);
                 continue;
             }
@@ -168,15 +165,15 @@ async function restoreGame(gameObj, userActionForAll) {
 
         // Proceed with restoring all paths based on user's decision
         for (const { sourcePath, destinationPath, backupType } of pathsToCheck) {
-            await ensureWritable(destinationPath);
+            ensureWritable(destinationPath);
 
             if (backupType === 'folder') {
-                await fse.ensureDir(destinationPath);
-                await fse.copy(sourcePath, destinationPath, { overwrite: true });
+                fsOriginal.mkdirSync(destinationPath, { recursive: true });
+                fsOriginalCopyFolder(sourcePath, destinationPath);
 
             } else if (backupType === 'file') {
-                await fse.ensureDir(path.dirname(destinationPath));
-                await fse.copy(path.join(sourcePath, path.basename(destinationPath)), destinationPath, { overwrite: true });
+                fsOriginal.mkdirSync(path.dirname(destinationPath), { recursive: true });
+                fsOriginal.copyFileSync(path.join(sourcePath, path.basename(destinationPath)), destinationPath);
 
             } else if (backupType === 'reg') {
                 const registryFilePath = path.join(sourcePath, 'registry_backup.reg');
@@ -201,9 +198,6 @@ async function restoreGame(gameObj, userActionForAll) {
     } catch (error) {
         console.error(`Error during restore for game: ${getGameDisplayName(gameObj)}`, error.stack);
         return { action: localActionForAll, error: `${i18next.t('alert.restore_game_error', { game_name: getGameDisplayName(gameObj) })}: ${error.message}` };
-
-    } finally {
-        enableAsar();
     }
 }
 
@@ -213,8 +207,8 @@ async function shouldSkip(pathsToCheck, gameDisplayName, userActionForAll) {
 
     // Loop through each source-destination pair to find the latest modification times
     for (const { sourcePath, destinationPath } of pathsToCheck) {
-        const srcModTime = await getLatestModificationTime(sourcePath);
-        const destModTime = await getLatestModificationTime(destinationPath);
+        const srcModTime = getLatestModificationTime(sourcePath);
+        const destModTime = getLatestModificationTime(destinationPath);
 
         if (srcModTime > latestSourceModTime) {
             latestSourceModTime = srcModTime;
@@ -258,24 +252,24 @@ async function shouldSkip(pathsToCheck, gameDisplayName, userActionForAll) {
     return { skip: false, actionForAll: null };
 }
 
-async function getLatestModificationTime(directory) {
-    if (!fs.existsSync(directory)) {
+function getLatestModificationTime(directory) {
+    if (!fsOriginal.existsSync(directory)) {
         return new Date(0);
     }
 
-    const stats = await fse.lstat(directory);
+    const stats = fsOriginal.statSync(directory);
 
     if (stats.isDirectory()) {
-        const files = await fse.readdir(directory);
+        const files = fsOriginal.readdirSync(directory);
         let latestModTime = new Date(0);
 
         for (const file of files) {
             const fullPath = path.join(directory, file);
-            const fileStats = await fse.lstat(fullPath);
+            const fileStats = fsOriginal.statSync(fullPath);
 
             if (fileStats.isDirectory()) {
                 // Recursively check subdirectories
-                const subDirModTime = await getLatestModificationTime(fullPath);
+                const subDirModTime = getLatestModificationTime(fullPath);
                 if (subDirModTime > latestModTime) {
                     latestModTime = subDirModTime;
                 }
@@ -316,7 +310,7 @@ function getGameInstallPath(installFolder) {
     const gameInstallPaths = getSettings().gameInstalls;
 
     for (const installPath of gameInstallPaths) {
-        const directories = fs.readdirSync(installPath, { withFileTypes: true })
+        const directories = fsOriginal.readdirSync(installPath, { withFileTypes: true })
             .filter(dirent => dirent.isDirectory())
             .map(dirent => dirent.name);
 

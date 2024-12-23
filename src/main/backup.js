@@ -2,6 +2,7 @@ const { app, dialog } = require('electron');
 
 const { exec } = require('child_process');
 const fs = require('fs');
+const fsOriginal = require('original-fs');
 const https = require('https');
 const os = require('os');
 const path = require('path');
@@ -14,7 +15,7 @@ const moment = require('moment');
 const sqlite3 = require('sqlite3');
 const WinReg = require('winreg');
 
-const { getMainWin, getGameDisplayName, enableAsar, disableAsar, calculateDirectorySize, ensureWritable, getNewestBackup, placeholder_mapping, placeholder_identifier, osKeyMap, getSettings } = require('./global');
+const { getMainWin, getGameDisplayName, calculateDirectorySize, ensureWritable, getNewestBackup, fsOriginalCopyFolder, placeholder_mapping, placeholder_identifier, osKeyMap, getSettings } = require('./global');
 const { getGameData } = require('./gameData');
 
 const execPromise = util.promisify(exec);
@@ -57,7 +58,6 @@ const execPromise = util.promisify(exec);
 // }
 
 async function getGameDataFromDB() {
-    disableAsar();
     const games = [];
     const errors = [];
     const dbPath = path.join(app.getPath("userData"), "GSM Database", "database.db");
@@ -68,7 +68,6 @@ async function getGameDataFromDB() {
                 i18next.t('alert.missing_database_file'),
                 i18next.t('alert.missing_database_file_message')
             );
-            enableAsar();
             return { games, errors };
         } else {
             await fse.copy(installedDbPath, dbPath);
@@ -84,7 +83,7 @@ async function getGameDataFromDB() {
 
             // Process database entries
             for (const installPath of gameInstallPaths) {
-                const directories = fs.readdirSync(installPath, { withFileTypes: true })
+                const directories = fsOriginal.readdirSync(installPath, { withFileTypes: true })
                     .filter(dirent => dirent.isDirectory())
                     .map(dirent => dirent.name);
 
@@ -142,7 +141,6 @@ async function getGameDataFromDB() {
 
         } finally {
             db.close();
-            enableAsar();
             resolve({ games, errors });
         }
     });
@@ -238,7 +236,7 @@ async function process_game(db_game_row) {
             if (resolvedPath.path.includes('*')) {
                 const files = glob.sync(resolvedPath.path.replace(/\\/g, '/'));
                 for (const filePath of files) {
-                    if (fs.existsSync(filePath)) {
+                    if (fsOriginal.existsSync(filePath)) {
                         totalBackupSize += calculateDirectorySize(filePath);
                         resolved_paths.push({
                             template: templatedPath,
@@ -248,7 +246,7 @@ async function process_game(db_game_row) {
                     }
                 }
             } else {
-                if (fs.existsSync(resolvedPath.path)) {
+                if (fsOriginal.existsSync(resolvedPath.path)) {
                     totalBackupSize += calculateDirectorySize(resolvedPath.path);
                     resolved_paths.push({
                         template: templatedPath,
@@ -395,7 +393,7 @@ async function findLatestModifiedPath(paths) {
     let latestTime = 0;
 
     for (const filePath of paths) {
-        const stats = await fs.promises.stat(filePath);
+        const stats = fsOriginal.statSync(filePath);
         if (stats.mtimeMs > latestTime) {
             latestTime = stats.mtimeMs;
             latestPath = filePath;
@@ -421,7 +419,6 @@ function extractUidFromPath(templatePath, resolvedPath) {
 }
 
 async function backupGame(gameObj) {
-    disableAsar();
     const gameBackupPath = path.join(getSettings().backupPath, gameObj.wiki_page_id.toString());
 
     // Create a new backup instance folder based on the current date and time
@@ -440,10 +437,10 @@ async function backupGame(gameObj) {
             const resolvedPath = path.normalize(resolvedPathObj.resolved);
             const pathFolderName = `path${index + 1}`;
             const targetPath = path.join(backupInstancePath, pathFolderName);
+            fsOriginal.mkdirSync(targetPath, { recursive: true });
 
             if (resolvedPathObj['type'] === 'reg') {
                 // Registry backup logic using reg.exe
-                await fse.ensureDir(targetPath);
                 const registryFilePath = path.join(targetPath, 'registry_backup.reg');
 
                 const regExportCommand = `reg export "${resolvedPath}" "${registryFilePath}" /y`;
@@ -459,17 +456,16 @@ async function backupGame(gameObj) {
             } else {
                 // File/directory backup logic
                 let dataType = null;
-                await fse.ensureDir(targetPath);
-                await ensureWritable(resolvedPath);
-                const stats = await fse.stat(resolvedPath);
+                ensureWritable(resolvedPath);
+                const stats = fsOriginal.statSync(resolvedPath);
 
                 if (stats.isDirectory()) {
                     dataType = 'folder';
-                    await fse.copy(resolvedPath, targetPath, { overwrite: true });
+                    fsOriginalCopyFolder(resolvedPath, targetPath);
                 } else {
                     dataType = 'file';
                     const targetFilePath = path.join(targetPath, path.basename(resolvedPath));
-                    await fse.copy(resolvedPath, targetFilePath, { overwrite: true });
+                    fsOriginal.copyFileSync(resolvedPath, targetFilePath);
                 }
 
                 backupConfig.backup_paths.push({
@@ -484,7 +480,7 @@ async function backupGame(gameObj) {
         const configFilePath = path.join(backupInstancePath, 'backup_info.json');
         await fse.writeJson(configFilePath, backupConfig, { spaces: 4 });
 
-        const existingBackups = (await fse.readdir(gameBackupPath)).sort((a, b) => {
+        const existingBackups = (fsOriginal.readdirSync(gameBackupPath)).sort((a, b) => {
             return a.localeCompare(b);
         });
 
@@ -494,16 +490,13 @@ async function backupGame(gameObj) {
             const backupsToDelete = existingBackups.slice(0, existingBackups.length - maxBackups);
             for (const backup of backupsToDelete) {
                 const backupToDeletePath = path.join(gameBackupPath, backup);
-                await fse.remove(backupToDeletePath);
+                fsOriginal.rmSync(backupToDeletePath, { recursive: true, force: true });
             }
         }
 
     } catch (error) {
         console.error(`Error during backup for game ${getGameDisplayName(gameObj)}: ${error.stack}`);
         return `${i18next.t('alert.backup_game_error', { game_name: getGameDisplayName(gameObj) })}: ${error.message}`;
-
-    } finally {
-        enableAsar();
     }
 
     return null;
