@@ -338,6 +338,8 @@ async function resolveTemplatedBackupPath(templatedPath, gameInstallPath) {
         } else if (normalizedMatch === '{{p|uid}}') {
             // Defer handling of {{p|uid}} to the next step
             return '{{p|uid}}';
+        } else if (normalizedMatch === '{{p|userprofile/documents}}') {
+            return app.getPath('documents');
         }
 
         return placeholder_mapping[normalizedMatch] || match;
