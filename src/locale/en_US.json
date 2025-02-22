@@ -56,7 +56,8 @@
         "total_restore_size": "Total restore size: {{size}}",
         "backup_count": "Number of Backups",
         "restore_selected": "Restore Selected Games",
-        "update_database": "Update Database"
+        "update_database": "Update Database",
+        "export": "Export"
     },
     "summary": {
         "done": "Done",
@@ -106,6 +107,7 @@
         "wait_for_restore": "Please wait for restore to complete",
         "wait_for_migrate": "Please wait for backup files migration to complete",
         "wait_for_updating_db": "Please wait for database update to complete",
+        "wait_for_export": "Please wait for export to complete",
         "save_custom_error": "Error saving custom games",
         "load_custom_error": "Error loading custom games",
         "save_custom_success": "Successfully saved custom games",
@@ -122,6 +124,12 @@
         "ubisoft_not_installed": "Ubisoft not installed",
         "missing_database_file": "Missing database file",
         "missing_database_file_message": "Could not find database file, please try updating database or reinstalling the application",
-        "manually_skipped": "Manually skipped"
+        "manually_skipped": "Manually skipped",
+        "export_backups": "Export Backups",
+        "export_count": "Number of exports per game (ordered from newest to oldest)",
+        "export_path": "Export path",
+        "exporting": "Exporting...",
+        "export_success": "Export success",
+        "error_during_export": "An error occurred while exporting backups"
     }
 }
