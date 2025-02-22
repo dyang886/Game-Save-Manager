@@ -26,13 +26,13 @@
 
     <!-- Modals -->
     <div id="modal-overlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-40"></div>
-    <div id="modal" tabindex="-1" aria-hidden="true"
+    <div id="modal-info" tabindex="-1" aria-hidden="true"
         class="hidden animate-fadeInShift overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 max-h-[calc(100%-1rem)]">
         <div class="relative p-4 w-full max-w-2xl max-h-full">
             <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
                 <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-                    <h3 id="modal-title" class="text-xl font-semibold text-gray-900 dark:text-white"></h3>
-                    <button type="button" id="modal-close"
+                    <h3 id="modal-info-title" class="text-xl font-semibold text-gray-900 dark:text-white"></h3>
+                    <button type="button" id="modal-info-close"
                         class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
                         <svg class="w-3 h-3" aria-hidden="true" fill="none" viewBox="0 0 14 14">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -44,11 +44,59 @@
 
                 <div
                     class="break-all max-h-[calc(100vh-250px)] p-4 md:p-5 space-y-4 overflow-y-auto scrollbar scrollbar-w-2 scrollbar-h-2 scrollbar-track-rounded-full scrollbar-thumb-rounded-full scrollbar-track-white scrollbar-thumb-slate-300 dark:scrollbar-track-gray-800 dark:scrollbar-thumb-slate-600">
-                    <p id="modal-content" class="text-base leading-relaxed text-gray-500 dark:text-gray-400"></p>
+                    <p id="modal-info-content" class="text-base leading-relaxed text-gray-500 dark:text-gray-400"></p>
                 </div>
 
                 <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
-                    <button type="button" id="modal-confirm"
+                    <button type="button" id="modal-info-confirm"
+                        class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="modal-export" tabindex="-1" aria-hidden="true"
+        class="hidden animate-fadeInShift overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 max-h-[calc(100%-1rem)]">
+        <div class="relative p-4 w-full max-w-2xl max-h-full">
+            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white" data-i18n="alert.export_backups">
+                        <span class="text-content">Export Backups</span>
+                    </h3>
+                    <button type="button" id="modal-export-close"
+                        class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
+                        <svg class="w-3 h-3" aria-hidden="true" fill="none" viewBox="0 0 14 14">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                        </svg>
+                        <span class="sr-only">Close modal</span>
+                    </button>
+                </div>
+
+                <div class="p-4 md:p-5">
+                    <label for="modal-export-count" data-i18n="alert.export_count"
+                        class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
+                        <span class="text-content">Number of exports per game (ordered from newest to oldest)</span>
+                    </label>
+                    <input type="number" id="modal-export-count" aria-describedby="helper-text-explanation"
+                        class="mb-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-none block w-full p-2.5 dark:bg-gray-600 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                        value="1" min="1" />
+
+                    <label for="modal-export-path" data-i18n="alert.export_path"
+                        class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
+                        <span class="text-content">Export path</span>
+                    </label>
+                    <div class="flex mb-4">
+                        <input type="text" id="modal-export-path" readonly
+                            class="flex-grow bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-l-lg p-2.5 focus:outline-none dark:bg-gray-600 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" />
+                        <button type="button" id="modal-export-select-path"
+                            class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-r-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700">
+                            <i class="fa-solid fa-ellipsis"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
+                    <button type="button" id="modal-export-confirm"
                         class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700">Ok</button>
                 </div>
             </div>

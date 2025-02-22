@@ -8,6 +8,8 @@ const path = require('path');
 const fse = require('fs-extra');
 const i18next = require('i18next');
 const moment = require('moment');
+const Seven = require('node-7z');
+const sevenBin = require('7zip-bin');
 
 let win;
 let settingsWin;
@@ -21,7 +23,8 @@ let status = {
     backuping: false,
     restoring: false,
     migrating: false,
-    updating_db: false
+    updating_db: false,
+    exporting: false
 }
 
 // Menu settings
@@ -89,6 +92,12 @@ const initializeMenu = () => {
                     },
                 },
             ],
+        },
+        {
+            label: i18next.t("main.export"),
+            click() {
+                win.webContents.send("select-backup-count");
+            },
         },
     ];
 }
@@ -286,6 +295,87 @@ function fsOriginalCopyFolder(source, target) {
     }
 }
 
+async function exportBackups(count, exportPath) {
+    const progressId = 'export';
+    const progressTitle = i18next.t('alert.exporting');
+    const sourcePath = settings.backupPath;
+
+    try {
+        if (!status.exporting) {
+            status.exporting = true;
+            win.webContents.send('update-progress', progressId, progressTitle, 'start');
+
+            // Build the list of relative paths to archive
+            let itemsToArchive = [];
+
+            const customEntriesPath = path.join(sourcePath, 'custom_entries.json');
+            if (fsOriginal.existsSync(customEntriesPath)) {
+                itemsToArchive.push('custom_entries.json');
+            }
+
+            const items = fsOriginal.readdirSync(sourcePath);
+            const gameFolders = items.filter(item => {
+                const fullPath = path.join(sourcePath, item);
+                return fsOriginal.lstatSync(fullPath).isDirectory();
+            });
+
+            // For each game folder, select the most recent backup instances
+            for (const gameId of gameFolders) {
+                const gameFolderPath = path.join(sourcePath, gameId);
+                let backups = fsOriginal.readdirSync(gameFolderPath).filter(item => {
+                    const fullPath = path.join(gameFolderPath, item);
+                    return fsOriginal.lstatSync(fullPath).isDirectory();
+                });
+
+                backups.sort((a, b) => { return b.localeCompare(a); });
+                backups = backups.slice(0, count);
+
+                backups.forEach(backupFolder => {
+                    itemsToArchive.push(path.join(gameId, backupFolder));
+                });
+            }
+
+            const timestamp = moment().format('YYYY-MM-DD_HH-mm');
+            const finalFileName = `GSMBackup-${timestamp}.gsm`;
+            const finalDestPath = path.join(exportPath, finalFileName);
+
+            const sevenOptions = {
+                yes: true,
+                recursive: true,
+                $bin: sevenBin.path7za,
+                $progress: true,
+                $raw: []
+            };
+
+            const originalCwd = process.cwd();
+            process.chdir(sourcePath);
+            const archiveStream = Seven.add(finalDestPath, itemsToArchive, sevenOptions);
+
+            archiveStream.on('progress', (progress) => {
+                if (progress.percent) {
+                    win.webContents.send('update-progress', progressId, progressTitle, Math.floor(progress.percent));
+                }
+            });
+
+            await new Promise((resolve, reject) => {
+                archiveStream.on('end', resolve);
+                archiveStream.on('error', reject);
+            });
+
+            process.chdir(originalCwd);
+            win.webContents.send('update-progress', progressId, progressTitle, 'end');
+            win.webContents.send('show-alert', 'success', i18next.t('alert.export_success'));
+            status.exporting = false;
+        }
+
+    } catch (error) {
+        console.error(`An error occurred while exporting backups: ${error.message}`);
+        win.webContents.send('show-alert', 'modal', i18next.t('alert.error_during_export'), error.message);
+        win.webContents.send('update-progress', progressId, progressTitle, 'end');
+        status.exporting = false;
+    }
+}
+
 const placeholder_mapping = {
     // Windows
     '{{p|username}}': os.userInfo().username,
@@ -370,6 +460,7 @@ const loadSettings = () => {
         theme: 'dark',
         language: detectedLanguage,
         backupPath: path.join(appDataPath, "GSM Backups"),
+        exportPath: "",
         maxBackups: 5,
         autoAppUpdate: true,
         autoDbUpdate: false,
@@ -519,6 +610,7 @@ module.exports = {
     ensureWritable,
     getNewestBackup,
     fsOriginalCopyFolder,
+    exportBackups,
     placeholder_mapping,
     placeholder_identifier,
     osKeyMap,

@@ -8,6 +8,10 @@ window.api.receive('show-alert', (type, message, modalContent) => {
     showAlert(type, message, modalContent);
 });
 
+window.api.receive('select-backup-count', () => {
+    showExportModal();
+});
+
 window.api.receive('update-progress', (progressId, progressTitle, percentage) => {
     updateProgress(progressId, progressTitle, percentage);
 });
@@ -88,7 +92,7 @@ async function showAlert(type, message, modalContent) {
         `;
 
         alertElement.querySelector('button').addEventListener('click', () => {
-            showModal(message, modalContent);
+            showInfoModal(message, modalContent);
         });
 
     } else {
@@ -126,11 +130,11 @@ async function showAlert(type, message, modalContent) {
     }, 5000);
 }
 
-function showModal(modalTitle, modalContent) {
-    const modal = document.getElementById('modal');
+function showInfoModal(modalTitle, modalContent) {
+    const modal = document.getElementById('modal-info');
     const modalOverlay = document.getElementById('modal-overlay');
-    const modalTitleElement = document.getElementById('modal-title');
-    const modalContentElement = document.getElementById('modal-content');
+    const modalTitleElement = document.getElementById('modal-info-title');
+    const modalContentElement = document.getElementById('modal-info-content');
 
     modalTitleElement.textContent = modalTitle;
 
@@ -144,14 +148,79 @@ function showModal(modalTitle, modalContent) {
     modal.classList.remove('hidden');
     modalOverlay.classList.remove('hidden');
 
-    document.getElementById('modal-close').addEventListener('click', closeModal);
-    document.getElementById('modal-confirm').addEventListener('click', closeModal);
+    document.getElementById('modal-info-close').addEventListener('click', closeInfoModal);
+    document.getElementById('modal-info-confirm').addEventListener('click', closeInfoModal);
 }
 
-function closeModal() {
-    const modal = document.getElementById('modal');
+function closeInfoModal() {
+    const modal = document.getElementById('modal-info');
     const modalOverlay = document.getElementById('modal-overlay');
 
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    modalOverlay.classList.add('hidden');
+}
+
+function showExportModal() {
+    const modal = document.getElementById('modal-export');
+    const modalOverlay = document.getElementById('modal-overlay');
+    const modalExportCountInput = document.getElementById('modal-export-count');
+    const modalExportPathInput = document.getElementById('modal-export-path');
+    const modalExportPathSelectButton = document.getElementById('modal-export-select-path');
+
+    window.api.invoke('get-settings').then((settings) => {
+        if (settings) {
+            modalExportCountInput.max = settings.maxBackups;
+            modalExportPathInput.value = settings.exportPath;
+        }
+    });
+
+    if (!modal.dataset.listenerAdded) {
+        modalExportCountInput.addEventListener('input', () => {
+            const min = parseInt(modalExportCountInput.min, 10);
+            const max = parseInt(modalExportCountInput.max, 10);
+            let value = parseInt(modalExportCountInput.value, 10);
+
+            if (isNaN(value) || value < 1) {
+                modalExportCountInput.value = min;
+            } else if (value > max) {
+                modalExportCountInput.value = max;
+            }
+        });
+
+        modalExportPathSelectButton.addEventListener('click', async () => {
+            const result = await window.api.invoke('select-path', 'folder');
+            if (result) {
+                modalExportPathInput.value = result;
+            }
+        });
+        modal.dataset.listenerAdded = true;
+    }
+
+    modal.classList.add('flex');
+    modal.classList.remove('hidden');
+    modalOverlay.classList.remove('hidden');
+
+    document.getElementById('modal-export-close').addEventListener('click', closeExportModal);
+    document.getElementById('modal-export-confirm').addEventListener('click', exportConfirm);
+}
+
+async function exportConfirm() {
+    const start = await operationStartCheck('export');
+    if (start) {
+        const count = document.getElementById('modal-export-count').value;
+        const exportPath = document.getElementById('modal-export-path').value;
+        window.api.send("export-backups", count, exportPath);
+    }
+    closeExportModal();
+}
+
+function closeExportModal() {
+    const modal = document.getElementById('modal-export');
+    const modalOverlay = document.getElementById('modal-overlay');
+    const modalExportPathInput = document.getElementById('modal-export-path');
+
+    window.api.send('save-settings', 'exportPath', modalExportPathInput.value);
     modal.classList.add('hidden');
     modal.classList.remove('flex');
     modalOverlay.classList.add('hidden');
@@ -197,7 +266,8 @@ async function operationStartCheck(operation) {
         'backup': {
             restoring: 'alert.wait_for_restore',
             migrating: 'alert.wait_for_migrate',
-            updating_db: 'alert.wait_for_updating_db'
+            updating_db: 'alert.wait_for_updating_db',
+            exporting: 'alert.wait_for_export'
         },
         'restore': {
             backuping: 'alert.wait_for_backup',
@@ -206,16 +276,22 @@ async function operationStartCheck(operation) {
         'change-settings': {
             backuping: 'alert.wait_for_backup',
             restoring: 'alert.wait_for_restore',
-            migrating: 'alert.wait_for_migrate'
+            migrating: 'alert.wait_for_migrate',
+            exporting: 'alert.wait_for_export'
         },
         'save-custom': {
             backuping: 'alert.wait_for_backup',
             restoring: 'alert.wait_for_restore',
-            migrating: 'alert.wait_for_migrate'
+            migrating: 'alert.wait_for_migrate',
+            exporting: 'alert.wait_for_export'
         },
         'update-db': {
             backuping: 'alert.wait_for_backup',
-        }
+        },
+        'export': {
+            backuping: 'alert.wait_for_backup',
+            migrating: 'alert.wait_for_migrate'
+        },
     };
 
     const alerts = statusChecks[operation];
