@@ -57,7 +57,9 @@
         "backup_count": "Number of Backups",
         "restore_selected": "Restore Selected Games",
         "update_database": "Update Database",
-        "export": "Export"
+        "export": "Export",
+        "import": "Import",
+        "gsm-file-type": "GSM Backup File"
     },
     "summary": {
         "done": "Done",
@@ -108,6 +110,7 @@
         "wait_for_migrate": "Please wait for backup files migration to complete",
         "wait_for_updating_db": "Please wait for database update to complete",
         "wait_for_export": "Please wait for export to complete",
+        "wait_for_import": "Please wait for import to complete",
         "save_custom_error": "Error saving custom games",
         "load_custom_error": "Error loading custom games",
         "save_custom_success": "Successfully saved custom games",
@@ -130,6 +133,11 @@
         "export_path": "Export path",
         "exporting": "Exporting...",
         "export_success": "Export success",
-        "error_during_export": "An error occurred while exporting backups"
+        "error_during_export": "An error occurred while exporting backups",
+        "import_backups": "Import Backups",
+        "gsm_path": "GSM file path",
+        "importing": "Importing...",
+        "import_success": "Import success",
+        "error_during_import": "An error occurred while importing backups"
     }
 }
