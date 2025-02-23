@@ -11,13 +11,33 @@ const i18next = require('i18next');
 const Backend = require('i18next-fs-backend');
 const { pinyin } = require('pinyin');
 
-const { createMainWindow, getMainWin, getNewestBackup, getStatus, updateStatus, checkAppUpdate, exportBackups, osKeyMap, loadSettings, saveSettings, getSettings, moveFilesWithProgress, getCurrentVersion, getLatestVersion } = require('./global');
+const { createMainWindow, getMainWin, getNewestBackup, getStatus, updateStatus, checkAppUpdate, exportBackups, importBackups, osKeyMap, loadSettings, saveSettings, getSettings, moveFilesWithProgress, getCurrentVersion, getLatestVersion } = require('./global');
 const { getGameData, initializeGameData, detectGamePaths } = require('./gameData');
 const { getGameDataFromDB, getAllGameDataFromDB, backupGame, updateDatabase } = require('./backup');
 const { getGameDataForRestore, restoreGame } = require("./restore");
 
 
 app.commandLine.appendSwitch("lang", "en");
+const gotTheLock = app.requestSingleInstanceLock();
+let pendingGSMPath = null;
+
+if (!gotTheLock) {
+    app.quit();
+} else {
+    app.on('second-instance', (event, argv) => {
+        const gsmPath = argv.find(arg => arg.toLowerCase().endsWith('.gsm'));
+        if (gsmPath) {
+            getMainWin().webContents.send('open-import-modal', gsmPath);
+        }
+    });
+
+    if (process.platform === 'win32') {
+        const gsmPath = process.argv.find(arg => arg.toLowerCase().endsWith('.gsm'));
+        if (gsmPath) {
+            pendingGSMPath = gsmPath;
+        }
+    }
+}
 
 app.whenReady().then(async () => {
     loadSettings();
@@ -36,8 +56,15 @@ app.whenReady().then(async () => {
         checkAppUpdate();
     }
 
+    getMainWin().webContents.once('did-finish-load', () => {
+        if (pendingGSMPath) {
+            getMainWin().webContents.send('open-import-modal', pendingGSMPath);
+            pendingGSMPath = null;
+        }
+    });
+
     app.on("activate", () => {
-        if (BrowserWindow.getAllWindows().length === 0) createWindow();
+        if (BrowserWindow.getAllWindows().length === 0) createMainWindow();
     });
 });
 
@@ -136,6 +163,12 @@ ipcMain.handle('select-path', async (event, fileType) => {
             break;
         case 'registry':
             return null;
+        case 'gsm':
+            dialogOptions.properties = ['openFile'];
+            dialogOptions.filters = [
+                { name: i18next.t('main.gsm-file-type'), extensions: ['gsm'] }
+            ];
+            break;
     }
 
     const result = await dialog.showOpenDialog(focusedWindow, {
@@ -293,4 +326,8 @@ ipcMain.handle('update-database', async () => {
 
 ipcMain.on("export-backups", (event, count, exportPath) => {
     exportBackups(count, exportPath);
+});
+
+ipcMain.on("import-backups", (event, gsmPath) => {
+    importBackups(gsmPath);
 });

@@ -24,7 +24,8 @@ let status = {
     restoring: false,
     migrating: false,
     updating_db: false,
-    exporting: false
+    exporting: false,
+    importing: false
 }
 
 // Menu settings
@@ -96,7 +97,13 @@ const initializeMenu = () => {
         {
             label: i18next.t("main.export"),
             click() {
-                win.webContents.send("select-backup-count");
+                win.webContents.send("open-export-modal", "");
+            },
+        },
+        {
+            label: i18next.t("main.import"),
+            click() {
+                win.webContents.send("open-import-modal", "");
             },
         },
     ];
@@ -342,7 +349,7 @@ async function exportBackups(count, exportPath) {
             const sevenOptions = {
                 yes: true,
                 recursive: true,
-                $bin: sevenBin.path7za,
+                $bin: sevenBin.path7za.replace('app.asar', 'app.asar.unpacked'),
                 $progress: true,
                 $raw: []
             };
@@ -373,6 +380,122 @@ async function exportBackups(count, exportPath) {
         win.webContents.send('show-alert', 'modal', i18next.t('alert.error_during_export'), error.message);
         win.webContents.send('update-progress', progressId, progressTitle, 'end');
         status.exporting = false;
+    }
+}
+
+async function importBackups(gsmPath) {
+    const progressId = 'import';
+    const progressTitle = i18next.t('alert.importing');
+    const destinationPath = settings.backupPath;
+
+    try {
+        if (!status.importing) {
+            status.importing = true;
+            win.webContents.send('update-progress', progressId, progressTitle, 'start');
+
+            // 1. Extract the GSM file to a temporary directory
+            const tempExtractPath = fsOriginal.mkdtempSync(path.join(os.tmpdir(), 'GSMImportTemp-'));
+            const sevenOptions = {
+                yes: true,
+                recursive: true,
+                $bin: sevenBin.path7za.replace('app.asar', 'app.asar.unpacked'),
+                $progress: true,
+                $raw: []
+            };
+
+            const extractStream = Seven.extractFull(gsmPath, tempExtractPath, sevenOptions);
+
+            extractStream.on('progress', (progress) => {
+                if (progress.percent) {
+                    const overallProgress = Math.floor(progress.percent * 0.5);
+                    win.webContents.send('update-progress', progressId, progressTitle, Math.floor(overallProgress));
+                }
+            });
+
+            await new Promise((resolve, reject) => {
+                extractStream.on('end', resolve);
+                extractStream.on('error', reject);
+            });
+
+            const extractedItems = fsOriginal.readdirSync(tempExtractPath);
+
+            // 2. Process the custom_entries.json file if present
+            if (extractedItems.includes('custom_entries.json')) {
+                const importedJsonPath = path.join(tempExtractPath, 'custom_entries.json');
+                let importedEntries = [];
+                try {
+                    importedEntries = JSON.parse(fsOriginal.readFileSync(importedJsonPath, 'utf8'));
+                } catch (e) {
+                    console.error("Error parsing imported custom_entries.json:", e);
+                }
+
+                const destinationJsonPath = path.join(destinationPath, 'custom_entries.json');
+                let destinationEntries = [];
+                if (fsOriginal.existsSync(destinationJsonPath)) {
+                    try {
+                        destinationEntries = JSON.parse(fsOriginal.readFileSync(destinationJsonPath, 'utf8'));
+                    } catch (e) {
+                        console.error("Error parsing destination custom_entries.json:", e);
+                    }
+                }
+
+                // Append only those entries that do not already exist (by wiki_page_id)
+                importedEntries.forEach(imported => {
+                    const exists = destinationEntries.some(dest => dest.wiki_page_id === imported.wiki_page_id);
+                    if (!exists) {
+                        destinationEntries.push(imported);
+                    }
+                });
+                fsOriginal.writeFileSync(destinationJsonPath, JSON.stringify(destinationEntries, null, 2), 'utf8');
+            }
+
+            // 3. Process game backup folders
+            let totalBackups = extractedItems.length;
+            let processedBackups = 0;
+
+            for (const item of extractedItems) {
+                const itemPath = path.join(tempExtractPath, item);
+                if (fsOriginal.lstatSync(itemPath).isDirectory()) {
+                    const gameId = item;
+                    const destGameFolder = path.join(destinationPath, gameId);
+
+                    const backupFolders = fsOriginal.readdirSync(itemPath).filter(sub => {
+                        const subPath = path.join(itemPath, sub);
+                        return fsOriginal.lstatSync(subPath).isDirectory();
+                    });
+
+                    // For each backup instance folder, skip if the same folder exists in destination
+                    backupFolders.forEach(backupFolder => {
+                        const srcBackupPath = path.join(itemPath, backupFolder);
+                        const destBackupPath = path.join(destGameFolder, backupFolder);
+                        if (!fsOriginal.existsSync(destBackupPath)) {
+                            fsOriginalCopyFolder(srcBackupPath, destBackupPath);
+                        }
+                    });
+                }
+
+                processedBackups++;
+                const movingProgress = totalBackups ? Math.floor((processedBackups / totalBackups) * 50) : 50;
+                const overallProgress = 50 + movingProgress;
+                win.webContents.send('update-progress', progressId, progressTitle, overallProgress);
+            }
+
+            win.webContents.send('update-progress', progressId, progressTitle, 'end');
+            win.webContents.send('show-alert', 'success', i18next.t('alert.import_success'));
+            status.importing = false;
+
+            await fsOriginal.promises.rm(tempExtractPath, { recursive: true });
+        }
+
+    } catch (error) {
+        console.error(`An error occurred while importing backups: ${error.message}`);
+        win.webContents.send('show-alert', 'modal', i18next.t('alert.error_during_import'), error.message);
+        win.webContents.send('update-progress', progressId, progressTitle, 'end');
+        status.importing = false;
+
+    } finally {
+        win.webContents.send('update-backup-table');
+        win.webContents.send('update-restore-table');
     }
 }
 
@@ -611,6 +734,7 @@ module.exports = {
     getNewestBackup,
     fsOriginalCopyFolder,
     exportBackups,
+    importBackups,
     placeholder_mapping,
     placeholder_identifier,
     osKeyMap,

@@ -57,7 +57,9 @@
         "backup_count": "备份个数",
         "restore_selected": "还原选中的游戏",
         "update_database": "更新数据库",
-        "export": "导出"
+        "export": "导出",
+        "import": "导入",
+        "gsm-file-type": "GSM 备份文件"
     },
     "summary": {
         "done": "完成",
@@ -108,6 +110,7 @@
         "wait_for_migrate": "请等待备份文件转移完成",
         "wait_for_updating_db": "请等待数据库更新完成",
         "wait_for_export": "请等待导出完成",
+        "wait_for_import": "请等待导入完成",
         "save_custom_error": "保存自定义游戏时出错",
         "load_custom_error": "加载自定义游戏时出错",
         "save_custom_success": "保存自定义游戏成功",
@@ -130,6 +133,11 @@
         "export_path": "导出路径",
         "exporting": "导出中...",
         "export_success": "导出成功",
-        "error_during_export": "导出备份时出错"
+        "error_during_export": "导出备份时出错",
+        "import_backups": "导入备份",
+        "gsm_path": "GSM 文件路径",
+        "importing": "导入中...",
+        "import_success": "导入成功",
+        "error_during_import": "导入备份时出错"
     }
 }

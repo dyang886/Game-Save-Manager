@@ -8,8 +8,12 @@ window.api.receive('show-alert', (type, message, modalContent) => {
     showAlert(type, message, modalContent);
 });
 
-window.api.receive('select-backup-count', () => {
+window.api.receive('open-export-modal', () => {
     showExportModal();
+});
+
+window.api.receive('open-import-modal', (gsmPath) => {
+    showImportModal(gsmPath);
 });
 
 window.api.receive('update-progress', (progressId, progressTitle, percentage) => {
@@ -161,12 +165,15 @@ function closeInfoModal() {
     modalOverlay.classList.add('hidden');
 }
 
+// Export modal
 function showExportModal() {
     const modal = document.getElementById('modal-export');
     const modalOverlay = document.getElementById('modal-overlay');
     const modalExportCountInput = document.getElementById('modal-export-count');
     const modalExportPathInput = document.getElementById('modal-export-path');
     const modalExportPathSelectButton = document.getElementById('modal-export-select-path');
+
+    if (!modalOverlay.classList.contains('hidden')) return;
 
     window.api.invoke('get-settings').then((settings) => {
         if (settings) {
@@ -226,6 +233,52 @@ function closeExportModal() {
     modalOverlay.classList.add('hidden');
 }
 
+// Import modal
+function showImportModal(gsmPath) {
+    const modal = document.getElementById('modal-import');
+    const modalOverlay = document.getElementById('modal-overlay');
+    const modalImportPathInput = document.getElementById('modal-import-path');
+    const modalImportPathSelectButton = document.getElementById('modal-import-select-path');
+
+    if (!modalOverlay.classList.contains('hidden')) return;
+
+    if (gsmPath) modalImportPathInput.value = gsmPath;
+    if (!modal.dataset.listenerAdded) {
+        modalImportPathSelectButton.addEventListener('click', async () => {
+            const result = await window.api.invoke('select-path', 'gsm');
+            if (result) {
+                modalImportPathInput.value = result;
+            }
+        });
+        modal.dataset.listenerAdded = true;
+    }
+
+    modal.classList.add('flex');
+    modal.classList.remove('hidden');
+    modalOverlay.classList.remove('hidden');
+
+    document.getElementById('modal-import-close').addEventListener('click', closeImportModal);
+    document.getElementById('modal-import-confirm').addEventListener('click', importConfirm);
+}
+
+async function importConfirm() {
+    const start = await operationStartCheck('import');
+    if (start) {
+        const importPath = document.getElementById('modal-import-path').value;
+        window.api.send("import-backups", importPath);
+    }
+    closeImportModal();
+}
+
+function closeImportModal() {
+    const modal = document.getElementById('modal-import');
+    const modalOverlay = document.getElementById('modal-overlay');
+
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    modalOverlay.classList.add('hidden');
+}
+
 function updateProgress(progressId, progressTitle, percentage) {
     const progressContainer = document.getElementById('progress-container');
 
@@ -267,31 +320,43 @@ async function operationStartCheck(operation) {
             restoring: 'alert.wait_for_restore',
             migrating: 'alert.wait_for_migrate',
             updating_db: 'alert.wait_for_updating_db',
-            exporting: 'alert.wait_for_export'
+            exporting: 'alert.wait_for_export',
+            importing: 'alert.wait_for_import'
         },
         'restore': {
             backuping: 'alert.wait_for_backup',
-            migrating: 'alert.wait_for_migrate'
+            migrating: 'alert.wait_for_migrate',
+            importing: 'alert.wait_for_import'
         },
         'change-settings': {
             backuping: 'alert.wait_for_backup',
             restoring: 'alert.wait_for_restore',
             migrating: 'alert.wait_for_migrate',
-            exporting: 'alert.wait_for_export'
+            exporting: 'alert.wait_for_export',
+            importing: 'alert.wait_for_import'
         },
         'save-custom': {
             backuping: 'alert.wait_for_backup',
             restoring: 'alert.wait_for_restore',
             migrating: 'alert.wait_for_migrate',
-            exporting: 'alert.wait_for_export'
+            exporting: 'alert.wait_for_export',
+            importing: 'alert.wait_for_import'
         },
         'update-db': {
             backuping: 'alert.wait_for_backup',
+            importing: 'alert.wait_for_import'
         },
         'export': {
             backuping: 'alert.wait_for_backup',
-            migrating: 'alert.wait_for_migrate'
+            migrating: 'alert.wait_for_migrate',
+            importing: 'alert.wait_for_import'
         },
+        'import': {
+            backuping: 'alert.wait_for_backup',
+            restoring: 'alert.wait_for_restore',
+            migrating: 'alert.wait_for_migrate',
+            exporting: 'alert.wait_for_export'
+        }
     };
 
     const alerts = statusChecks[operation];
