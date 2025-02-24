@@ -17,7 +17,8 @@
         "save_settings": "Save Settings",
         "save-settings-success": "Successfully saved settings",
         "auto_app_update": "Check software update automatically",
-        "auto_db_update": "Update database automatically"
+        "auto_db_update": "Update database automatically",
+        "save_uninstalled_games": "Save and display uninstalled games in backup tab after full database scan"
     },
     "about": {
         "title": "About",
@@ -59,7 +60,8 @@
         "update_database": "Update Database",
         "export": "Export",
         "import": "Import",
-        "gsm-file-type": "GSM Backup File"
+        "gsm-file-type": "GSM Backup File",
+        "scan_full": "Database Full Scan"
     },
     "summary": {
         "done": "Done",
@@ -111,6 +113,7 @@
         "wait_for_updating_db": "Please wait for database update to complete",
         "wait_for_export": "Please wait for export to complete",
         "wait_for_import": "Please wait for import to complete",
+        "wait_for_scan_full": "Please wait for full database scan to complete",
         "save_custom_error": "Error saving custom games",
         "load_custom_error": "Error loading custom games",
         "save_custom_success": "Successfully saved custom games",
@@ -138,6 +141,8 @@
         "gsm_path": "GSM file path",
         "importing": "Importing...",
         "import_success": "Import success",
-        "error_during_import": "An error occurred while importing backups"
+        "error_during_import": "An error occurred while importing backups",
+        "scan_full_complete": "Full database scan complete",
+        "scanning_full": "Scanning full database..."
     }
 }

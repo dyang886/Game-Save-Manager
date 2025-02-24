@@ -15,7 +15,7 @@ const moment = require('moment');
 const sqlite3 = require('sqlite3');
 const WinReg = require('winreg');
 
-const { getMainWin, getGameDisplayName, calculateDirectorySize, ensureWritable, getNewestBackup, fsOriginalCopyFolder, placeholder_mapping, placeholder_identifier, osKeyMap, getSettings } = require('./global');
+const { getMainWin, getStatus, updateStatus, getGameDisplayName, calculateDirectorySize, ensureWritable, getNewestBackup, fsOriginalCopyFolder, placeholder_mapping, placeholder_identifier, osKeyMap, getSettings, saveSettings } = require('./global');
 const { getGameData } = require('./gameData');
 
 const execPromise = util.promisify(exec);
@@ -61,6 +61,7 @@ async function getGameDataFromDB() {
     const games = [];
     const errors = [];
     const dbPath = path.join(app.getPath("userData"), "GSM Database", "database.db");
+
     if (!fs.existsSync(dbPath)) {
         const installedDbPath = path.join('./database', 'database.db');
         if (!fs.existsSync(installedDbPath)) {
@@ -73,11 +74,13 @@ async function getGameDataFromDB() {
             await fse.copy(installedDbPath, dbPath);
         }
     }
+
     const db = new sqlite3.Database(dbPath, sqlite3.OPEN_READONLY);
     let stmtInstallFolder;
 
     return new Promise(async (resolve, reject) => {
         try {
+            // 1. Process installed games by folder name
             stmtInstallFolder = db.prepare("SELECT * FROM games WHERE install_folder = ?");
             const gameInstallPaths = getSettings().gameInstalls;
 
@@ -114,7 +117,7 @@ async function getGameDataFromDB() {
                                     }
 
                                 } catch (err) {
-                                    console.error(`Error processing database game ${getGameDisplayName(row)}: ${err.stack}`);
+                                    console.error(`Error processing installed game ${getGameDisplayName(row)}: ${err.stack}`);
                                     errors.push(`${i18next.t('alert.backup_process_error_db', { game_name: getGameDisplayName(row) })}: ${err.message}`);
                                 }
                             }
@@ -122,10 +125,48 @@ async function getGameDataFromDB() {
                     }
                 }
             }
-
             stmtInstallFolder.finalize();
 
-            // Process custom entries after the database games
+            // 2. Process uninstalled games by wiki id
+            if (getSettings().saveUninstalledGames) {
+                const uninstalledWikiIds = getSettings().uninstalledGames || [];
+                const processedWikiIds = new Set(games.map(game => game.wiki_page_id));
+                const remainingUninstalledWikiIds = uninstalledWikiIds.filter(id => !processedWikiIds.has(id));
+                if (JSON.stringify([...remainingUninstalledWikiIds].sort()) !== JSON.stringify([...uninstalledWikiIds].sort())) {
+                    saveSettings('uninstalledGames', remainingUninstalledWikiIds);
+                }
+
+                for (const wikiId of remainingUninstalledWikiIds) {
+                    const rows = await new Promise((res, rej) => {
+                        db.all("SELECT * FROM games WHERE wiki_page_id = ?", [wikiId], (err, rows) => {
+                            if (err) rej(err);
+                            else res(rows);
+                        });
+                    });
+
+                    if (rows && rows.length > 0) {
+                        for (const row of rows) {
+                            try {
+                                row.wiki_page_id = row.wiki_page_id.toString();
+                                row.platform = JSON.parse(row.platform);
+                                row.save_location = JSON.parse(row.save_location);
+                                row.latest_backup = getNewestBackup(row.wiki_page_id);
+
+                                const processed_game = await process_game(row);
+                                if (processed_game.resolved_paths.length !== 0) {
+                                    games.push(processed_game);
+                                }
+
+                            } catch (err) {
+                                console.error(`Error processing uninstalled game ${getGameDisplayName(row)}: ${err.stack}`);
+                                errors.push(`${i18next.t('alert.backup_process_error_db', { game_name: getGameDisplayName(row) })}: ${err.message}`);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 3. Process custom entries
             const customJsonPath = path.join(getSettings().backupPath, 'custom_entries.json');
 
             if (fs.existsSync(customJsonPath)) {
@@ -146,6 +187,88 @@ async function getGameDataFromDB() {
             resolve({ games, errors });
         }
     });
+}
+
+async function getAllGameDataFromDB() {
+    const games = [];
+    const errors = [];
+    const dbPath = path.join(app.getPath("userData"), "GSM Database", "database.db");
+
+    if (!getStatus().scanning_full) {
+        if (!fs.existsSync(dbPath)) {
+            const installedDbPath = path.join('./database', 'database.db');
+            if (!fs.existsSync(installedDbPath)) {
+                dialog.showErrorBox(
+                    i18next.t('alert.missing_database_file'),
+                    i18next.t('alert.missing_database_file_message')
+                );
+                return { games, errors };
+            } else {
+                await fse.copy(installedDbPath, dbPath);
+            }
+        }
+
+        const db = new sqlite3.Database(dbPath, sqlite3.OPEN_READONLY);
+        const progressId = 'scan-full';
+        const progressTitle = i18next.t('alert.scanning_full');
+        const mainWin = getMainWin();
+
+        mainWin.webContents.send('update-progress', progressId, progressTitle, 'start');
+        updateStatus('scanning_full', true);
+
+        try {
+            const rows = await new Promise((resolve, reject) => {
+                db.all("SELECT * FROM games", (err, rows) => {
+                    if (err) reject(err);
+                    else resolve(rows);
+                });
+            });
+
+            const totalRows = rows.length;
+            let processedRows = 0;
+
+            for (const row of rows) {
+                try {
+                    row.wiki_page_id = row.wiki_page_id.toString();
+                    row.platform = JSON.parse(row.platform);
+                    row.save_location = JSON.parse(row.save_location);
+                    row.latest_backup = getNewestBackup(row.wiki_page_id);
+
+                    const processed_game = await process_game(row);
+                    if (processed_game.resolved_paths.length !== 0) {
+                        games.push(processed_game);
+                    }
+
+                } catch (err) {
+                    console.error(`Error processing database game ${getGameDisplayName(row)}: ${err.stack}`);
+                    errors.push(`${i18next.t('alert.backup_process_error_db', { game_name: getGameDisplayName(row) })}: ${err.message}`);
+                }
+                processedRows++;
+                const dbProgress = Math.floor((processedRows / totalRows) * 95);
+                mainWin.webContents.send('update-progress', progressId, progressTitle, dbProgress);
+            }
+
+            const customJsonPath = path.join(getSettings().backupPath, 'custom_entries.json');
+            if (fs.existsSync(customJsonPath)) {
+                const { customGames, customGameErrors } = await processCustomEntries(customJsonPath);
+                games.push(...customGames);
+                errors.push(...customGameErrors);
+            }
+
+            mainWin.webContents.send('update-progress', progressId, progressTitle, 100);
+            mainWin.webContents.send('show-alert', 'success', i18next.t('alert.scan_full_complete'));
+
+        } catch (error) {
+            console.error(`Error displaying backup table: ${error.stack}`);
+            errors.push(`${i18next.t('alert.backup_process_error_display')}: ${error.message}`);
+
+        } finally {
+            updateStatus('scanning_full', false);
+            mainWin.webContents.send('update-progress', progressId, progressTitle, 'end');
+            db.close();
+            return { games, errors };
+        }
+    }
 }
 
 async function processCustomEntries(customJsonPath) {
@@ -174,55 +297,6 @@ async function processCustomEntries(customJsonPath) {
     return { customGames, customGameErrors };
 }
 
-async function getAllGameDataFromDB() {
-    return new Promise((resolve, reject) => {
-        const dbPath = path.join(app.getPath("userData"), "GSM Database", "database.db");
-        const db = new sqlite3.Database(dbPath, sqlite3.OPEN_READONLY);
-
-        const games = [];
-
-        db.serialize(async () => {
-            const stmtGetAllGames = db.prepare("SELECT * FROM games");
-
-            try {
-                const rows = await new Promise((resolve, reject) => {
-                    stmtGetAllGames.all((err, rows) => {
-                        if (err) {
-                            console.error('Error querying all games:', err);
-                            reject(err);
-                        } else {
-                            resolve(rows);
-                        }
-                    });
-                });
-
-                if (rows && rows.length > 0) {
-                    for (const row of rows) {
-                        row.platform = JSON.parse(row.platform);
-                        row.save_location = JSON.parse(row.save_location);
-                        // row.install_path = getInstallPathFromSettings(row.game_name);
-                        row.latest_backup = getNewestBackup(row.wiki_page_id);
-
-                        const processed_game = await process_game(row);
-                        if (processed_game.resolved_paths.length !== 0) {
-                            games.push(processed_game);
-                        }
-                    }
-                }
-
-                stmtGetAllGames.finalize(() => {
-                    db.close();
-                    resolve(games);
-                });
-            } catch (error) {
-                console.error('Error during processing:', error);
-                db.close();
-                reject(error);
-            }
-        });
-    });
-}
-
 async function process_game(db_game_row) {
     const resolved_paths = [];
     let totalBackupSize = 0;
@@ -239,22 +313,28 @@ async function process_game(db_game_row) {
                 const files = glob.sync(resolvedPath.path.replace(/\\/g, '/'));
                 for (const filePath of files) {
                     if (fsOriginal.existsSync(filePath)) {
-                        totalBackupSize += calculateDirectorySize(filePath);
-                        resolved_paths.push({
-                            template: templatedPath,
-                            resolved: path.normalize(filePath),
-                            uid: resolvedPath.uid
-                        });
+                        const backupSize = calculateDirectorySize(filePath);
+                        if (backupSize > 0) {
+                            totalBackupSize += backupSize;
+                            resolved_paths.push({
+                                template: templatedPath,
+                                resolved: path.normalize(filePath),
+                                uid: resolvedPath.uid
+                            });
+                        }
                     }
                 }
             } else {
                 if (fsOriginal.existsSync(resolvedPath.path)) {
-                    totalBackupSize += calculateDirectorySize(resolvedPath.path);
-                    resolved_paths.push({
-                        template: templatedPath,
-                        resolved: path.normalize(resolvedPath.path),
-                        uid: resolvedPath.uid
-                    });
+                    const backupSize = calculateDirectorySize(resolvedPath.path);
+                    if (backupSize > 0) {
+                        totalBackupSize += backupSize;
+                        resolved_paths.push({
+                            template: templatedPath,
+                            resolved: path.normalize(resolvedPath.path),
+                            uid: resolvedPath.uid
+                        });
+                    }
                 }
             }
         }

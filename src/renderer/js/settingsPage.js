@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const maxBackupsInput = document.getElementById('max-backups');
     const autoAppUpdateCheckbox = document.getElementById('auto-app-update');
     const autoDbUpdateCheckbox = document.getElementById('auto-db-update');
+    const saveUninstalledCheckbox = document.getElementById('save-uninstalled-games');
     const autoDetectButton = document.getElementById('auto-detect-paths');
     const gamePathsContainer = document.getElementById('game-paths-container');
     const addNewPathButton = document.getElementById('add-new-path');
@@ -19,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
             maxBackupsInput.value = settings.maxBackups;
             autoAppUpdateCheckbox.checked = settings.autoAppUpdate;
             autoDbUpdateCheckbox.checked = settings.autoDbUpdate;
+            saveUninstalledCheckbox.checked = settings.saveUninstalledGames;
 
             if (settings.gameInstalls && settings.gameInstalls.length > 0) {
                 settings.gameInstalls.forEach((installPath) => {
@@ -91,6 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
             window.api.send('save-settings', 'maxBackups', maxBackupsInput.value);
             window.api.send('save-settings', 'autoAppUpdate', autoAppUpdateCheckbox.checked);
             window.api.send('save-settings', 'autoDbUpdate', autoDbUpdateCheckbox.checked);
+            window.api.send('save-settings', 'saveUninstalledGames', saveUninstalledCheckbox.checked);
             showAlert('success', await window.i18n.translate('settings.save-settings-success'));
         }
     });

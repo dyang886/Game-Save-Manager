@@ -6,6 +6,31 @@ window.api.receive('update-backup-table', () => {
     updateBackupTable(true);
 });
 
+window.api.receive('scan-full', async () => {
+    const start = await operationStartCheck('scan-full');
+    if (start) {
+        const iconMap = await window.api.invoke('get-icon-map');
+        const fullScanGameData = await window.api.invoke('start-scan-full');
+
+        if (fullScanGameData) {
+            await showLoadingIndicator('backup');
+            let normalScanGameData = await window.api.invoke('fetch-backup-table-data');
+
+            const allIds = new Set(fullScanGameData.map(game => game.wiki_page_id));
+            const installedGameIds = new Set(normalScanGameData.map(game => game.wiki_page_id));
+            const uninstalledGameIds = [...allIds].filter(id => !installedGameIds.has(id));
+            if (uninstalledGameIds.length > 0) {
+                window.api.send('save-settings', 'uninstalledGames', uninstalledGameIds);
+            }
+
+            normalScanGameData = await window.api.invoke('fetch-backup-table-data');
+            await populateBackupTable(normalScanGameData, iconMap);
+            updateSelectedCountAndSize('backup');
+            hideLoadingIndicator('backup');
+        }
+    }
+});
+
 async function updateBackupTable(loader) {
     if (loader) {
         await showLoadingIndicator('backup');
@@ -236,7 +261,7 @@ function showBackupSummary(backupCount, backupFailed, errors, backupSize) {
                 });
                 document.getElementById('backup-summary-total-failed').textContent = failed_message;
                 document.getElementById('backup-failed-learn-more').addEventListener('click', () => {
-                    showModal(failed_message, errors);
+                    showInfoModal(failed_message, errors);
                 });
                 backupFailedContainer.classList.remove('hidden');
             } else {
