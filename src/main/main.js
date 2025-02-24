@@ -324,10 +324,22 @@ ipcMain.handle('update-database', async () => {
     return;
 });
 
-ipcMain.on("export-backups", (event, count, exportPath) => {
+ipcMain.on('export-backups', (event, count, exportPath) => {
     exportBackups(count, exportPath);
 });
 
-ipcMain.on("import-backups", (event, gsmPath) => {
+ipcMain.on('import-backups', (event, gsmPath) => {
     importBackups(gsmPath);
+});
+
+ipcMain.handle('start-scan-full', async () => {
+    if (!getStatus().scanning_full) {
+        const { games, errors } = await getAllGameDataFromDB();
+
+        if (errors.length > 0) {
+            getMainWin().webContents.send('show-alert', 'modal', i18next.t('alert.backup_process_error_display'), errors);
+        }
+
+        return games;
+    }
 });

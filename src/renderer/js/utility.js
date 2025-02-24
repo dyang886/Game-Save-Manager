@@ -288,7 +288,7 @@ function updateProgress(progressId, progressTitle, percentage) {
         progressElement.className = "ml-auto max-w-max p-4 mb-2 rounded-lg bg-blue-50 dark:bg-gray-800 animate-fadeIn";
         progressElement.innerHTML = `
             <div class="flex justify-between mb-1 text-sm font-medium text-blue-700 dark:text-white">
-                <span >${progressTitle}</span>
+                <span>${progressTitle}</span>
                 <span id="${progressId}-percentage">0%</span>
             </div>
             <div class="w-60 bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
@@ -321,7 +321,13 @@ async function operationStartCheck(operation) {
             migrating: 'alert.wait_for_migrate',
             updating_db: 'alert.wait_for_updating_db',
             exporting: 'alert.wait_for_export',
-            importing: 'alert.wait_for_import'
+            importing: 'alert.wait_for_import',
+            scanning_full: 'alert.wait_for_scan_full'
+        },
+        'scan-full': {
+            backuping: 'alert.wait_for_backup',
+            restoring: 'alert.wait_for_restore',
+            updating_db: 'alert.wait_for_updating_db',
         },
         'restore': {
             backuping: 'alert.wait_for_backup',
@@ -333,18 +339,21 @@ async function operationStartCheck(operation) {
             restoring: 'alert.wait_for_restore',
             migrating: 'alert.wait_for_migrate',
             exporting: 'alert.wait_for_export',
-            importing: 'alert.wait_for_import'
+            importing: 'alert.wait_for_import',
+            scanning_full: 'alert.wait_for_scan_full'
         },
         'save-custom': {
             backuping: 'alert.wait_for_backup',
             restoring: 'alert.wait_for_restore',
             migrating: 'alert.wait_for_migrate',
             exporting: 'alert.wait_for_export',
-            importing: 'alert.wait_for_import'
+            importing: 'alert.wait_for_import',
+            scanning_full: 'alert.wait_for_scan_full'
         },
         'update-db': {
             backuping: 'alert.wait_for_backup',
-            importing: 'alert.wait_for_import'
+            importing: 'alert.wait_for_import',
+            scanning_full: 'alert.wait_for_scan_full'
         },
         'export': {
             backuping: 'alert.wait_for_backup',
@@ -355,7 +364,8 @@ async function operationStartCheck(operation) {
             backuping: 'alert.wait_for_backup',
             restoring: 'alert.wait_for_restore',
             migrating: 'alert.wait_for_migrate',
-            exporting: 'alert.wait_for_export'
+            exporting: 'alert.wait_for_export',
+            scanning_full: 'alert.wait_for_scan_full'
         }
     };
 

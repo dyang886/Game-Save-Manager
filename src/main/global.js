@@ -21,6 +21,7 @@ const appVersion = "2.0.3";
 const updateLink = "https://api.github.com/repos/dyang886/Game-Save-Manager/releases/latest";
 let status = {
     backuping: false,
+    scanning_full: false,
     restoring: false,
     migrating: false,
     updating_db: false,
@@ -65,6 +66,12 @@ const initializeMenu = () => {
                     },
                 },
                 {
+                    label: i18next.t("main.scan_full"),
+                    click() {
+                        win.webContents.send("scan-full");
+                    },
+                },
+                {
                     label: i18next.t("about.title"),
                     click() {
                         let about_window_size = [480, 290];
@@ -97,7 +104,7 @@ const initializeMenu = () => {
         {
             label: i18next.t("main.export"),
             click() {
-                win.webContents.send("open-export-modal", "");
+                win.webContents.send("open-export-modal");
             },
         },
         {
@@ -480,7 +487,6 @@ async function importBackups(gsmPath) {
                 win.webContents.send('update-progress', progressId, progressTitle, overallProgress);
             }
 
-            win.webContents.send('update-progress', progressId, progressTitle, 'end');
             win.webContents.send('show-alert', 'success', i18next.t('alert.import_success'));
             status.importing = false;
 
@@ -490,10 +496,10 @@ async function importBackups(gsmPath) {
     } catch (error) {
         console.error(`An error occurred while importing backups: ${error.message}`);
         win.webContents.send('show-alert', 'modal', i18next.t('alert.error_during_import'), error.message);
-        win.webContents.send('update-progress', progressId, progressTitle, 'end');
         status.importing = false;
 
     } finally {
+        win.webContents.send('update-progress', progressId, progressTitle, 'end');
         win.webContents.send('update-backup-table');
         win.webContents.send('update-restore-table');
     }
@@ -587,8 +593,10 @@ const loadSettings = () => {
         maxBackups: 5,
         autoAppUpdate: true,
         autoDbUpdate: false,
+        saveUninstalledGames: true,
         gameInstalls: 'uninitialized',
-        pinnedGames: []
+        pinnedGames: [],
+        uninstalledGames: []
     };
 
     fs.mkdirSync(path.dirname(settingsPath), { recursive: true });
@@ -626,7 +634,7 @@ function saveSettings(key, value) {
                         });
                     }
 
-                    if (key === 'gameInstalls') {
+                    if (key === 'gameInstalls' || key === 'saveUninstalledGames') {
                         win.webContents.send('update-backup-table');
                     }
 
