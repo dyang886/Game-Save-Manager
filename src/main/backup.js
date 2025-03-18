@@ -594,41 +594,40 @@ function finalizeTemplate(template, resolvedPath, uid, gameInstallPath) {
         const tokens = [];
         let currentToken = '';
         let i = 0;
+        let inPlaceholder = false;
 
         while (i < templatePath.length) {
-            if (templatePath.substr(i, 2) === '{{') {
-                // If we detect the beginning of a placeholder
+            // If we're not already in a placeholder and we see the start marker, enter placeholder mode.
+            if (!inPlaceholder && templatePath.substr(i, 2) === '{{') {
+                inPlaceholder = true;
+                currentToken += '{{';
+                i += 2;
+                continue;
+            }
+
+            // If we're in a placeholder and we see the end marker, exit placeholder mode.
+            if (inPlaceholder && templatePath.substr(i, 2) === '}}') {
+                inPlaceholder = false;
+                currentToken += '}}';
+                i += 2;
+                continue;
+            }
+
+            // If we're not inside a placeholder and we encounter a path separator, flush the current token and skip any consecutive separators.
+            if (!inPlaceholder && (templatePath[i] === '\\' || templatePath[i] === '/')) {
                 if (currentToken) {
                     tokens.push(currentToken);
                     currentToken = '';
                 }
-
-                const endIndex = templatePath.indexOf('}}', i);
-                if (endIndex === -1) {
-                    throw new Error(`Error parsing template path: ${templatePath}`);
-                }
-
-                const placeholder = templatePath.slice(i, endIndex + 2);
-                tokens.push(placeholder);
-                i = endIndex + 2;
-
-            } else if (templatePath[i] === '\\' || templatePath[i] === '/') {
-                // When we hit a path separator, flush the current token (if any)
-                if (currentToken) {
-                    tokens.push(currentToken);
-                    currentToken = '';
-                }
-
-                // Skip any additional consecutive separators
                 while (i < templatePath.length && (templatePath[i] === '\\' || templatePath[i] === '/')) {
                     i++;
                 }
-
-            } else {
-                // Append normal characters
-                currentToken += templatePath[i];
-                i++;
+                continue;
             }
+
+            // Append the current character to the token.
+            currentToken += templatePath[i];
+            i++;
         }
 
         if (currentToken) {
