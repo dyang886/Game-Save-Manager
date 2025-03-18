@@ -532,31 +532,6 @@ const placeholder_mapping = {
     '{{p|xdgconfighome}}': process.env.XDG_CONFIG_HOME || path.join(os.homedir(), '.config'),
 };
 
-const placeholder_identifier = {
-    '{{p|username}}': '{{p1}}',
-    '{{p|userprofile}}': '{{p2}}',
-    '{{p|userprofile/documents}}': '{{p3}}',
-    '{{p|userprofile/appdata/locallow}}': '{{p4}}',
-    '{{p|appdata}}': '{{p5}}',
-    '{{p|localappdata}}': '{{p6}}',
-    '{{p|programfiles}}': '{{p7}}',
-    '{{p|programdata}}': '{{p8}}',
-    '{{p|public}}': '{{p9}}',
-    '{{p|windir}}': '{{p10}}',
-    '{{p|game}}': '{{p11}}',
-    '{{p|uid}}': '{{p12}}',
-    '{{p|steam}}': '{{p13}}',
-    '{{p|uplay}}': '{{p14}}',
-    '{{p|ubisoftconnect}}': '{{p14}}',
-    '{{p|hkcu}}': '{{p15}}',
-    '{{p|hklm}}': '{{p16}}',
-    '{{p|wow64}}': '{{p17}}',
-    '{{p|osxhome}}': '{{p18}}',
-    '{{p|linuxhome}}': '{{p19}}',
-    '{{p|xdgdatahome}}': '{{p20}}',
-    '{{p|xdgconfighome}}': '{{p21}}',
-};
-
 const osKeyMap = {
     win32: 'win',
     darwin: 'mac',
@@ -744,7 +719,6 @@ module.exports = {
     exportBackups,
     importBackups,
     placeholder_mapping,
-    placeholder_identifier,
     osKeyMap,
     loadSettings,
     saveSettings,

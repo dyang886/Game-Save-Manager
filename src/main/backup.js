@@ -15,7 +15,7 @@ const moment = require('moment');
 const sqlite3 = require('sqlite3');
 const WinReg = require('winreg');
 
-const { getMainWin, getStatus, updateStatus, getGameDisplayName, calculateDirectorySize, ensureWritable, getNewestBackup, fsOriginalCopyFolder, placeholder_mapping, placeholder_identifier, osKeyMap, getSettings, saveSettings } = require('./global');
+const { getMainWin, getStatus, updateStatus, getGameDisplayName, calculateDirectorySize, ensureWritable, getNewestBackup, fsOriginalCopyFolder, placeholder_mapping, osKeyMap, getSettings, saveSettings } = require('./global');
 const { getGameData } = require('./gameData');
 
 const execPromise = util.promisify(exec);
@@ -77,6 +77,7 @@ async function getGameDataFromDB() {
 
     const db = new sqlite3.Database(dbPath, sqlite3.OPEN_READONLY);
     let stmtInstallFolder;
+    const processedInstallPaths = new Set();
 
     return new Promise(async (resolve, reject) => {
         try {
@@ -92,6 +93,9 @@ async function getGameDataFromDB() {
                         .map(dirent => dirent.name);
 
                     for (const dir of directories) {
+                        if (processedInstallPaths.has(dir)) continue;
+                        processedInstallPaths.add(dir);
+
                         const rows = await new Promise((resolve, reject) => {
                             stmtInstallFolder.all(dir, (err, rows) => {
                                 if (err) {
@@ -587,12 +591,50 @@ async function backupGame(gameObj) {
 // Replace wildcards and uid by finding the corresponding components in resolved path
 function finalizeTemplate(template, resolvedPath, uid, gameInstallPath) {
     function splitTemplatePath(templatePath) {
-        let normalizedTemplate = templatePath.replace(/\{\{p\|[^\}]+\}\}/gi, match => {
-            const normalizedMatch = match.toLowerCase().replace(/\\/g, '/');
-            return placeholder_identifier[normalizedMatch] || normalizedMatch;
-        });
+        const tokens = [];
+        let currentToken = '';
+        let i = 0;
 
-        return normalizedTemplate.replace(/[\\/]+/g, path.sep).split(path.sep);
+        while (i < templatePath.length) {
+            if (templatePath.substr(i, 2) === '{{') {
+                // If we detect the beginning of a placeholder
+                if (currentToken) {
+                    tokens.push(currentToken);
+                    currentToken = '';
+                }
+
+                const endIndex = templatePath.indexOf('}}', i);
+                if (endIndex === -1) {
+                    throw new Error(`Error parsing template path: ${templatePath}`);
+                }
+
+                const placeholder = templatePath.slice(i, endIndex + 2);
+                tokens.push(placeholder);
+                i = endIndex + 2;
+
+            } else if (templatePath[i] === '\\' || templatePath[i] === '/') {
+                // When we hit a path separator, flush the current token (if any)
+                if (currentToken) {
+                    tokens.push(currentToken);
+                    currentToken = '';
+                }
+
+                // Skip any additional consecutive separators
+                while (i < templatePath.length && (templatePath[i] === '\\' || templatePath[i] === '/')) {
+                    i++;
+                }
+
+            } else {
+                // Append normal characters
+                currentToken += templatePath[i];
+                i++;
+            }
+        }
+
+        if (currentToken) {
+            tokens.push(currentToken);
+        }
+        return tokens;
     }
 
     const templateParts = splitTemplatePath(template);
@@ -602,21 +644,21 @@ function finalizeTemplate(template, resolvedPath, uid, gameInstallPath) {
     let resolvedIndex = 0;
 
     for (let i = 0; i < templateParts.length; i++) {
-        const currentPart = templateParts[i];
+        const currentPart = templateParts[i]
 
         // Process placeholders
-        if (/\{\{p\d+\}\}/.test(currentPart)) {
+        if (/\{\{p\|[^\}]+\}\}/gi.test(currentPart)) {
             let pathMapping = '';
-            const placeholder = findKeyByValue(placeholder_identifier, currentPart) || currentPart;
+            const placeholder = currentPart.replace(/\\/g, '/').toLowerCase();
 
-            if (currentPart.includes('{{p11}}')) {
-                pathMapping = currentPart.replace('{{p11}}', gameInstallPath);
-            } else if (currentPart.includes('{{p13}}')) {
-                pathMapping = currentPart.replace('{{p13}}', getGameData().steamPath);
-            } else if (currentPart.includes('{{p14}}')) {
-                pathMapping = currentPart.replace('{{p14}}', getGameData().ubisoftPath);
-            } else if (currentPart.includes('{{p12}}')) {
-                resultParts.push(currentPart.replace('{{p12}}', uid));
+            if (placeholder.includes('{{p|game}}')) {
+                pathMapping = placeholder.replace('{{p|game}}', gameInstallPath);
+            } else if (placeholder.includes('{{p|steam}}')) {
+                pathMapping = placeholder.replace('{{p|steam}}', getGameData().steamPath);
+            } else if (/\{\{p\|(uplay|ubisoftconnect)\}\}/.test(placeholder)) {
+                pathMapping = placeholder.replace(/\{\{p\|(uplay|ubisoftconnect)\}\}/, getGameData().ubisoftPath);
+            } else if (placeholder.includes('{{p|uid}}')) {
+                resultParts.push(placeholder.replace('{{p|uid}}', uid));
                 resolvedIndex++;
                 continue;
             } else {
@@ -640,10 +682,6 @@ function finalizeTemplate(template, resolvedPath, uid, gameInstallPath) {
     }
 
     return path.join(...resultParts);
-}
-
-function findKeyByValue(obj, value) {
-    return Object.keys(obj).find(key => obj[key] === value);
 }
 
 async function updateDatabase() {
