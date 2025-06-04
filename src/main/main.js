@@ -25,14 +25,14 @@ if (!gotTheLock) {
     app.quit();
 } else {
     app.on('second-instance', (event, argv) => {
-        const gsmPath = argv.find(arg => arg.toLowerCase().endsWith('.gsm'));
+        const gsmPath = argv.find(arg => arg.toLowerCase().endsWith('.gsmr'));
         if (gsmPath) {
             getMainWin().webContents.send('open-import-modal', gsmPath);
         }
     });
 
     if (process.platform === 'win32') {
-        const gsmPath = process.argv.find(arg => arg.toLowerCase().endsWith('.gsm'));
+        const gsmPath = process.argv.find(arg => arg.toLowerCase().endsWith('.gsmr'));
         if (gsmPath) {
             pendingGSMPath = gsmPath;
         }
@@ -163,10 +163,10 @@ ipcMain.handle('select-path', async (event, fileType) => {
             break;
         case 'registry':
             return null;
-        case 'gsm':
+        case 'gsmr':
             dialogOptions.properties = ['openFile'];
             dialogOptions.filters = [
-                { name: i18next.t('main.gsm-file-type'), extensions: ['gsm'] }
+                { name: i18next.t('main.gsmr-file-type'), extensions: ['gsmr'] }
             ];
             break;
     }
@@ -270,8 +270,8 @@ ipcMain.handle('get-icon-map', async () => {
     };
 });
 
-ipcMain.handle('fetch-backup-table-data', async () => {
-    const { games, errors } = await getGameDataFromDB();
+ipcMain.handle('fetch-backup-table-data', async (event, ignoreUninstalled) => {
+    const { games, errors } = await getGameDataFromDB(ignoreUninstalled);
 
     if (errors.length > 0) {
         getMainWin().webContents.send('show-alert', 'modal', i18next.t('alert.backup_process_error_display'), errors);
@@ -316,7 +316,7 @@ ipcMain.handle('get-current-version', () => {
 });
 
 ipcMain.handle('get-latest-version', () => {
-    return getLatestVersion();
+    return getLatestVersion('GSM');
 });
 
 ipcMain.handle('update-database', async () => {

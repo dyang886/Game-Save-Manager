@@ -5,11 +5,14 @@ const fsOriginal = require('original-fs');
 const os = require('os');
 const path = require('path');
 
+const axios = require('axios');
 const fse = require('fs-extra');
 const i18next = require('i18next');
 const moment = require('moment');
 const Seven = require('node-7z');
 const sevenBin = require('7zip-bin');
+
+const { SIGNED_URL_API_GATEWAY_ENDPOINT, VERSION_CHECKER_API_GATEWAY_ENDPOINT, CLIENT_API_KEY } = require('./secret_config')
 
 let win;
 let settingsWin;
@@ -17,8 +20,7 @@ let aboutWin;
 let settings;
 let writeQueue = Promise.resolve();
 
-const appVersion = "2.0.3";
-const updateLink = "https://api.github.com/repos/dyang886/Game-Save-Manager/releases/latest";
+const appVersion = "2.0.4";
 let status = {
     backuping: false,
     scanning_full: false,
@@ -148,25 +150,82 @@ const createMainWindow = async () => {
     });
 };
 
-async function getLatestVersion() {
+async function getSignedDownloadUrl(filePathOnS3) {
+    if (!SIGNED_URL_API_GATEWAY_ENDPOINT || !CLIENT_API_KEY) {
+        console.error("Error: API Gateway endpoint or Client API Key is not configured.");
+        return null;
+    }
+
+    const headers = {
+        'x-api-key': CLIENT_API_KEY
+    };
+    const params = {
+        'filePath': filePathOnS3
+    };
+
     try {
-        const response = await fetch(updateLink);
-        const data = await response.json();
-        const latestVersion = data.tag_name ? data.tag_name.replace(/^v/, "") : null;
+        const response = await axios.get(SIGNED_URL_API_GATEWAY_ENDPOINT, {
+            headers: headers,
+            params: params,
+            timeout: 15000 // 15 seconds
+        });
 
-        return latestVersion;
-
+        const data = response.data;
+        const signedUrl = data.signedUrl;
+        if (signedUrl) {
+            return signedUrl;
+        } else {
+            console.error(`Error: 'signedUrl' not found in response. Response: ${JSON.stringify(data)}`);
+            return null;
+        }
     } catch (error) {
-        console.error("Error checking for update:", error.stack);
+        console.error(`Error retrieving signed URL: ${error.message}`);
+        return null;
+    }
+}
+
+async function getLatestVersion(appName) {
+    if (!VERSION_CHECKER_API_GATEWAY_ENDPOINT || !CLIENT_API_KEY) {
+        console.error("Error: API Gateway endpoint or Client API Key is not configured.");
+        return null;
+    }
+
+    const headers = {
+        'x-api-key': CLIENT_API_KEY
+    };
+    const params = {
+        'appName': appName
+    };
+
+    try {
+        const response = await axios.get(VERSION_CHECKER_API_GATEWAY_ENDPOINT, {
+            headers: headers,
+            params: params,
+            timeout: 15000 // 15 seconds
+        });
+
+        const data = response.data;
+        const latestVersion = data.latest_version;
+        if (latestVersion) {
+            return latestVersion;
+        } else {
+            console.error(`Error: 'latest_version' not found in response. Response: ${JSON.stringify(data)}`);
+            return null;
+        }
+    } catch (error) {
+        console.error(`Error retrieving latest version: ${error.message}`);
+        if (error.response) {
+            console.error('Response data:', JSON.stringify(error.response.data));
+            console.error('Status:', error.response.status);
+            console.error('Headers:', JSON.stringify(error.response.headers));
+        }
         return null;
     }
 }
 
 async function checkAppUpdate() {
     try {
-        const response = await fetch(updateLink);
-        const data = await response.json();
-        const latestVersion = data.tag_name ? data.tag_name.replace(/^v/, "") : appVersion;
+        const latestVersion = await getLatestVersion('GSM');
 
         if (latestVersion > appVersion) {
             showNotification(
@@ -257,8 +316,11 @@ function ensureWritable(pathToCheck) {
 
     } else {
         if (!(stats.mode & 0o200)) {
-            fsOriginal.chmod(pathToCheck, 0o666);
-            console.log(`Changed permissions for file: ${pathToCheck}`);
+            fsOriginal.chmod(pathToCheck, 0o666, (err) => {
+                if (err) {
+                    throw (`Error changing permissions for ${pathToCheck}:`, err);
+                }
+            });
         }
     }
 }
@@ -315,6 +377,11 @@ async function exportBackups(count, exportPath) {
     const sourcePath = settings.backupPath;
 
     try {
+        if (!exportPath) {
+            win.webContents.send('show-alert', 'warning', i18next.t('alert.empty_export_path'));
+            return;
+        }
+
         if (!status.exporting) {
             status.exporting = true;
             win.webContents.send('update-progress', progressId, progressTitle, 'start');
@@ -350,7 +417,7 @@ async function exportBackups(count, exportPath) {
             }
 
             const timestamp = moment().format('YYYY-MM-DD_HH-mm');
-            const finalFileName = `GSMBackup-${timestamp}.gsm`;
+            const finalFileName = `GSMBackup-${timestamp}.gsmr`;
             const finalDestPath = path.join(exportPath, finalFileName);
 
             const sevenOptions = {
@@ -400,7 +467,7 @@ async function importBackups(gsmPath) {
             status.importing = true;
             win.webContents.send('update-progress', progressId, progressTitle, 'start');
 
-            // 1. Extract the GSM file to a temporary directory
+            // 1. Extract the GSMR file to a temporary directory
             const tempExtractPath = fsOriginal.mkdtempSync(path.join(os.tmpdir(), 'GSMImportTemp-'));
             const sevenOptions = {
                 yes: true,
@@ -708,6 +775,7 @@ module.exports = {
     getSettingsWin: () => settingsWin,
     getStatus: () => status,
     updateStatus,
+    getSignedDownloadUrl,
     getCurrentVersion: () => appVersion,
     getLatestVersion,
     checkAppUpdate,
