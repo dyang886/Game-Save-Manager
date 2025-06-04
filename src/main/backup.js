@@ -15,7 +15,7 @@ const moment = require('moment');
 const sqlite3 = require('sqlite3');
 const WinReg = require('winreg');
 
-const { getMainWin, getStatus, updateStatus, getGameDisplayName, calculateDirectorySize, ensureWritable, getNewestBackup, fsOriginalCopyFolder, placeholder_mapping, osKeyMap, getSettings, saveSettings } = require('./global');
+const { getMainWin, getStatus, updateStatus, getSignedDownloadUrl, getGameDisplayName, calculateDirectorySize, ensureWritable, getNewestBackup, fsOriginalCopyFolder, placeholder_mapping, osKeyMap, getSettings, saveSettings } = require('./global');
 const { getGameData } = require('./gameData');
 
 const execPromise = util.promisify(exec);
@@ -57,7 +57,7 @@ const execPromise = util.promisify(exec);
 //     backup_size: 414799
 // }
 
-async function getGameDataFromDB() {
+async function getGameDataFromDB(ignoreUninstalled = false) {
     const games = [];
     const errors = [];
     const dbPath = path.join(app.getPath("userData"), "GSM Database", "database.db");
@@ -132,7 +132,7 @@ async function getGameDataFromDB() {
             stmtInstallFolder.finalize();
 
             // 2. Process uninstalled games by wiki id
-            if (getSettings().saveUninstalledGames) {
+            if (!ignoreUninstalled && getSettings().saveUninstalledGames) {
                 const uninstalledWikiIds = getSettings().uninstalledGames || [];
                 const processedWikiIds = new Set(games.map(game => game.wiki_page_id));
                 const remainingUninstalledWikiIds = uninstalledWikiIds.filter(id => !processedWikiIds.has(id));
@@ -457,6 +457,16 @@ async function fillPathUid(basePath) {
         }
     }
 
+    // Exclude steam and ubisoft userdata save paths (to process current user only)
+    const steamSavePathPattern = `${getGameData().steamPath}/userdata/{{p|uid}}`.replace(/\\/g, '/');
+    const ubisoftSavePathPattern = `${getGameData().ubisoftPath}/savegames/{{p|uid}}`.replace(/\\/g, '/');
+    const normalizedBasePath = basePath.replace(/\\/g, '/');
+
+    if (normalizedBasePath.toLowerCase().includes(steamSavePathPattern.toLowerCase()) ||
+        normalizedBasePath.toLowerCase().includes(ubisoftSavePathPattern.toLowerCase())) {
+        return { path: '' };
+    }
+
     // If no valid paths found with userIds, attempt wildcard for uid
     const wildcardPath = basePath.replace(/\{\{p\|uid\}\}/gi, '*');
     const wildcardResolvedPaths = glob.sync(wildcardPath.replace(/\\/g, '/'));
@@ -686,7 +696,6 @@ function finalizeTemplate(template, resolvedPath, uid, gameInstallPath) {
 async function updateDatabase() {
     const progressId = 'update-db';
     const progressTitle = i18next.t('alert.updating_database');
-    const databaseLink = "https://raw.githubusercontent.com/dyang886/Game-Save-Manager/main/database/database.db";
     const dbPath = path.join(app.getPath("userData"), "GSM Database", "database.db");
     const backupPath = `${dbPath}.backup`;
 
@@ -700,7 +709,8 @@ async function updateDatabase() {
             fs.copyFileSync(dbPath, backupPath);
         }
 
-        await new Promise((resolve, reject) => {
+        await new Promise(async (resolve, reject) => {
+            const databaseLink = await getSignedDownloadUrl('GSM/database.db');
             const request = https.get(databaseLink, (response) => {
                 const totalSize = parseInt(response.headers['content-length'], 10);
                 let downloadedSize = 0;

@@ -60,7 +60,7 @@
         "update_database": "Update Database",
         "export": "Export",
         "import": "Import",
-        "gsm-file-type": "GSM Backup File",
+        "gsmr-file-type": "GSMR Backup File",
         "scan_full": "Database Full Scan"
     },
     "summary": {
@@ -134,11 +134,12 @@
         "export_backups": "Export Backups",
         "export_count": "Number of exports per game (ordered from newest to oldest)",
         "export_path": "Export path",
+        "empty_export_path": "Please select an export path",
         "exporting": "Exporting...",
         "export_success": "Export success",
         "error_during_export": "An error occurred while exporting backups",
         "import_backups": "Import Backups",
-        "gsm_path": "GSM file path",
+        "gsmr_path": "GSMR file path",
         "importing": "Importing...",
         "import_success": "Import success",
         "error_during_import": "An error occurred while importing backups",

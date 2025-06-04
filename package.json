@@ -1,6 +1,6 @@
 {
   "name": "game-save-manager",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "Easily backup and restore your game saves anytime",
   "main": "src/main/main.js",
   "scripts": {
@@ -17,8 +17,7 @@
     "productName": "Game Save Manager",
     "copyright": "Copyright © 2024-2025 Yongcan Yang",
     "files": [
-      "src/**/*",
-      "node_modules/**/*"
+      "src/**/*"
     ],
     "extraFiles": [
       "./database/database.db"
@@ -29,8 +28,9 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.6.0",
     "7zip-bin": "^5.2.0",
-    "autoprefixer": "^10.4.19",
+    "axios": "^1.9.0",
     "fs-extra": "^11.2.0",
+    "glob": "^11.0.2",
     "i18next": "^23.12.2",
     "i18next-browser-languagedetector": "^8.0.0",
     "i18next-fs-backend": "^2.3.2",
@@ -38,17 +38,18 @@
     "moment": "^2.30.1",
     "node-7z": "^3.0.0",
     "pinyin": "^4.0.0-alpha.2",
-    "postcss": "^8.4.40",
     "sqlite3": "^5.1.6",
-    "tailwindcss": "^3.4.7",
     "vdf-parser": "^1.2.1",
     "winreg": "^1.2.5"
   },
   "devDependencies": {
+    "autoprefixer": "^10.4.19",
     "concurrently": "^8.2.2",
     "electron": "^31.3.1",
     "electron-builder": "^24.13.3",
+    "postcss": "^8.4.40",
     "tailwind-scrollbar": "^3.1.0",
+    "tailwindcss": "^3.4.7",
     "wait-on": "^7.2.0"
   }
 }

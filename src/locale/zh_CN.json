@@ -18,7 +18,7 @@
         "save-settings-success": "设置保存成功",
         "auto_app_update": "自动检查软件更新",
         "auto_db_update": "自动更新数据库",
-        "save_uninstalled_games": "完整数据库扫描后，保存并在备份选列表中显示未安装的游戏"
+        "save_uninstalled_games": "完整数据库扫描后，保存并在备份列表中显示未安装的游戏"
     },
     "about": {
         "title": "关于",
@@ -60,7 +60,7 @@
         "update_database": "更新数据库",
         "export": "导出",
         "import": "导入",
-        "gsm-file-type": "GSM 备份文件",
+        "gsmr-file-type": "GSMR 备份文件",
         "scan_full": "完整数据库扫描"
     },
     "summary": {
@@ -134,11 +134,12 @@
         "export_backups": "导出备份",
         "export_count": "每个游戏的导出数量（从新到旧排序）",
         "export_path": "导出路径",
+        "empty_export_path": "请选择导出路径",
         "exporting": "导出中...",
         "export_success": "导出成功",
         "error_during_export": "导出备份时出错",
         "import_backups": "导入备份",
-        "gsm_path": "GSM 文件路径",
+        "gsmr_path": "GSMR 文件路径",
         "importing": "导入中...",
         "import_success": "导入成功",
         "error_during_import": "导入备份时出错",

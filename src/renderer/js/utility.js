@@ -245,7 +245,7 @@ function showImportModal(gsmPath) {
     if (gsmPath) modalImportPathInput.value = gsmPath;
     if (!modal.dataset.listenerAdded) {
         modalImportPathSelectButton.addEventListener('click', async () => {
-            const result = await window.api.invoke('select-path', 'gsm');
+            const result = await window.api.invoke('select-path', 'gsmr');
             if (result) {
                 modalImportPathInput.value = result;
             }

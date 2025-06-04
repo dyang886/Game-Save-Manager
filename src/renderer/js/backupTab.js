@@ -14,7 +14,7 @@ window.api.receive('scan-full', async () => {
 
         if (fullScanGameData) {
             await showLoadingIndicator('backup');
-            let normalScanGameData = await window.api.invoke('fetch-backup-table-data');
+            let normalScanGameData = await window.api.invoke('fetch-backup-table-data', true);
 
             const allIds = new Set(fullScanGameData.map(game => game.wiki_page_id));
             const installedGameIds = new Set(normalScanGameData.map(game => game.wiki_page_id));
