@@ -7,14 +7,13 @@
     <meta http-equiv="Content-Security-Policy"
         content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; connect-src 'self'">
     <title class="text-content" data-i18n="main.title">Game Save Manager</title>
-    <link href="../../../node_modules/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
-    <link href="../css/styles.css" rel="stylesheet">
-    <link href="../css/styles_addition.css" rel="stylesheet">
-    <script defer src="../js/utility.js"></script>
-    <script src="../js/commonTabs.js"></script>
-    <script src="../js/backupTab.js"></script>
-    <script src="../js/restoreTab.js"></script>
-    <script src="../js/customTab.js"></script>
+    <!-- <link href="../../node_modules/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="output.css" rel="stylesheet">
+    <script defer type="module" src="js/utility.js"></script>
+    <script type="module" src="js/commonTabs.js"></script>
+    <script type="module" src="js/backupTab.js"></script>
+    <script type="module" src="js/restoreTab.js"></script>
+    <script type="module" src="js/customTab.js"></script> -->
 </head>
 
 <body class="bg-white dark:bg-gray-900 p-8 pt-2 overflow-hidden">
@@ -29,7 +28,7 @@
     <div id="modal-info" tabindex="-1" aria-hidden="true"
         class="hidden animate-fadeInShift overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 max-h-[calc(100%-1rem)]">
         <div class="relative p-4 w-full max-w-2xl max-h-full">
-            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+            <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
                 <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                     <h3 id="modal-info-title" class="text-xl font-semibold text-gray-900 dark:text-white"></h3>
                     <button type="button" id="modal-info-close"
@@ -49,7 +48,7 @@
 
                 <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
                     <button type="button" id="modal-info-confirm"
-                        class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700">Ok</button>
+                        class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-hidden font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700">Ok</button>
                 </div>
             </div>
         </div>
@@ -58,7 +57,7 @@
     <div id="modal-export" tabindex="-1" aria-hidden="true"
         class="hidden animate-fadeInShift overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 max-h-[calc(100%-1rem)]">
         <div class="relative p-4 w-full max-w-2xl max-h-full">
-            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+            <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
                 <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                     <h3 class="text-xl font-semibold text-gray-900 dark:text-white" data-i18n="alert.export_backups">
                         <i class="fa-solid fa-file-export mr-2"></i>
@@ -80,7 +79,7 @@
                         <span class="text-content">Number of exports per game (ordered from newest to oldest)</span>
                     </label>
                     <input type="number" id="modal-export-count" aria-describedby="helper-text-explanation"
-                        class="mb-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-none block w-full p-2.5 dark:bg-gray-600 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                        class="mb-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-hidden block w-full p-2.5 dark:bg-gray-600 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                         value="1" min="1" />
 
                     <label for="modal-export-path" data-i18n="alert.export_path"
@@ -89,9 +88,9 @@
                     </label>
                     <div class="flex mb-4">
                         <input type="text" id="modal-export-path" readonly
-                            class="flex-grow bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-l-lg p-2.5 focus:outline-none dark:bg-gray-600 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" />
+                            class="grow bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-l-lg p-2.5 focus:outline-hidden dark:bg-gray-600 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" />
                         <button type="button" id="modal-export-select-path"
-                            class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-r-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700">
+                            class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-hidden font-medium rounded-r-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700">
                             <i class="fa-solid fa-ellipsis"></i>
                         </button>
                     </div>
@@ -99,7 +98,7 @@
 
                 <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
                     <button type="button" id="modal-export-confirm"
-                        class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700">Ok</button>
+                        class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-hidden font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700">Ok</button>
                 </div>
             </div>
         </div>
@@ -108,7 +107,7 @@
     <div id="modal-import" tabindex="-1" aria-hidden="true"
         class="hidden animate-fadeInShift overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 max-h-[calc(100%-1rem)]">
         <div class="relative p-4 w-full max-w-2xl max-h-full">
-            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+            <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
                 <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                     <h3 class="text-xl font-semibold text-gray-900 dark:text-white" data-i18n="alert.import_backups">
                         <i class="fa-solid fa-file-import mr-2"></i>
@@ -131,9 +130,9 @@
                     </label>
                     <div class="flex mb-4">
                         <input type="text" id="modal-import-path" readonly
-                            class="flex-grow bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-l-lg p-2.5 focus:outline-none dark:bg-gray-600 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" />
+                            class="grow bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-l-lg p-2.5 focus:outline-hidden dark:bg-gray-600 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" />
                         <button type="button" id="modal-import-select-path"
-                            class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-r-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700">
+                            class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-hidden font-medium rounded-r-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700">
                             <i class="fa-solid fa-ellipsis"></i>
                         </button>
                     </div>
@@ -141,7 +140,7 @@
 
                 <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
                     <button type="button" id="modal-import-confirm"
-                        class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700">Ok</button>
+                        class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-hidden font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700">Ok</button>
                 </div>
             </div>
         </div>
@@ -246,7 +245,7 @@
                             </svg>
                         </div>
                         <input type="text" id="backup-search"
-                            class="block py-2 pt-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                            class="block py-2 pt-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:outline-hidden dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                             data-i18n-placeholder="main.search_for_games">
                     </div>
                     <div class="text-right">
@@ -265,7 +264,7 @@
                                 <th scope="col" class="w-4 py-3 pl-4">
                                     <div class="flex items-center">
                                         <input id="backup-checkbox-all-search" type="checkbox"
-                                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:outline-none dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600">
+                                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:outline-hidden dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600">
                                         <label for="backup-checkbox-all-search" class="sr-only">checkbox</label>
                                     </div>
                                 </th>
@@ -373,7 +372,7 @@
                             </svg>
                         </div>
                         <input type="text" id="restore-search"
-                            class="block py-2 pt-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                            class="block py-2 pt-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:outline-hidden dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                             data-i18n-placeholder="main.search_for_games">
                     </div>
                     <div class="text-right">
@@ -392,7 +391,7 @@
                                 <th scope="col" class="w-4 py-3 pl-4">
                                     <div class="flex items-center">
                                         <input id="restore-checkbox-all-search" type="checkbox"
-                                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:outline-none dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600">
+                                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:outline-hidden dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600">
                                         <label for="restore-checkbox-all-search" class="sr-only">checkbox</label>
                                     </div>
                                 </th>

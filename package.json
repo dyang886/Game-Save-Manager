@@ -2,13 +2,14 @@
   "name": "game-save-manager",
   "version": "2.0.4",
   "description": "Easily backup and restore your game saves anytime",
-  "main": "src/main/main.js",
+  "main": "dist/out/main/main.js",
   "scripts": {
-    "start": "concurrently -k --success=first \"npm:tailwind:build\" \"npm:electron:start\"",
-    "tailwind:build": "tailwindcss -i ./src/renderer/css/style_config.css -o ./src/renderer/css/styles.css --watch",
-    "electron:start": "wait-on ./src/renderer/css/styles.css && electron .",
-    "build": "electron-builder --dir",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "tailwind:build": "npx tailwindcss -i ./src/renderer/styles.css -o ./src/renderer/tailwind-output.css --minify",
+    "tailwind:watch": "npx tailwindcss -i ./src/renderer/styles.css -o ./src/renderer/tailwind-output.css --watch",
+    "clean": "rimraf dist/out",
+    "start": "npm run clean && npm run tailwind:build && concurrently -k -s first -n \"TAILWIND,RENDERER,MAIN,ELECTRON\" \"npm:tailwind:watch\" \"webpack --watch --config webpack.renderer.config.js --mode development\" \"webpack --watch --config webpack.main.config.js --config webpack.preload.config.js --mode development\" \"wait-on dist/out/main/main.js && electron .\"",
+    "build": "npm run clean && cross-env NODE_ENV=production npm run tailwind:build && cross-env NODE_ENV=production webpack --config webpack.main.config.js --config webpack.preload.config.js --config webpack.renderer.config.js --mode production",
+    "package": "npm run build && electron-builder --dir"
   },
   "build": {
     "extends": null,
@@ -17,7 +18,7 @@
     "productName": "Game Save Manager",
     "copyright": "Copyright © 2024-2025 Yongcan Yang",
     "files": [
-      "src/**/*"
+      "dist/out/**/*"
     ],
     "extraFiles": [
       "./database/database.db"
@@ -26,9 +27,9 @@
   "author": "Yongcan Yang",
   "license": "GPL-3.0-only",
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^6.6.0",
     "7zip-bin": "^5.2.0",
     "axios": "^1.9.0",
+    "bytenode": "^1.5.7",
     "fs-extra": "^11.2.0",
     "glob": "^11.0.2",
     "i18next": "^23.12.2",
@@ -43,13 +44,26 @@
     "winreg": "^1.2.5"
   },
   "devDependencies": {
-    "autoprefixer": "^10.4.19",
-    "concurrently": "^8.2.2",
+    "@babel/core": "^7.27.4",
+    "@babel/preset-env": "^7.27.2",
+    "@fortawesome/fontawesome-free": "^6.6.0",
+    "@herberttn/bytenode-webpack-plugin": "^2.3.1",
+    "@tailwindcss/cli": "^4.1.8",
+    "babel-loader": "^10.0.0",
+    "concurrently": "^9.1.2",
+    "copy-webpack-plugin": "^13.0.0",
+    "cross-env": "^7.0.3",
+    "css-loader": "^7.1.2",
     "electron": "^31.3.1",
     "electron-builder": "^24.13.3",
-    "postcss": "^8.4.40",
-    "tailwind-scrollbar": "^3.1.0",
-    "tailwindcss": "^3.4.7",
-    "wait-on": "^7.2.0"
+    "html-webpack-plugin": "^5.6.3",
+    "mini-css-extract-plugin": "^2.9.2",
+    "rimraf": "^6.0.1",
+    "tailwind-scrollbar": "^4.0.2",
+    "wait-on": "^8.0.3",
+    "webpack": "^5.99.9",
+    "webpack-cli": "^6.0.1",
+    "webpack-node-externals": "^3.0.0",
+    "webpack-obfuscator": "^3.5.1"
   }
 }

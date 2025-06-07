@@ -1,3 +1,9 @@
+import { updateTranslations, showAlert, operationStartCheck } from './utility.js';
+
+window.api.receive('apply-language', () => {
+    updateTranslations(document);
+});
+
 document.addEventListener('DOMContentLoaded', () => {
     const themeSelect = document.getElementById('theme');
     const languageSelect = document.getElementById('language');
@@ -59,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
     saveSettingsButton.addEventListener('click', async () => {
         const start = await operationStartCheck('change-settings');
         if (start) {
-            previousSettings = await window.api.invoke('get-settings');
+            const previousSettings = await window.api.invoke('get-settings');
 
             // Check if game install paths changed
             const newGameInstallPaths = [];
@@ -84,6 +90,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.api.send('save-settings', 'gameInstalls', newGameInstallPaths);
             }
 
+            if (previousSettings.saveUninstalledGames !== saveUninstalledCheckbox.checked) {
+                window.api.send('save-settings', 'saveUninstalledGames', saveUninstalledCheckbox.checked);
+            }
+
             // Check if backup path changed
             const newBackupPath = backupPathInput.value.trim();
             if (previousSettings.backupPath.trim() !== newBackupPath) {
@@ -93,7 +103,6 @@ document.addEventListener('DOMContentLoaded', () => {
             window.api.send('save-settings', 'maxBackups', maxBackupsInput.value);
             window.api.send('save-settings', 'autoAppUpdate', autoAppUpdateCheckbox.checked);
             window.api.send('save-settings', 'autoDbUpdate', autoDbUpdateCheckbox.checked);
-            window.api.send('save-settings', 'saveUninstalledGames', saveUninstalledCheckbox.checked);
             showAlert('success', await window.i18n.translate('settings.save-settings-success'));
         }
     });
@@ -121,11 +130,11 @@ document.addEventListener('DOMContentLoaded', () => {
         newPath.className = 'flex mb-2 game-path-item';
         newPath.innerHTML = `
             <input type="text" readonly value="${installPath}"
-                class="display-path flex-grow bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-l-lg p-2.5 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" />
-            <button type="button" class="select-path text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-r-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700">
+                class="display-path grow bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-l-lg p-2.5 focus:outline-hidden dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" />
+            <button type="button" class="select-path text-white bg-blue-700 hover:bg-blue-800 focus:outline-hidden font-medium rounded-r-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700">
                 <i class="fa-solid fa-ellipsis"></i>
             </button>
-            <button type="button" class="remove-path rounded-lg text-white bg-red-600 hover:bg-red-700 focus:outline-none font-medium text-sm px-4 py-2 ms-2 dark:bg-red-500 dark:hover:bg-red-600">
+            <button type="button" class="remove-path rounded-lg text-white bg-red-600 hover:bg-red-700 focus:outline-hidden font-medium text-sm px-4 py-2 ms-2 dark:bg-red-500 dark:hover:bg-red-600">
                 <i class="fa-solid fa-trash"></i>
             </button>
         `;
@@ -175,10 +184,4 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         return isDuplicate;
     }
-});
-
-window.api.receive('apply-language', () => {
-    updateTranslations(document);
-    updateSelectedCountAndSize('backup');
-    updateSelectedCountAndSize('restore');
 });

@@ -20,7 +20,7 @@ window.api.receive('update-progress', (progressId, progressTitle, percentage) =>
     updateProgress(progressId, progressTitle, percentage);
 });
 
-async function updateTranslations(container) {
+export async function updateTranslations(container) {
     container.querySelectorAll("[data-i18n]").forEach(async (el) => {
         const key = el.getAttribute("data-i18n");
         const translation = await window.i18n.translate(key);
@@ -54,7 +54,7 @@ function changeTheme(theme) {
     }
 }
 
-async function showAlert(type, message, modalContent) {
+export async function showAlert(type, message, modalContent) {
     const alertContainer = document.getElementById('alert-container');
 
     const alertClasses = {
@@ -77,7 +77,7 @@ async function showAlert(type, message, modalContent) {
     alertElement.className = `flex ml-auto max-w-max items-center p-4 mb-2 rounded-lg ${alertClasses[type]} animate-fadeInShift`;
 
     alertElement.innerHTML = `
-        <svg class="flex-shrink-0 w-4 h-4" aria-hidden="true" fill="currentColor"
+        <svg class="shrink-0 w-4 h-4" aria-hidden="true" fill="currentColor"
             viewBox="0 0 20 20">
             <path
                 d="${iconPaths[type]}" />
@@ -134,7 +134,7 @@ async function showAlert(type, message, modalContent) {
     }, 5000);
 }
 
-function showInfoModal(modalTitle, modalContent) {
+export function showInfoModal(modalTitle, modalContent) {
     const modal = document.getElementById('modal-info');
     const modalOverlay = document.getElementById('modal-overlay');
     const modalTitleElement = document.getElementById('modal-info-title');
@@ -279,7 +279,7 @@ function closeImportModal() {
     modalOverlay.classList.add('hidden');
 }
 
-function updateProgress(progressId, progressTitle, percentage) {
+export function updateProgress(progressId, progressTitle, percentage) {
     const progressContainer = document.getElementById('progress-container');
 
     if (percentage === 'start') {
@@ -311,7 +311,7 @@ function updateProgress(progressId, progressTitle, percentage) {
     progressPercentage.innerText = `${percentage}%`;
 }
 
-async function operationStartCheck(operation) {
+export async function operationStartCheck(operation) {
     const status = await window.api.invoke('get-status');
 
     // Define contradicting operations

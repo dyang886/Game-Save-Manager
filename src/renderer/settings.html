@@ -7,11 +7,10 @@
     <meta http-equiv="Content-Security-Policy"
         content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; connect-src 'self'">
     <title class="text-content" data-i18n="settings.title">Settings</title>
-    <link href="../../../node_modules/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
-    <link href="../css/styles.css" rel="stylesheet">
-    <link href="../css/styles_addition.css" rel="stylesheet">
-    <script defer src="../js/utility.js"></script>
-    <script defer src="../js/settingsPage.js"></script>
+    <!-- <link href="../../node_modules/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="output.css" rel="stylesheet">
+    <script defer type="module" src="js/utility.js"></script>
+    <script defer type="module" src="js/settingsPage.js"></script> -->
 </head>
 
 <body
@@ -25,7 +24,7 @@
             <span class="text-content">Theme</span>
         </label>
         <select id="theme"
-            class="mb-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+            class="mb-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:outline-hidden dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
             <option class="text-content" data-i18n="settings.dark" value="dark">Dark</option>
             <option class="text-content" data-i18n="settings.light" value="light">Light</option>
         </select>
@@ -36,7 +35,7 @@
             <span class="text-content">Language</span>
         </label>
         <select id="language"
-            class="mb-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+            class="mb-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:outline-hidden dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
             <option value="en_US">English (US)</option>
             <option value="zh_CN">简体中文</option>
             <option value="zh_TW">繁體中文</option>
@@ -49,9 +48,9 @@
         </label>
         <div class="flex mb-4">
             <input type="text" id="backup-path" readonly
-                class="flex-grow bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-l-lg p-2.5 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" />
+                class="grow bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-l-lg p-2.5 focus:outline-hidden dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" />
             <button type="button" id="select-path"
-                class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-r-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700">
+                class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-hidden font-medium rounded-r-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700">
                 <i class="fa-solid fa-ellipsis"></i>
             </button>
         </div>
@@ -62,24 +61,24 @@
             <span class="text-content">Maximum Backups Per Game</span>
         </label>
         <input type="number" id="max-backups" aria-describedby="helper-text-explanation"
-            class="mb-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-none block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+            class="mb-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-hidden block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
             min="1" max="1000" />
         
         <!-- Auto app update -->
         <div class="flex items-center mb-4" data-i18n="settings.auto_app_update">
-            <input id="auto-app-update" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 rounded dark:ring-offset-gray-800 dark:bg-gray-700">
+            <input id="auto-app-update" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 rounded-sm dark:ring-offset-gray-800 dark:bg-gray-700">
             <label for="auto-app-update" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300 text-content">Check software update automatically</label>
         </div>
 
         <!-- Auto database update -->
         <div class="flex items-center mb-4" data-i18n="settings.auto_db_update">
-            <input id="auto-db-update" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 rounded dark:ring-offset-gray-800 dark:bg-gray-700">
+            <input id="auto-db-update" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 rounded-sm dark:ring-offset-gray-800 dark:bg-gray-700">
             <label for="auto-db-update" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300 text-content">Update database automatically</label>
         </div>
 
         <!-- Save uninstalled game ids after full database scan -->
         <div class="flex items-center mb-4" data-i18n="settings.save_uninstalled_games">
-            <input id="save-uninstalled-games" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 rounded dark:ring-offset-gray-800 dark:bg-gray-700">
+            <input id="save-uninstalled-games" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 rounded-sm dark:ring-offset-gray-800 dark:bg-gray-700">
             <label for="save-uninstalled-games" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300 text-content">Save and display uninstalled games after full database scan</label>
         </div>
 
@@ -111,7 +110,7 @@
     <div
         class="fixed inset-x-0 bottom-0 bg-gray-200 dark:bg-gray-800 border-t border-gray-300 dark:border-gray-600 py-4 text-center">
         <button id="save-settings" data-i18n="settings.save_settings"
-            class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700">
+            class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-hidden font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700">
             <i class="fas fa-save mr-1"></i>
             <span class="text-content">Save Settings</span>
         </button>

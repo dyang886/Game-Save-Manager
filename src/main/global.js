@@ -52,12 +52,14 @@ const initializeMenu = () => {
                                 parent: win,
                                 modal: true,
                                 webPreferences: {
-                                    preload: path.join(__dirname, "preload.js"),
+                                    preload: path.join(__dirname, "../preload/preload.js"),
+                                    sandbox: false,
                                 },
                             });
 
+                            // settingsWin.webContents.openDevTools();
                             settingsWin.setMenuBarVisibility(false);
-                            settingsWin.loadFile(path.join(__dirname, "../renderer/html/settings.html"));
+                            settingsWin.loadFile(path.join(__dirname, "../renderer/settings.html"));
 
                             settingsWin.on("closed", () => {
                                 settingsWin = null;
@@ -86,12 +88,14 @@ const initializeMenu = () => {
                                 parent: win,
                                 modal: true,
                                 webPreferences: {
-                                    preload: path.join(__dirname, "preload.js"),
+                                    preload: path.join(__dirname, "../preload/preload.js"),
+                                    sandbox: false,
                                 },
                             });
 
+                            // aboutWin.webContents.openDevTools();
                             aboutWin.setMenuBarVisibility(false);
-                            aboutWin.loadFile(path.join(__dirname, "../renderer/html/about.html"));
+                            aboutWin.loadFile(path.join(__dirname, "../renderer/about.html"));
 
                             aboutWin.on("closed", () => {
                                 aboutWin = null;
@@ -128,12 +132,13 @@ const createMainWindow = async () => {
         minHeight: main_window_size[1],
         icon: path.join(__dirname, "../assets/logo.ico"),
         webPreferences: {
-            preload: path.join(__dirname, "preload.js"),
+            preload: path.join(__dirname, "../preload/preload.js"),
+            sandbox: false,
         },
     });
 
     // win.webContents.openDevTools();
-    win.loadFile(path.join(__dirname, "../renderer/html/index.html"));
+    win.loadFile(path.join(__dirname, "../renderer/index.html"));
     const menu = Menu.buildFromTemplate(initializeMenu());
     Menu.setApplicationMenu(menu);
 
