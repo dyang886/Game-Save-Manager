@@ -1,3 +1,5 @@
+import { updateTranslations } from './utility.js';
+
 document.addEventListener('DOMContentLoaded', () => {
     const latestVersionSpan = document.getElementById('latest-version');
     const currentVersionSpan = document.getElementById('current-version');

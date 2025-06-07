@@ -1,19 +1,11 @@
-document.addEventListener('DOMContentLoaded', async () => {
+import { updateTranslations } from './utility.js';
+
+document.addEventListener('DOMContentLoaded', () => {
     updateTranslations(document);
     initializeTabs();
     setupSearchFilter('backup');
     setupSearchFilter('restore');
-    setupBackupTabButtons();
-    setupRestoreButton();
-    setupCustomPage();
     setDropDownAction();
-
-    updateRestoreTable(true);
-    const settings = await window.api.invoke('get-settings');
-    if (settings.autoDbUpdate) {
-        await updateDatabase();
-    }
-    await updateBackupTable(true);
 });
 
 window.api.receive('apply-language', () => {
@@ -22,7 +14,7 @@ window.api.receive('apply-language', () => {
     updateSelectedCountAndSize('restore');
 });
 
-const spinner = `
+export const spinner = `
     <svg aria-hidden="true" role="status" class="inline w-4 h-4 text-white animate-spin"
         viewBox="0 0 100 101" fill="none">
         <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
@@ -44,7 +36,6 @@ function initializeTabs() {
         defaultTabId: 'backup',
         activeClasses: 'text-blue-600 hover:text-blue-600 dark:text-blue-500 dark:hover:text-blue-400 border-blue-600 dark:border-blue-500',
         inactiveClasses: 'text-gray-500 hover:text-gray-600 dark:text-gray-400 border-gray-100 hover:border-gray-300 dark:border-gray-700 dark:hover:text-gray-300',
-        onShow: () => console.log('Tab is shown'),
     };
 
     if (tabsElement) {
@@ -95,7 +86,7 @@ const loader = `
     <span class="text-content pl-3 text-gray-900 dark:text-white">Loading...</span>
 `;
 
-async function showLoadingIndicator(tabName) {
+export async function showLoadingIndicator(tabName) {
     const loadingContainer = document.getElementById(`${tabName}-loading`);
     const actionSummary = document.querySelector(`#${tabName}-summary`);
     const contentContainer = document.getElementById(`${tabName}-content`);
@@ -131,7 +122,7 @@ async function showLoadingIndicator(tabName) {
     }
 }
 
-function hideLoadingIndicator(tabName) {
+export function hideLoadingIndicator(tabName) {
     const loadingContainer = document.getElementById(`${tabName}-loading`);
     const contentContainer = document.getElementById(`${tabName}-content`);
     const actionButton = document.getElementById(`${tabName}-button`);
@@ -167,7 +158,7 @@ function setupSearchFilter(tabName) {
     });
 }
 
-async function updateNewestBackupTime(tabName, wikiId) {
+export async function updateNewestBackupTime(tabName, wikiId) {
     const tableBody = document.querySelector(`#${tabName} tbody`);
     const row = tableBody.querySelector(`tr[data-wiki-id="${wikiId}"]`);
     const newestBackupTime = await window.api.invoke('get-newest-backup-time', wikiId);
@@ -188,7 +179,7 @@ async function updateNewestBackupTime(tabName, wikiId) {
     }
 }
 
-function addPinIcon(row) {
+export function addPinIcon(row) {
     const titleCell = row.querySelector('th[scope="row"]');
 
     if (titleCell) {
@@ -199,11 +190,11 @@ function addPinIcon(row) {
     }
 }
 
-function getPlatformIcon(platform, iconMap) {
+export function getPlatformIcon(platform, iconMap) {
     return iconMap[platform] || '';
 }
 
-function formatSize(sizeInBytes) {
+export function formatSize(sizeInBytes) {
     if (sizeInBytes === 0) return '0 B';
     const i = Math.floor(Math.log(sizeInBytes) / Math.log(1024));
     return (sizeInBytes / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'KB', 'MB', 'GB', 'TB'][i];
@@ -220,7 +211,7 @@ async function createDropdownMenu(wikiPageId) {
     }
 
     const dropdownMenu = document.createElement('div');
-    dropdownMenu.className = 'bg-white rounded-lg shadow w-46 dark:bg-gray-700 absolute hidden animate-fadeInShift';
+    dropdownMenu.className = 'bg-white rounded-lg shadow-sm w-46 dark:bg-gray-700 absolute hidden animate-fadeInShift';
     dropdownMenu.innerHTML = `
         <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
             <li>
@@ -438,7 +429,7 @@ async function unpinGameFromTop(tabName, wikiId) {
 }
 
 // Function to update the count and size display
-async function updateSelectedCountAndSize(tabName) {
+export async function updateSelectedCountAndSize(tabName) {
     const selectedCountWidget = document.querySelector(`#${tabName}-selected-count`);
     const totalSizeWidget = document.querySelector(`#${tabName}-selected-size`);
     const tableBody = document.querySelector(`#${tabName} tbody`);
@@ -468,7 +459,7 @@ async function updateSelectedCountAndSize(tabName) {
 }
 
 // Function to setup "Select All" checkbox functionality
-function setupSelectAllCheckbox(tabName, selectAllCheckbox) {
+export function setupSelectAllCheckbox(tabName, selectAllCheckbox) {
     const tableBody = document.querySelector(`#${tabName} tbody`);
 
     // Handle the "Select All" checkbox change
@@ -501,7 +492,7 @@ function updateSelectAllCheckbox(selectAllCheckbox, tableContainer) {
     selectAllCheckbox.indeterminate = !allChecked && anyChecked;
 }
 
-function getSelectedWikiIds(tabName) {
+export function getSelectedWikiIds(tabName) {
     const table = document.querySelector(`#${tabName}`);
     const selectedRows = table.querySelectorAll('.row-checkbox:checked');
     return Array.from(selectedRows).map(checkbox => {

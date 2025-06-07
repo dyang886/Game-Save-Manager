@@ -1,6 +1,18 @@
+import { showAlert, showInfoModal, updateProgress, operationStartCheck } from './utility.js';
+import { spinner, showLoadingIndicator, hideLoadingIndicator, updateNewestBackupTime, addPinIcon, getPlatformIcon, formatSize, updateSelectedCountAndSize, setupSelectAllCheckbox, getSelectedWikiIds } from './commonTabs.js';
+
 const backupTableDataMap = new Map();
-let backup_total_size = 0;
-let backup_total_selected = 0;
+window.backupTableDataMap = backupTableDataMap;
+
+document.addEventListener('DOMContentLoaded', async () => {
+    setupBackupTabButtons();
+
+    const settings = await window.api.invoke('get-settings');
+    if (settings.autoDbUpdate) {
+        await updateDatabase();
+    }
+    await updateBackupTable(true);
+});
 
 window.api.receive('update-backup-table', () => {
     updateBackupTable(true);
@@ -132,7 +144,7 @@ function createBackupTableRow(gameTitle, platformIcons, backupSize, newestBackup
     row.innerHTML = `
         <td class="w-4 py-4 pl-4">
             <div class="flex items-center">
-                <input type="checkbox" class="row-checkbox w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:outline-none dark:bg-gray-700 dark:border-gray-600">
+                <input type="checkbox" class="row-checkbox w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:outline-hidden dark:bg-gray-700 dark:border-gray-600">
                 <label class="sr-only">checkbox</label>
             </div>
         </td>
@@ -149,7 +161,7 @@ function createBackupTableRow(gameTitle, platformIcons, backupSize, newestBackup
             ${newestBackupTime}
         </td>
         <td class="px-6 py-4 truncate text-center">
-            <button class="dropdown-menu-button inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 hover:bg-transparent focus:outline-none dark:text-white"
+            <button class="dropdown-menu-button inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 hover:bg-transparent focus:outline-hidden dark:text-white"
                 type="button">
                 <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 16 3">
                     <path
