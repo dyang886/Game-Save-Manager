@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentVersionSpan = document.getElementById('current-version');
     const githubLink = document.getElementById('github-link');
     const bilibiliLink = document.getElementById('bilibili-link');
+    const updateButton = document.getElementById('update-button');
 
     const fetchLatestVersion = async () => {
         const currentVersion = await window.api.invoke('get-current-version');
@@ -23,6 +24,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (latestVersion && latestVersion > currentVersion) {
             currentVersionSpan.style.color = 'red';
             latestVersionSpan.style.color = 'green';
+
+            updateButton.classList.remove('hidden');
+            updateButton.addEventListener('click', () => {
+                window.api.send('update-app', latestVersion);
+            });
         }
     };
 

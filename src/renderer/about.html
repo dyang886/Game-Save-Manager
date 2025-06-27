@@ -22,16 +22,28 @@
             <h1 class="text-2xl mb-4" data-i18n="main.title">
                 <span class="text-content">Game Save manager</span>
             </h1>
-            <p class="text-sm">
-                <span class="text-content" data-i18n="about.current_version">Current version: </span>
-                <span id="current-version"></span><br>
-                <span class="text-content" data-i18n="about.latest_version">Latest version: </span>
-                <span id="latest-version" class="text-content" data-i18n="main.loading">Loading...</span>
-            </p>
+            <div class="text-[0.8rem] gap-5 flex flex-row items-center justify-center">
+                <div class="flex flex-col gap-y-0.5">
+                    <div>
+                        <span class="text-content" data-i18n="about.current_version">Current version: </span>
+                        <span id="current-version"></span>
+                    </div>
+                    <div>
+                        <span class="text-content" data-i18n="about.latest_version">Latest version: </span>
+                        <span id="latest-version" class="text-content" data-i18n="main.loading">Loading...</span>
+                    </div>
+                </div>
+
+                <button id="update-button" type="button" data-i18n="about.update"
+                    class="hidden text-white bg-blue-700 hover:bg-blue-800 rounded-xs px-1.5 py-1 dark:bg-blue-600 dark:hover:bg-blue-700 border-1 border-blue-400">
+                    <span id="backup-text" class="text-content">Update Now</span>
+                </button>
+            </div>
+
         </div>
     </div>
 
-    <div class="text-sm text-gray-900 dark:text-white flex flex-col gap-2 items-center mb-2">
+    <div class="text-[0.8rem] text-gray-900 dark:text-white flex flex-col gap-2 items-center mb-2">
         <p data-i18n="about.github">
             <span class="text-content">GitHub: </span>
             <a id="github-link"

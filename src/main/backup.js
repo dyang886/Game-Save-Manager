@@ -3,11 +3,11 @@ const { app, dialog } = require('electron');
 const { exec } = require('child_process');
 const fs = require('fs');
 const fsOriginal = require('original-fs');
-const https = require('https');
 const os = require('os');
 const path = require('path');
 const util = require('util');
 
+const axios = require('axios');
 const fse = require('fs-extra');
 const glob = require('glob');
 const i18next = require('i18next');
@@ -697,7 +697,7 @@ async function updateDatabase() {
     const progressId = 'update-db';
     const progressTitle = i18next.t('alert.updating_database');
     const dbPath = path.join(app.getPath("userData"), "GSM Database", "database.db");
-    const backupPath = `${dbPath}.backup`;
+    const dbTempPath = `${dbPath}.temp`;
 
     getMainWin().webContents.send('update-progress', progressId, progressTitle, 'start');
 
@@ -706,24 +706,35 @@ async function updateDatabase() {
             fs.mkdirSync(path.dirname(dbPath), { recursive: true });
         }
         if (fs.existsSync(dbPath)) {
-            fs.copyFileSync(dbPath, backupPath);
+            fs.copyFileSync(dbPath, dbTempPath);
         }
 
         await new Promise(async (resolve, reject) => {
-            const databaseLink = await getSignedDownloadUrl('GSM/database.db');
-            const request = https.get(databaseLink, (response) => {
-                const totalSize = parseInt(response.headers['content-length'], 10);
+            try {
+                const databaseLink = await getSignedDownloadUrl('GSM/database.db');
+                if (!databaseLink) {
+                    throw new Error("Request failed.");
+                }
+                const { data, headers } = await axios({
+                    method: 'get',
+                    url: databaseLink,
+                    responseType: 'stream',
+                });
+
+                const totalSize = parseInt(headers['content-length'], 10);
                 let downloadedSize = 0;
 
-                const fileStream = fs.createWriteStream(dbPath);
+                const fileStream = fs.createWriteStream(dbTempPath);
 
-                response.on('data', (chunk) => {
+                data.on('data', (chunk) => {
                     downloadedSize += chunk.length;
                     const progressPercentage = Math.round((downloadedSize / totalSize) * 100);
                     getMainWin().webContents.send('update-progress', progressId, progressTitle, progressPercentage);
                 });
 
-                response.pipe(fileStream);
+                data.on('error', (error) => {
+                    reject(error);
+                });
 
                 fileStream.on('finish', () => {
                     fileStream.close(() => {
@@ -731,18 +742,20 @@ async function updateDatabase() {
                     });
                 });
 
-                response.on('error', (error) => {
+                fileStream.on('error', (error) => {
                     reject(error);
                 });
-            });
 
-            request.on('error', (error) => {
+                data.pipe(fileStream);
+
+            } catch (error) {
                 reject(error);
-            });
+            }
         });
 
-        if (fs.existsSync(backupPath)) {
-            fs.unlinkSync(backupPath);
+        if (fs.existsSync(dbTempPath)) {
+            fs.copyFileSync(dbTempPath, dbPath);
+            fs.unlinkSync(dbTempPath);
         }
         getMainWin().webContents.send('update-progress', progressId, progressTitle, 'end');
         getMainWin().webContents.send('show-alert', 'success', i18next.t('alert.update_db_success'));
@@ -752,9 +765,8 @@ async function updateDatabase() {
         getMainWin().webContents.send('show-alert', 'modal', i18next.t('alert.error_during_db_update'), error.message);
         getMainWin().webContents.send('update-progress', progressId, progressTitle, 'end');
 
-        if (fs.existsSync(backupPath)) {
-            fs.copyFileSync(backupPath, dbPath);
-            fs.unlinkSync(backupPath);
+        if (fs.existsSync(dbTempPath)) {
+            fs.unlinkSync(dbTempPath);
         }
     }
 }

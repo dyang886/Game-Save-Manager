@@ -14,11 +14,17 @@
   "build": {
     "extends": null,
     "icon": "./src/assets/logo.ico",
-    "appId": "com.dyang.game-save-manager",
+    "appId": "com.yyc.game-save-manager",
     "productName": "Game Save Manager",
     "copyright": "Copyright © 2024-2025 Yongcan Yang",
     "files": [
       "dist/out/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "./src/assets_export",
+        "to": "assets_export"
+      }
     ],
     "extraFiles": [
       "./database/database.db"
