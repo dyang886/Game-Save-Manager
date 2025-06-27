@@ -1,9 +1,10 @@
-const { BrowserWindow, Menu, Notification, app } = require('electron');
+const { BrowserWindow, Menu, Notification, app, ipcMain } = require('electron');
 
 const fs = require('fs');
 const fsOriginal = require('original-fs');
 const os = require('os');
 const path = require('path');
+const { spawn } = require('child_process');
 
 const axios = require('axios');
 const fse = require('fs-extra');
@@ -20,7 +21,7 @@ let aboutWin;
 let settings;
 let writeQueue = Promise.resolve();
 
-const appVersion = "2.0.4";
+const appVersion = "1.0.0";
 let status = {
     backuping: false,
     scanning_full: false,
@@ -155,6 +156,14 @@ const createMainWindow = async () => {
     });
 };
 
+function resource_path(resource_name) {
+    if (!app.isPackaged) {
+        return path.join(__dirname, "../assets_export", resource_name);
+    } else {
+        return path.join(process.resourcesPath, "assets_export", resource_name);
+    }
+}
+
 async function getSignedDownloadUrl(filePathOnS3) {
     if (!SIGNED_URL_API_GATEWAY_ENDPOINT || !CLIENT_API_KEY) {
         console.error("Error: API Gateway endpoint or Client API Key is not configured.");
@@ -219,11 +228,6 @@ async function getLatestVersion(appName) {
         }
     } catch (error) {
         console.error(`Error retrieving latest version: ${error.message}`);
-        if (error.response) {
-            console.error('Response data:', JSON.stringify(error.response.data));
-            console.error('Status:', error.response.status);
-            console.error('Headers:', JSON.stringify(error.response.headers));
-        }
         return null;
     }
 }
@@ -234,35 +238,88 @@ async function checkAppUpdate() {
 
         if (latestVersion > appVersion) {
             showNotification(
-                "info",
+                "app",
                 i18next.t('alert.update_available'),
                 `${i18next.t('alert.new_version_found', { old_version: appVersion, new_version: latestVersion })}\n` +
-                `${i18next.t('alert.new_version_found_text')}`
+                `${i18next.t('alert.new_version_found_text')}`,
+                latestVersion
             );
         }
 
     } catch (error) {
         console.error("Error checking for update:", error.stack);
         showNotification(
-            "warning",
+            "app",
             i18next.t('alert.update_check_failed'),
             i18next.t('alert.update_check_failed_text')
         );
     }
 }
 
-function showNotification(type, title, body) {
-    icon_map = {
-        'info': path.join(__dirname, "../assets/information.png"),
-        'warning': path.join(__dirname, "../assets/warning.png"),
-        'critical': path.join(__dirname, "../assets/critical.png")
+function showNotification(type, title, body, latest_version = 0) {
+    const icon_map = {
+        'app': resource_path('logo.png'),
+        'info': resource_path('information.png'),
+        'warning': resource_path('warning.png'),
+        'critical': resource_path('critical.png'),
     }
 
-    new Notification({
-        title: title,
-        body: body,
-        icon: icon_map[type],
-    }).show()
+    if (process.platform === 'win32') {
+        const toastXml = `
+            <toast launch="gamesavemanager://default-click">
+                <visual>
+                    <binding template="ToastImageAndText04">
+                        <image id="1" src="${icon_map[type]}" placement="appLogoOverride"/>
+                        <text id="1">${title}</text>
+                        <text id="2">${body}</text>
+                    </binding>
+                </visual>
+                <actions>
+                    <action content="${i18next.t("alert.yes")}" activationType="protocol" arguments="gamesavemanager://yes"/>
+                    <action content="${i18next.t("alert.no")}" activationType="protocol" arguments="gamesavemanager://no"/>
+                </actions>
+            </toast>
+        `;
+
+        app.setAppUserModelId('com.yyc.game-save-manager');
+        const notification = new Notification({
+            toastXml: toastXml
+        });
+        notification.show();
+
+        const handleAction = (event, action) => {
+            if (action === 'yes') {
+                updateApp(latest_version);
+            }
+            ipcMain.removeListener('notification-action', handleAction);
+        };
+        ipcMain.on('notification-action', handleAction);
+
+    } else {
+        const notification = new Notification({
+            title: title,
+            body: body,
+            icon: icon_map[type]
+        });
+        notification.show();
+    }
+}
+
+function updateApp(latest_version) {
+    const updaterPath = './Updater.exe';
+    const s3Path = `GSM/Game Save Manager Setup ${latest_version}.exe`;
+    const args = ['--pid', process.pid, '--s3-path', s3Path, '--theme', settings['theme'], '--language', settings['language']];
+
+    try {
+        const updaterProcess = spawn(updaterPath, args, {
+            detached: true,
+            stdio: 'ignore',
+        });
+        updaterProcess.unref();
+
+    } catch (error) {
+        console.error('An error occurred while trying to spawn the updater process:', error);
+    }
 }
 
 function getGameDisplayName(gameObj) {
@@ -784,6 +841,7 @@ module.exports = {
     getCurrentVersion: () => appVersion,
     getLatestVersion,
     checkAppUpdate,
+    updateApp,
     getGameDisplayName,
     calculateDirectorySize,
     ensureWritable,

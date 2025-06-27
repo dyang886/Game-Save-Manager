@@ -26,7 +26,8 @@
         "latest_version": "Latest version: ",
         "github": "GitHub: ",
         "bilibili": "Bilibili author home page: ",
-        "load_failed": "Failed to load"
+        "load_failed": "Failed to load",
+        "update": "Update Now"
     },
     "main": {
         "title": "Game Save Manager",
@@ -119,7 +120,7 @@
         "save_custom_success": "Successfully saved custom games",
         "update_available": "Update Available",
         "new_version_found": "New Version Found: {{old_version}} ➜ {{new_version}}",
-        "new_version_found_text": "Please navigate to `Options` ➜ `About` to download the latest version.",
+        "new_version_found_text": "Would you like to update now?",
         "update_check_failed": "Update Check Failed",
         "update_check_failed_text": "Failed to check for software update. You can navigate to 'Options' ➜ 'About' to check for updates manually.",
         "updating_database": "Updating database...",

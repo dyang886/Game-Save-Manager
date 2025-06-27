@@ -11,7 +11,7 @@ const i18next = require('i18next');
 const Backend = require('i18next-fs-backend');
 const { pinyin } = require('pinyin');
 
-const { createMainWindow, getMainWin, getNewestBackup, getStatus, updateStatus, checkAppUpdate, exportBackups, importBackups, osKeyMap, loadSettings, saveSettings, getSettings, moveFilesWithProgress, getCurrentVersion, getLatestVersion } = require('./global');
+const { createMainWindow, getMainWin, getNewestBackup, getStatus, updateStatus, checkAppUpdate, exportBackups, importBackups, osKeyMap, loadSettings, saveSettings, getSettings, moveFilesWithProgress, getCurrentVersion, getLatestVersion, updateApp } = require('./global');
 const { getGameData, initializeGameData, detectGamePaths } = require('./gameData');
 const { getGameDataFromDB, getAllGameDataFromDB, backupGame, updateDatabase } = require('./backup');
 const { getGameDataForRestore, restoreGame } = require("./restore");
@@ -26,8 +26,13 @@ if (!gotTheLock) {
 } else {
     app.on('second-instance', (event, argv) => {
         const gsmPath = argv.find(arg => arg.toLowerCase().endsWith('.gsmr'));
+        const uriPath = argv.find(arg => arg.startsWith('gamesavemanager://'));
         if (gsmPath) {
             getMainWin().webContents.send('open-import-modal', gsmPath);
+        }
+        else if (uriPath) {
+            const action = uriPath.replace('gamesavemanager://', '').replace('/', '');
+            ipcMain.emit('notification-action', null, action);
         }
     });
 
@@ -40,6 +45,8 @@ if (!gotTheLock) {
 }
 
 app.whenReady().then(async () => {
+    app.setAsDefaultProtocolClient('gamesavemanager');
+
     loadSettings();
     await initializeI18next(getSettings().language);
     await initializeGameData();
@@ -342,4 +349,8 @@ ipcMain.handle('start-scan-full', async () => {
 
         return games;
     }
+});
+
+ipcMain.on('update-app', (event, latest_version) => {
+    updateApp(latest_version);
 });

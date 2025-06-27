@@ -41,6 +41,10 @@ module.exports = {
                     to: path.resolve(__dirname, 'dist/out/assets'),
                 },
                 {
+                    from: path.resolve(__dirname, 'src/assets_export'),
+                    to: path.resolve(__dirname, 'dist/out/assets_export'),
+                },
+                {
                     from: path.resolve(__dirname, 'src/locale'),
                     to: path.resolve(__dirname, 'dist/out/locale'),
                 }
