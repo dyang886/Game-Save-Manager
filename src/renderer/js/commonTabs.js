@@ -1,4 +1,4 @@
-import { updateTranslations } from './utility.js';
+import { showAlert, updateTranslations } from './utility.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     updateTranslations(document);
@@ -209,6 +209,7 @@ async function createDropdownMenu(wikiPageId) {
         action = 'unpin';
         i18nKey = 'main.unpin';
     }
+    const wikiUrl = !wikiPageId.includes('-') ? `https://www.pcgamingwiki.com/wiki/index.php?curid=${wikiPageId}` : "none";
 
     const dropdownMenu = document.createElement('div');
     dropdownMenu.className = 'bg-white rounded-lg shadow-sm w-46 dark:bg-gray-700 absolute hidden animate-fadeInShift';
@@ -221,7 +222,7 @@ async function createDropdownMenu(wikiPageId) {
                 </a>
             </li>
             <li>
-                <a href="#" data-action="open-wiki" data-url="https://www.pcgamingwiki.com/wiki/index.php?curid=${wikiPageId}" data-i18n="main.view_wiki"
+                <a href="#" data-action="open-wiki" data-url="${wikiUrl}" data-i18n="main.view_wiki"
                     class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
                     <span class="text-content">View on PCGamingWiki</span>
                 </a>
@@ -281,9 +282,9 @@ function setDropDownAction() {
                         pinGameOnTop('restore', wikiId);
                     }
                 });
-                removeDropDown();
-                return;
             }
+            removeDropDown();
+            return;
         }
         if (actionElement && actionElement.dataset.action === 'unpin') {
             const wikiId = actionElement.dataset.id;
@@ -297,25 +298,27 @@ function setDropDownAction() {
                         unpinGameFromTop('restore', wikiId);
                     }
                 });
-                removeDropDown();
-                return;
             }
+            removeDropDown();
+            return;
         }
         if (actionElement && actionElement.dataset.action === 'open-wiki') {
             const wikiUrl = actionElement.dataset.url;
-            if (wikiUrl) {
+            if (wikiUrl && wikiUrl !== 'none') {
                 window.api.invoke('open-url', wikiUrl);
-                removeDropDown();
-                return;
+            } else {
+                showAlert('warning', await window.i18n.translate('alert.no_wiki_url'));
             }
+            removeDropDown();
+            return;
         }
         if (actionElement && actionElement.dataset.action === 'open-backup-folder') {
             const wikiId = actionElement.dataset.id;
             if (wikiId) {
                 window.api.invoke('open-backup-folder', wikiId);
-                removeDropDown();
-                return;
             }
+            removeDropDown();
+            return;
         }
 
         // If clicking outside any dropdown, remove the active one
@@ -325,10 +328,8 @@ function setDropDownAction() {
         }
 
         // If clicking the same button, toggle the dropdown visibility
-        if (button === lastButtonClicked) {
-            if (activeDropdownMenu) {
-                removeDropDown();
-            }
+        if (button === lastButtonClicked && activeDropdownMenu) {
+            removeDropDown();
             return;
         }
 

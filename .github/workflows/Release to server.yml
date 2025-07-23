@@ -1,0 +1,64 @@
+name: Release to Server
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  deploy-installer:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_TO_ASSUME }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Get release version and installer name
+        id: get_version
+        run: |
+          VERSION=$(echo "${{ github.event.release.tag_name }}" | sed 's/^v//')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "local_installer_name=Game.Save.Manager.Setup.$VERSION.exe" >> $GITHUB_OUTPUT
+          echo "server_installer_name=Game Save Manager Setup $VERSION.exe" >> $GITHUB_OUTPUT
+
+      - name: Download release asset
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release download ${{ github.event.release.tag_name }} --pattern "${{ steps.get_version.outputs.local_installer_name }}"
+
+      - name: Delete previous installer from S3
+        env:
+          S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+          S3_GSM_PREFIX: "GSM"
+        run: |
+          aws s3 rm "s3://${S3_BUCKET_NAME}/${S3_GSM_PREFIX}/" --recursive --exclude "*" --include "Game Save Manager Setup*.exe"
+          echo "Previous installers deleted from s3://${S3_BUCKET_NAME}/${S3_GSM_PREFIX}/"
+
+      - name: Upload new installer to AWS S3
+        env:
+          S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+          S3_GCM_PREFIX: "GSM"
+        run: |
+          LOCAL_INSTALLER_NAME="${{ steps.get_version.outputs.local_installer_name }}"
+          SERVER_INSTALLER_NAME="${{ steps.get_version.outputs.server_installer_name }}"
+          aws s3 cp "./${LOCAL_INSTALLER_NAME}" "s3://${S3_BUCKET_NAME}/${S3_GCM_PREFIX}/${SERVER_INSTALLER_NAME}"
+          echo "'${LOCAL_INSTALLER_NAME}' uploaded to s3://${S3_BUCKET_NAME}/${S3_GCM_PREFIX}/"
+
+      - name: Create CloudFront Invalidation
+        env:
+          CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+          S3_PREFIX_FOR_INVALIDATION: "GSM"
+        run: |
+          echo "Creating invalidation for path /${S3_PREFIX_FOR_INVALIDATION}/*"
+          aws cloudfront create-invalidation \
+            --distribution-id $CLOUDFRONT_DISTRIBUTION_ID \
+            --paths "/${S3_PREFIX_FOR_INVALIDATION}/*"

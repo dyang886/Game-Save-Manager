@@ -1,5 +1,6 @@
 // webpack.preload.config.js
 const path = require('path');
+
 const { BytenodeWebpackPlugin } = require('@herberttn/bytenode-webpack-plugin');
 const nodeExternals = require('webpack-node-externals');
 

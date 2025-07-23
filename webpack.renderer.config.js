@@ -1,8 +1,9 @@
 // webpack.renderer.config.js
 const path = require('path');
+
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const WebpackObfuscator = require('webpack-obfuscator');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const WebpackObfuscator = require('webpack-obfuscator');
 
 const isProduction = process.env.NODE_ENV === 'production';
 

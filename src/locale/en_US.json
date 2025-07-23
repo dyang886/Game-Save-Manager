@@ -82,7 +82,13 @@
         "add_path": "Add Path",
         "file": "File",
         "folder": "Folder",
-        "registry": "Registry"
+        "registry": "Registry",
+        "view_placeholder": "View placeholder",
+        "placeholders_guide": "Placeholders Guide",
+        "placeholders_guide_desc": "Use placeholders in the path to ensure that the path remains valid after importing and exporting across devices",
+        "placeholder": "Placeholder",
+        "resolved_path": "Resolved Path",
+        "os_username": "{OS_Username}"
     },
     "alert": {
         "no_games_selected": "No games selected",
@@ -145,6 +151,7 @@
         "import_success": "Import success",
         "error_during_import": "An error occurred while importing backups",
         "scan_full_complete": "Full database scan complete",
-        "scanning_full": "Scanning full database..."
+        "scanning_full": "Scanning full database...",
+        "no_wiki_url": "No Wiki entry is available for this game"
     }
 }
