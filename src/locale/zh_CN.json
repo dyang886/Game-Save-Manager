@@ -82,7 +82,13 @@
         "add_path": "添加路径",
         "file": "文件",
         "folder": "文件夹",
-        "registry": "注册表"
+        "registry": "注册表",
+        "view_placeholder": "查看占位符",
+        "placeholders_guide": "占位符指南",
+        "placeholders_guide_desc": "在路径中使用占位符以确保在跨设备导入及导出后路径仍然有效",
+        "placeholder": "占位符",
+        "resolved_path": "解析路径",
+        "os_username": "{系统用户名}"
     },
     "alert": {
         "no_games_selected": "没有选择游戏",
@@ -145,6 +151,7 @@
         "import_success": "导入成功",
         "error_during_import": "导入备份时出错",
         "scan_full_complete": "完整数据库扫描完成",
-        "scanning_full": "扫描完整数据库中..."
+        "scanning_full": "扫描完整数据库中...",
+        "no_wiki_url": "此游戏没有可用的 Wiki 条目"
     }
 }

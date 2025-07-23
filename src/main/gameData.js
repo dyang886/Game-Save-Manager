@@ -1,7 +1,9 @@
 const fs = require('fs');
+const fsOriginal = require('original-fs');
 const path = require('path');
 
 const glob = require('glob');
+const moment = require('moment');
 const vdf = require('vdf-parser');
 const WinReg = require('winreg');
 const yaml = require('js-yaml');
@@ -41,31 +43,6 @@ class GameData {
         });
     }
 
-    getLatestModificationTime(dir) {
-        let latestTime = 0;
-
-        function checkDirectory(directoryPath) {
-            const items = fs.readdirSync(directoryPath, { withFileTypes: true });
-
-            for (const item of items) {
-                const itemPath = path.join(directoryPath, item.name);
-                const stats = fs.statSync(itemPath);
-
-                if (stats.isDirectory()) {
-                    checkDirectory(itemPath); // Recursively check subdirectories
-                } else {
-                    const modifiedTime = stats.mtimeMs;
-                    if (modifiedTime > latestTime) {
-                        latestTime = modifiedTime;
-                    }
-                }
-            }
-        }
-
-        checkDirectory(dir);
-        return latestTime;
-    }
-
     async initialize() {
         if (process.platform === 'win32') {
             // Query Steam install path
@@ -100,7 +77,12 @@ class GameData {
             await this.getCurrentUserIds();
         }
 
-        console.log(`Steam id64: ${this.currentSteamUserId64}\nSteam id3: ${this.currentSteamUserId3}\nUbisoft user id: ${this.currentUbisoftUserId}`);
+        console.log(
+            'Steam user name: ' + this.currentSteamUserName + '\n' +
+            'Steam id64: ' + this.currentSteamUserId64 + '\n' +
+            'Steam id3: ' + this.currentSteamUserId3 + '\n' +
+            'Ubisoft user id: ' + this.currentUbisoftUserId
+        );
     }
 
     async getCurrentUserIds() {
@@ -178,7 +160,7 @@ class GameData {
 
                 for (const userId of userFolders) {
                     const userFolderPath = path.join(saveGamesPath, userId);
-                    const userFolderTime = this.getLatestModificationTime(userFolderPath);
+                    const userFolderTime = getLatestModificationTime(userFolderPath);
 
                     if (userFolderTime > latestTime) {
                         latestTime = userFolderTime;
@@ -309,10 +291,47 @@ class GameData {
     }
 }
 
+function getLatestModificationTime(directory) {
+    if (!fsOriginal.existsSync(directory)) {
+        return new Date(0);
+    }
+
+    const stats = fsOriginal.statSync(directory);
+
+    if (stats.isDirectory()) {
+        const files = fsOriginal.readdirSync(directory);
+        let latestModTime = new Date(0);
+
+        for (const file of files) {
+            const fullPath = path.join(directory, file);
+            const fileStats = fsOriginal.statSync(fullPath);
+
+            if (fileStats.isDirectory()) {
+                // Recursively check subdirectories
+                const subDirModTime = getLatestModificationTime(fullPath);
+                if (subDirModTime > latestModTime) {
+                    latestModTime = subDirModTime;
+                }
+            } else {
+                // Consider file modification time
+                const fileModTime = moment(fileStats.mtime).seconds(0).milliseconds(0).toDate();
+                if (fileModTime > latestModTime) {
+                    latestModTime = fileModTime;
+                }
+            }
+        }
+        return latestModTime;
+
+    } else {
+        return moment(stats.mtime).seconds(0).milliseconds(0).toDate();
+    }
+}
+
 let gameData = new GameData();
 
 module.exports = {
     getGameData: () => gameData,
     initializeGameData: async () => await gameData.initialize(),
     detectGamePaths: async () => await gameData.detectGamePaths(),
+    getLatestModificationTime
 };

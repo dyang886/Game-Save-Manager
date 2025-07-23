@@ -24,7 +24,7 @@
     </div>
 
     <!-- Modals -->
-    <div id="modal-overlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-40"></div>
+    <div id="modal-overlay" class="hidden fixed inset-0 bg-black opacity-80 z-40"></div>
     <div id="modal-info" tabindex="-1" aria-hidden="true"
         class="hidden animate-fadeInShift overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 max-h-[calc(100%-1rem)]">
         <div class="relative p-4 w-full max-w-2xl max-h-full">
@@ -443,11 +443,195 @@
                     <span class="text-content">Save All</span>
                 </button>
 
-                <button type="button" id="custom-add-game" data-i18n="custom.add_game"
+                <button type="button" id="custom-view-placeholder" data-i18n="custom.view_placeholder"
                     class="ml-auto text-white bg-green-600 hover:bg-green-700 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-green-500 dark:hover:bg-green-600">
+                    <i class="fa-solid fa-list mr-1"></i>
+                    <span class="text-content">View Placeholders</span>
+                </button>
+                <button type="button" id="custom-add-game" data-i18n="custom.add_game"
+                    class="ml-2 text-white bg-green-600 hover:bg-green-700 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-green-500 dark:hover:bg-green-600">
                     <i class="fa-solid fa-plus mr-1"></i>
                     <span class="text-content">Add Game</span>
                 </button>
+            </div>
+
+            <!-- Placeholders Guide -->
+            <div id="placeholder-guide"
+                class="hidden animate-fadeInShift overflow-x-hidden fixed top-0 right-0 left-0 z-50 px-30 py-10 justify-center items-center w-full md:inset-0 scrollbar scrollbar-w-2 scrollbar-h-2 scrollbar-track-rounded-full scrollbar-thumb-rounded-full scrollbar-track-white scrollbar-thumb-slate-300 dark:scrollbar-track-gray-800 dark:scrollbar-thumb-slate-600">
+                <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                        <caption
+                            class="p-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <span class="text-content" data-i18n="custom.placeholders_guide">Placeholders
+                                        Guide</span>
+                                    <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400 text-content"
+                                        data-i18n="custom.placeholders_guide_desc">
+                                        Use placeholders in the path to ensure that the path remains valid after
+                                        importing and exporting across devices
+                                    </p>
+                                </div>
+                                <button type="button" id="placeholder-guide-close"
+                                    class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
+                                    <svg class="w-3 h-3" aria-hidden="true" fill="none" viewBox="0 0 14 14">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                            stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </caption>
+                        <thead class="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-content" data-i18n="custom.placeholder">
+                                    Placeholder</th>
+                                <th scope="col" class="px-6 py-3 text-content" data-i18n="custom.resolved_path">Resolved
+                                    Path</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200"
+                                data-i18n="custom.os_username">
+                                <th scope="row"
+                                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    <i class="cursor-pointer fa-solid fa-copy mr-2"></i>{{p|username}}
+                                </th>
+                                <td class="px-6 py-4 text-content">{OS_username}</td>
+                            </tr>
+                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                                <th scope="row"
+                                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    <i class="cursor-pointer fa-solid fa-copy mr-2"></i>{{p|userprofile}}
+                                </th>
+                                <td class="px-6 py-4" data-i18n="custom.os_username">
+                                    C:\Users\<span class="text-content">{OS_username}</span>
+                                </td>
+                            </tr>
+                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                                <th scope="row"
+                                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    <i class="cursor-pointer fa-solid fa-copy mr-2"></i>{{p|userprofile/documents}}
+                                </th>
+                                <td class="px-6 py-4" data-i18n="custom.os_username">
+                                    C:\Users\<span class="text-content">{OS_username}</span>\Documents
+                                </td>
+                            </tr>
+                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                                <th scope="row"
+                                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    <i
+                                        class="cursor-pointer fa-solid fa-copy mr-2"></i>{{p|userprofile/appdata/locallow}}
+                                </th>
+                                <td class="px-6 py-4" data-i18n="custom.os_username">
+                                    C:\Users\<span class="text-content">{OS_username}</span>\AppData\LocalLow
+                                </td>
+                            </tr>
+                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                                <th scope="row"
+                                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    <i class="cursor-pointer fa-solid fa-copy mr-2"></i>{{p|appdata}}
+                                </th>
+                                <td class="px-6 py-4" data-i18n="custom.os_username">
+                                    C:\Users\<span class="text-content">{OS_username}</span>\AppData\Roaming
+                                </td>
+                            </tr>
+                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                                <th scope="row"
+                                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    <i class="cursor-pointer fa-solid fa-copy mr-2"></i>{{p|localappdata}}
+                                </th>
+                                <td class="px-6 py-4" data-i18n="custom.os_username">
+                                    C:\Users\<span class="text-content">{OS_username}</span>\AppData\Local
+                                </td>
+                            </tr>
+                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                                <th scope="row"
+                                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    <i class="cursor-pointer fa-solid fa-copy mr-2"></i>{{p|programfiles}}
+                                </th>
+                                <td class="px-6 py-4">C:\Program Files</td>
+                            </tr>
+                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                                <th scope="row"
+                                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    <i class="cursor-pointer fa-solid fa-copy mr-2"></i>{{p|programdata}}
+                                </th>
+                                <td class="px-6 py-4">C:\ProgramData</td>
+                            </tr>
+                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                                <th scope="row"
+                                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    <i class="cursor-pointer fa-solid fa-copy mr-2"></i>{{p|public}}
+                                </th>
+                                <td class="px-6 py-4">C:\Users\Public</td>
+                            </tr>
+                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                                <th scope="row"
+                                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    <i class="cursor-pointer fa-solid fa-copy mr-2"></i>{{p|windir}}
+                                </th>
+                                <td class="px-6 py-4">C:\Windows</td>
+                            </tr>
+                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                                <th scope="row"
+                                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    <i class="cursor-pointer fa-solid fa-copy mr-2"></i>{{p|hkcu}}
+                                </th>
+                                <td class="px-6 py-4">HKEY_CURRENT_USER</td>
+                            </tr>
+                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                                <th scope="row"
+                                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    <i class="cursor-pointer fa-solid fa-copy mr-2"></i>{{p|hklm}}
+                                </th>
+                                <td class="px-6 py-4">HKEY_LOCAL_MACHINE</td>
+                            </tr>
+                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                                <th scope="row"
+                                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    <i class="cursor-pointer fa-solid fa-copy mr-2"></i>{{p|wow64}}
+                                </th>
+                                <td class="px-6 py-4">HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node</td>
+                            </tr>
+                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                                <th scope="row"
+                                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    <i class="cursor-pointer fa-solid fa-copy mr-2"></i>{{p|osxhome}}
+                                </th>
+                                <td class="px-6 py-4" data-i18n="custom.os_username">
+                                    /Users/<span class="text-content">{OS_username}</span>
+                                </td>
+                            </tr>
+                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                                <th scope="row"
+                                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    <i class="cursor-pointer fa-solid fa-copy mr-2"></i>{{p|linuxhome}}
+                                </th>
+                                <td class="px-6 py-4" data-i18n="custom.os_username">
+                                    /home/<span class="text-content">{OS_username}</span>
+                                </td>
+                            </tr>
+                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                                <th scope="row"
+                                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    <i class="cursor-pointer fa-solid fa-copy mr-2"></i>{{p|xdgdatahome}}
+                                </th>
+                                <td class="px-6 py-4" data-i18n="custom.os_username">
+                                    /home/<span class="text-content">{OS_username}</span>/.local/share
+                                </td>
+                            </tr>
+                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                                <th scope="row"
+                                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    <i class="cursor-pointer fa-solid fa-copy mr-2"></i>{{p|xdgconfighome}}
+                                </th>
+                                <td class="px-6 py-4" data-i18n="custom.os_username">
+                                    /home/<span class="text-content">{OS_username}</span>/.config
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

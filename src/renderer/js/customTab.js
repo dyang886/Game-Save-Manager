@@ -1,4 +1,4 @@
-import { updateTranslations } from './utility.js';
+import { operationStartCheck, updateTranslations } from './utility.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     setupCustomPage();
@@ -7,6 +7,10 @@ document.addEventListener('DOMContentLoaded', () => {
 function setupCustomPage() {
     const addGameButton = document.querySelector('#custom-add-game');
     const saveAllButton = document.querySelector('#custom-save-all');
+    const placeholderButton = document.querySelector('#custom-view-placeholder');
+    const placeholderGuide = document.querySelector('#placeholder-guide');
+    const placeholderGuideClose = document.querySelector('#placeholder-guide-close');
+    const modalOverlay = document.getElementById('modal-overlay');
 
     addGameButton.addEventListener('click', async () => {
         const allTitles = document.querySelectorAll('.custom-entry-title');
@@ -29,6 +33,37 @@ function setupCustomPage() {
     saveAllButton.addEventListener('click', () => {
         const start = operationStartCheck('save-custom');
         if (start) saveEntriesToJson(saveAllButton);
+    });
+
+    placeholderButton.addEventListener('click', () => {
+        modalOverlay.classList.remove('hidden');
+        placeholderGuide.classList.remove('hidden');
+    });
+
+    placeholderGuide.addEventListener('click', (event) => {
+        if (event.target.matches('i.fa-copy')) {
+            const icon = event.target;
+            const placeholderText = icon.parentElement.textContent.trim();
+
+            if (placeholderText) {
+                navigator.clipboard.writeText(placeholderText).then(() => {
+                    const originalClass = icon.className;
+                    icon.className = 'fa-solid fa-check mr-2 text-green-500';
+
+                    setTimeout(() => {
+                        icon.className = originalClass;
+                    }, 1500);
+
+                }).catch(err => {
+                    console.error('Failed to copy text: ', err);
+                });
+            }
+        }
+    });
+
+    placeholderGuideClose.addEventListener('click', () => {
+        modalOverlay.classList.add('hidden');
+        placeholderGuide.classList.add('hidden');
     });
 
     loadEntriesFromJson();

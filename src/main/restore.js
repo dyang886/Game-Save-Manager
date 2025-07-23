@@ -9,7 +9,7 @@ const fse = require('fs-extra');
 const i18next = require('i18next');
 const moment = require('moment');
 
-const { getGameData } = require('./gameData');
+const { getGameData, getLatestModificationTime } = require('./gameData');
 const { getGameDisplayName, calculateDirectorySize, ensureWritable, fsOriginalCopyFolder, placeholder_mapping, getSettings } = require('./global');
 
 const execPromise = util.promisify(exec);
@@ -250,42 +250,6 @@ async function shouldSkip(pathsToCheck, gameDisplayName, userActionForAll) {
     }
 
     return { skip: false, actionForAll: null };
-}
-
-function getLatestModificationTime(directory) {
-    if (!fsOriginal.existsSync(directory)) {
-        return new Date(0);
-    }
-
-    const stats = fsOriginal.statSync(directory);
-
-    if (stats.isDirectory()) {
-        const files = fsOriginal.readdirSync(directory);
-        let latestModTime = new Date(0);
-
-        for (const file of files) {
-            const fullPath = path.join(directory, file);
-            const fileStats = fsOriginal.statSync(fullPath);
-
-            if (fileStats.isDirectory()) {
-                // Recursively check subdirectories
-                const subDirModTime = getLatestModificationTime(fullPath);
-                if (subDirModTime > latestModTime) {
-                    latestModTime = subDirModTime;
-                }
-            } else {
-                // Consider file modification time
-                const fileModTime = moment(fileStats.mtime).seconds(0).milliseconds(0).toDate();
-                if (fileModTime > latestModTime) {
-                    latestModTime = fileModTime;
-                }
-            }
-        }
-        return latestModTime;
-
-    } else {
-        return moment(stats.mtime).seconds(0).milliseconds(0).toDate();
-    }
 }
 
 function resolveTemplatedRestorePath(templatedPath, installFolder) {
