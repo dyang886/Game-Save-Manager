@@ -126,9 +126,21 @@ function createCustomEntry() {
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5 5 1 1 5" />
                 </svg>
             </div>
+
             <div class="collapsed-content hidden text-right p-5 border border-gray-200 dark:border-gray-700 dark:bg-gray-900">
+                <div class="text-left flex items-center mb-3">
+                    <div class="group relative inline-flex w-11 shrink-0 rounded-full bg-gray-200 p-0.5 inset-ring inset-ring-gray-900/5 outline-offset-2 outline-blue-600 transition-colors duration-200 ease-in-out has-checked:bg-blue-600 has-focus-visible:outline-2 dark:bg-white/5 dark:inset-ring-white/10 dark:outline-blue-500 dark:has-checked:bg-blue-500">
+                        <span class="size-5 rounded-full bg-white shadow-xs ring-1 ring-gray-900/5 transition-transform duration-200 ease-in-out group-has-checked:translate-x-5"></span>
+                        <input type="checkbox" name="annual-billing" class="game-install-folder-toggle absolute inset-0 appearance-none focus:outline-hidden" />
+                    </div>
+                    <span class="my-1.5 ms-3 text-sm font-medium text-gray-900 dark:text-gray-300 select-none text-content" data-i18n="custom.add_game_install_folder">Add Game Install Folder Name</span>
+                    <input type="text" class="folder-name-input hidden grow bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-sm p-1 ml-2 focus:outline-hidden dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                        data-i18n-placeholder="custom.folder_name" placeholder="Folder name">
+                </div>
+
                 <div class="collapsed-rows"></div>
-                <button type="button" class="custom-add-path inline text-white bg-green-600 hover:bg-green-700 font-medium rounded-lg text-sm px-5 py-2.5 mt-2 dark:bg-green-500 dark:hover:bg-green-600"
+
+                <button type="button" class="custom-add-path select-none inline text-white bg-green-600 hover:bg-green-700 font-medium rounded-lg text-sm px-5 py-2.5 mt-2 dark:bg-green-500 dark:hover:bg-green-600"
                     data-i18n="custom.add_path">
                     <i class="fa-solid fa-plus mr-1"></i>
                     <span class="text-content">Add Path</span>
@@ -142,7 +154,7 @@ function createCollapsedRow() {
     return `
         <div class="collapsed-row">
             <div class="flex items-center mb-3">
-                <select class="custom-backup-type-dropdown bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 focus:outline-hidden dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white mr-3">
+                <select class="custom-backup-type-dropdown select-none bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 focus:outline-hidden dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white mr-3">
                     <option value="file" data-i18n="custom.file" class="text-content">File</option>
                     <option value="folder" data-i18n="custom.folder" class="text-content">Folder</option>
                     <option value="registry" data-i18n="custom.registry" class="text-content">Registry</option>
@@ -206,8 +218,10 @@ async function addTemplate(renameTitleFocus = true, wikiId = null) {
     }
     newEntry.dataset.wikiId = wikiId;
 
-    const titleInput = newEntry.querySelector('.custom-entry-title-input');
     const entryTitle = newEntry.querySelector('.custom-entry-title');
+    const folderToggle = newEntry.querySelector('.game-install-folder-toggle');
+    const folderInput = newEntry.querySelector('.folder-name-input');
+    const titleInput = newEntry.querySelector('.custom-entry-title-input');
     const renameButton = newEntry.querySelector('.custom-entry-rename');
     const deleteButton = newEntry.querySelector('.custom-entry-delete');
     const dropdownIcon = newEntry.querySelector('.custom-entry-dropdown');
@@ -221,6 +235,11 @@ async function addTemplate(renameTitleFocus = true, wikiId = null) {
         } else {
             toggleEntry(newEntry);
         }
+    });
+
+    // Handle game install folder toggle
+    folderToggle.addEventListener('change', () => {
+        folderInput.classList.toggle('hidden', !folderToggle.checked);
     });
 
     // Rename the title
@@ -288,6 +307,7 @@ async function saveEntriesToJson(saveAllButton) {
         const entryTitle = entry.querySelector('.custom-entry-title').innerText.trim();
         const collapsedRows = entry.querySelectorAll('.collapsed-row');
         const wikiId = entry.dataset.wikiId;
+        const installFolderName = entry.querySelector('.folder-name-input').value.trim();
         const saveLocations = {
             win: [],
             reg: [],
@@ -318,7 +338,7 @@ async function saveEntriesToJson(saveAllButton) {
             const gameObject = {
                 title: entryTitle,
                 wiki_page_id: wikiId,
-                install_folder: '',
+                install_folder: installFolderName,
                 save_location: saveLocations
             };
 
@@ -345,6 +365,16 @@ async function loadEntriesFromJson() {
         // Set the entry title
         const entryTitleElement = newEntry.querySelector('.custom-entry-title');
         entryTitleElement.innerText = gameEntry.title;
+
+        // Set the entry game install folder name
+        if (gameEntry.install_folder) {
+            const folderToggle = newEntry.querySelector('.game-install-folder-toggle');
+            folderToggle.checked = true;
+
+            const folderInput = newEntry.querySelector('.folder-name-input');
+            folderInput.classList.remove('hidden');
+            folderInput.value = gameEntry.install_folder;
+        }
 
         const collapsedRowsContainer = newEntry.querySelector('.collapsed-rows');
 

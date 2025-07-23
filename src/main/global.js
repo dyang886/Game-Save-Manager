@@ -138,7 +138,7 @@ const createMainWindow = async () => {
         },
     });
 
-    // win.webContents.openDevTools();
+    win.webContents.openDevTools();
     win.loadFile(path.join(__dirname, "../renderer/index.html"));
     const menu = Menu.buildFromTemplate(initializeMenu());
     Menu.setApplicationMenu(menu);

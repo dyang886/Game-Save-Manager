@@ -85,10 +85,15 @@
         "registry": "注册表",
         "view_placeholder": "查看占位符",
         "placeholders_guide": "占位符指南",
-        "placeholders_guide_desc": "在路径中使用占位符以确保在跨设备导入及导出后路径仍然有效",
+        "placeholders_guide_desc": "在路径中使用占位符以确保在跨设备导入及导出后路径仍然有效\n\n使用 {{p|game}}：此占位符要求您启用“添加游戏安装文件夹名”选项并提供游戏的准确文件夹名称。请确保该文件夹可以在“选项->设置->游戏安装路径”下的路径之一找到",
         "placeholder": "占位符",
         "resolved_path": "解析路径",
-        "os_username": "{系统用户名}"
+        "os_username": "{系统用户名}",
+        "game_install_path": "{游戏安装路径}",
+        "steam_install_path": "{steam安装路径}",
+        "ubi_install_path": "{ubisoft安装路径}",
+        "add_game_install_folder": "添加游戏安装文件夹名",
+        "folder_name": "文件夹名称"
     },
     "alert": {
         "no_games_selected": "没有选择游戏",

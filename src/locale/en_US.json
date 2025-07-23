@@ -85,10 +85,15 @@
         "registry": "Registry",
         "view_placeholder": "View placeholder",
         "placeholders_guide": "Placeholders Guide",
-        "placeholders_guide_desc": "Use placeholders in the path to ensure that the path remains valid after importing and exporting across devices",
+        "placeholders_guide_desc": "Use placeholders in the path to ensure that it remains valid after importing and exporting across devices\n\nUsing {{p|game}}: This placeholder requires you to enable the 'Add Game Install Folder Name' option and provide the exact folder name of the game. Make sure the game folder can be found under one of the paths under 'Options->Settings->Game Install Locations'",
         "placeholder": "Placeholder",
         "resolved_path": "Resolved Path",
-        "os_username": "{OS_Username}"
+        "game_install_path": "{game_install_path}",
+        "steam_install_path": "{steam_install_path}",
+        "ubi_install_path": "{ubisoft_install_path}",
+        "os_username": "{os_username}",
+        "add_game_install_folder": "Add Game Install Folder Name",
+        "folder_name": "Folder Name"
     },
     "alert": {
         "no_games_selected": "No games selected",
