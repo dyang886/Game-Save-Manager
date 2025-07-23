@@ -152,7 +152,7 @@
             data-tabs-toggle="#main-tab-content" role="tablist">
             <li class="me-2" role="presentation">
                 <button
-                    class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
+                    class="select-none inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
                     id="backup-tab" data-tabs-target="#backup" type="button" role="tab" aria-controls="backup"
                     aria-selected="false" data-i18n="main.backup">
                     <i class="fa-solid fa-cloud-arrow-up mr-2"></i>
@@ -161,7 +161,7 @@
             </li>
             <li class="me-2" role="presentation">
                 <button
-                    class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
+                    class="select-none inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
                     id="restore-tab" data-tabs-target="#restore" type="button" role="tab" aria-controls="restore"
                     aria-selected="false" data-i18n="main.restore">
                     <i class="fa-solid fa-cloud-arrow-down mr-2"></i>
@@ -170,7 +170,7 @@
             </li>
             <li role="presentation">
                 <button
-                    class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
+                    class="select-none inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
                     id="custom-tab" data-tabs-target="#custom" type="button" role="tab" aria-controls="custom"
                     aria-selected="false" data-i18n="main.custom">
                     <i class="fa-solid fa-file-circle-plus mr-2"></i>
@@ -294,13 +294,13 @@
                 <!-- Backup and database update button -->
                 <div class="mt-4 mb-2 flex flex-row items-center">
                     <button id="backup-button" type="button" data-i18n="main.backup_selected"
-                        class="whitespace-nowrap text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 dark:bg-blue-600 dark:hover:bg-blue-700">
+                        class="select-none whitespace-nowrap text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 dark:bg-blue-600 dark:hover:bg-blue-700">
                         <i id="backup-icon" class="fa-solid fa-arrow-right-long mr-1"></i>
                         <span id="backup-text" class="text-content">Backup Selected Games</span>
                     </button>
 
                     <button id="update-database" type="button" data-i18n="main.update_database"
-                        class="ml-auto text-white bg-green-600 hover:bg-green-700 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-green-500 dark:hover:bg-green-600">
+                        class="select-none ml-auto text-white bg-green-600 hover:bg-green-700 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-green-500 dark:hover:bg-green-600">
                         <i id="update-database-icon" class="fa-solid fa-rotate mr-1"></i>
                         <span id="update-database-text" class="text-content">Update Database</span>
                     </button>
@@ -421,7 +421,7 @@
                 <!-- Restore button -->
                 <div class="mt-4 mb-2 flex flex-row items-center">
                     <button id="restore-button" type="button" data-i18n="main.restore_selected"
-                        class="whitespace-nowrap text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 dark:bg-blue-600 dark:hover:bg-blue-700">
+                        class="select-none whitespace-nowrap text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 dark:bg-blue-600 dark:hover:bg-blue-700">
                         <i id="restore-icon" class="fa-solid fa-arrow-right-long mr-1"></i>
                         <span id="restore-text" class="text-content">Restore Selected Games</span>
                     </button>
@@ -438,18 +438,18 @@
             <!-- Custom Buttons -->
             <div class="flex mt-4">
                 <button type="button" id="custom-save-all" data-i18n="custom.save_all"
-                    class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700">
+                    class="select-none text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700">
                     <i class="fa-solid fa-floppy-disk mr-1"></i>
                     <span class="text-content">Save All</span>
                 </button>
 
                 <button type="button" id="custom-view-placeholder" data-i18n="custom.view_placeholder"
-                    class="ml-auto text-white bg-green-600 hover:bg-green-700 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-green-500 dark:hover:bg-green-600">
+                    class="select-none ml-auto text-white bg-green-600 hover:bg-green-700 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-green-500 dark:hover:bg-green-600">
                     <i class="fa-solid fa-list mr-1"></i>
                     <span class="text-content">View Placeholders</span>
                 </button>
                 <button type="button" id="custom-add-game" data-i18n="custom.add_game"
-                    class="ml-2 text-white bg-green-600 hover:bg-green-700 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-green-500 dark:hover:bg-green-600">
+                    class="select-none ml-2 text-white bg-green-600 hover:bg-green-700 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-green-500 dark:hover:bg-green-600">
                     <i class="fa-solid fa-plus mr-1"></i>
                     <span class="text-content">Add Game</span>
                 </button>
@@ -468,8 +468,7 @@
                                         Guide</span>
                                     <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400 text-content"
                                         data-i18n="custom.placeholders_guide_desc">
-                                        Use placeholders in the path to ensure that the path remains valid after
-                                        importing and exporting across devices
+                                        ...
                                     </p>
                                 </div>
                                 <button type="button" id="placeholder-guide-close"
@@ -491,12 +490,36 @@
                         </thead>
                         <tbody>
                             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200"
+                                data-i18n="custom.game_install_path">
+                                <th scope="row"
+                                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    <i class="cursor-pointer fa-solid fa-copy mr-2"></i>{{p|game}}
+                                </th>
+                                <td class="px-6 py-4 text-content">{game_install_path}</td>
+                            </tr>
+                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200"
+                                data-i18n="custom.steam_install_path">
+                                <th scope="row"
+                                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    <i class="cursor-pointer fa-solid fa-copy mr-2"></i>{{p|steam}}
+                                </th>
+                                <td class="px-6 py-4 text-content">{steam_install_path}</td>
+                            </tr>
+                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200"
+                                data-i18n="custom.ubi_install_path">
+                                <th scope="row"
+                                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    <i class="cursor-pointer fa-solid fa-copy mr-2"></i>{{p|ubisoftconnect}}
+                                </th>
+                                <td class="px-6 py-4 text-content">{ubisoft_install_path}</td>
+                            </tr>
+                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200"
                                 data-i18n="custom.os_username">
                                 <th scope="row"
                                     class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                     <i class="cursor-pointer fa-solid fa-copy mr-2"></i>{{p|username}}
                                 </th>
-                                <td class="px-6 py-4 text-content">{OS_username}</td>
+                                <td class="px-6 py-4 text-content">{os_username}</td>
                             </tr>
                             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
                                 <th scope="row"
@@ -504,7 +527,7 @@
                                     <i class="cursor-pointer fa-solid fa-copy mr-2"></i>{{p|userprofile}}
                                 </th>
                                 <td class="px-6 py-4" data-i18n="custom.os_username">
-                                    C:\Users\<span class="text-content">{OS_username}</span>
+                                    C:\Users\<span class="text-content">{os_username}</span>
                                 </td>
                             </tr>
                             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
@@ -513,7 +536,7 @@
                                     <i class="cursor-pointer fa-solid fa-copy mr-2"></i>{{p|userprofile/documents}}
                                 </th>
                                 <td class="px-6 py-4" data-i18n="custom.os_username">
-                                    C:\Users\<span class="text-content">{OS_username}</span>\Documents
+                                    C:\Users\<span class="text-content">{os_username}</span>\Documents
                                 </td>
                             </tr>
                             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
@@ -523,7 +546,7 @@
                                         class="cursor-pointer fa-solid fa-copy mr-2"></i>{{p|userprofile/appdata/locallow}}
                                 </th>
                                 <td class="px-6 py-4" data-i18n="custom.os_username">
-                                    C:\Users\<span class="text-content">{OS_username}</span>\AppData\LocalLow
+                                    C:\Users\<span class="text-content">{os_username}</span>\AppData\LocalLow
                                 </td>
                             </tr>
                             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
@@ -532,7 +555,7 @@
                                     <i class="cursor-pointer fa-solid fa-copy mr-2"></i>{{p|appdata}}
                                 </th>
                                 <td class="px-6 py-4" data-i18n="custom.os_username">
-                                    C:\Users\<span class="text-content">{OS_username}</span>\AppData\Roaming
+                                    C:\Users\<span class="text-content">{os_username}</span>\AppData\Roaming
                                 </td>
                             </tr>
                             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
@@ -541,7 +564,7 @@
                                     <i class="cursor-pointer fa-solid fa-copy mr-2"></i>{{p|localappdata}}
                                 </th>
                                 <td class="px-6 py-4" data-i18n="custom.os_username">
-                                    C:\Users\<span class="text-content">{OS_username}</span>\AppData\Local
+                                    C:\Users\<span class="text-content">{os_username}</span>\AppData\Local
                                 </td>
                             </tr>
                             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
@@ -599,7 +622,7 @@
                                     <i class="cursor-pointer fa-solid fa-copy mr-2"></i>{{p|osxhome}}
                                 </th>
                                 <td class="px-6 py-4" data-i18n="custom.os_username">
-                                    /Users/<span class="text-content">{OS_username}</span>
+                                    /Users/<span class="text-content">{os_username}</span>
                                 </td>
                             </tr>
                             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
@@ -608,7 +631,7 @@
                                     <i class="cursor-pointer fa-solid fa-copy mr-2"></i>{{p|linuxhome}}
                                 </th>
                                 <td class="px-6 py-4" data-i18n="custom.os_username">
-                                    /home/<span class="text-content">{OS_username}</span>
+                                    /home/<span class="text-content">{os_username}</span>
                                 </td>
                             </tr>
                             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
@@ -617,7 +640,7 @@
                                     <i class="cursor-pointer fa-solid fa-copy mr-2"></i>{{p|xdgdatahome}}
                                 </th>
                                 <td class="px-6 py-4" data-i18n="custom.os_username">
-                                    /home/<span class="text-content">{OS_username}</span>/.local/share
+                                    /home/<span class="text-content">{os_username}</span>/.local/share
                                 </td>
                             </tr>
                             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
@@ -626,7 +649,7 @@
                                     <i class="cursor-pointer fa-solid fa-copy mr-2"></i>{{p|xdgconfighome}}
                                 </th>
                                 <td class="px-6 py-4" data-i18n="custom.os_username">
-                                    /home/<span class="text-content">{OS_username}</span>/.config
+                                    /home/<span class="text-content">{os_username}</span>/.config
                                 </td>
                             </tr>
                         </tbody>

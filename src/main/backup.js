@@ -174,7 +174,7 @@ async function getGameDataFromDB(ignoreUninstalled = false) {
             const customJsonPath = path.join(getSettings().backupPath, 'custom_entries.json');
 
             if (fs.existsSync(customJsonPath)) {
-                const { customGames, customGameErrors } = await processCustomEntries(customJsonPath);
+                const { customGames, customGameErrors } = await processCustomEntries(customJsonPath, gameInstallPaths);
                 games.push(...customGames);
                 errors.push(...customGameErrors);
             }
@@ -275,13 +275,23 @@ async function getAllGameDataFromDB() {
     }
 }
 
-async function processCustomEntries(customJsonPath) {
+async function processCustomEntries(customJsonPath, gameInstallPaths) {
     const customGames = [];
     const customGameErrors = [];
 
     const customEntries = JSON.parse(fs.readFileSync(customJsonPath, 'utf-8'));
     for (let customEntry of customEntries) {
         try {
+            if (customEntry.install_folder) {
+                for (const installPath of gameInstallPaths) {
+                    const potentialPath = path.join(installPath, customEntry.install_folder);
+                    if (fsOriginal.existsSync(potentialPath)) {
+                        customEntry.install_path = potentialPath;
+                        break;
+                    }
+                }
+            }
+
             customEntry.platform = ['Custom'];
             customEntry.latest_backup = getNewestBackup(customEntry.wiki_page_id);
             for (const plat in customEntry.save_location) {
