@@ -432,6 +432,8 @@ async function resolveTemplatedBackupPath(templatedPath, gameInstallPath) {
         } else if (normalizedMatch === '{{p|uid}}') {
             // Defer handling of {{p|uid}} to the next step
             return '{{p|uid}}';
+        } else if (normalizedMatch === '{{p|userprofile/documents}}') {
+            return app.getPath('documents');
         }
 
         return placeholder_mapping[normalizedMatch] || match;
@@ -518,7 +520,12 @@ function extractUidFromPath(templatePath, resolvedPath) {
     const uidIndex = templateParts.findIndex(part => part.includes('{{p|uid}}'));
 
     if (uidIndex !== -1 && resolvedParts[uidIndex]) {
-        return resolvedParts[uidIndex];
+        const matchedPart = resolvedParts[uidIndex];
+        const prefix = templateParts[uidIndex].split('{{p|uid}}')[0]; // "user_"
+        if (prefix && matchedPart.startsWith(prefix)) {
+            return matchedPart.slice(prefix.length);
+        }
+        return matchedPart;
     }
 
     return null;
