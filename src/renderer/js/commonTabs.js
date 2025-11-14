@@ -212,7 +212,7 @@ async function createDropdownMenu(wikiPageId) {
     const wikiUrl = !wikiPageId.includes('-') ? `https://www.pcgamingwiki.com/wiki/index.php?curid=${wikiPageId}` : "none";
 
     const dropdownMenu = document.createElement('div');
-    dropdownMenu.className = 'bg-white rounded-lg shadow-sm w-46 dark:bg-gray-700 absolute hidden animate-fadeInShift';
+    dropdownMenu.className = 'bg-white rounded-lg shadow-sm w-48 dark:bg-gray-700 absolute hidden animate-fadeInShift';
     dropdownMenu.innerHTML = `
         <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
             <li>
