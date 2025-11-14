@@ -21,7 +21,7 @@ let aboutWin;
 let settings;
 let writeQueue = Promise.resolve();
 
-const appVersion = "1.0.0";
+const appVersion = "2.1.0";
 let status = {
     backuping: false,
     scanning_full: false,
@@ -125,7 +125,7 @@ const initializeMenu = () => {
 
 // Main window
 const createMainWindow = async () => {
-    let main_window_size = [1100, 750];
+    let main_window_size = [1150, 750];
     win = new BrowserWindow({
         width: main_window_size[0],
         height: main_window_size[1],
@@ -138,7 +138,7 @@ const createMainWindow = async () => {
         },
     });
 
-    win.webContents.openDevTools();
+    // win.webContents.openDevTools();
     win.loadFile(path.join(__dirname, "../renderer/index.html"));
     const menu = Menu.buildFromTemplate(initializeMenu());
     Menu.setApplicationMenu(menu);
@@ -685,7 +685,7 @@ const loadSettings = () => {
     };
 
     const systemLocale = app.getLocale();
-    // console.log(`Current locale: ${systemLocale}; Preferred languages: ${app.getPreferredSystemLanguages()}`);
+    console.log(`Current locale: ${systemLocale}; Preferred languages: ${app.getPreferredSystemLanguages()}`);
     const detectedLanguage = locale_mapping[systemLocale] || 'en_US';
 
     // Default settings

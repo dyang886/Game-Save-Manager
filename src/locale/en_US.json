@@ -18,14 +18,14 @@
         "save-settings-success": "Successfully saved settings",
         "auto_app_update": "Check software update automatically",
         "auto_db_update": "Update database automatically",
-        "save_uninstalled_games": "Save and display uninstalled games in backup table after full database scan"
+        "save_uninstalled_games": "Display uninstalled games (needs full database scan)"
     },
     "about": {
         "title": "About",
         "current_version": "Current version: ",
         "latest_version": "Latest version: ",
         "github": "GitHub: ",
-        "bilibili": "Bilibili author home page: ",
+        "bilibili": "Bilibili: ",
         "load_failed": "Failed to load",
         "update": "Update Now"
     },

@@ -197,6 +197,7 @@ async function getAllGameDataFromDB() {
     const games = [];
     const errors = [];
     const dbPath = path.join(app.getPath("userData"), "GSM Database", "database.db");
+    const gameInstallPaths = getSettings().gameInstalls;
 
     if (!getStatus().scanning_full) {
         if (!fs.existsSync(dbPath)) {
@@ -254,7 +255,7 @@ async function getAllGameDataFromDB() {
 
             const customJsonPath = path.join(getSettings().backupPath, 'custom_entries.json');
             if (fs.existsSync(customJsonPath)) {
-                const { customGames, customGameErrors } = await processCustomEntries(customJsonPath);
+                const { customGames, customGameErrors } = await processCustomEntries(customJsonPath, gameInstallPaths);
                 games.push(...customGames);
                 errors.push(...customGameErrors);
             }
