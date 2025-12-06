@@ -238,7 +238,7 @@ function showRestoreSummary(restoreCount, restoreFailed, errors, restoreSize) {
                 });
                 document.getElementById('restore-summary-total-failed').textContent = failed_message;
                 document.getElementById('restore-failed-learn-more').addEventListener('click', () => {
-                    showInfoModal(failed_message, errors);
+                    showInfoModal(failed_message, [errors]);
                 });
                 restoreFailedContainer.classList.remove('hidden');
             } else {

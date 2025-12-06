@@ -1,4 +1,6 @@
-import { operationStartCheck, updateTranslations } from './utility.js';
+import { operationStartCheck, updateTranslations, showInfoModal } from './utility.js';
+
+let lastSavedEntries = [];
 
 document.addEventListener('DOMContentLoaded', () => {
     setupCustomPage();
@@ -16,10 +18,14 @@ function setupCustomPage() {
         const allTitles = document.querySelectorAll('.custom-entry-title');
         const foundEmptyEntry = Array.from(allTitles).some(title => {
             if (!title.innerText.trim()) {
-                const titleInput = title.closest('.custom-entry').querySelector('.custom-entry-title-input');
+                const closestEntry = title.closest('.custom-entry');
+                const renameMode = closestEntry.querySelector('.rename-mode');
+                renameMode.classList.remove('hidden');
+                renameMode.classList.add('flex');
+                closestEntry.querySelector('.custom-entry-rename').classList.add('hidden');
+                closestEntry.querySelector('.custom-entry-delete').classList.add('hidden');
                 title.classList.add('hidden');
-                titleInput.classList.remove('hidden');
-                titleInput.focus();
+                closestEntry.querySelector('.custom-entry-title-input').focus();
                 return true;
             }
             return false;
@@ -73,232 +79,8 @@ async function generateUniqueId() {
     return window.api.invoke('get-uuid');
 }
 
-// Function to collapse all entries except the one clicked
-function toggleEntry(clickedEntry) {
-    const allEntries = document.querySelectorAll('.custom-entry');
-
-    allEntries.forEach(entry => {
-        const content = entry.querySelector('.collapsed-content');
-        const buttonSvg = entry.querySelector('.custom-entry-dropdown');
-
-        if (entry === clickedEntry) {
-            content.classList.toggle('hidden');
-            buttonSvg.classList.toggle('rotate-180');
-        } else {
-            content.classList.add('hidden');
-            buttonSvg.classList.remove('rotate-180');
-        }
-    });
-}
-
-function updateCustomEntryStyles() {
-    const entries = document.querySelectorAll('.custom-entry');
-
-    entries.forEach(entry => {
-        const button = entry.querySelector('.custom-entry-header');
-        button.classList.remove('rounded-t-xl');
-    });
-
-    if (entries.length > 0) {
-        const firstButton = entries[0].querySelector('.custom-entry-header');
-        firstButton.classList.add('rounded-t-xl');
-    }
-
-    updateTranslations(document.querySelector("#custom"));
-}
-
-function createCustomEntry() {
-    return `
-        <div class="custom-entry flex flex-col">
-            <div class="custom-entry-header flex items-center justify-between w-full p-5 font-medium rtl:text-right text-gray-500 border border-gray-200 rounded-t-xl focus:outline-hidden dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800">
-                <div class="flex items-center gap-3">
-                    <input type="text" class="custom-entry-title-input hidden bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 focus:outline-hidden dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                        data-i18n-placeholder="custom.enter_game_name" placeholder="Please enter game name" />
-                    <span class="custom-entry-title"></span>
-                    <button type="button" class="custom-entry-rename text-blue-500 hover:text-blue-600">
-                        <i class="fa-solid fa-pencil"></i>
-                    </button>
-                    <button type="button" class="custom-entry-delete text-red-500 hover:text-red-600">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-                <svg data-accordion-icon class="custom-entry-dropdown w-3 h-3 shrink-0 cursor-pointer" aria-hidden="true" fill="none" viewBox="0 0 10 6">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5 5 1 1 5" />
-                </svg>
-            </div>
-
-            <div class="collapsed-content hidden text-right p-5 border border-gray-200 dark:border-gray-700 dark:bg-gray-900">
-                <div class="text-left flex items-center mb-3">
-                    <div class="group relative inline-flex w-11 shrink-0 rounded-full bg-gray-200 p-0.5 inset-ring inset-ring-gray-900/5 outline-offset-2 outline-blue-600 transition-colors duration-200 ease-in-out has-checked:bg-blue-600 has-focus-visible:outline-2 dark:bg-white/5 dark:inset-ring-white/10 dark:outline-blue-500 dark:has-checked:bg-blue-500">
-                        <span class="size-5 rounded-full bg-white shadow-xs ring-1 ring-gray-900/5 transition-transform duration-200 ease-in-out group-has-checked:translate-x-5"></span>
-                        <input type="checkbox" name="annual-billing" class="game-install-folder-toggle absolute inset-0 appearance-none focus:outline-hidden" />
-                    </div>
-                    <span class="my-1.5 ms-3 text-sm font-medium text-gray-900 dark:text-gray-300 select-none text-content" data-i18n="custom.add_game_install_folder">Add Game Install Folder Name</span>
-                    <input type="text" class="folder-name-input hidden grow bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-sm p-1 ml-2 focus:outline-hidden dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                        data-i18n-placeholder="custom.folder_name" placeholder="Folder name">
-                </div>
-
-                <div class="collapsed-rows"></div>
-
-                <button type="button" class="custom-add-path select-none inline text-white bg-green-600 hover:bg-green-700 font-medium rounded-lg text-sm px-5 py-2.5 mt-2 dark:bg-green-500 dark:hover:bg-green-600"
-                    data-i18n="custom.add_path">
-                    <i class="fa-solid fa-plus mr-1"></i>
-                    <span class="text-content">Add Path</span>
-                </button>
-            </div>
-        </div>
-    `;
-}
-
-function createCollapsedRow() {
-    return `
-        <div class="collapsed-row">
-            <div class="flex items-center mb-3">
-                <select class="custom-backup-type-dropdown select-none bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 focus:outline-hidden dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white mr-3">
-                    <option value="file" data-i18n="custom.file" class="text-content">File</option>
-                    <option value="folder" data-i18n="custom.folder" class="text-content">Folder</option>
-                    <option value="registry" data-i18n="custom.registry" class="text-content">Registry</option>
-                </select>
-
-                <input type="text" class="custom-path-select-input grow bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 focus:outline-hidden dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white mr-3"
-                    data-i18n-placeholder="settings.select_path" placeholder="Select a path">
-
-                <button type="button" class="custom-path-select-button text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700">
-                    <i class="fa-solid fa-ellipsis"></i>
-                </button>
-
-                <button type="button" class="custom-delete-collapsed-row text-white bg-red-600 hover:bg-red-700 font-medium rounded-lg text-sm px-4 py-2 ml-3 dark:bg-red-500 dark:hover:bg-red-600">
-                    <i class="fa-solid fa-trash"></i>
-                </button>
-            </div>
-        </div>
-    `;
-}
-
-function addCollapsedRow(entry) {
-    const collapsedRowsContainer = entry.querySelector('.collapsed-rows');
-    collapsedRowsContainer.insertAdjacentHTML('beforeend', createCollapsedRow());
-
-    const newRow = collapsedRowsContainer.lastElementChild;
-
-    // Listener for dropdown change
-    const dropDown = newRow.querySelector('.custom-backup-type-dropdown');
-    const pathInput = newRow.querySelector('.custom-path-select-input');
-    dropDown.addEventListener('change', () => {
-        pathInput.value = '';
-    });
-
-    // Listener for add path button
-    const addPathButton = newRow.querySelector('.custom-path-select-button');
-    addPathButton.addEventListener('click', async () => {
-        const result = await window.api.invoke('select-path', dropDown.value);
-
-        if (result) {
-            pathInput.value = result;
-        }
-    });
-
-    // Listener for delete path row button
-    const deletePathButton = newRow.querySelector('.custom-delete-collapsed-row');
-    deletePathButton.addEventListener('click', () => {
-        newRow.remove();
-    });
-
-    updateTranslations(collapsedRowsContainer);
-}
-
-async function addTemplate(renameTitleFocus = true, wikiId = null) {
-    const customTabContent = document.querySelector('#custom-content');
-
-    customTabContent.insertAdjacentHTML('beforeend', createCustomEntry());
-    const newEntry = customTabContent.lastElementChild;
-
-    if (!wikiId) {
-        wikiId = await generateUniqueId();
-    }
-    newEntry.dataset.wikiId = wikiId;
-
-    const entryTitle = newEntry.querySelector('.custom-entry-title');
-    const folderToggle = newEntry.querySelector('.game-install-folder-toggle');
-    const folderInput = newEntry.querySelector('.folder-name-input');
-    const titleInput = newEntry.querySelector('.custom-entry-title-input');
-    const renameButton = newEntry.querySelector('.custom-entry-rename');
-    const deleteButton = newEntry.querySelector('.custom-entry-delete');
-    const dropdownIcon = newEntry.querySelector('.custom-entry-dropdown');
-
-    let hasToggled = false;
-
-    // Toggle collapsed content when the dropdown icon is clicked
-    dropdownIcon.addEventListener('click', () => {
-        if (!entryTitle.innerHTML.trim()) {
-            renameEntry();
-        } else {
-            toggleEntry(newEntry);
-        }
-    });
-
-    // Handle game install folder toggle
-    folderToggle.addEventListener('change', () => {
-        folderInput.classList.toggle('hidden', !folderToggle.checked);
-    });
-
-    // Rename the title
-    const renameEntry = () => {
-        titleInput.classList.remove('hidden');
-        entryTitle.classList.add('hidden');
-        titleInput.value = entryTitle.innerText;
-        titleInput.focus();
-    }
-    renameButton.addEventListener('click', () => {
-        renameEntry()
-    });
-
-    // Save the new title on blur or Enter key press
-    titleInput.addEventListener('blur', () => {
-        const newTitle = titleInput.value.trim();
-        if (newTitle) {
-            entryTitle.innerText = newTitle;
-        }
-        titleInput.classList.add('hidden');
-        entryTitle.classList.remove('hidden');
-
-        if (entryTitle.innerHTML.trim() && !hasToggled) {
-            toggleEntry(newEntry);
-            hasToggled = true;
-        }
-    });
-
-    titleInput.addEventListener('keypress', (event) => {
-        if (event.key === 'Enter') {
-            titleInput.blur();
-        }
-    });
-
-    // Handle delete button
-    deleteButton.addEventListener('click', () => {
-        newEntry.remove();
-    });
-
-    const addPathButton = newEntry.querySelector('.custom-add-path');
-    addPathButton.addEventListener('click', () => {
-        addCollapsedRow(newEntry);
-    });
-
-    updateCustomEntryStyles();
-
-    // If not loaded from json
-    if (renameTitleFocus) {
-        renameEntry();
-        addCollapsedRow(newEntry);
-    }
-}
-
-async function saveEntriesToJson(saveAllButton) {
-    // TODO: name duplicates check
-    // TODO: tab exist warning for unsaved changes
-    saveAllButton.disabled = true;
-    saveAllButton.classList.add('cursor-not-allowed');
-
+// Collect current entries from the UI
+async function getCurrentEntries() {
     const allEntries = document.querySelectorAll('.custom-entry');
     const entriesArray = [];
     const platform = await window.api.invoke('get-platform');
@@ -346,7 +128,287 @@ async function saveEntriesToJson(saveAllButton) {
         }
     });
 
+    return entriesArray;
+}
+
+// Function to toggle entry expanded/collapsed state
+function toggleEntry(clickedEntry) {
+    const allEntries = document.querySelectorAll('.custom-entry');
+
+    allEntries.forEach(entry => {
+        const content = entry.querySelector('.collapsed-content');
+        const buttonSvg = entry.querySelector('.custom-entry-dropdown');
+
+        if (entry === clickedEntry) {
+            content.classList.toggle('hidden');
+            buttonSvg.classList.toggle('rotate-180');
+        } else {
+            content.classList.add('hidden');
+            buttonSvg.classList.remove('rotate-180');
+        }
+    });
+}
+
+function updateCustomEntryStyles() {
+    updateTranslations(document.querySelector("#custom"));
+}
+
+function createCustomEntry() {
+    return `
+        <div class="custom-entry flex flex-col bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 mb-2 mr-2 overflow-hidden">
+            <div class="custom-entry-header flex items-center justify-between w-full px-5 py-4 font-medium text-gray-900 dark:text-white cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-150">
+                <div class="flex items-center gap-2 flex-1 min-w-0">
+                    <div class="rename-mode hidden flex-1 min-w-0 items-center bg-white dark:bg-gray-700 rounded-md border border-gray-300 dark:border-gray-600">
+                        <input type="text" class="custom-entry-title-input pl-3 py-3 flex-1 min-w-0 bg-transparent border-0 text-gray-900 text-sm focus:outline-none dark:text-white"
+                            data-i18n-placeholder="custom.enter_game_name" placeholder="Please enter game name" />
+                        <button type="button" class="custom-entry-confirm-rename px-3 py-2 text-green-500 hover:text-green-600 transition-colors duration-150">
+                            <i class="fa-solid fa-check"></i>
+                        </button>
+                    </div>
+                    <span class="custom-entry-title truncate mr-2"></span>
+                    <button type="button" class="custom-entry-rename text-gray-400 hover:text-blue-500 transition-colors duration-150 shrink-0 mr-1">
+                        <i class="fa-solid fa-pencil"></i>
+                    </button>
+                    <button type="button" class="custom-entry-delete text-gray-400 hover:text-red-500 transition-colors duration-150 shrink-0">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+                <svg data-accordion-icon class="custom-entry-dropdown w-4 h-4 shrink-0 text-gray-500 transition-transform duration-300 ml-3" aria-hidden="true" fill="none" viewBox="0 0 10 6">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5 5 1 1 5" />
+                </svg>
+            </div>
+
+            <div class="collapsed-content hidden border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-5 py-4">
+                <div class="flex items-center h-14 mb-4 pb-3 border-b border-gray-200 dark:border-gray-700">
+                    <div class="group relative inline-flex w-11 shrink-0 rounded-full bg-gray-200 p-0.5 inset-ring inset-ring-gray-900/5 outline-offset-2 outline-blue-600 transition-colors duration-200 ease-in-out has-checked:bg-blue-600 has-focus-visible:outline-2 dark:bg-white/5 dark:inset-ring-white/10 dark:outline-blue-500 dark:has-checked:bg-blue-500">
+                        <span class="size-5 rounded-full bg-white shadow-xs ring-1 ring-gray-900/5 transition-transform duration-200 ease-in-out group-has-checked:translate-x-5"></span>
+                        <input type="checkbox" class="game-install-folder-toggle absolute inset-0 appearance-none focus:outline-none" />
+                    </div>
+                    <span class="my-1.5 ms-3 text-sm font-medium text-gray-700 dark:text-gray-300 select-none text-content" data-i18n="custom.add_game_install_folder">Add Game Install Folder Name</span>
+                    <input type="text" class="folder-name-input hidden grow bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md p-2 ml-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                        data-i18n-placeholder="custom.folder_name" placeholder="Folder name">
+                </div>
+
+                <div class="collapsed-rows"></div>
+
+                <button type="button" class="custom-add-path select-none inline text-white bg-green-600 hover:bg-green-700 font-medium rounded-lg text-sm px-5 py-2.5 mt-2 dark:bg-green-500 dark:hover:bg-green-600"
+                    data-i18n="custom.add_path">
+                    <i class="fa-solid fa-plus mr-1"></i>
+                    <span class="text-content">Add Path</span>
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+function createCollapsedRow() {
+    return `
+        <div class="collapsed-row flex items-center gap-2 mb-3 px-5">
+            <select class="custom-backup-type-dropdown flex-shrink-0 w-24 bg-white border border-gray-300 text-gray-900 text-sm rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                <option value="file" data-i18n="custom.file" class="text-content">File</option>
+                <option value="folder" data-i18n="custom.folder" class="text-content">Folder</option>
+                <option value="registry" data-i18n="custom.registry" class="text-content">Registry</option>
+            </select>
+
+            <input type="text" class="custom-path-select-input flex-1 bg-white border border-gray-300 text-gray-900 text-sm rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                data-i18n-placeholder="settings.select_path" placeholder="Select a path">
+
+            <button type="button" class="custom-path-select-button flex-shrink-0 text-white bg-blue-600 hover:bg-blue-700 focus:outline-none font-medium rounded-md text-sm px-3 py-2 transition-colors duration-150 dark:bg-blue-700 dark:hover:bg-blue-600">
+                <i class="fa-solid fa-ellipsis"></i>
+            </button>
+
+            <button type="button" class="custom-delete-collapsed-row flex-shrink-0 text-white bg-red-600 hover:bg-red-700 focus:outline-none font-medium rounded-md text-sm px-3 py-2 transition-colors duration-150 dark:bg-red-700 dark:hover:bg-red-600">
+                <i class="fa-solid fa-trash"></i>
+            </button>
+        </div>
+    `;
+}
+
+function addCollapsedRow(entry) {
+    const collapsedRowsContainer = entry.querySelector('.collapsed-rows');
+    collapsedRowsContainer.insertAdjacentHTML('beforeend', createCollapsedRow());
+
+    const newRow = collapsedRowsContainer.lastElementChild;
+
+    // Listener for dropdown change
+    const dropDown = newRow.querySelector('.custom-backup-type-dropdown');
+    const pathInput = newRow.querySelector('.custom-path-select-input');
+    dropDown.addEventListener('change', () => {
+        pathInput.value = '';
+    });
+
+    // Listener for add path button
+    const addPathButton = newRow.querySelector('.custom-path-select-button');
+    addPathButton.addEventListener('click', async () => {
+        const result = await window.api.invoke('select-path', dropDown.value);
+
+        if (result) {
+            pathInput.value = result;
+        }
+    });
+
+    // Listener for delete path row button
+    const deletePathButton = newRow.querySelector('.custom-delete-collapsed-row');
+    deletePathButton.addEventListener('click', () => {
+        newRow.remove();
+    });
+
+    updateTranslations(collapsedRowsContainer);
+}
+
+async function addTemplate(renameTitleFocus = true, wikiId = null) {
+    const customTabContent = document.querySelector('#custom-content');
+
+    customTabContent.insertAdjacentHTML('beforeend', createCustomEntry());
+    const newEntry = customTabContent.lastElementChild;
+
+    if (!wikiId) {
+        wikiId = await generateUniqueId();
+    }
+    newEntry.dataset.wikiId = wikiId;
+
+    const entryHeader = newEntry.querySelector('.custom-entry-header');
+    const entryTitle = newEntry.querySelector('.custom-entry-title');
+    const renameMode = newEntry.querySelector('.rename-mode');
+    const folderToggle = newEntry.querySelector('.game-install-folder-toggle');
+    const folderInput = newEntry.querySelector('.folder-name-input');
+    const titleInput = newEntry.querySelector('.custom-entry-title-input');
+    const renameButton = newEntry.querySelector('.custom-entry-rename');
+    const confirmRenameButton = newEntry.querySelector('.custom-entry-confirm-rename');
+    const deleteButton = newEntry.querySelector('.custom-entry-delete');
+
+    let skipNextHeaderClick = false;
+
+    entryHeader.addEventListener('click', (e) => {
+        // Skip if we just confirmed a rename
+        if (skipNextHeaderClick) {
+            skipNextHeaderClick = false;
+            return;
+        }
+
+        // Don't toggle if clicking on buttons or input
+        if (e.target.closest('.custom-entry-rename') ||
+            e.target.closest('.custom-entry-delete') ||
+            e.target.closest('.rename-mode')) {
+            return;
+        }
+
+        if (!entryTitle.innerHTML.trim()) {
+            renameEntry();
+        } else {
+            toggleEntry(newEntry);
+        }
+    });
+
+    // Handle game install folder toggle
+    folderToggle.addEventListener('change', () => {
+        folderInput.classList.toggle('hidden', !folderToggle.checked);
+    });
+
+    // Rename the title
+    const renameEntry = () => {
+        renameMode.classList.remove('hidden');
+        renameMode.classList.add('flex');
+        entryTitle.classList.add('hidden');
+        renameButton.classList.add('hidden');
+        deleteButton.classList.add('hidden');
+        titleInput.value = entryTitle.innerText;
+        titleInput.focus();
+        titleInput.select();
+    }
+    renameButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        renameEntry();
+    });
+
+    // Confirm rename
+    const finishRename = () => {
+        const newTitle = titleInput.value.trim();
+        if (newTitle) {
+            entryTitle.innerText = newTitle;
+        }
+        renameMode.classList.add('hidden');
+        renameMode.classList.remove('flex');
+        entryTitle.classList.remove('hidden');
+        renameButton.classList.remove('hidden');
+        deleteButton.classList.remove('hidden');
+
+        // Always expand the entry after renaming
+        const collapsedContent = newEntry.querySelector('.collapsed-content');
+        if (entryTitle.innerText && collapsedContent.classList.contains('hidden')) {
+            toggleEntry(newEntry);
+        }
+    }
+
+    // Handle rename confirmation
+    titleInput.addEventListener('blur', () => {
+        finishRename();
+    });
+    titleInput.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+            titleInput.blur();
+        }
+    });
+    confirmRenameButton.addEventListener('mousedown', (e) => {
+        skipNextHeaderClick = true;
+        e.stopPropagation();
+    });
+    confirmRenameButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        titleInput.blur();
+    });
+
+    // Handle delete button
+    deleteButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        newEntry.remove();
+    });
+
+    // Handle add path button
+    const addPathButton = newEntry.querySelector('.custom-add-path');
+    addPathButton.addEventListener('click', () => {
+        addCollapsedRow(newEntry);
+    });
+
+    updateCustomEntryStyles();
+
+    // If not loaded from json
+    if (renameTitleFocus) {
+        renameEntry();
+        addCollapsedRow(newEntry);
+    }
+}
+
+async function saveEntriesToJson(saveAllButton) {
+    saveAllButton.disabled = true;
+    saveAllButton.classList.add('cursor-not-allowed');
+
+    const entriesArray = await getCurrentEntries();
+    const titleSet = new Set();
+    const duplicateTitles = [];
+
+    // Check for duplicate names
+    entriesArray.forEach(entry => {
+        if (titleSet.has(entry.title)) {
+            duplicateTitles.push(entry.title);
+        } else {
+            titleSet.add(entry.title);
+        }
+    });
+
+    // Show warning if duplicate names found
+    if (duplicateTitles.length > 0) {
+        const title = await window.i18n.translate('custom.duplicate_names_title');
+        const message = await window.i18n.translate('custom.duplicate_names_message');
+        const content = [message, duplicateTitles];
+        await showInfoModal(title, content);
+        saveAllButton.disabled = false;
+        saveAllButton.classList.remove('cursor-not-allowed');
+        return;
+    }
+
     await window.api.invoke('save-custom-entries', entriesArray);
+    lastSavedEntries = entriesArray;
     saveAllButton.disabled = false;
     saveAllButton.classList.remove('cursor-not-allowed');
 }
@@ -408,5 +470,20 @@ async function loadEntriesFromJson() {
     }
 
     updateCustomEntryStyles();
+
+    // Store the loaded entries as the baseline for unsaved changes comparison
+    lastSavedEntries = jsonEntries;
 }
 window.loadEntriesFromJson = loadEntriesFromJson;
+
+export async function checkAndWarnUnsavedChanges() {
+    const currentEntries = await getCurrentEntries();
+
+    if (JSON.stringify(lastSavedEntries) !== JSON.stringify(currentEntries)) {
+        const title = await window.i18n.translate('custom.unsaved_changes_title');
+        const message = await window.i18n.translate('custom.unsaved_changes_message');
+        return showInfoModal(title, message, 'yesno');
+    }
+
+    return true; // No unsaved changes, safe to proceed
+}

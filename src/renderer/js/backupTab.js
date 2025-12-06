@@ -273,7 +273,7 @@ function showBackupSummary(backupCount, backupFailed, errors, backupSize) {
                 });
                 document.getElementById('backup-summary-total-failed').textContent = failed_message;
                 document.getElementById('backup-failed-learn-more').addEventListener('click', () => {
-                    showInfoModal(failed_message, errors);
+                    showInfoModal(failed_message, [errors]);
                 });
                 backupFailedContainer.classList.remove('hidden');
             } else {

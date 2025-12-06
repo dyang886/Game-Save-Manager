@@ -93,7 +93,11 @@
         "steam_install_path": "{steam安装路径}",
         "ubi_install_path": "{ubisoft安装路径}",
         "add_game_install_folder": "添加游戏安装文件夹名",
-        "folder_name": "文件夹名称"
+        "folder_name": "文件夹名称",
+        "duplicate_names_title": "游戏名称重复",
+        "duplicate_names_message": "请重命名以下条目以确保唯一性：",
+        "unsaved_changes_title": "未保存的更改",
+        "unsaved_changes_message": "您在自定义游戏标签页中有未保存的更改。是否不保存并离开？"
     },
     "alert": {
         "no_games_selected": "没有选择游戏",

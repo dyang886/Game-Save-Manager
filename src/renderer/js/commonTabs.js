@@ -1,4 +1,5 @@
 import { showAlert, updateTranslations } from './utility.js';
+import { checkAndWarnUnsavedChanges } from './customTab.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     updateTranslations(document);
@@ -45,7 +46,16 @@ function initializeTabs() {
         }
 
         tabElements.forEach(tab => {
-            tab.triggerEl.addEventListener('click', () => {
+            tab.triggerEl.addEventListener('click', async () => {
+                // Check for unsaved changes in custom tab before leaving it
+                const currentCustomTab = tabElements.find(t => t.id === 'custom' && !t.targetEl.classList.contains('hidden'));
+                if (currentCustomTab && tab.id !== 'custom') {
+                    const canLeave = await checkAndWarnUnsavedChanges();
+                    if (!canLeave) {
+                        return;
+                    }
+                }
+
                 const contentEl = document.getElementById(`${tab.id}-content`);
                 if (contentEl) {
                     contentEl.classList.remove('animate-fadeInShift', 'animate-fadeOut');

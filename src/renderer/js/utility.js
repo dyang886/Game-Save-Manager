@@ -134,35 +134,85 @@ export async function showAlert(type, message, modalContent) {
     }, 5000);
 }
 
-export function showInfoModal(modalTitle, modalContent) {
-    const modal = document.getElementById('modal-info');
-    const modalOverlay = document.getElementById('modal-overlay');
-    const modalTitleElement = document.getElementById('modal-info-title');
-    const modalContentElement = document.getElementById('modal-info-content');
+// Info modal, showing either "ok" or "yesno" style
+export async function showInfoModal(modalTitle, modalContent, style = 'ok') {
+    return new Promise(async (resolve) => {
+        const modal = document.getElementById('modal-info');
+        const modalOverlay = document.getElementById('modal-overlay');
+        const modalTitleElement = document.getElementById('modal-info-title');
+        const modalContentElement = document.getElementById('modal-info-content');
+        const closeButton = document.getElementById('modal-info-close');
+        const noButton = document.getElementById('modal-info-no');
+        const confirmButton = document.getElementById('modal-info-confirm');
 
-    modalTitleElement.textContent = modalTitle;
+        modalTitleElement.textContent = modalTitle;
 
-    if (Array.isArray(modalContent)) {
-        modalContentElement.innerHTML = modalContent.map(item => `<li>${item}</li>`).join('');
-    } else {
-        modalContentElement.textContent = modalContent;
-    }
+        // Handle mixed content: strings as plain text, arrays as list items
+        if (Array.isArray(modalContent)) {
+            const contentElements = modalContent.map(item => {
+                if (Array.isArray(item)) {
+                    // Nested array becomes a list
+                    const listItems = item.map(listItem => `<li>${listItem}</li>`).join('');
+                    return `<ul class="list-disc list-inside ml-3">${listItems}</ul>`;
+                } else {
+                    // String becomes a paragraph
+                    return `<p>${item}</p>`;
+                }
+            }).join('');
+            modalContentElement.innerHTML = contentElements;
+        } else {
+            modalContentElement.textContent = modalContent;
+        }
 
-    modal.classList.add('flex');
-    modal.classList.remove('hidden');
-    modalOverlay.classList.remove('hidden');
+        const closeModal = () => {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            modalOverlay.classList.add('hidden');
+            cleanupListeners();
+        };
 
-    document.getElementById('modal-info-close').addEventListener('click', closeInfoModal);
-    document.getElementById('modal-info-confirm').addEventListener('click', closeInfoModal);
-}
+        const cleanupListeners = () => {
+            closeButton.removeEventListener('click', handleClose);
+            noButton.removeEventListener('click', handleNo);
+            confirmButton.removeEventListener('click', handleConfirm);
+        };
 
-function closeInfoModal() {
-    const modal = document.getElementById('modal-info');
-    const modalOverlay = document.getElementById('modal-overlay');
+        const handleClose = () => {
+            closeModal();
+            if (style === 'yesno') {
+                resolve(false);
+            } else {
+                resolve(true);
+            }
+        };
 
-    modal.classList.add('hidden');
-    modal.classList.remove('flex');
-    modalOverlay.classList.add('hidden');
+        const handleNo = () => {
+            closeModal();
+            resolve(false);
+        };
+
+        const handleConfirm = () => {
+            closeModal();
+            resolve(true);
+        };
+
+        if (style === 'yesno') {
+            noButton.style.display = '';
+            noButton.textContent = await window.i18n.translate('alert.no');
+            confirmButton.textContent = await window.i18n.translate('alert.yes');
+        } else {
+            noButton.style.display = 'none';
+            confirmButton.textContent = 'Ok';
+        }
+
+        modal.classList.add('flex');
+        modal.classList.remove('hidden');
+        modalOverlay.classList.remove('hidden');
+
+        closeButton.addEventListener('click', handleClose);
+        noButton.addEventListener('click', handleNo);
+        confirmButton.addEventListener('click', handleConfirm);
+    });
 }
 
 // Export modal
