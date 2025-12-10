@@ -553,13 +553,14 @@ export async function showManageBackupsModal(wikiId) {
     const backupCountLabel = await window.i18n.translate('main.backup_count');
     headerInfo.innerHTML = `
         <p><span class="font-medium">${newestBackupLabel}:</span> ${latestBackup}</p>
-        <p><span class="font-medium">${backupCountLabel}:</span> ${backupCount}</p>
+        <p><span class="font-medium">${backupCountLabel}:</span> <span class="backup-count-value">${backupCount}</span></p>
     `;
 
     const backupTimeLabel = await window.i18n.translate('main.backup_time');
     const backupSizeLabel = await window.i18n.translate('main.backup_size');
     const actionLabel = await window.i18n.translate('main.action');
     const restoreLabel = await window.i18n.translate('main.restore');
+    const deleteLabel = await window.i18n.translate('main.delete');
 
     const tableHtml = `
         <div class="overflow-x-auto">
@@ -580,10 +581,16 @@ export async function showManageBackupsModal(wikiId) {
                                 <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">${formattedDate}</td>
                                 <td class="px-6 py-3">${backupSize}</td>
                                 <td class="px-6 py-3 text-center">
-                                    <button type="button" class="restore-backup-btn inline-flex items-center px-3 py-1 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors duration-150 dark:bg-blue-700 dark:hover:bg-blue-600" data-backup-date="${backup.date}">
-                                        <i class="fa-solid fa-arrow-left mr-1"></i>
-                                        ${restoreLabel}
-                                    </button>
+                                    <div class="flex justify-center gap-2">
+                                        <button type="button" class="restore-backup-btn inline-flex items-center px-3 py-1 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors duration-150 dark:bg-blue-700 dark:hover:bg-blue-600" data-backup-date="${backup.date}">
+                                            <i class="fa-solid fa-arrow-left mr-1"></i>
+                                            ${restoreLabel}
+                                        </button>
+                                        <button type="button" class="delete-backup-btn inline-flex items-center px-3 py-1 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors duration-150 dark:bg-red-700 dark:hover:bg-red-600" data-backup-date="${backup.date}">
+                                            <i class="fa-solid fa-trash mr-1"></i>
+                                            ${deleteLabel}
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         `;
@@ -602,6 +609,23 @@ export async function showManageBackupsModal(wikiId) {
             closeManageBackupsModal();
             const backupDate = btn.dataset.backupDate;
             await restoreBackupInstance(backupDate, gameData);
+        });
+    });
+
+    // Add event listeners to delete buttons
+    modalContent.querySelectorAll('.delete-backup-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const backupDate = btn.dataset.backupDate;
+            const row = btn.closest('tr');
+            const success = await window.api.invoke('confirm-delete-backup', wikiId, backupDate);
+
+            if (success) {
+                row.remove();
+                const countElement = headerInfo.querySelector('.backup-count-value');
+                const currentCount = parseInt(countElement.textContent);
+                countElement.textContent = currentCount - 1;
+            }
         });
     });
 

@@ -35,6 +35,7 @@
         "loading": "Loading...",
         "backup": "Backup",
         "restore": "Restore",
+        "delete": "Delete",
         "custom": "Custom Games",
         "game_name": "Game Name",
         "supported_plats": "Supported Platforms",
@@ -164,6 +165,10 @@
         "error_during_import": "An error occurred while importing backups",
         "scan_full_complete": "Full database scan complete",
         "scanning_full": "Scanning full database...",
-        "no_wiki_url": "No Wiki entry is available for this game"
+        "no_wiki_url": "No Wiki entry is available for this game",
+        "confirm_delete_backup_title": "Confirm Delete Backup",
+        "confirm_delete_backup_message": "Are you sure you want to delete the backup from {{backup_date}}? This action cannot be undone.",
+        "backup_deleted_success": "Backup deleted successfully",
+        "backup_delete_failed": "Failed to delete backup"
     }
 }

@@ -35,6 +35,7 @@
         "loading": "加载中...",
         "backup": "备份",
         "restore": "还原",
+        "delete": "删除",
         "custom": "自定义游戏",
         "game_name": "游戏名",
         "supported_plats": "支持的平台",
@@ -164,6 +165,10 @@
         "error_during_import": "导入备份时出错",
         "scan_full_complete": "完整数据库扫描完成",
         "scanning_full": "扫描完整数据库中...",
-        "no_wiki_url": "此游戏没有可用的 Wiki 条目"
+        "no_wiki_url": "此游戏没有可用的 Wiki 条目",
+        "confirm_delete_backup_title": "确认删除备份",
+        "confirm_delete_backup_message": "确定要删除 {{backup_date}} 的备份吗？此操作无法撤销。",
+        "backup_deleted_success": "备份删除成功",
+        "backup_delete_failed": "备份删除失败"
     }
 }
