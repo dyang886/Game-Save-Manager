@@ -380,6 +380,7 @@ export async function operationStartCheck(operation) {
             updating_db: 'alert.wait_for_updating_db',
         },
         'restore': {
+            restoring: 'alert.wait_for_restore',
             backuping: 'alert.wait_for_backup',
             migrating: 'alert.wait_for_migrate',
             importing: 'alert.wait_for_import'

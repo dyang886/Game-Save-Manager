@@ -461,6 +461,7 @@ async function fillPathUid(basePath) {
         const matchedPaths = glob.sync(resolvedPath.replace(/\\/g, '/'));
 
         if (matchedPaths.length > 0) {
+            // Found a valid path with current known user ids (from steam and ubisoft)
             return {
                 path: resolvedPath,
                 uid: uid,

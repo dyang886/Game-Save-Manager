@@ -1,4 +1,4 @@
-import { showAlert, updateTranslations } from './utility.js';
+import { showAlert, updateTranslations, updateProgress, operationStartCheck } from './utility.js';
 import { checkAndWarnUnsavedChanges } from './customTab.js';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -243,6 +243,12 @@ async function createDropdownMenu(wikiPageId) {
                     <span class="text-content">Open backup folder</span>
                 </a>
             </li>
+            <li>
+                <a href="#" data-action="manage-backups" data-id="${wikiPageId}" data-i18n="main.manage_backups"
+                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                    <span class="text-content">Manage Backups</span>
+                </a>
+            </li>
         </ul>
     `;
     dropdownMenu.querySelectorAll('.text-content').forEach(async (span) => {
@@ -326,6 +332,14 @@ function setDropDownAction() {
             const wikiId = actionElement.dataset.id;
             if (wikiId) {
                 window.api.invoke('open-backup-folder', wikiId);
+            }
+            removeDropDown();
+            return;
+        }
+        if (actionElement && actionElement.dataset.action === 'manage-backups') {
+            const wikiId = actionElement.dataset.id;
+            if (wikiId) {
+                showManageBackupsModal(wikiId);
             }
             removeDropDown();
             return;
@@ -510,4 +524,129 @@ export function getSelectedWikiIds(tabName) {
         const row = checkbox.closest('tr');
         return row.getAttribute('data-wiki-id').trim();
     });
+}
+
+export async function showManageBackupsModal(wikiId) {
+    const gamesList = await window.api.invoke('fetch-restore-table-data', wikiId);
+
+    // Extract the single game from the returned array
+    const gameData = gamesList && gamesList.length > 0 ? gamesList[0] : null;
+    if (!gameData) {
+        showAlert('warning', await window.i18n.translate('alert.no_backups_found'));
+        return;
+    }
+
+    const modal = document.getElementById('modal-manage-backups');
+    const modalOverlay = document.getElementById('modal-overlay');
+    const modalTitle = document.getElementById('modal-manage-backups-title');
+    const headerInfo = document.getElementById('modal-manage-backups-header-info');
+    const modalContent = document.getElementById('modal-manage-backups-content');
+
+    // Set title
+    const gameTitle = gameData.title;
+    const backupCount = gameData.backups.length;
+    const latestBackup = gameData.latest_backup;
+    modalTitle.textContent = gameTitle;
+
+    // Create header info with translations
+    const newestBackupLabel = await window.i18n.translate('main.newest_backup_time');
+    const backupCountLabel = await window.i18n.translate('main.backup_count');
+    headerInfo.innerHTML = `
+        <p><span class="font-medium">${newestBackupLabel}:</span> ${latestBackup}</p>
+        <p><span class="font-medium">${backupCountLabel}:</span> ${backupCount}</p>
+    `;
+
+    const backupTimeLabel = await window.i18n.translate('main.backup_time');
+    const backupSizeLabel = await window.i18n.translate('main.backup_size');
+    const actionLabel = await window.i18n.translate('main.action');
+    const restoreLabel = await window.i18n.translate('main.restore');
+
+    const tableHtml = `
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-800 dark:text-gray-200 rounded-t-lg">
+                    <tr>
+                        <th scope="col" class="px-4 py-3 rounded-tl-lg">${backupTimeLabel}</th>
+                        <th scope="col" class="px-6 py-3">${backupSizeLabel}</th>
+                        <th scope="col" class="px-6 py-3 text-center rounded-tr-lg">${actionLabel}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${gameData.backups.sort((a, b) => b.date.localeCompare(a.date)).map(backup => {
+        const formattedDate = backup.date.replace(/(\d{4})-(\d{2})-(\d{2})_(\d{2})-(\d{2})/, '$1/$2/$3 $4:$5');
+        const backupSize = formatSize(backup.backup_size);
+        return `
+                            <tr class="bg-white border-b dark:bg-[#2d3748] dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">${formattedDate}</td>
+                                <td class="px-6 py-3">${backupSize}</td>
+                                <td class="px-6 py-3 text-center">
+                                    <button type="button" class="restore-backup-btn inline-flex items-center px-3 py-1 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors duration-150 dark:bg-blue-700 dark:hover:bg-blue-600" data-backup-date="${backup.date}">
+                                        <i class="fa-solid fa-arrow-left mr-1"></i>
+                                        ${restoreLabel}
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+    }).join('')}
+                </tbody>
+            </table>
+        </div>
+    `;
+
+    modalContent.innerHTML = tableHtml;
+
+    // Add event listeners to restore buttons
+    modalContent.querySelectorAll('.restore-backup-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            closeManageBackupsModal();
+            const backupDate = btn.dataset.backupDate;
+            await restoreBackupInstance(backupDate, gameData);
+        });
+    });
+
+    // Show modal
+    modal.classList.add('flex');
+    modal.classList.remove('hidden');
+    modalOverlay.classList.remove('hidden');
+
+    // Close button handler
+    document.getElementById('modal-manage-backups-close').onclick = closeManageBackupsModal;
+}
+
+function closeManageBackupsModal() {
+    const modal = document.getElementById('modal-manage-backups');
+    const modalOverlay = document.getElementById('modal-overlay');
+
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    modalOverlay.classList.add('hidden');
+}
+
+async function restoreBackupInstance(backupDate, gameData) {
+    const start = await operationStartCheck('restore');
+
+    if (start) {
+        window.api.send('update-status', 'restoring', true);
+        const restoreButton = document.getElementById('restore-button');
+        restoreButton.disabled = true;
+        restoreButton.classList.add('cursor-not-allowed');
+        const restoreProgressId = 'restore-progress';
+        const restoreProgressTitle = await window.api.invoke('translate', 'main.restore_in_progress');
+        updateProgress(restoreProgressId, restoreProgressTitle, 'start');
+
+        // Find the specific backup instance
+        const backupInstance = gameData.backups.find(b => b.date === backupDate);
+        // Create a game object with just this backup instance
+        const gameObjForRestore = { ...gameData, backups: [backupInstance] };
+        const { action, error } = await window.api.invoke('restore-game', gameObjForRestore, null);
+
+        const restoreFailed = error ? 1 : 0;
+        updateProgress(restoreProgressId, restoreProgressTitle, 'end');
+        showRestoreSummary(1, restoreFailed, error, backupInstance.backup_size);
+        document.querySelector('#restore-summary-done').classList.remove('hidden');
+        restoreButton.disabled = false;
+        restoreButton.classList.remove('cursor-not-allowed');
+        window.api.send('update-status', 'restoring', false);
+    }
 }

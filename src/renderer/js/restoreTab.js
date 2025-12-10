@@ -219,7 +219,7 @@ async function performRestore() {
     }
 }
 
-function showRestoreSummary(restoreCount, restoreFailed, errors, restoreSize) {
+export function showRestoreSummary(restoreCount, restoreFailed, errors, restoreSize) {
     const restoreSummary = document.querySelector('#restore-summary');
     const restoreContent = document.querySelector('#restore-content');
     const restoreFailedContainer = document.querySelector('#restore-summary-total-failed-container');
@@ -254,3 +254,4 @@ function showRestoreSummary(restoreCount, restoreFailed, errors, restoreSize) {
         event.target.closest('button').classList.add('hidden');
     });
 }
+window.showRestoreSummary = showRestoreSummary;

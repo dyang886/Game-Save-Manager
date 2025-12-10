@@ -17,6 +17,16 @@ const { getGameDataFromDB, getAllGameDataFromDB, backupGame, updateDatabase } = 
 const { getGameDataForRestore, restoreGame } = require("./restore");
 
 
+// Setup hot reload for development
+if (process.env.NODE_ENV === 'development' || !process.env.NODE_ENV) {
+    try {
+        const setupHotReload = require('./hotReload');
+        setupHotReload();
+    } catch (err) {
+        console.error('Failed to setup hot reload:', err.message);
+    }
+}
+
 app.commandLine.appendSwitch("lang", "en");
 const gotTheLock = app.requestSingleInstanceLock();
 let pendingGSMPath = null;
@@ -291,8 +301,8 @@ ipcMain.handle('backup-game', async (event, gameObj) => {
     return await backupGame(gameObj);
 });
 
-ipcMain.handle('fetch-restore-table-data', async () => {
-    const { games, errors } = await getGameDataForRestore();
+ipcMain.handle('fetch-restore-table-data', async (event, wikiId = null) => {
+    const { games, errors } = await getGameDataForRestore(wikiId);
 
     if (errors.length > 0) {
         getMainWin().webContents.send('show-alert', 'modal', i18next.t('alert.restore_process_error_display'), errors);

@@ -45,67 +45,87 @@ const execPromise = util.promisify(exec);
 //     ]
 // }
 
-async function getGameDataForRestore() {
+async function fetchBackups(wikiIdFolderPath, wikiId, errors) {
+    const backups = [];
+
+    try {
+        if (wikiId && !fsOriginal.existsSync(wikiIdFolderPath)) return null;
+        const stats = fsOriginal.statSync(wikiIdFolderPath);
+        if (!stats.isDirectory()) return null;
+
+        const backupFolders = fsOriginal.readdirSync(wikiIdFolderPath);
+        for (const backupFolder of backupFolders) {
+            const backupFolderPath = path.join(wikiIdFolderPath, backupFolder);
+            const configFilePath = path.join(backupFolderPath, 'backup_info.json');
+            const backupSize = calculateDirectorySize(backupFolderPath);
+
+            if (fsOriginal.existsSync(configFilePath)) {
+                try {
+                    const backupConfig = await fse.readJson(configFilePath);
+                    backups.push({
+                        date: backupFolder,  // Backup folder name is the date (YYYY-MM-DD_HH-mm)
+                        title: backupConfig.title,
+                        zh_CN: backupConfig.zh_CN,
+                        backup_size: backupSize,
+                        backup_paths: backupConfig.backup_paths
+                    });
+
+                } catch (err) {
+                    console.error(`Error reading backup config file at ${configFilePath}: ${err.stack}`);
+                    errors.push(`${i18next.t('alert.restore_process_error_config', { config_path: configFilePath })}: ${err.message}`);
+                }
+            }
+        }
+
+        if (backups.length === 0) return null;
+
+        // Sort by date and get the latest
+        const latestBackup = backups.sort((a, b) => b.date.localeCompare(a.date))[0];
+        const latestBackupFormatted = moment(latestBackup.date, 'YYYY-MM-DD_HH-mm').format('YYYY/MM/DD HH:mm');
+
+        return {
+            wiki_page_id: wikiId,
+            latest_backup: latestBackupFormatted,
+            title: latestBackup.title,
+            zh_CN: latestBackup.zh_CN,
+            backup_size: latestBackup.backup_size,
+            backups: backups
+        };
+
+    } catch (error) {
+        console.error(`Error processing ${wikiIdFolderPath} for restore table display: ${error.stack}`);
+        errors.push(`${i18next.t('alert.restore_process_error_path', { backup_path: wikiIdFolderPath })}: ${error.message}`);
+        return null;
+    }
+}
+
+async function getGameDataForRestore(wikiId = null) {
     const backupPath = getSettings().backupPath;
     fsOriginal.mkdirSync(backupPath, { recursive: true });
-    const gameFolders = fsOriginal.readdirSync(backupPath);
 
-    const games = [];
     const errors = [];
+
+    // If specific wikiId is provided, fetch only that game
+    if (wikiId) {
+        const wikiIdFolderPath = path.join(backupPath, wikiId.toString());
+        const gameData = await fetchBackups(wikiIdFolderPath, wikiId, errors);
+
+        return {
+            games: gameData ? [gameData] : [],
+            errors: errors
+        };
+    }
+
+    // Otherwise fetch all games
+    const gameFolders = fsOriginal.readdirSync(backupPath);
+    const games = [];
 
     for (const gameFolder of gameFolders) {
         const wikiIdFolderPath = path.join(backupPath, gameFolder);
-        const stats = fsOriginal.statSync(wikiIdFolderPath);
+        const gameData = await fetchBackups(wikiIdFolderPath, gameFolder, errors);
 
-        try {
-            if (stats.isDirectory()) {
-                const backups = [];
-
-                // Read all backup instance folders inside this game folder
-                const backupFolders = fsOriginal.readdirSync(wikiIdFolderPath);
-                for (const backupFolder of backupFolders) {
-                    const backupFolderPath = path.join(wikiIdFolderPath, backupFolder);
-                    const configFilePath = path.join(backupFolderPath, 'backup_info.json');
-                    const backupSize = calculateDirectorySize(backupFolderPath);
-
-                    // Check if the backup instance contains a config file
-                    if (fsOriginal.existsSync(configFilePath)) {
-                        try {
-                            const backupConfig = await fse.readJson(configFilePath);
-                            backups.push({
-                                date: backupFolder,  // Backup folder name is the date (YYYY-MM-DD_HH-mm)
-                                title: backupConfig.title,
-                                zh_CN: backupConfig.zh_CN,
-                                backup_size: backupSize,
-                                backup_paths: backupConfig.backup_paths
-                            });
-                        } catch (err) {
-                            console.error(`Error reading backup config file at ${configFilePath}: ${err.stack}`);
-                            errors.push(`${i18next.t('alert.restore_process_error_config', { config_path: configFilePath })}: ${err.message}`);
-                        }
-                    }
-                }
-
-                if (backups.length > 0) {
-                    const latestBackup = backups.sort((a, b) => {
-                        return b.date.localeCompare(a.date);
-                    })[0];
-                    const latestBackupFormatted = moment(latestBackup.date, 'YYYY-MM-DD_HH-mm').format('YYYY/MM/DD HH:mm');
-
-                    games.push({
-                        wiki_page_id: gameFolder,
-                        latest_backup: latestBackupFormatted,
-                        title: latestBackup.title,
-                        zh_CN: latestBackup.zh_CN,
-                        backup_size: latestBackup.backup_size,
-                        backups: backups
-                    });
-                }
-            }
-
-        } catch (error) {
-            console.error(`Error processing ${wikiIdFolderPath} for restore table display: ${error.stack}`);
-            errors.push(`${i18next.t('alert.restore_process_error_path', { backup_path: wikiIdFolderPath })}: ${error.message}`);
+        if (gameData) {
+            games.push(gameData);
         }
     }
 
