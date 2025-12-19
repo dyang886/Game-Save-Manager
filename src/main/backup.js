@@ -588,14 +588,25 @@ async function backupGame(gameObj) {
         const configFilePath = path.join(backupInstancePath, 'backup_info.json');
         await fse.writeJson(configFilePath, backupConfig, { spaces: 4 });
 
-        const existingBackups = (fsOriginal.readdirSync(gameBackupPath)).sort((a, b) => {
-            return a.localeCompare(b);
-        });
+        // Separate permanent and non-permanent backups
+        const nonPermanentBackups = [];
+        for (const backup of (fsOriginal.readdirSync(gameBackupPath)).sort((a, b) => a.localeCompare(b))) {
+            const backupConfigPath = path.join(gameBackupPath, backup, 'backup_info.json');
+            if (fsOriginal.existsSync(backupConfigPath)) {
+                const backupConfig = await fse.readJson(backupConfigPath);
+                if (!backupConfig.is_permanent) {
+                    nonPermanentBackups.push(backup);
+                }
+            } else {
+                // If no config file exists, treat as non-permanent
+                nonPermanentBackups.push(backup);
+            }
+        }
 
-        // If there are more backups than allowed, delete the oldest ones
+        // If there are more non-permanent backups than allowed, delete the oldest ones
         const maxBackups = getSettings().maxBackups;
-        if (existingBackups.length > maxBackups) {
-            const backupsToDelete = existingBackups.slice(0, existingBackups.length - maxBackups);
+        if (nonPermanentBackups.length > maxBackups) {
+            const backupsToDelete = nonPermanentBackups.slice(0, nonPermanentBackups.length - maxBackups);
             for (const backup of backupsToDelete) {
                 const backupToDeletePath = path.join(gameBackupPath, backup);
                 fsOriginal.rmSync(backupToDeletePath, { recursive: true, force: true });

@@ -1,5 +1,5 @@
 import { showAlert, showInfoModal, updateProgress, operationStartCheck } from './utility.js';
-import { spinner, showLoadingIndicator, hideLoadingIndicator, addPinIcon, formatSize, updateSelectedCountAndSize, setupSelectAllCheckbox, getSelectedWikiIds } from './commonTabs.js';
+import { spinner, showLoadingIndicator, hideLoadingIndicator, formatSize, updateSelectedCountAndSize, setupSelectAllCheckbox, getSelectedWikiIds, setIcon } from './commonTabs.js';
 
 const restoreTableDataMap = new Map();
 window.restoreTableDataMap = restoreTableDataMap;
@@ -90,7 +90,13 @@ async function populateRestoreTable(data) {
 
             // Check if pinned
             if (isPinned) {
-                addPinIcon(row);
+                setIcon(row, 'pin', true);
+            }
+
+            // Check if any backup is permanent
+            const hasPermamentBackup = game.backups.some(backup => backup.is_permanent);
+            if (hasPermamentBackup) {
+                setIcon(row, 'star', true);
             }
 
             tableBody.appendChild(row);
@@ -115,6 +121,9 @@ function createRestoreTableRow(gameTitle, backupCount, backupSize, newestBackupT
             </div>
         </td>
         <th scope="row" class="pr-6 py-4 truncate font-medium text-gray-900 whitespace-nowrap dark:text-white">
+            <span data-icon="pin" class="hidden"><i class="fa-solid fa-thumbtack text-red-500 mr-2"></i></span>
+            <span data-icon="star" class="hidden"><i class="fa-solid fa-star text-yellow-500 mr-2"></i></span>
+            <span data-icon="timer" class="hidden"><i class="fa-solid fa-hourglass text-blue-500 mr-2"></i></span>
             ${gameTitle}
         </th>
         <td class="px-6 py-4 truncate">
@@ -152,7 +161,6 @@ function setupRestoreButton() {
             showAlert('warning', await window.i18n.translate('alert.no_games_selected'));
             return;
         }
-        window.api.send('update-status', 'restoring', true);
 
         // Disable the button and change the appearance
         restoreButton.disabled = true;
@@ -184,6 +192,7 @@ async function performRestore() {
 
     const start = await operationStartCheck('restore');
     if (start) {
+        window.api.send('update-status', 'restoring', true);
         updateProgress(restoreProgressId, restoreProgressTitle, 'start');
 
         let restoreCount = 0;

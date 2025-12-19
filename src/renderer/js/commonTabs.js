@@ -189,14 +189,13 @@ export async function updateNewestBackupTime(tabName, wikiId) {
     }
 }
 
-export function addPinIcon(row) {
+export function setIcon(row, iconName, show) {
     const titleCell = row.querySelector('th[scope="row"]');
+    if (!titleCell) return;
 
-    if (titleCell) {
-        const pinIcon = document.createElement('i');
-        pinIcon.classList.add('fa-solid', 'fa-thumbtack', 'text-red-500', 'mr-2');
-
-        titleCell.prepend(pinIcon);
+    const iconSpan = titleCell.querySelector(`span[data-icon="${iconName}"]`);
+    if (iconSpan) {
+        iconSpan.classList.toggle('hidden', !show);
     }
 }
 
@@ -390,10 +389,10 @@ async function pinGameOnTop(tabName, wikiId) {
 
     if (rowToMove) {
         tableBody.removeChild(rowToMove);
-        addPinIcon(rowToMove);
+        setIcon(rowToMove, 'pin', true);
 
         const pinnedGames = Array.from(tableBody.querySelectorAll('tr'))
-            .filter(row => row.querySelector('i.fa-thumbtack'))
+            .filter(row => !row.querySelector('span[data-icon="pin"].hidden'))
             .concat(rowToMove)
             .map(row => ({
                 wikiId: row.getAttribute('data-wiki-id'),
@@ -418,14 +417,11 @@ async function unpinGameFromTop(tabName, wikiId) {
     const rowToMove = tableBody.querySelector(`tr[data-wiki-id="${wikiId}"]`);
 
     if (rowToMove) {
-        const pinIcon = rowToMove.querySelector('.fa-thumbtack');
-        if (pinIcon) {
-            pinIcon.remove();
-        }
+        setIcon(rowToMove, 'pin', false);
         tableBody.removeChild(rowToMove);
 
         const unpinnedGames = Array.from(tableBody.querySelectorAll('tr'))
-            .filter(row => !row.querySelector('i.fa-thumbtack'))
+            .filter(row => row.querySelector('span[data-icon="pin"].hidden'))
             .concat(rowToMove)
             .map(row => ({
                 wikiId: row.getAttribute('data-wiki-id'),
@@ -437,7 +433,7 @@ async function unpinGameFromTop(tabName, wikiId) {
 
         const lastPinnedRow = Array.from(tableBody.querySelectorAll('tr'))
             .reverse()
-            .find(row => row.querySelector('i.fa-thumbtack'));
+            .find(row => !row.querySelector('span[data-icon="pin"].hidden'));
 
         if (targetIndex === 0) {
             if (lastPinnedRow) {
@@ -561,6 +557,45 @@ export async function showManageBackupsModal(wikiId) {
     const actionLabel = await window.i18n.translate('main.action');
     const restoreLabel = await window.i18n.translate('main.restore');
     const deleteLabel = await window.i18n.translate('main.delete');
+    const makePermanentLabel = await window.i18n.translate('main.make_permanent');
+    const removePermanentLabel = await window.i18n.translate('main.remove_permanent');
+
+    const rowsHtml = gameData.backups
+        .sort((a, b) => {
+            // Sort by is_permanent (true first), then by date
+            if (a.is_permanent !== b.is_permanent) {
+                return b.is_permanent - a.is_permanent;
+            }
+            return b.date.localeCompare(a.date);
+        })
+        .map(backup => {
+            const formattedDate = backup.date.replace(/(\d{4})-(\d{1,2})-(\d{1,2})_(\d{1,2})-(\d{1,2})/, (match, year, month, day, hour, minute) => {
+                return `${year}/${String(month).padStart(2, '0')}/${String(day).padStart(2, '0')} ${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+            });
+            const backupSize = formatSize(backup.backup_size);
+            const permanentIcon = backup.is_permanent ? '<i class="fa-solid fa-star text-yellow-500 mr-2"></i>' : '';
+            return `<tr class="bg-white border-b dark:bg-[#2d3748] dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-600">
+                <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">${permanentIcon}${formattedDate}</td>
+                <td class="px-6 py-3">${backupSize}</td>
+                <td class="px-6 py-3 text-center">
+                    <div class="flex justify-center gap-2">
+                        <button type="button" class="restore-backup-btn inline-flex items-center px-3 py-1 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors duration-150 dark:bg-blue-700 dark:hover:bg-blue-600" data-backup-date="${backup.date}">
+                            <i class="fa-solid fa-arrow-left mr-1"></i>
+                            ${restoreLabel}
+                        </button>
+                        <button type="button" class="permanent-backup-btn inline-flex items-center px-3 py-1 text-sm font-medium text-white bg-yellow-500 hover:bg-yellow-600 rounded-md transition-colors duration-150 dark:bg-yellow-600 dark:hover:bg-yellow-500" data-backup-date="${backup.date}" data-is-permanent="${backup.is_permanent}">
+                            <i class="fa-solid fa-star mr-1"></i>
+                            ${backup.is_permanent ? removePermanentLabel : makePermanentLabel}
+                        </button>
+                        <button type="button" class="delete-backup-btn inline-flex items-center px-3 py-1 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors duration-150 dark:bg-red-700 dark:hover:bg-red-600" data-backup-date="${backup.date}">
+                            <i class="fa-solid fa-trash mr-1"></i>
+                            ${deleteLabel}
+                        </button>
+                    </div>
+                </td>
+            </tr>`;
+        })
+        .join('');
 
     const tableHtml = `
         <div class="overflow-x-auto">
@@ -573,28 +608,7 @@ export async function showManageBackupsModal(wikiId) {
                     </tr>
                 </thead>
                 <tbody>
-                    ${gameData.backups.sort((a, b) => b.date.localeCompare(a.date)).map(backup => {
-        const formattedDate = backup.date.replace(/(\d{4})-(\d{2})-(\d{2})_(\d{2})-(\d{2})/, '$1/$2/$3 $4:$5');
-        const backupSize = formatSize(backup.backup_size);
-        return `
-                            <tr class="bg-white border-b dark:bg-[#2d3748] dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">${formattedDate}</td>
-                                <td class="px-6 py-3">${backupSize}</td>
-                                <td class="px-6 py-3 text-center">
-                                    <div class="flex justify-center gap-2">
-                                        <button type="button" class="restore-backup-btn inline-flex items-center px-3 py-1 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors duration-150 dark:bg-blue-700 dark:hover:bg-blue-600" data-backup-date="${backup.date}">
-                                            <i class="fa-solid fa-arrow-left mr-1"></i>
-                                            ${restoreLabel}
-                                        </button>
-                                        <button type="button" class="delete-backup-btn inline-flex items-center px-3 py-1 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors duration-150 dark:bg-red-700 dark:hover:bg-red-600" data-backup-date="${backup.date}">
-                                            <i class="fa-solid fa-trash mr-1"></i>
-                                            ${deleteLabel}
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        `;
-    }).join('')}
+                    ${rowsHtml}
                 </tbody>
             </table>
         </div>
@@ -609,6 +623,78 @@ export async function showManageBackupsModal(wikiId) {
             closeManageBackupsModal();
             const backupDate = btn.dataset.backupDate;
             await restoreBackupInstance(backupDate, gameData);
+        });
+    });
+
+    // Add event listeners to permanent buttons
+    modalContent.querySelectorAll('.permanent-backup-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const backupDate = btn.dataset.backupDate;
+            const isPermanent = btn.dataset.isPermanent === 'true';
+            const newIsPermanent = !isPermanent;
+
+            const success = await window.api.invoke('toggle-permanent-backup', wikiId, backupDate, newIsPermanent);
+
+            if (success) {
+                // Update button state in modal
+                const row = btn.closest('tr');
+                const dateCell = row.querySelector('td:first-child');
+
+                if (newIsPermanent) {
+                    btn.dataset.isPermanent = 'true';
+                    btn.querySelector('i').textContent = '';
+                    btn.innerHTML = `<i class="fa-solid fa-star mr-1"></i>${removePermanentLabel}`;
+                    if (!dateCell.querySelector('.fa-star')) {
+                        dateCell.innerHTML = '<i class="fa-solid fa-star text-yellow-500 mr-2"></i>' + dateCell.innerHTML;
+                    }
+                } else {
+                    btn.dataset.isPermanent = 'false';
+                    btn.innerHTML = `<i class="fa-solid fa-star mr-1"></i>${makePermanentLabel}`;
+                    const starIcon = dateCell.querySelector('.fa-star');
+                    if (starIcon) {
+                        starIcon.closest('i').remove();
+                    }
+                }
+
+                // Update main table with star icon - check if ANY backup is permanent
+                const backupTableRow = document.querySelector(`#backup tbody tr[data-wiki-id="${wikiId}"]`);
+                const restoreTableRow = document.querySelector(`#restore tbody tr[data-wiki-id="${wikiId}"]`);
+                const hasAnyPermanentBackup = gameData.backups.some(backup => {
+                    const btn = modalContent.querySelector(`.permanent-backup-btn[data-backup-date="${backup.date}"]`);
+                    return btn && btn.dataset.isPermanent === 'true';
+                });
+                if (backupTableRow) {
+                    setIcon(backupTableRow, 'star', hasAnyPermanentBackup);
+                }
+                if (restoreTableRow) {
+                    setIcon(restoreTableRow, 'star', hasAnyPermanentBackup);
+                }
+                // Update restoreTableDataMap with the new permanent status so backup tab has the latest data
+                const restoreGameData = window.restoreTableDataMap.get(wikiId);
+                if (restoreGameData) {
+                    const backupToUpdate = restoreGameData.backups.find(b => b.date === backupDate);
+                    if (backupToUpdate) {
+                        backupToUpdate.is_permanent = newIsPermanent;
+                    }
+                }
+
+                // Re-sort table with permanent backups on top
+                const tbody = modalContent.querySelector('tbody');
+                const rows = Array.from(tbody.querySelectorAll('tr'));
+                rows.sort((a, b) => {
+                    const aIsPermanent = a.querySelector('.permanent-backup-btn').dataset.isPermanent === 'true';
+                    const bIsPermanent = b.querySelector('.permanent-backup-btn').dataset.isPermanent === 'true';
+                    if (aIsPermanent !== bIsPermanent) {
+                        return bIsPermanent - aIsPermanent;
+                    }
+                    // Then sort by date (newest first)
+                    const aDate = a.querySelector('.permanent-backup-btn').dataset.backupDate;
+                    const bDate = b.querySelector('.permanent-backup-btn').dataset.backupDate;
+                    return bDate.localeCompare(aDate);
+                });
+                rows.forEach(row => tbody.appendChild(row));
+            }
         });
     });
 

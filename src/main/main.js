@@ -337,7 +337,6 @@ ipcMain.handle('confirm-delete-backup', async (event, wikiId, backupDate) => {
         // If user clicked "Yes"
         if (response.response === 0) {
             fsOriginal.rmSync(backupPath, { recursive: true, force: true });
-            getMainWin().webContents.send('show-alert', 'success', i18next.t('alert.backup_deleted_success'));
             return true;
         }
 
@@ -346,6 +345,28 @@ ipcMain.handle('confirm-delete-backup', async (event, wikiId, backupDate) => {
     } catch (error) {
         console.error(`Error deleting backup ${backupDate} for id ${wikiId}:`, error.message);
         getMainWin().webContents.send('show-alert', 'error', i18next.t('alert.backup_delete_failed'));
+        return false;
+    }
+});
+
+ipcMain.handle('toggle-permanent-backup', async (event, wikiId, backupDate, isPermanent) => {
+    try {
+        const configFilePath = path.join(getSettings().backupPath, wikiId.toString(), backupDate, 'backup_info.json');
+
+        if (!fsOriginal.existsSync(configFilePath)) {
+            throw new Error('Backup config file not found');
+        }
+
+        const backupConfig = await fse.readJson(configFilePath);
+        backupConfig.is_permanent = isPermanent;
+        await fse.writeJson(configFilePath, backupConfig, { spaces: 4 });
+
+        return true;
+
+    } catch (error) {
+        console.error(`Error toggling permanent status for backup ${backupDate} for id ${wikiId}:`, error.message);
+        const failedKey = isPermanent ? 'alert.make_permanent_failed' : 'alert.remove_permanent_failed';
+        getMainWin().webContents.send('show-alert', 'error', i18next.t(failedKey));
         return false;
     }
 });
@@ -360,6 +381,7 @@ ipcMain.handle('get-status', () => {
 });
 
 ipcMain.on('update-status', (event, statusKey, statusValue) => {
+    console.log(`Updating status: ${statusKey} = ${statusValue}`);
     updateStatus(statusKey, statusValue);
 });
 

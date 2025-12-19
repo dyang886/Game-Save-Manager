@@ -1,5 +1,5 @@
 import { showAlert, showInfoModal, updateProgress, operationStartCheck } from './utility.js';
-import { spinner, showLoadingIndicator, hideLoadingIndicator, updateNewestBackupTime, addPinIcon, getPlatformIcon, formatSize, updateSelectedCountAndSize, setupSelectAllCheckbox, getSelectedWikiIds } from './commonTabs.js';
+import { spinner, showLoadingIndicator, hideLoadingIndicator, updateNewestBackupTime, getPlatformIcon, formatSize, updateSelectedCountAndSize, setupSelectAllCheckbox, getSelectedWikiIds, setIcon } from './commonTabs.js';
 
 const backupTableDataMap = new Map();
 window.backupTableDataMap = backupTableDataMap;
@@ -123,7 +123,14 @@ async function populateBackupTable(data, iconMap) {
 
             // Check if pinned
             if (isPinned) {
-                addPinIcon(row);
+                setIcon(row, 'pin', true);
+            }
+
+            // Check if any backup is permanent by looking at restore table data which has is_permanent
+            const restoreGameData = window.restoreTableDataMap && window.restoreTableDataMap.get(wikiId);
+            const hasPermamentBackup = restoreGameData && restoreGameData.backups && restoreGameData.backups.some(backup => backup.is_permanent);
+            if (hasPermamentBackup) {
+                setIcon(row, 'star', true);
             }
 
             tableBody.appendChild(row);
@@ -149,6 +156,9 @@ function createBackupTableRow(gameTitle, platformIcons, backupSize, newestBackup
             </div>
         </td>
         <th scope="row" class="pr-6 py-4 truncate font-medium text-gray-900 whitespace-nowrap dark:text-white">
+            <span data-icon="pin" class="hidden"><i class="fa-solid fa-thumbtack text-red-500 mr-2"></i></span>
+            <span data-icon="star" class="hidden"><i class="fa-solid fa-star text-yellow-500 mr-2"></i></span>
+            <span data-icon="timer" class="hidden"><i class="fa-solid fa-hourglass text-blue-500 mr-2"></i></span>
             ${gameTitle}
         </th>
         <td class="px-6 py-4 truncate">

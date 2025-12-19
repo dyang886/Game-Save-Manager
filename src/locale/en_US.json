@@ -36,6 +36,8 @@
         "backup": "Backup",
         "restore": "Restore",
         "delete": "Delete",
+        "make_permanent": "Make Permanent",
+        "remove_permanent": "Remove Permanent",
         "custom": "Custom Games",
         "game_name": "Game Name",
         "supported_plats": "Supported Platforms",
@@ -168,7 +170,8 @@
         "no_wiki_url": "No Wiki entry is available for this game",
         "confirm_delete_backup_title": "Confirm Delete Backup",
         "confirm_delete_backup_message": "Are you sure you want to delete the backup from {{backup_date}}? This action cannot be undone.",
-        "backup_deleted_success": "Backup deleted successfully",
-        "backup_delete_failed": "Failed to delete backup"
+        "backup_delete_failed": "Failed to delete backup",
+        "make_permanent_failed": "Failed to mark backup as permanent",
+        "remove_permanent_failed": "Failed to remove backup from permanent storage"
     }
 }
