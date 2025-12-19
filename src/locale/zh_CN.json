@@ -171,7 +171,6 @@
         "confirm_delete_backup_title": "确认删除备份",
         "confirm_delete_backup_message": "确定要删除 {{backup_date}} 的备份吗？此操作无法撤销。",
         "backup_delete_failed": "备份删除失败",
-        "make_permanent_failed": "标记备份为永久保存失败",
-        "remove_permanent_failed": "从永久保存中移除失败"
+        "backup_update_failed": "备份信息更新失败"
     }
 }

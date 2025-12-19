@@ -522,6 +522,45 @@ export function getSelectedWikiIds(tabName) {
     });
 }
 
+// Helper function for Backup Management Modal to update backup date display
+function updateBackupDateDisplay(backupDateDisplay, backupDate, customName, isPermanent) {
+    const formattedDate = backupDate.replace(/(\d{4})-(\d{1,2})-(\d{1,2})_(\d{1,2})-(\d{1,2})/, (match, year, month, day, hour, minute) => {
+        return `${year}/${String(month).padStart(2, '0')}/${String(day).padStart(2, '0')} ${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+    });
+
+    if (isPermanent) {
+        const permanentIcon = '<i class="fa-solid fa-star text-yellow-500 mr-2"></i>';
+        const renameIcon = `<button type="button" class="rename-backup-btn text-gray-400 hover:text-blue-500 transition-colors duration-150 ml-2" data-backup-date="${backupDate}"><i class="fa-solid fa-pencil"></i></button>`;
+
+        if (customName) {
+            backupDateDisplay.innerHTML = `${permanentIcon}<div class="flex flex-col"><span class="backup-custom-name font-medium">${customName}</span><span class="text-xs text-gray-500 dark:text-gray-400">${formattedDate}</span></div>${renameIcon}`;
+        } else {
+            backupDateDisplay.innerHTML = `${permanentIcon}<span class="backup-date-text">${formattedDate}</span>${renameIcon}`;
+        }
+    } else {
+        backupDateDisplay.innerHTML = `<span class="backup-date-text">${formattedDate}</span>`;
+    }
+}
+
+// Helper function for Backup Management Modal to attach rename button listener
+function attachRenameButtonListener(renameBtn) {
+    const row = renameBtn.closest('tr');
+    renameBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const renameMode = row.querySelector('.rename-mode');
+        const backupDateDisplay = row.querySelector('.backup-date-display');
+        const nameInput = row.querySelector('.backup-name-input');
+        const currentCustomName = row.getAttribute('data-custom-name');
+
+        renameMode.classList.remove('hidden');
+        renameMode.classList.add('flex');
+        backupDateDisplay.classList.add('hidden');
+        nameInput.value = currentCustomName || '';
+        nameInput.focus();
+        nameInput.select();
+    });
+}
+
 export async function showManageBackupsModal(wikiId) {
     const gamesList = await window.api.invoke('fetch-restore-table-data', wikiId);
 
@@ -574,8 +613,30 @@ export async function showManageBackupsModal(wikiId) {
             });
             const backupSize = formatSize(backup.backup_size);
             const permanentIcon = backup.is_permanent ? '<i class="fa-solid fa-star text-yellow-500 mr-2"></i>' : '';
-            return `<tr class="bg-white border-b dark:bg-[#2d3748] dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-600">
-                <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">${permanentIcon}${formattedDate}</td>
+            const renameIcon = backup.is_permanent ? `<button type="button" class="rename-backup-btn text-gray-400 hover:text-blue-500 transition-colors duration-150 ml-2" data-backup-date="${backup.date}"><i class="fa-solid fa-pencil"></i></button>` : '';
+
+            // Display logic: if permanent and has custom name, show custom name with date below; otherwise just show date
+            let dateDisplay;
+            if (backup.is_permanent && backup.custom_name) {
+                dateDisplay = `${permanentIcon}<div class="flex flex-col"><span class="backup-custom-name font-medium">${backup.custom_name}</span><span class="text-xs text-gray-500 dark:text-gray-400">${formattedDate}</span></div>${renameIcon}`;
+            } else {
+                dateDisplay = `${permanentIcon}<span class="backup-date-text">${formattedDate}</span>${renameIcon}`;
+            }
+
+            return `<tr class="bg-white border-b dark:bg-[#2d3748] dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-600" data-custom-name="${backup.custom_name || ''}">
+                <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">
+                    <div class="flex items-center">
+                        <div class="rename-mode hidden items-center bg-white dark:bg-gray-700 rounded-md border border-gray-300 dark:border-gray-600">
+                            <input type="text" class="backup-name-input pl-3 py-2 flex-1 min-w-0 bg-transparent border-0 text-gray-900 text-sm focus:outline-none dark:text-white" placeholder="Enter backup name" />
+                            <button type="button" class="confirm-rename-btn px-3 py-2 text-green-500 hover:text-green-600 transition-colors duration-150">
+                                <i class="fa-solid fa-check"></i>
+                            </button>
+                        </div>
+                        <div class="backup-date-display flex items-center">
+                            ${dateDisplay}
+                        </div>
+                    </div>
+                </td>
                 <td class="px-6 py-3">${backupSize}</td>
                 <td class="px-6 py-3 text-center">
                     <div class="flex justify-center gap-2">
@@ -634,36 +695,38 @@ export async function showManageBackupsModal(wikiId) {
             const isPermanent = btn.dataset.isPermanent === 'true';
             const newIsPermanent = !isPermanent;
 
-            const success = await window.api.invoke('toggle-permanent-backup', wikiId, backupDate, newIsPermanent);
+            const success = await window.api.invoke('update-backup-info', wikiId, backupDate, 'is_permanent', newIsPermanent);
 
             if (success) {
-                // Update button state in modal
                 const row = btn.closest('tr');
-                const dateCell = row.querySelector('td:first-child');
+                const backupDateDisplay = row.querySelector('.backup-date-display');
+                const customName = row.getAttribute('data-custom-name');
 
+                // Update star icon/custom name on modal
                 if (newIsPermanent) {
                     btn.dataset.isPermanent = 'true';
-                    btn.querySelector('i').textContent = '';
                     btn.innerHTML = `<i class="fa-solid fa-star mr-1"></i>${removePermanentLabel}`;
-                    if (!dateCell.querySelector('.fa-star')) {
-                        dateCell.innerHTML = '<i class="fa-solid fa-star text-yellow-500 mr-2"></i>' + dateCell.innerHTML;
+
+                    updateBackupDateDisplay(backupDateDisplay, backupDate, customName, true);
+
+                    const renameBtn = backupDateDisplay.querySelector('.rename-backup-btn');
+                    if (renameBtn) {
+                        attachRenameButtonListener(renameBtn);
                     }
                 } else {
                     btn.dataset.isPermanent = 'false';
                     btn.innerHTML = `<i class="fa-solid fa-star mr-1"></i>${makePermanentLabel}`;
-                    const starIcon = dateCell.querySelector('.fa-star');
-                    if (starIcon) {
-                        starIcon.closest('i').remove();
-                    }
+
+                    updateBackupDateDisplay(backupDateDisplay, backupDate, customName, false);
                 }
 
-                // Update main table with star icon - check if ANY backup is permanent
-                const backupTableRow = document.querySelector(`#backup tbody tr[data-wiki-id="${wikiId}"]`);
-                const restoreTableRow = document.querySelector(`#restore tbody tr[data-wiki-id="${wikiId}"]`);
+                // Show star icon on main tables if ANY permanent backups exist
                 const hasAnyPermanentBackup = gameData.backups.some(backup => {
                     const btn = modalContent.querySelector(`.permanent-backup-btn[data-backup-date="${backup.date}"]`);
                     return btn && btn.dataset.isPermanent === 'true';
                 });
+                const backupTableRow = document.querySelector(`#backup tbody tr[data-wiki-id="${wikiId}"]`);
+                const restoreTableRow = document.querySelector(`#restore tbody tr[data-wiki-id="${wikiId}"]`);
                 if (backupTableRow) {
                     setIcon(backupTableRow, 'star', hasAnyPermanentBackup);
                 }
@@ -715,6 +778,63 @@ export async function showManageBackupsModal(wikiId) {
         });
     });
 
+    // Add event listeners to rename buttons
+    modalContent.querySelectorAll('.rename-backup-btn').forEach(btn => {
+        attachRenameButtonListener(btn);
+    });
+
+    // Add event listeners to confirm rename buttons
+    modalContent.querySelectorAll('.confirm-rename-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const row = btn.closest('tr');
+            const backupDate = row.querySelector('.permanent-backup-btn').dataset.backupDate;
+            const nameInput = row.querySelector('.backup-name-input');
+            const newName = nameInput.value.trim();
+
+            const success = await window.api.invoke('update-backup-info', wikiId, backupDate, 'custom_name', newName);
+
+            if (success) {
+                row.setAttribute('data-custom-name', newName);
+                const renameMode = row.querySelector('.rename-mode');
+                const backupDateDisplay = row.querySelector('.backup-date-display');
+                updateBackupDateDisplay(backupDateDisplay, backupDate, newName, true);
+
+                renameMode.classList.add('hidden');
+                renameMode.classList.remove('flex');
+                backupDateDisplay.classList.remove('hidden');
+
+                // Update restoreTableDataMap with custom name
+                const restoreGameData = window.restoreTableDataMap && window.restoreTableDataMap.get(wikiId);
+                if (restoreGameData) {
+                    const backupToUpdate = restoreGameData.backups.find(b => b.date === backupDate);
+                    if (backupToUpdate) {
+                        backupToUpdate.custom_name = newName;
+                    }
+                }
+
+                // Re-attach rename button event listener
+                const newRenameBtn = backupDateDisplay.querySelector('.rename-backup-btn');
+                if (newRenameBtn) {
+                    attachRenameButtonListener(newRenameBtn);
+                }
+            }
+        });
+    });
+
+    // Add keydown listener to rename input fields to trigger confirm on Enter
+    modalContent.querySelectorAll('.backup-name-input').forEach(input => {
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const confirmBtn = input.closest('.rename-mode').querySelector('.confirm-rename-btn');
+                if (confirmBtn) {
+                    confirmBtn.click();
+                }
+            }
+        });
+    });
+
     // Show modal
     modal.classList.add('flex');
     modal.classList.remove('hidden');
@@ -753,6 +873,7 @@ async function restoreBackupInstance(backupDate, gameData) {
 
         const restoreFailed = error ? 1 : 0;
         updateProgress(restoreProgressId, restoreProgressTitle, 'end');
+        document.querySelector('#restore-tab').click();
         showRestoreSummary(1, restoreFailed, error, backupInstance.backup_size);
         document.querySelector('#restore-summary-done').classList.remove('hidden');
         restoreButton.disabled = false;

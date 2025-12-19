@@ -171,7 +171,6 @@
         "confirm_delete_backup_title": "Confirm Delete Backup",
         "confirm_delete_backup_message": "Are you sure you want to delete the backup from {{backup_date}}? This action cannot be undone.",
         "backup_delete_failed": "Failed to delete backup",
-        "make_permanent_failed": "Failed to mark backup as permanent",
-        "remove_permanent_failed": "Failed to remove backup from permanent storage"
+        "backup_update_failed": "Failed to update backup information"
     }
 }

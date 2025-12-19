@@ -68,7 +68,8 @@ async function fetchBackups(wikiIdFolderPath, wikiId, errors) {
                         zh_CN: backupConfig.zh_CN,
                         backup_size: backupSize,
                         backup_paths: backupConfig.backup_paths,
-                        is_permanent: backupConfig.is_permanent || false
+                        is_permanent: backupConfig.is_permanent || false,
+                        custom_name: backupConfig.custom_name || ''
                     });
 
                 } catch (err) {
