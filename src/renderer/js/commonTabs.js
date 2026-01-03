@@ -578,7 +578,12 @@ export async function showManageBackupsModal(wikiId) {
     const modalContent = document.getElementById('modal-manage-backups-content');
 
     // Set title
-    const gameTitle = gameData.title;
+    let gameTitle = gameData.title;
+    await window.api.invoke('get-settings').then((settings) => {
+        if (gameData.zh_CN && settings.language === 'zh_CN') { 
+            gameTitle = gameData.zh_CN;
+        }
+    });
     const backupCount = gameData.backups.length;
     const latestBackup = gameData.latest_backup;
     modalTitle.textContent = gameTitle;

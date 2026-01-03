@@ -68,7 +68,8 @@
         "export": "导出",
         "import": "导入",
         "gsmr-file-type": "GSMR 备份文件",
-        "scan_full": "完整数据库扫描"
+        "scan_full": "完整数据库扫描",
+        "view_account_ids": "查看账户 ID"
     },
     "summary": {
         "done": "完成",
@@ -171,6 +172,18 @@
         "confirm_delete_backup_title": "确认删除备份",
         "confirm_delete_backup_message": "确定要删除 {{backup_date}} 的备份吗？此操作无法撤销。",
         "backup_delete_failed": "备份删除失败",
-        "backup_update_failed": "备份信息更新失败"
+        "backup_update_failed": "备份信息更新失败",
+        "detected_accounts": "检测到的账户",
+        "backup_scope": "备份范围",
+        "current_account_only": "仅当前账户",
+        "all_accounts": "所有账户",
+        "no_accounts_detected": "未检测到账户",
+        "account_backup_note": "Steam ID3 和 Ubisoft ID 将用于备份当前账户。尽管进行了设置，大多数备份仍将用于所有用户，因为它们的备份路径不与 ID 关联或不在典型的 Steam/Ubisoft 保存位置下。",
+        "steam_user_id64": "Steam 用户 ID64",
+        "steam_user_id3": "Steam 用户 ID3",
+        "ubisoft_user_id": "Ubisoft 用户 ID",
+        "xbox_user_id": "Xbox 用户 ID",
+        "rockstar_user_id": "Rockstar 用户 ID",
+        "confirm": "确认"
     }
 }

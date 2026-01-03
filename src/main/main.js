@@ -13,7 +13,7 @@ const moment = require('moment');
 const { pinyin } = require('pinyin');
 
 const { createMainWindow, getMainWin, getNewestBackup, getStatus, updateStatus, checkAppUpdate, exportBackups, importBackups, osKeyMap, loadSettings, saveSettings, getSettings, moveFilesWithProgress, getCurrentVersion, getLatestVersion, updateApp } = require('./global');
-const { getGameData, initializeGameData, detectGamePaths } = require('./gameData');
+const { getGameData, initializeGameData, detectGamePaths, getAllUserIds } = require('./gameData');
 const { getGameDataFromDB, getAllGameDataFromDB, backupGame, updateDatabase } = require('./backup');
 const { getGameDataForRestore, restoreGame } = require("./restore");
 
@@ -267,6 +267,10 @@ ipcMain.handle('load-custom-entries', async () => {
     }
 });
 
+ipcMain.handle('get-account-data', () => {
+    return getAllUserIds();
+});
+
 ipcMain.handle('get-platform', () => {
     return osKeyMap[os.platform()];
 });
@@ -296,6 +300,10 @@ ipcMain.handle('fetch-backup-table-data', async (event, ignoreUninstalled) => {
     }
 
     return games;
+});
+
+ipcMain.on('update-backup-table', async (event) => {
+    getMainWin().webContents.send('update-backup-table');
 });
 
 ipcMain.handle('backup-game', async (event, gameObj) => {

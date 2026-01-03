@@ -43,7 +43,7 @@ window.api.receive('scan-full', async () => {
     }
 });
 
-async function updateBackupTable(loader) {
+export async function updateBackupTable(loader) {
     if (loader) {
         await showLoadingIndicator('backup');
     }

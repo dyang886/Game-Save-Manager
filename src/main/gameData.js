@@ -20,6 +20,10 @@ class GameData {
         this.currentSteamAccountName = null;
         this.currentSteamUserName = null;
         this.currentUbisoftUserId = null;
+        this.currentXboxUserId = null;
+        this.currentRockStarUserId = null;
+        this.currentGogUserId = null;
+        this.currentEAUserId = null;
 
         this.detectedGamePaths = [];
         this.detectedSteamGameIds = [];
@@ -78,10 +82,15 @@ class GameData {
         }
 
         console.log(
+            'Steam account name: ' + this.currentSteamAccountName + '\n' +
             'Steam user name: ' + this.currentSteamUserName + '\n' +
             'Steam id64: ' + this.currentSteamUserId64 + '\n' +
             'Steam id3: ' + this.currentSteamUserId3 + '\n' +
-            'Ubisoft user id: ' + this.currentUbisoftUserId
+            'Ubisoft user id: ' + this.currentUbisoftUserId + '\n' +
+            'Xbox user id: ' + this.currentXboxUserId + '\n' +
+            'Rockstar user id: ' + this.currentRockStarUserId + '\n' +
+            'GOG user id: ' + this.currentGogUserId + '\n' +
+            'EA user id: ' + this.currentEAUserId
         );
     }
 
@@ -174,6 +183,73 @@ class GameData {
         } else {
             console.log(`No Ubisoft users found at: ${saveGamesPath}`);
         }
+
+        // Get current Xbox user id
+        this.currentXboxUserId = await this.getRegistryValue(
+            WinReg.HKCU,
+            '\\Software\\Microsoft\\XboxLive',
+            'Xuid'
+        );
+
+        // Get current RockStar user id
+        const rStarProfilePath = path.join(process.env.USERPROFILE || os.homedir(), "Documents\\Rockstar Games\\Social Club\\Profiles");
+        if (fs.existsSync(rStarProfilePath)) {
+            try {
+                const userFolders = fs.readdirSync(rStarProfilePath, { withFileTypes: true })
+                    .filter(dirent => dirent.isDirectory())
+                    .map(dirent => dirent.name);
+
+                let latestUserId = null;
+                let latestTime = 0;
+
+                for (const userId of userFolders) {
+                    const userFolderPath = path.join(rStarProfilePath, userId);
+                    const userFolderTime = getLatestModificationTime(userFolderPath);
+
+                    if (userFolderTime > latestTime) {
+                        latestTime = userFolderTime;
+                        latestUserId = userId;
+                    }
+                }
+                this.currentRockStarUserId = latestUserId;
+            } catch (e) {
+                console.log('Error reading or parsing Rockstar savegames directory:', e);
+            }
+        }
+
+        // --- Normally unused ids ---
+        // Gog user id
+        this.currentGogUserId = await this.getRegistryValue(
+            WinReg.HKCU,
+            '\\Software\\GOG.com\\Galaxy\\settings',
+            'userId'
+        );
+
+        // EA user id
+        const eaSettingsPattern = path.join(
+            process.env.LOCALAPPDATA || path.join(process.env.USERPROFILE || os.homedir(), 'AppData', 'Local'),
+            'Electronic Arts',
+            'EA Desktop',
+            'user_*.ini'
+        );
+        const eaFiles = glob.sync(eaSettingsPattern.replace(/\\/g, '/'));
+        if (eaFiles.length > 0) {
+            const fileName = path.basename(eaFiles[0]);
+            const userIdMatch = fileName.match(/user_(.+)\.ini/);
+            if (userIdMatch) {
+                this.currentEAUserId = userIdMatch[1];
+            }
+        }
+    }
+
+    getAllUserIds() {
+        return {
+            steamId64: this.currentSteamUserId64,
+            steamId3: this.currentSteamUserId3,
+            ubisoftId: this.currentUbisoftUserId,
+            xboxId: this.currentXboxUserId,
+            rockStarId: this.currentRockStarUserId,
+        };
     }
 
     async detectGamePaths() {
@@ -333,5 +409,6 @@ module.exports = {
     getGameData: () => gameData,
     initializeGameData: async () => await gameData.initialize(),
     detectGamePaths: async () => await gameData.detectGamePaths(),
+    getAllUserIds: () => gameData.getAllUserIds(),
     getLatestModificationTime
 };

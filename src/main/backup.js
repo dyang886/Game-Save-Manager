@@ -16,7 +16,7 @@ const sqlite3 = require('sqlite3');
 const WinReg = require('winreg');
 
 const { getMainWin, getStatus, updateStatus, getSignedDownloadUrl, getGameDisplayName, calculateDirectorySize, ensureWritable, getNewestBackup, fsOriginalCopyFolder, placeholder_mapping, osKeyMap, getSettings, saveSettings } = require('./global');
-const { getGameData } = require('./gameData');
+const { getGameData, getAllUserIds } = require('./gameData');
 
 const execPromise = util.promisify(exec);
 
@@ -321,34 +321,15 @@ async function process_game(db_game_row) {
 
     if (osKey && db_game_row.save_location[osKey]) {
         for (const templatedPath of db_game_row.save_location[osKey]) {
-            const resolvedPath = await resolveTemplatedBackupPath(templatedPath, db_game_row.install_path);
+            const resolvedPathObjs = await resolveTemplatedBackupPath(templatedPath, db_game_row.install_path, false);
 
-            // Check whether the resolved path actually exists then calculate size
-            if (resolvedPath.path.includes('*')) {
-                const files = glob.sync(resolvedPath.path.replace(/\\/g, '/'));
-                for (const filePath of files) {
-                    if (fsOriginal.existsSync(filePath)) {
-                        const backupSize = calculateDirectorySize(filePath);
-                        if (backupSize > 0) {
-                            totalBackupSize += backupSize;
-                            resolved_paths.push({
-                                template: templatedPath,
-                                resolved: path.normalize(filePath),
-                                uid: resolvedPath.uid
-                            });
-                        }
-                    }
-                }
-            } else {
-                if (fsOriginal.existsSync(resolvedPath.path)) {
-                    const backupSize = calculateDirectorySize(resolvedPath.path);
+            // Process each resolved path object
+            for (const resolvedPathObj of resolvedPathObjs) {
+                if (fsOriginal.existsSync(resolvedPathObj.resolved)) {
+                    const backupSize = calculateDirectorySize(resolvedPathObj.resolved);
                     if (backupSize > 0) {
                         totalBackupSize += backupSize;
-                        resolved_paths.push({
-                            template: templatedPath,
-                            resolved: path.normalize(resolvedPath.path),
-                            uid: resolvedPath.uid
-                        });
+                        resolved_paths.push(resolvedPathObj);
                     }
                 }
             }
@@ -358,38 +339,41 @@ async function process_game(db_game_row) {
     // Process registry paths
     if (osKey === 'win' && db_game_row.save_location['reg'] && db_game_row.save_location['reg'].length > 0) {
         for (const templatedPath of db_game_row.save_location['reg']) {
-            const resolvedPath = await resolveTemplatedBackupPath(templatedPath, null);
+            const resolvedPathObjs = await resolveTemplatedBackupPath(templatedPath, null, true);
 
-            const normalizedRegPath = path.normalize(resolvedPath.path);
-            const { hive, key } = parseRegistryPath(normalizedRegPath);
-            const winRegHive = getWinRegHive(hive);
-            if (!winRegHive) {
-                continue;
-            }
+            // Process each resolved registry path object
+            for (const resolvedPathObj of resolvedPathObjs) {
+                const normalizedRegPath = path.normalize(resolvedPathObj.resolved);
+                const { hive, key } = parseRegistryPath(normalizedRegPath);
+                const winRegHive = getWinRegHive(hive);
+                if (!winRegHive) {
+                    continue;
+                }
 
-            const registryKey = new WinReg({
-                hive: winRegHive,
-                key: key
-            });
-
-            await new Promise((resolve, reject) => {
-                registryKey.keyExists((err, exists) => {
-                    if (err) {
-                        getMainWin().webContents.send('show-alert', 'error', `${i18next.t('alert.registry_existence_check_failed')}: ${db_game_row.title}`);
-                        console.error(`Error checking registry existence for ${db_game_row.title}: ${err}`);
-                        return reject(err);
-                    }
-                    if (exists) {
-                        resolved_paths.push({
-                            template: templatedPath,
-                            resolved: normalizedRegPath,
-                            uid: resolvedPath.uid,
-                            type: 'reg'
-                        });
-                    }
-                    resolve();
+                const registryKey = new WinReg({
+                    hive: winRegHive,
+                    key: key
                 });
-            });
+
+                await new Promise((resolve, reject) => {
+                    registryKey.keyExists((err, exists) => {
+                        if (err) {
+                            getMainWin().webContents.send('show-alert', 'error', `${i18next.t('alert.registry_existence_check_failed')}: ${db_game_row.title}`);
+                            console.error(`Error checking registry existence for ${db_game_row.title}: ${err}`);
+                            return reject(err);
+                        }
+                        if (exists) {
+                            resolved_paths.push({
+                                template: resolvedPathObj.template,
+                                finalTemplate: resolvedPathObj.finalTemplate,
+                                resolved: normalizedRegPath,
+                                type: 'reg'
+                            });
+                        }
+                        resolve();
+                    });
+                });
+            }
         }
     }
 
@@ -419,80 +403,186 @@ function parseRegistryPath(registryPath) {
     return { hive, key };
 }
 
-// Resolves the templated path to the actual path based on the save_path_mapping
-async function resolveTemplatedBackupPath(templatedPath, gameInstallPath) {
+async function resolveTemplatedBackupPath(templatedPath, gameInstallPath, isRegistry = false) {
+    // Track placeholder→value mappings for later reconstruction of finalTemplate
+    const placeholderMappings = {};
+
+    // Replace all non-uid placeholders while tracking mappings
     let basePath = templatedPath.replace(/\{\{p\|[^\}]+\}\}/gi, match => {
         const normalizedMatch = match.toLowerCase().replace(/\\/g, '/');
 
+        let replacement = normalizedMatch;
         if (normalizedMatch === '{{p|game}}') {
-            return gameInstallPath;
+            replacement = gameInstallPath;
         } else if (normalizedMatch === '{{p|steam}}') {
-            return getGameData().steamPath;
+            replacement = getGameData().steamPath;
         } else if (normalizedMatch === '{{p|uplay}}' || normalizedMatch === '{{p|ubisoftconnect}}') {
-            return getGameData().ubisoftPath;
+            replacement = getGameData().ubisoftPath;
         } else if (normalizedMatch === '{{p|uid}}') {
-            // Defer handling of {{p|uid}} to the next step
+            // Defer handling of {{p|uid}} - leave it as is
             return '{{p|uid}}';
+        } else if (placeholder_mapping[normalizedMatch]) {
+            replacement = placeholder_mapping[normalizedMatch];
         }
 
-        return placeholder_mapping[normalizedMatch] || match;
+        // Track this mapping if it was actually resolved
+        if (replacement !== normalizedMatch) {
+            placeholderMappings[normalizedMatch] = replacement;
+        }
+
+        return replacement;
     });
 
-    // Final check for unresolved placeholders, but ignore {{p|uid}}
+    // Final check for unresolved placeholders (except uid)
     if (/\{\{p\|[^\}]+\}\}/i.test(basePath.toLowerCase().replace(/\{\{p\|uid\}\}/gi, ''))) {
         console.warn(`Unresolved placeholder found in path: ${basePath}`);
-        return { path: '' };
+        return [];
     }
 
-    // Handle {{p|uid}}
-    if (basePath.includes('{{p|uid}}')) {
-        return await fillPathUid(basePath);
-    } else {
-        return { path: basePath };
+    // If it's a registry path, return directly without uid/wildcard processing
+    if (isRegistry) {
+        return [{
+            template: templatedPath,
+            finalTemplate: basePath,
+            resolved: basePath
+        }];
     }
+
+    // For file paths, pass to fillPathUid to handle uid and wildcards
+    return await fillPathUid(templatedPath, basePath, placeholderMappings);
 }
 
-async function fillPathUid(basePath) {
-    const userIds = [getGameData().currentSteamUserId64, getGameData().currentSteamUserId3, getGameData().currentUbisoftUserId];
+async function fillPathUid(templatedPath, basePath, placeholderMappings) {
+    function escapeRegExp(string) {
+        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+    // Helper function to create finalTemplate by reversing placeholder mappings
+    function createFinalTemplate(resolvedPath) {
+        let finalTemplate = resolvedPath.replace(/\\/g, '/');
+        const sortedMappings = Object.entries(placeholderMappings)
+            .sort((a, b) => b[1].length - a[1].length);
 
-    // Check with pre-determined user ids
-    for (const uid of userIds) {
-        const resolvedPath = basePath.replace(/\{\{p\|uid\}\}/gi, uid);
-        const matchedPaths = glob.sync(resolvedPath.replace(/\\/g, '/'));
+        for (const [placeholder, resolvedValue] of sortedMappings) {
+            const normalizedValue = resolvedValue.replace(/\\/g, '/');
+            const escapedValue = escapeRegExp(normalizedValue);
+            const regex = new RegExp(escapedValue, 'gi');
+            finalTemplate = finalTemplate.replace(regex, placeholder);
+        }
 
-        if (matchedPaths.length > 0) {
-            // Found a valid path with current known user ids (from steam and ubisoft)
-            return {
-                path: resolvedPath,
-                uid: uid,
-            };
+        return finalTemplate;
+    }
+
+    // Helper function to generate all combinations of UIDs for a given number of {{p|uid}}
+    function generateUidCombinations(count, allUids) {
+        if (count === 0) return [[]];
+        if (count === 1) return allUids.map(uid => [uid]);
+
+        const smaller = generateUidCombinations(count - 1, allUids);
+        const result = [];
+        for (const combo of smaller) {
+            for (const uid of allUids) {
+                result.push([...combo, uid]);
+            }
+        }
+        return result;
+    }
+
+    // Helper function to try glob on a path and return valid paths
+    function tryGlobAndReturnPaths(testPath) {
+        const files = glob.sync(testPath.replace(/\\/g, '/'));
+        if (files.length > 0) {
+            return files
+                .filter(filePath => fsOriginal.existsSync(filePath))
+                .map(filePath => ({
+                    template: templatedPath,
+                    finalTemplate: createFinalTemplate(filePath),
+                    resolved: filePath
+                }));
+        }
+        return null;
+    }
+
+    // 1. If there's no uid placeholder, just handle wildcards
+    if (!basePath.includes('{{p|uid}}')) {
+        const result = tryGlobAndReturnPaths(basePath);
+        return result || [];
+    }
+
+    const steamPath = getGameData().steamPath;
+    const ubisoftPath = getGameData().ubisoftPath;
+    const steamUid = getGameData().currentSteamUserId3;
+    const ubisoftUid = getGameData().currentUbisoftUserId;
+
+    // Helper to apply context-aware UID replacement using regex
+    const applyContextReplacement = (pathStr, fullPattern, uidValue) => {
+        if (!fullPattern || !uidValue) return pathStr;
+
+        const normalizedPattern = fullPattern.replace(/\\/g, '/');
+        const normalizedPath = pathStr.replace(/\\/g, '/');
+
+        const escapedPattern = escapeRegExp(normalizedPattern);
+        const regex = new RegExp(escapedPattern, 'gi');
+
+        const replacement = normalizedPattern.replace(/\{\{p\|uid\}\}/gi, uidValue);
+        return normalizedPath.replace(regex, replacement);
+    };
+
+    // 2. Apply context-aware replacements
+    let contextAwarePath = basePath;
+    if (!getSettings().backupAllAccounts) {
+        contextAwarePath = applyContextReplacement(contextAwarePath, `${steamPath}/userdata/{{p|uid}}`, steamUid);
+        contextAwarePath = applyContextReplacement(contextAwarePath, `${ubisoftPath}/savegames/{{p|uid}}`, ubisoftUid);
+    }
+
+    // If both placeholders are context-aware, try glob directly
+    if (!contextAwarePath.includes('{{p|uid}}')) {
+        const result = tryGlobAndReturnPaths(contextAwarePath);
+        return result || [];
+    }
+
+    // 3. Count and guess remaining {{p|uid}} placeholders
+    const uidMatches = contextAwarePath.match(/\{\{p\|uid\}\}/gi);
+    const uidCount = uidMatches ? uidMatches.length : 0;
+
+    if (uidCount === 0) {
+        // All UIDs were context-aware, handled above
+        return [];
+    }
+
+    const uidValues = Object.values(getAllUserIds()).filter(uid => uid && uid !== 'N/A' && uid !== null && uid !== undefined);
+    const uidCombinations = generateUidCombinations(uidCount, uidValues);
+
+    for (const uidCombo of uidCombinations) {
+        let testPath = contextAwarePath;
+
+        // Replace each {{p|uid}} with the corresponding uid from the combination
+        let uidIndex = 0;
+        testPath = testPath.replace(/\{\{p\|uid\}\}/gi, () => {
+            const uid = uidCombo[uidIndex];
+            uidIndex++;
+            return uid;
+        });
+
+        const result = tryGlobAndReturnPaths(testPath);
+        if (result) {
+            return result;
         }
     }
 
-    // Exclude steam and ubisoft userdata save paths (to process current user only)
-    const steamSavePathPattern = `${getGameData().steamPath}/userdata/{{p|uid}}`.replace(/\\/g, '/');
-    const ubisoftSavePathPattern = `${getGameData().ubisoftPath}/savegames/{{p|uid}}`.replace(/\\/g, '/');
-    const normalizedBasePath = basePath.replace(/\\/g, '/');
-
-    if (normalizedBasePath.toLowerCase().includes(steamSavePathPattern.toLowerCase()) ||
-        normalizedBasePath.toLowerCase().includes(ubisoftSavePathPattern.toLowerCase())) {
-        return { path: '' };
-    }
-
-    // If no valid paths found with userIds, attempt wildcard for uid
+    // 4. Final fallback: wildcard matching for uid
     const wildcardPath = basePath.replace(/\{\{p\|uid\}\}/gi, '*');
     const wildcardResolvedPaths = glob.sync(wildcardPath.replace(/\\/g, '/'));
 
     if (wildcardResolvedPaths.length === 0) {
-        return { path: '' };
+        return [];
     }
 
     const latestPath = await findLatestModifiedPath(wildcardResolvedPaths);
-    const extractedUid = extractUidFromPath(basePath, latestPath);
-    return {
-        path: basePath.replace(/\{\{p\|uid\}\}/gi, extractedUid),
-        uid: extractedUid,
-    };
+    return [{
+        template: templatedPath,
+        finalTemplate: createFinalTemplate(latestPath),
+        resolved: latestPath
+    }];
 }
 
 // Find the latest modified path
@@ -509,21 +599,6 @@ async function findLatestModifiedPath(paths) {
     }
 
     return latestPath;
-}
-
-// Extract the uid from the resolved path based on the template path
-function extractUidFromPath(templatePath, resolvedPath) {
-    const templateParts = templatePath.split(path.sep);
-    const resolvedParts = resolvedPath.split(path.sep);
-
-    // Find where {{p|uid}} appears in the template and extract the corresponding part from the resolved path
-    const uidIndex = templateParts.findIndex(part => part.includes('{{p|uid}}'));
-
-    if (uidIndex !== -1 && resolvedParts[uidIndex]) {
-        return resolvedParts[uidIndex];
-    }
-
-    return null;
 }
 
 async function backupGame(gameObj) {
@@ -556,7 +631,7 @@ async function backupGame(gameObj) {
 
                 backupConfig.backup_paths.push({
                     folder_name: pathFolderName,
-                    template: resolvedPathObj.template,
+                    template: resolvedPathObj.finalTemplate,
                     type: 'reg',
                     install_folder: gameObj.install_folder || null
                 });
@@ -578,7 +653,7 @@ async function backupGame(gameObj) {
 
                 backupConfig.backup_paths.push({
                     folder_name: pathFolderName,
-                    template: finalizeTemplate(resolvedPathObj.template, resolvedPathObj.resolved, resolvedPathObj.uid, gameObj.install_path),
+                    template: resolvedPathObj.finalTemplate,
                     type: dataType,
                     install_folder: gameObj.install_folder || null
                 });
@@ -619,101 +694,6 @@ async function backupGame(gameObj) {
     }
 
     return null;
-}
-
-// Replace wildcards and uid by finding the corresponding components in resolved path
-function finalizeTemplate(template, resolvedPath, uid, gameInstallPath) {
-    function splitTemplatePath(templatePath) {
-        const tokens = [];
-        let currentToken = '';
-        let i = 0;
-        let inPlaceholder = false;
-
-        while (i < templatePath.length) {
-            // If we're not already in a placeholder and we see the start marker, enter placeholder mode.
-            if (!inPlaceholder && templatePath.substr(i, 2) === '{{') {
-                inPlaceholder = true;
-                currentToken += '{{';
-                i += 2;
-                continue;
-            }
-
-            // If we're in a placeholder and we see the end marker, exit placeholder mode.
-            if (inPlaceholder && templatePath.substr(i, 2) === '}}') {
-                inPlaceholder = false;
-                currentToken += '}}';
-                i += 2;
-                continue;
-            }
-
-            // If we're not inside a placeholder and we encounter a path separator, flush the current token and skip any consecutive separators.
-            if (!inPlaceholder && (templatePath[i] === '\\' || templatePath[i] === '/')) {
-                if (currentToken) {
-                    tokens.push(currentToken);
-                    currentToken = '';
-                }
-                while (i < templatePath.length && (templatePath[i] === '\\' || templatePath[i] === '/')) {
-                    i++;
-                }
-                continue;
-            }
-
-            // Append the current character to the token.
-            currentToken += templatePath[i];
-            i++;
-        }
-
-        if (currentToken) {
-            tokens.push(currentToken);
-        }
-        return tokens;
-    }
-
-    const templateParts = splitTemplatePath(template);
-    let resolvedParts = resolvedPath.split(path.sep);
-
-    let resultParts = [];
-    let resolvedIndex = 0;
-
-    for (let i = 0; i < templateParts.length; i++) {
-        const currentPart = templateParts[i]
-
-        // Process placeholders
-        if (/\{\{p\|[^\}]+\}\}/gi.test(currentPart)) {
-            let pathMapping = '';
-            const placeholder = currentPart.replace(/\\/g, '/').toLowerCase();
-
-            if (placeholder.includes('{{p|game}}')) {
-                pathMapping = placeholder.replace('{{p|game}}', gameInstallPath);
-            } else if (placeholder.includes('{{p|steam}}')) {
-                pathMapping = placeholder.replace('{{p|steam}}', getGameData().steamPath);
-            } else if (/\{\{p\|(uplay|ubisoftconnect)\}\}/.test(placeholder)) {
-                pathMapping = placeholder.replace(/\{\{p\|(uplay|ubisoftconnect)\}\}/, getGameData().ubisoftPath);
-            } else if (placeholder.includes('{{p|uid}}')) {
-                resultParts.push(placeholder.replace('{{p|uid}}', uid));
-                resolvedIndex++;
-                continue;
-            } else {
-                pathMapping = placeholder_mapping[placeholder];
-            }
-
-            resultParts.push(placeholder);
-            const splittedPathMapping = pathMapping.split(path.sep);
-            resolvedIndex += splittedPathMapping.length;
-
-            // Process wildcards
-        } else if (currentPart.includes('*')) {
-            resultParts.push(resolvedParts[resolvedIndex]);
-            resolvedIndex++;
-
-            // Process normal path elements
-        } else {
-            resultParts.push(currentPart);
-            resolvedIndex++;
-        }
-    }
-
-    return path.join(...resultParts);
 }
 
 async function updateDatabase() {

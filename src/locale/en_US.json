@@ -68,7 +68,8 @@
         "export": "Export",
         "import": "Import",
         "gsmr-file-type": "GSMR Backup File",
-        "scan_full": "Database Full Scan"
+        "scan_full": "Database Full Scan",
+        "view_account_ids": "View Account IDs"
     },
     "summary": {
         "done": "Done",
@@ -171,6 +172,18 @@
         "confirm_delete_backup_title": "Confirm Delete Backup",
         "confirm_delete_backup_message": "Are you sure you want to delete the backup from {{backup_date}}? This action cannot be undone.",
         "backup_delete_failed": "Failed to delete backup",
-        "backup_update_failed": "Failed to update backup information"
+        "backup_update_failed": "Failed to update backup information",
+        "detected_accounts": "Detected Accounts",
+        "backup_scope": "Backup Scope",
+        "current_account_only": "Current Account Only",
+        "all_accounts": "All Accounts",
+        "no_accounts_detected": "No accounts detected",
+        "account_backup_note": "Steam ID3 and Ubisoft ID will be used for backing up current accounts. Most backups will still be for all users though despite the settings due to their backup paths not associated with an id or they are not under typical Steam/Ubisoft save locations.",
+        "steam_user_id64": "Steam User ID64",
+        "steam_user_id3": "Steam User ID3",
+        "ubisoft_user_id": "Ubisoft User ID",
+        "xbox_user_id": "Xbox User ID",
+        "rockstar_user_id": "Rockstar User ID",
+        "confirm": "Confirm"
     }
 }

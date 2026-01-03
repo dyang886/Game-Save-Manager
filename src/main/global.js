@@ -58,7 +58,9 @@ const initializeMenu = () => {
                                 },
                             });
 
-                            // settingsWin.webContents.openDevTools();
+                            if (!app.isPackaged) {
+                                settingsWin.webContents.openDevTools({ mode: "detach" });
+                            }
                             settingsWin.setMenuBarVisibility(false);
                             settingsWin.loadFile(path.join(__dirname, "../renderer/settings.html"));
 
@@ -68,6 +70,12 @@ const initializeMenu = () => {
                         } else {
                             settingsWin.focus();
                         }
+                    },
+                },
+                {
+                    label: i18next.t("main.view_account_ids"),
+                    click() {
+                        win.webContents.send("view_account_ids");
                     },
                 },
                 {
@@ -94,7 +102,9 @@ const initializeMenu = () => {
                                 },
                             });
 
-                            // aboutWin.webContents.openDevTools();
+                            if (!app.isPackaged) {
+                                aboutWin.webContents.openDevTools({ mode: "detach" });
+                            }
                             aboutWin.setMenuBarVisibility(false);
                             aboutWin.loadFile(path.join(__dirname, "../renderer/about.html"));
 
@@ -138,7 +148,9 @@ const createMainWindow = async () => {
         },
     });
 
-    win.webContents.openDevTools();
+    if (!app.isPackaged) {
+        win.webContents.openDevTools({ mode: "detach" });
+    }
     win.loadFile(path.join(__dirname, "../renderer/index.html"));
     const menu = Menu.buildFromTemplate(initializeMenu());
     Menu.setApplicationMenu(menu);
@@ -697,6 +709,7 @@ const loadSettings = () => {
         maxBackups: 5,
         autoAppUpdate: true,
         autoDbUpdate: false,
+        backupAllAccounts: false,
         saveUninstalledGames: true,
         gameInstalls: 'uninitialized',
         pinnedGames: [],
