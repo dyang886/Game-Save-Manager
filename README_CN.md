@@ -8,7 +8,7 @@
     <img src="src/assets/logo.png" alt="Game Save Manager logo" width="250" />
 </div>
 
-**获取更多信息，请访问我们的官方网站 [https://gamezonelabs.com](https://gamezonelabs.com)。**
+**获取更多信息，请访问我们的官方网站 https://gamezonelabs.com。**
 
 不要再盲目信任云同步了。**Game Save Manager (GSM)** 将你在 Steam、Epic 以及自定义位置的游戏存档安全地集中在一个地方。自动检测已安装的游戏，维护带有版本历史的备份，并支持一键恢复你的游戏进度。
 
