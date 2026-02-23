@@ -589,6 +589,7 @@ export async function showManageBackupsModal(wikiId) {
     const deleteLabel = await window.i18n.translate('main.delete');
     const makePermanentLabel = await window.i18n.translate('main.make_permanent');
     const removePermanentLabel = await window.i18n.translate('main.remove_permanent');
+    const enterBackupNameLabel = await window.i18n.translate('main.enter_backup_name');
     const openBackupFolderLabel = await window.i18n.translate('main.open_backup_folder');
     const browseLocalSaveLabel = await window.i18n.translate('main.browse_local_save');
     const deleteLocalSaveLabel = await window.i18n.translate('main.delete_local_save');
@@ -621,7 +622,7 @@ export async function showManageBackupsModal(wikiId) {
                 <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">
                     <div class="flex items-center">
                         <div class="rename-mode hidden items-center bg-white dark:bg-gray-700 rounded-md border border-gray-300 dark:border-gray-600">
-                            <input type="text" class="backup-name-input pl-3 py-2 flex-1 min-w-0 bg-transparent border-0 text-gray-900 text-sm focus:outline-none dark:text-white" placeholder="Enter backup name" />
+                            <input type="text" class="backup-name-input pl-3 py-2 flex-1 min-w-0 bg-transparent border-0 text-gray-900 text-sm focus:outline-none dark:text-white placeholder-gray-500 dark:placeholder-gray-400" placeholder="${enterBackupNameLabel}" />
                             <button type="button" class="confirm-rename-btn px-3 py-2 text-green-500 hover:text-green-600 transition-colors duration-150">
                                 <i class="fa-solid fa-check"></i>
                             </button>

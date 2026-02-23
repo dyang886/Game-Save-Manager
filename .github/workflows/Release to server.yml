@@ -35,23 +35,27 @@ jobs:
         run: |
           gh release download ${{ github.event.release.tag_name }} --pattern "${{ steps.get_version.outputs.local_installer_name }}"
 
-      - name: Delete previous installer from S3
+      - name: Delete previous stable installers from S3
         env:
           S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
           S3_GSM_PREFIX: "GSM"
         run: |
-          aws s3 rm "s3://${S3_BUCKET_NAME}/${S3_GSM_PREFIX}/" --recursive --exclude "*" --include "Game Save Manager Setup*.exe"
-          echo "Previous installers deleted from s3://${S3_BUCKET_NAME}/${S3_GSM_PREFIX}/"
+          aws s3 rm "s3://${S3_BUCKET_NAME}/${S3_GSM_PREFIX}/" \
+            --recursive \
+            --exclude "*" \
+            --include "Game Save Manager Setup*.exe" \
+            --exclude "*beta*"
+          echo "Previous stable installers deleted from s3://${S3_BUCKET_NAME}/${S3_GSM_PREFIX}/"
 
       - name: Upload new installer to AWS S3
         env:
           S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
-          S3_GCM_PREFIX: "GSM"
+          S3_GSM_PREFIX: "GSM"
         run: |
           LOCAL_INSTALLER_NAME="${{ steps.get_version.outputs.local_installer_name }}"
           SERVER_INSTALLER_NAME="${{ steps.get_version.outputs.server_installer_name }}"
-          aws s3 cp "./${LOCAL_INSTALLER_NAME}" "s3://${S3_BUCKET_NAME}/${S3_GCM_PREFIX}/${SERVER_INSTALLER_NAME}"
-          echo "'${LOCAL_INSTALLER_NAME}' uploaded to s3://${S3_BUCKET_NAME}/${S3_GCM_PREFIX}/"
+          aws s3 cp "./${LOCAL_INSTALLER_NAME}" "s3://${S3_BUCKET_NAME}/${S3_GSM_PREFIX}/${SERVER_INSTALLER_NAME}"
+          echo "'${LOCAL_INSTALLER_NAME}' uploaded to s3://${S3_BUCKET_NAME}/${S3_GSM_PREFIX}/"
 
       - name: Create CloudFront Invalidation
         env:

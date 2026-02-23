@@ -149,7 +149,7 @@ function createBackupTableRow(gameTitle, platformIcons, backupSize, newestBackup
     row.setAttribute('data-wiki-id', wikiPageId);
     row.classList.add('bg-white', 'border-b', 'dark:bg-gray-800', 'dark:border-gray-700', 'hover:bg-gray-50', 'dark:hover:bg-gray-600');
     row.innerHTML = `
-        <td class="w-4 py-4 pl-4">
+        <td class="py-4 pl-4">
             <div class="flex items-center">
                 <input type="checkbox" class="row-checkbox w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:outline-hidden dark:bg-gray-700 dark:border-gray-600">
                 <label class="sr-only">checkbox</label>
