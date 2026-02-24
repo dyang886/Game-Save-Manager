@@ -55,6 +55,7 @@
         "restore_in_progress": "Restore in progress...",
         "backup_complete": "Backup Complete",
         "restore_complete": "Restore Complete",
+        "export_complete": "Export Complete",
         "no_backups": "No backups",
         "view_wiki": "View on PCGamingWiki",
         "pin_on_top": "Pin on top",
@@ -69,6 +70,8 @@
         "restore_selected": "Restore Selected Games",
         "update_database": "Update Database",
         "export": "Export",
+        "export_selected": "Export Selected Games",
+        "export_in_progress": "Exporting...",
         "import": "Import",
         "gsmr-file-type": "GSMR Backup File",
         "scan_full": "Database Full Scan",
@@ -79,11 +82,15 @@
         "total_games_backed_up": "Total games backed up:",
         "total_backup_failed": "Failed to backup {{failed_count}} game(s)",
         "total_restore_failed": "Failed to restore {{failed_count}} game(s)",
+        "total_games_exported": "Total games exported:",
+        "total_export_failed": "Failed to export {{failed_count}} game(s)",
         "total_backup_size": "Total backup size:",
         "backup_saved_to": "Backup saved to:",
         "total_games_restored": "Total games restored:",
         "total_restore_size": "Total restore size:",
-        "restored_from": "Restored from:"
+        "restored_from": "Restored from:",
+        "total_export_size": "Total export size: {{size}}",
+        "exported_to": "Exported to:"
     },
     "custom": {
         "save_all": "Save All",

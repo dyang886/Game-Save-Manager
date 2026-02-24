@@ -55,6 +55,7 @@
         "restore_in_progress": "还原中...",
         "backup_complete": "备份完成",
         "restore_complete": "还原完成",
+        "export_complete": "导出完成",
         "no_backups": "暂无备份",
         "view_wiki": "在 PCGamingWiki 上查看",
         "pin_on_top": "置顶",
@@ -69,6 +70,8 @@
         "restore_selected": "还原选中的游戏",
         "update_database": "更新数据库",
         "export": "导出",
+        "export_selected": "导出选中的游戏",
+        "export_in_progress": "导出中...",
         "import": "导入",
         "gsmr-file-type": "GSMR 备份文件",
         "scan_full": "完整数据库扫描",
@@ -79,11 +82,15 @@
         "total_games_backed_up": "备份游戏总数：",
         "total_backup_failed": "{{failed_count}} 个游戏备份失败",
         "total_restore_failed": "{{failed_count}} 个游戏还原失败",
+        "total_games_exported": "导出游戏总数：",
+        "total_export_failed": "{{failed_count}} 个游戏导出失败",
         "total_backup_size": "备份总大小：",
         "backup_saved_to": "备份保存至：",
         "total_games_restored": "还原游戏总数：",
         "total_restore_size": "还原总大小：",
-        "restored_from": "从此处还原："
+        "restored_from": "从此处还原：",
+        "total_export_size": "导出总大小：{{size}}",
+        "exported_to": "导出至："
     },
     "custom": {
         "save_all": "保存全部",

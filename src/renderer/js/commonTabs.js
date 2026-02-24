@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeTabs();
     setupSearchFilter('backup');
     setupSearchFilter('restore');
+    setupSearchFilter('export');
     setDropDownAction();
 });
 
@@ -13,6 +14,7 @@ window.api.receive('apply-language', () => {
     updateTranslations(document);
     updateSelectedCountAndSize('backup');
     updateSelectedCountAndSize('restore');
+    updateSelectedCountAndSize('export');
 });
 
 export const spinner = `
@@ -30,6 +32,7 @@ function initializeTabs() {
     const tabElements = [
         { id: 'backup', triggerEl: document.querySelector('#backup-tab'), targetEl: document.querySelector('#backup') },
         { id: 'restore', triggerEl: document.querySelector('#restore-tab'), targetEl: document.querySelector('#restore') },
+        { id: 'export', triggerEl: document.querySelector('#export-tab'), targetEl: document.querySelector('#export') },
         { id: 'custom', triggerEl: document.querySelector('#custom-tab'), targetEl: document.querySelector('#custom') },
     ];
 
@@ -179,12 +182,21 @@ export async function updateNewestBackupTime(tabName, wikiId) {
             newestBackupCell.textContent = newestBackupTime;
         }
 
-        const dataMap = tabName === 'backup' ? backupTableDataMap : restoreTableDataMap;
+        let dataMap;
+        if (tabName === 'backup') {
+            dataMap = backupTableDataMap;
+        } else if (tabName === 'restore') {
+            dataMap = restoreTableDataMap;
+        } else if (tabName === 'export') {
+            dataMap = window.exportTableDataMap;
+        }
 
-        const gameData = dataMap.get(wikiId);
-        if (gameData) {
-            gameData.latest_backup = newestBackupTime;
-            dataMap.set(wikiId, gameData);
+        if (dataMap) {
+            const gameData = dataMap.get(wikiId);
+            if (gameData) {
+                gameData.latest_backup = newestBackupTime;
+                dataMap.set(wikiId, gameData);
+            }
         }
     }
 }
@@ -446,7 +458,17 @@ export async function updateSelectedCountAndSize(tabName) {
     let total_size = 0;
     let total_selected = 0;
 
-    const dataMap = tabName === 'backup' ? backupTableDataMap : restoreTableDataMap;
+    let dataMap;
+    if (tabName === 'backup') {
+        dataMap = window.backupTableDataMap;
+    } else if (tabName === 'restore') {
+        dataMap = window.restoreTableDataMap;
+    } else if (tabName === 'export') {
+        // Use exportTableDataMap for the export tab so sizes reflect selected export items
+        dataMap = window.exportTableDataMap;
+    } else {
+        dataMap = window.restoreTableDataMap;
+    }
 
     selectedWikiIds.forEach(wikiId => {
         const gameData = dataMap.get(wikiId);
@@ -460,7 +482,9 @@ export async function updateSelectedCountAndSize(tabName) {
         count: total_selected,
         total: total_games_count
     });
-    totalSizeWidget.innerHTML = await window.i18n.translate(`main.total_${tabName}_size`, {
+    // Use different translation keys for export tab (summary namespace)
+    const sizeKey = tabName === 'export' ? 'summary.total_export_size' : `main.total_${tabName}_size`;
+    totalSizeWidget.innerHTML = await window.i18n.translate(sizeKey, {
         size: formatSize(total_size)
     });
 }

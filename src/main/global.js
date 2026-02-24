@@ -531,6 +531,155 @@ async function exportBackups(count, exportPath) {
     }
 }
 
+async function exportSelectedBackups(selectedWikiIds, count, exportPath) {
+    const progressId = 'export';
+    const progressTitle = i18next.t('alert.exporting');
+    const sourcePath = settings.backupPath;
+    const errors = [];
+
+    try {
+        if (!exportPath) {
+            errors.push(i18next.t('alert.empty_export_path'));
+            return { games: selectedWikiIds, errors: errors };
+        }
+
+        if (!status.exporting) {
+            status.exporting = true;
+            win.webContents.send('update-progress', progressId, progressTitle, 'start');
+
+            // Build the list of relative paths to archive
+            let itemsToArchive = [];
+
+            const customEntriesPath = path.join(sourcePath, 'custom_entries.json');
+            if (fsOriginal.existsSync(customEntriesPath)) {
+                itemsToArchive.push('custom_entries.json');
+            }
+
+            console.log(`[Export] Starting export for ${selectedWikiIds.length} games, max ${count} backups per game`);
+            console.log(`[Export] Source path: ${sourcePath}`);
+            console.log(`[Export] Export path: ${exportPath}`);
+
+            // Only process selected games
+            for (const wikiId of selectedWikiIds) {
+                const gameFolderPath = path.join(sourcePath, wikiId.toString());
+                
+                if (!fsOriginal.existsSync(gameFolderPath)) {
+                    console.log(`[Export] Game folder not found: ${gameFolderPath}`);
+                    continue;
+                }
+
+                try {
+                    let backups = fsOriginal.readdirSync(gameFolderPath).filter(item => {
+                        const fullPath = path.join(gameFolderPath, item);
+                        try {
+                            return fsOriginal.lstatSync(fullPath).isDirectory();
+                        } catch (err) {
+                            return false;
+                        }
+                    });
+
+                    // Sort in descending order (newest first)
+                    backups.sort((a, b) => b.localeCompare(a));
+                    
+                    // Take only the requested number of backups, or all if less than requested
+                    backups = backups.slice(0, count);
+
+                    console.log(`[Export] Game ${wikiId}: found ${backups.length} backups to export`);
+
+                    backups.forEach(backupFolder => {
+                        itemsToArchive.push(path.join(wikiId.toString(), backupFolder));
+                    });
+                } catch (error) {
+                    console.error(`[Export] Error processing game ${wikiId}:`, error.message);
+                    errors.push(`Error processing game ${wikiId}: ${error.message}`);
+                }
+            }
+
+            console.log(`[Export] Total items to archive: ${itemsToArchive.length}`);
+
+            if (itemsToArchive.length === 0) {
+                status.exporting = false;
+                console.error('[Export] No items to archive - aborting export');
+                errors.push('No backups to export');
+                win.webContents.send('update-progress', progressId, progressTitle, 'end');
+                return { games: selectedWikiIds, errors: errors };
+            }
+
+            const timestamp = moment().format('YYYY-MM-DD_HH-mm');
+            const finalFileName = `GSMBackup-${timestamp}.gsmr`;
+            const finalDestPath = path.join(exportPath, finalFileName);
+
+            console.log(`[Export] Creating archive: ${finalDestPath}`);
+
+            const sevenOptions = {
+                yes: true,
+                recursive: true,
+                $bin: sevenBin.path7za.replace('app.asar', 'app.asar.unpacked'),
+                $progress: true,
+                $raw: []
+            };
+
+            const originalCwd = process.cwd();
+            process.chdir(sourcePath);
+            console.log(`[Export] Changed working directory to: ${sourcePath}`);
+            console.log(`[Export] Items to archive:`, itemsToArchive);
+
+            const archiveStream = Seven.add(finalDestPath, itemsToArchive, sevenOptions);
+
+            archiveStream.on('progress', (progress) => {
+                if (progress.percent) {
+                    console.log(`[Export] Progress: ${progress.percent}%`);
+                    win.webContents.send('update-progress', progressId, progressTitle, Math.floor(progress.percent));
+                }
+            });
+
+            await new Promise((resolve, reject) => {
+                archiveStream.on('end', () => {
+                    console.log(`[Export] Archive stream ended`);
+                    resolve();
+                });
+                archiveStream.on('error', (err) => {
+                    console.error(`[Export] Archive stream error:`, err);
+                    reject(err);
+                });
+            });
+
+            process.chdir(originalCwd);
+            console.log(`[Export] Restored working directory`);
+            
+            // Verify file was created
+            if (fsOriginal.existsSync(finalDestPath)) {
+                const fileSize = fsOriginal.statSync(finalDestPath).size;
+                console.log(`[Export] Export file created successfully: ${finalDestPath} (${fileSize} bytes)`);
+                win.webContents.send('show-alert', 'success', i18next.t('alert.export_success'));
+            } else {
+                const fileError = `Export file was not created at ${finalDestPath}`;
+                console.error(`[Export] ${fileError}`);
+                errors.push(fileError);
+            }
+
+            win.webContents.send('update-progress', progressId, progressTitle, 'end');
+            status.exporting = false;
+            
+            return { games: selectedWikiIds, errors: errors };
+        } else {
+            // Operation already in progress
+            console.log('[Export] Export operation already in progress');
+            errors.push('Export operation already in progress');
+            return { games: selectedWikiIds, errors: errors };
+        }
+
+    } catch (error) {
+        console.error(`[Export] An error occurred while exporting selected backups: ${error.message}`);
+        console.error(`[Export] Stack trace:`, error.stack);
+        status.exporting = false;
+        errors.push(error.message);
+        win.webContents.send('update-progress', progressId, progressTitle, 'end');
+        win.webContents.send('show-alert', 'modal', i18next.t('alert.error_during_export'), error.message);
+        return { games: selectedWikiIds, errors: errors };
+    }
+}
+
 async function importBackups(gsmPath) {
     const progressId = 'import';
     const progressTitle = i18next.t('alert.importing');
@@ -1014,6 +1163,7 @@ module.exports = {
     getNewestBackup,
     fsOriginalCopyFolder,
     exportBackups,
+    exportSelectedBackups,
     importBackups,
     browseLocalSave,
     deleteLocalSave,
