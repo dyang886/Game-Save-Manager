@@ -6,8 +6,8 @@ on:
     types: [published]
 
 jobs:
-  upload-portable:
-    runs-on: ubuntu-latest
+  build-and-upload:
+    runs-on: windows-latest  # Electron 打包需要 Windows
     permissions:
       contents: write
 
@@ -15,117 +15,94 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # 获取所有tag信息
+          fetch-depth: 0
 
-      - name: Get latest tag and version
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build portable version
+        run: |
+          npm run build
+          npm run package
+        env:
+          # 防止 electron-builder 询问证书
+          CSC_IDENTITY_AUTO_DISCOVERY: false
+
+      - name: Get release version
         id: get_version
         run: |
-          # 获取最新的tag
-          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-          
-          if [ -z "$LATEST_TAG" ]; then
-            echo "No tags found, using default v1.0.0"
-            LATEST_TAG="v1.0.0"
+          if [[ "${{ github.event_name }}" == "release" ]]; then
+            TAG="${{ github.event.release.tag_name }}"
+          else
+            TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v1.0.0")
           fi
-          
-          VERSION=$(echo "$LATEST_TAG" | sed 's/^v//')
-          echo "latest_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+          VERSION=$(echo "$TAG" | sed 's/^v//')
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
           echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "portable_name=Game.Save.Manager.Portable.$VERSION.zip" >> $GITHUB_OUTPUT
-          echo "final_name=Game Save Manager Portable $VERSION.zip" >> $GITHUB_OUTPUT
-          
-          echo "Using tag: $LATEST_TAG, version: $VERSION"
+          echo "final_name=Game Save Manager Portable $VERSION.exe" >> $GITHUB_OUTPUT
 
-      - name: Check if release exists
-        id: check_release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Find portable executable
+        id: find_file
         run: |
-          TAG="${{ steps.get_version.outputs.latest_tag }}"
-          
-          # 检查release是否存在
-          if gh release view "$TAG" &>/dev/null; then
-            echo "release_exists=true" >> $GITHUB_OUTPUT
-            echo "Release $TAG already exists"
+          # electron-builder 输出的便携版位置
+          # 通常格式：dist/Game Save Manager.exe
+          if [ -f "dist/Game Save Manager.exe" ]; then
+            echo "source=dist/Game Save Manager.exe" >> $GITHUB_OUTPUT
           else
-            echo "release_exists=false" >> $GITHUB_OUTPUT
-            echo "Release $TAG does not exist, will create new one"
+            # 查找其他可能的位置
+            EXE=$(find . -name "*.exe" -path "*/dist/*" -not -name "*-*" | head -1)
+            if [ -n "$EXE" ]; then
+              echo "source=$EXE" >> $GITHUB_OUTPUT
+            else
+              echo "❌ Portable executable not found"
+              exit 1
+            fi
           fi
 
-      - name: Create release if not exists
-        if: steps.check_release.outputs.release_exists == 'false'
+      - name: Create or update release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          TAG="${{ steps.get_version.outputs.latest_tag }}"
-          VERSION="${{ steps.get_version.outputs.version }}"
-          
-          # 创建新release
-          gh release create "$TAG" \
-            --title "Release $VERSION" \
-            --notes "Automated release for version $VERSION" \
-            --latest
-          
-          echo "Created new release for tag: $TAG"
-
-      - name: Download release asset (if exists)
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        continue-on-error: true
-        run: |
-          TAG="${{ steps.get_version.outputs.latest_tag }}"
-          PORTABLE_NAME="${{ steps.get_version.outputs.portable_name }}"
-          
-          # 尝试下载已存在的asset（如果release已存在）
-          gh release download "$TAG" --pattern "$PORTABLE_NAME" --clobber || true
-
-      - name: Upload portable version to GitHub Release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          TAG="${{ steps.get_version.outputs.latest_tag }}"
-          PORTABLE_NAME="${{ steps.get_version.outputs.portable_name }}"
+          TAG="${{ steps.get_version.outputs.tag }}"
           FINAL_NAME="${{ steps.get_version.outputs.final_name }}"
+          SOURCE_FILE="${{ steps.find_file.outputs.source }}"
           
-          # 如果文件不存在，创建示例文件用于测试
-          if [ ! -f "./${PORTABLE_NAME}" ] && [ ! -f "./${FINAL_NAME}" ]; then
-            echo "Creating sample portable file for testing..."
-            echo "This is a sample portable version file" > "./${PORTABLE_NAME}"
-          fi
+          # 重命名文件为更友好的名称
+          mv "$SOURCE_FILE" "./${FINAL_NAME}"
           
-          # 确定实际存在的文件名
-          if [ -f "./${PORTABLE_NAME}" ]; then
-            SOURCE_FILE="./${PORTABLE_NAME}"
-            TARGET_NAME="$FINAL_NAME"
-          elif [ -f "./${FINAL_NAME}" ]; then
-            SOURCE_FILE="./${FINAL_NAME}"
-            TARGET_NAME="$FINAL_NAME"
+          # 检查 release 是否存在
+          if gh release view "$TAG" &>/dev/null; then
+            echo "✅ Release $TAG exists, uploading asset..."
           else
-            echo "No portable file found to upload"
-            exit 1
+            echo "📦 Creating new release $TAG..."
+            gh release create "$TAG" \
+              --title "Game Save Manager ${{ steps.get_version.outputs.version }}" \
+              --notes "🎮 Automated portable release for version ${{ steps.get_version.outputs.version }}" \
+              --latest
           fi
           
-          # 重命名文件（如果需要）
-          if [ "$SOURCE_FILE" != "./${TARGET_NAME}" ]; then
-            mv "$SOURCE_FILE" "./${TARGET_NAME}"
-          fi
+          # 上传便携版文件（覆盖已存在的）
+          gh release upload "$TAG" "./${FINAL_NAME}" --clobber
           
-          # 上传到release，如果存在则覆盖
-          gh release upload "$TAG" "./${TARGET_NAME}" --clobber
-          
-          echo "'${TARGET_NAME}' uploaded to release $TAG"
+          echo "✅ Uploaded: ${FINAL_NAME}"
 
       - name: Verify upload
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          TAG="${{ steps.get_version.outputs.latest_tag }}"
+          TAG="${{ steps.get_version.outputs.tag }}"
           FINAL_NAME="${{ steps.get_version.outputs.final_name }}"
           
-          # 验证上传是否成功
-          if gh release view "$TAG" --json assets | grep -q "$FINAL_NAME"; then
-            echo "✅ Successfully uploaded $FINAL_NAME to release $TAG"
+          # 使用 jq 精确验证
+          if gh release view "$TAG" --json assets | jq -r '.assets[].name' | grep -Fx "$FINAL_NAME"; then
+            echo "🎉 Successfully released $FINAL_NAME"
           else
-            echo "❌ Failed to verify upload of $FINAL_NAME"
+            echo "❌ Upload verification failed"
             exit 1
           fi
