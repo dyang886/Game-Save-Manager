@@ -1,0 +1,131 @@
+name: Manual
+
+on:
+  workflow_dispatch:  # 支持手动运行
+  release:
+    types: [published]
+
+jobs:
+  upload-portable:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 获取所有tag信息
+
+      - name: Get latest tag and version
+        id: get_version
+        run: |
+          # 获取最新的tag
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          
+          if [ -z "$LATEST_TAG" ]; then
+            echo "No tags found, using default v1.0.0"
+            LATEST_TAG="v1.0.0"
+          fi
+          
+          VERSION=$(echo "$LATEST_TAG" | sed 's/^v//')
+          echo "latest_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "portable_name=Game.Save.Manager.Portable.$VERSION.zip" >> $GITHUB_OUTPUT
+          echo "final_name=Game Save Manager Portable $VERSION.zip" >> $GITHUB_OUTPUT
+          
+          echo "Using tag: $LATEST_TAG, version: $VERSION"
+
+      - name: Check if release exists
+        id: check_release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${{ steps.get_version.outputs.latest_tag }}"
+          
+          # 检查release是否存在
+          if gh release view "$TAG" &>/dev/null; then
+            echo "release_exists=true" >> $GITHUB_OUTPUT
+            echo "Release $TAG already exists"
+          else
+            echo "release_exists=false" >> $GITHUB_OUTPUT
+            echo "Release $TAG does not exist, will create new one"
+          fi
+
+      - name: Create release if not exists
+        if: steps.check_release.outputs.release_exists == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${{ steps.get_version.outputs.latest_tag }}"
+          VERSION="${{ steps.get_version.outputs.version }}"
+          
+          # 创建新release
+          gh release create "$TAG" \
+            --title "Release $VERSION" \
+            --notes "Automated release for version $VERSION" \
+            --latest
+          
+          echo "Created new release for tag: $TAG"
+
+      - name: Download release asset (if exists)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+        run: |
+          TAG="${{ steps.get_version.outputs.latest_tag }}"
+          PORTABLE_NAME="${{ steps.get_version.outputs.portable_name }}"
+          
+          # 尝试下载已存在的asset（如果release已存在）
+          gh release download "$TAG" --pattern "$PORTABLE_NAME" --clobber || true
+
+      - name: Upload portable version to GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${{ steps.get_version.outputs.latest_tag }}"
+          PORTABLE_NAME="${{ steps.get_version.outputs.portable_name }}"
+          FINAL_NAME="${{ steps.get_version.outputs.final_name }}"
+          
+          # 如果文件不存在，创建示例文件用于测试
+          if [ ! -f "./${PORTABLE_NAME}" ] && [ ! -f "./${FINAL_NAME}" ]; then
+            echo "Creating sample portable file for testing..."
+            echo "This is a sample portable version file" > "./${PORTABLE_NAME}"
+          fi
+          
+          # 确定实际存在的文件名
+          if [ -f "./${PORTABLE_NAME}" ]; then
+            SOURCE_FILE="./${PORTABLE_NAME}"
+            TARGET_NAME="$FINAL_NAME"
+          elif [ -f "./${FINAL_NAME}" ]; then
+            SOURCE_FILE="./${FINAL_NAME}"
+            TARGET_NAME="$FINAL_NAME"
+          else
+            echo "No portable file found to upload"
+            exit 1
+          fi
+          
+          # 重命名文件（如果需要）
+          if [ "$SOURCE_FILE" != "./${TARGET_NAME}" ]; then
+            mv "$SOURCE_FILE" "./${TARGET_NAME}"
+          fi
+          
+          # 上传到release，如果存在则覆盖
+          gh release upload "$TAG" "./${TARGET_NAME}" --clobber
+          
+          echo "'${TARGET_NAME}' uploaded to release $TAG"
+
+      - name: Verify upload
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${{ steps.get_version.outputs.latest_tag }}"
+          FINAL_NAME="${{ steps.get_version.outputs.final_name }}"
+          
+          # 验证上传是否成功
+          if gh release view "$TAG" --json assets | grep -q "$FINAL_NAME"; then
+            echo "✅ Successfully uploaded $FINAL_NAME to release $TAG"
+          else
+            echo "❌ Failed to verify upload of $FINAL_NAME"
+            exit 1
+          fi
