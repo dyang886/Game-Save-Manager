@@ -53,21 +53,23 @@ module.exports = {
             ]
         }),
 
-        isProduction && new WebpackObfuscator({
-            stringArray: true,
-            stringArrayThreshold: 1,
-            stringArrayEncoding: ['rc4'],
-            rotateStringArray: true,
-            selfDefending: true,
-            controlFlowFlattening: true,
-            controlFlowFlatteningThreshold: 0.75,
-            deadCodeInjection: true,
-            deadCodeInjectionThreshold: 0.4,
-        }, []),
+        // Disabled for stable packaging
+        // isProduction && new WebpackObfuscator({
+        //     stringArray: true,
+        //     stringArrayThreshold: 1,
+        //     stringArrayEncoding: ['rc4'],
+        //     rotateStringArray: true,
+        //     selfDefending: true,
+        //     controlFlowFlattening: true,
+        //     controlFlowFlatteningThreshold: 0.75,
+        //     deadCodeInjection: true,
+        //     deadCodeInjectionThreshold: 0.4,
+        // }, []),
 
-        isProduction && new BytenodeWebpackPlugin({
-            compileForElectron: true,
-        }),
+        // Disabled for stable packaging
+        // isProduction && new BytenodeWebpackPlugin({
+        //     compileForElectron: true,
+        // }),
     ].filter(Boolean), // Filters out falsy values (like 'false' when not in production)
 
     node: {

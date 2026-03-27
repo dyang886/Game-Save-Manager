@@ -205,6 +205,15 @@
                     <span class="text-content">Restore</span>
                 </button>
             </li>
+            <li class="me-2" role="presentation">
+                <button
+                    class="select-none inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
+                    id="export-tab" data-tabs-target="#export" type="button" role="tab" aria-controls="export"
+                    aria-selected="false" data-i18n="main.export">
+                    <i class="fa-solid fa-file-export mr-2"></i>
+                    <span class="text-content">Export</span>
+                </button>
+            </li>
             <li role="presentation">
                 <button
                     class="select-none inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
@@ -466,7 +475,128 @@
             </div>
         </div>
 
-        <!-- Tab 3: Custom Games -->
+        <!-- Tab 3: Export -->
+        <div class="hidden" id="export" role="tabpanel" aria-labelledby="export-tab">
+            <div id="export-loading" role="status" class="flex justify-center" data-i18n="main.loading"></div>
+
+            <!-- Export content -->
+            <div id="export-content" class="hidden">
+                <div class="pb-4 bg-white dark:bg-gray-900 sticky top-0 flex flex-row justify-between items-center">
+                    <label for="table-search" class="sr-only">Search</label>
+                    <div class="relative mt-1">
+                        <div
+                            class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
+                            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" fill="none"
+                                viewBox="0 0 20 20">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                            </svg>
+                        </div>
+                        <input type="text" id="export-search"
+                            class="block py-2 pt-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:outline-hidden dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                            data-i18n-placeholder="main.search_for_games">
+                    </div>
+                    <div class="text-right">
+                        <p id="export-selected-count" class="text-lg text-gray-900 dark:text-white"></p>
+                        <p id="export-selected-size" class="text-sm text-gray-500 dark:text-gray-40e"></p>
+                    </div>
+                </div>
+
+                <!-- Export table -->
+                <div
+                    class="table-container table-height shadow-md rounded-lg overflow-y-auto scrollbar scrollbar-w-2 scrollbar-h-2 scrollbar-track-rounded-full scrollbar-thumb-rounded-full scrollbar-track-white scrollbar-thumb-slate-300 dark:scrollbar-track-gray-800 dark:scrollbar-thumb-slate-600">
+                    <table class="w-full table-fixed text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                        <thead
+                            class="sticky top-0 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                            <tr>
+                                <th scope="col" class="w-4 py-3 pl-4">
+                                    <div class="flex items-center">
+                                        <input id="export-checkbox-all-search" type="checkbox"
+                                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:outline-hidden dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600">
+                                        <label for="export-checkbox-all-search" class="sr-only">checkbox</label>
+                                    </div>
+                                </th>
+                                <th scope="col" class="pr-6 py-3 truncate w-3/12" data-i18n="main.game_name">
+                                    <span class="text-content">Game Name</span>
+                                </th>
+                                <th scope="col" class="px-6 py-3 truncate w-2/12" data-i18n="main.backup_count">
+                                    <span class="text-content">Number of Backups</span>
+                                </th>
+                                <th scope="col" class="px-6 py-3 truncate w-2/12" data-i18n="main.backup_size">
+                                    <span class="text-content">Backup Size</span>
+                                </th>
+                                <th scope="col" class="px-6 py-3 truncate w-2/12" data-i18n="main.newest_backup_time">
+                                    <span class="text-content">Newest Backup Time</span>
+                                </th>
+                                <th scope="col" class="px-6 py-3 truncate w-4 text-center" data-i18n="main.more">
+                                    <span class="text-content">More</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Export table content -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Export button -->
+                <div class="mt-4 mb-2 flex flex-row items-center">
+                    <button id="export-button" type="button" data-i18n="main.export_selected"
+                        class="select-none whitespace-nowrap text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 dark:bg-blue-600 dark:hover:bg-blue-700">
+                        <i id="export-icon" class="fa-solid fa-file-export mr-1"></i>
+                        <span id="export-text" class="text-content">Export Selected Games</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Export summary -->
+            <div id="export-summary" class="w-full p-8 text-center hidden animate-fadeInShift">
+                <h5 data-i18n="main.export_complete" class="mb-8 text-5xl font-bold text-gray-900 dark:text-white">
+                    <span class="text-content">Export Complete</span>
+                </h5>
+
+                <div class="flex justify-center items-center mb-8">
+                    <i class="fa-solid fa-circle-check text-green-500 fa-5x"></i>
+                </div>
+
+                <div class="text-lg text-gray-700 dark:text-gray-300 mb-6">
+                    <p class="mb-4" data-i18n="summary.total_games_exported">
+                        <span class="text-content">Total games exported:</span>
+                        <span id="export-summary-total-games"
+                            class="font-semibold text-gray-900 dark:text-white text-xl"></span>
+                    </p>
+                    <p id="export-summary-total-failed-container" class="hidden mb-4"
+                        data-i18n="summary.total_export_failed">
+                        <i class="fa-solid fa-xmark mr-1 text-red-700"></i>
+                        <span id="export-summary-total-failed" class="text-content">Failed to export x games</span>
+                        <button id="export-failed-learn-more" type="button"
+                            class="ms-2 text-blue-500 text-lg font-medium underline" data-i18n="alert.learn_more">
+                            <span class="text-content">Learn More</span>
+                        </button>
+                    </p>
+                    <p class="mb-4" data-i18n="summary.total_export_size">
+                        <span class="text-content">Total export size:</span>
+                        <span id="export-summary-total-size"
+                            class="font-semibold text-gray-900 dark:text-white text-xl"></span>
+                    </p>
+                    <p class="mb-4" data-i18n="summary.exported_to">
+                        <span class="text-content">Exported to:</span>
+                        <span id="export-summary-save-path"
+                            class="font-semibold text-gray-900 dark:text-white text-xl"></span>
+                    </p>
+                </div>
+
+                <div class="mt-8">
+                    <button id="export-summary-done" type="button" data-i18n="summary.done"
+                        class="animate-fadeIn hidden text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700">
+                        <i class="fa-solid fa-check mr-1"></i>
+                        <span class="text-content">Done</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 4: Custom Games -->
         <div class="hidden rounded-lg" id="custom" role="tabpanel" aria-labelledby="custom-tab">
             <div id="custom-content" data-accordion="collapse"
                 class="custom-height overflow-y-auto scrollbar scrollbar-w-2 scrollbar-h-2 scrollbar-track-rounded-full scrollbar-thumb-rounded-full scrollbar-track-white scrollbar-thumb-slate-300 dark:scrollbar-track-gray-800 dark:scrollbar-thumb-slate-600">

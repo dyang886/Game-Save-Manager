@@ -260,6 +260,8 @@ async function performBackup() {
 
         updateProgress(backupProgressId, backupProgressTitle, 'end');
         showBackupSummary(backupCount, backupFailed, errors, backupSize);
+        await updateExportTable(true);
+        await updateBackupTable(true);
         await updateRestoreTable(true);
     }
 }

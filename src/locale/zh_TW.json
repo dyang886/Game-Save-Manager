@@ -45,6 +45,7 @@
         "restore_in_progress": "還原中...",
         "backup_complete": "備份完成",
         "restore_complete": "還原完成",
+        "export_complete": "匯出完成",
         "no_backups": "暫無備份",
         "view_wiki": "在 PCGamingWiki 上查看",
         "open_backup_folder": "打開備份資料夾",
@@ -56,18 +57,25 @@
         "total_restore_size": "總還原大小：{{size}}",
         "backup_count": "備份個數",
         "restore_selected": "還原選中的遊戲",
-        "update_database": "更新資料庫"
+        "update_database": "更新資料庫",
+        "export": "匯出",
+        "export_selected": "匯出選中的遊戲",
+        "export_in_progress": "匯出中..."
     },
     "summary": {
         "done": "完成",
         "total_games_backed_up": "備份遊戲總數：",
         "total_backup_failed": "{{failed_count}} 個遊戲備份失敗",
         "total_restore_failed": "{{failed_count}} 個遊戲還原失敗",
+        "total_games_exported": "匯出遊戲總數：",
+        "total_export_failed": "{{failed_count}} 個遊戲匯出失敗",
         "total_backup_size": "備份總大小：",
         "backup_saved_to": "備份儲存至：",
         "total_games_restored": "還原遊戲總數：",
         "total_restore_size": "還原總大小：",
-        "restored_from": "從此處還原："
+        "restored_from": "從此處還原：",
+        "total_export_size": "匯出總大小：{{size}}",
+        "exported_to": "匯出至："
     },
     "custom": {
         "save_all": "儲存全部",

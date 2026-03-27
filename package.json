@@ -24,14 +24,22 @@
       {
         "from": "./src/assets_export",
         "to": "assets_export"
+      },
+      {
+        "from": "./database",
+        "to": "database"
       }
     ],
-    "extraFiles": [
-      {
-        "from": "../gamezoneofficial.com/GSM/database.db",
-        "to": "./database/database.db"
-      }
-    ]
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    }
   },
   "author": "Yongcan Yang",
   "license": "GPL-3.0-only",

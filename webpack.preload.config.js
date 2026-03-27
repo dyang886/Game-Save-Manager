@@ -33,9 +33,10 @@ module.exports = {
     },
 
     plugins: [
-        isProduction && new BytenodeWebpackPlugin({
-            compileForElectron: true,
-        }),
+        // Disabled for stable packaging
+        // isProduction && new BytenodeWebpackPlugin({
+        //     compileForElectron: true,
+        // }),
     ].filter(Boolean),
 
     node: {

@@ -1,0 +1,128 @@
+name: Manual
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+jobs:
+  build-and-upload:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Create secret_config.js
+        run: |
+          $configContent = @'
+          // Secret configuration (placeholders - should be replaced with actual values)
+          // For open-source deployment, set endpoints to null to disable auto-update features
+          module.exports = {
+              SIGNED_URL_DOWNLOAD_ENDPOINT: null,  // Disabled for open-source (requires private backend API)
+              VERSION_CHECKER_ENDPOINT: null,      // Disabled for open-source (requires private backend API)
+              CLIENT_API_KEY: null                 // Disabled for open-source
+          };
+          '@
+          
+          # 确保目录存在
+          New-Item -Path "src/main" -ItemType Directory -Force
+          
+          # 写入配置文件
+          Set-Content -Path "src/main/secret_config.js" -Value $configContent
+          Write-Host "✅ Created secret_config.js"
+
+      - name: Build portable version
+        run: |
+          npm run build
+          npm run package
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: false
+
+      - name: Get release version
+        id: get_version
+        run: |
+          if ($env:GITHUB_EVENT_NAME -eq "release") {
+            $TAG = "${{ github.event.release.tag_name }}"
+          } else {
+            $TAG = git describe --tags --abbrev=0 2>$null
+            if (-not $TAG) { $TAG = "v1.0.0" }
+          }
+          $VERSION = $TAG -replace '^v', ''
+          echo "tag=$TAG" >> $env:GITHUB_OUTPUT
+          echo "version=$VERSION" >> $env:GITHUB_OUTPUT
+          echo "zip_name=Game.Save.Manager.Portable.$VERSION.zip" >> $env:GITHUB_OUTPUT
+
+      - name: Find and zip portable directory
+        run: |
+          $ZIP_NAME = "${{ steps.get_version.outputs.zip_name }}"
+          
+          # electron-builder --dir 会输出到 dist 目录
+          if (Test-Path "dist") {
+            $SOURCE_DIR = "dist"
+          } elseif (Test-Path "release") {
+            $SOURCE_DIR = "release"
+          } else {
+            Write-Host "❌ No build output directory found"
+            Write-Host "Current directory contents:"
+            Get-ChildItem -Path . -Directory
+            exit 1
+          }
+          
+          Write-Host "📁 Source directory: $SOURCE_DIR"
+          Write-Host "📦 Creating $ZIP_NAME ..."
+          
+          # 压缩整个目录
+          Compress-Archive -Path "$SOURCE_DIR/*" -DestinationPath "$ZIP_NAME" -Force
+          Write-Host "✅ Created $ZIP_NAME"
+
+      - name: Create or update release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $TAG = "${{ steps.get_version.outputs.tag }}"
+          $ZIP_NAME = "${{ steps.get_version.outputs.zip_name }}"
+          
+          # 检查 release 是否存在
+          $releaseExists = gh release view $TAG 2>$null
+          if ($LASTEXITCODE -eq 0) {
+            Write-Host "✅ Release $TAG exists, uploading asset..."
+          } else {
+            Write-Host "📦 Creating new release $TAG..."
+            gh release create $TAG `
+              --title "Game Save Manager ${{ steps.get_version.outputs.version }}" `
+              --notes "🎮 Automated portable release for version ${{ steps.get_version.outputs.version }}" `
+              --latest
+          }
+          
+          # 上传 zip 文件
+          gh release upload $TAG "./$ZIP_NAME" --clobber
+          Write-Host "✅ Uploaded: $ZIP_NAME"
+
+      - name: Verify upload
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $TAG = "${{ steps.get_version.outputs.tag }}"
+          $ZIP_NAME = "${{ steps.get_version.outputs.zip_name }}"
+          
+          $assets = gh release view $TAG --json assets | jq -r '.assets[].name'
+          if ($assets -contains $ZIP_NAME) {
+            Write-Host "🎉 Successfully released $ZIP_NAME"
+          } else {
+            Write-Host "❌ Upload verification failed"
+            exit 1
+          }
