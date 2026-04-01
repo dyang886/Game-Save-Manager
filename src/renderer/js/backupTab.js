@@ -1,5 +1,5 @@
 import { showAlert, showInfoModal, updateProgress, operationStartCheck } from './utility.js';
-import { spinner, showLoadingIndicator, hideLoadingIndicator, updateNewestBackupTime, getPlatformIcon, formatSize, updateSelectedCountAndSize, setupSelectAllCheckbox, getSelectedWikiIds, setIcon } from './commonTabs.js';
+import { spinner, showLoadingIndicator, hideLoadingIndicator, createBackupTableRow, addOrUpdateTableRow, getPlatformIcon, formatSize, updateSelectedCountAndSize, setupSelectAllCheckbox, getSelectedWikiIds, setIcon } from './commonTabs.js';
 
 const backupTableDataMap = new Map();
 window.backupTableDataMap = backupTableDataMap;
@@ -25,6 +25,7 @@ window.api.receive('scan-full', async () => {
         const fullScanGameData = await window.api.invoke('start-scan-full');
 
         if (fullScanGameData) {
+            window.api.send('update-status', 'updating_backup', true);
             await showLoadingIndicator('backup');
             let normalScanGameData = await window.api.invoke('fetch-backup-table-data', true);
 
@@ -39,11 +40,13 @@ window.api.receive('scan-full', async () => {
             await populateBackupTable(normalScanGameData, iconMap);
             updateSelectedCountAndSize('backup');
             hideLoadingIndicator('backup');
+            window.api.send('update-status', 'updating_backup', false);
         }
     }
 });
 
 export async function updateBackupTable(loader) {
+    window.api.send('update-status', 'updating_backup', true);
     if (loader) {
         await showLoadingIndicator('backup');
     }
@@ -56,6 +59,7 @@ export async function updateBackupTable(loader) {
     if (loader) {
         hideLoadingIndicator('backup');
     }
+    window.api.send('update-status', 'updating_backup', false);
 }
 
 // Function to populate backup table
@@ -143,46 +147,6 @@ async function populateBackupTable(data, iconMap) {
     setupSelectAllCheckbox('backup', selectAllCheckbox);
 }
 
-// Function to create a backup table row
-function createBackupTableRow(gameTitle, platformIcons, backupSize, newestBackupTime, wikiPageId) {
-    const row = document.createElement('tr');
-    row.setAttribute('data-wiki-id', wikiPageId);
-    row.classList.add('bg-white', 'border-b', 'dark:bg-gray-800', 'dark:border-gray-700', 'hover:bg-gray-50', 'dark:hover:bg-gray-600');
-    row.innerHTML = `
-        <td class="py-4 pl-4">
-            <div class="flex items-center">
-                <input type="checkbox" class="row-checkbox w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:outline-hidden dark:bg-gray-700 dark:border-gray-600">
-                <label class="sr-only">checkbox</label>
-            </div>
-        </td>
-        <th scope="row" class="pr-6 py-4 truncate font-medium text-gray-900 whitespace-nowrap dark:text-white">
-            <span data-icon="pin" class="hidden"><i class="fa-solid fa-thumbtack text-red-500 mr-2"></i></span>
-            <span data-icon="star" class="hidden"><i class="fa-solid fa-star text-yellow-500 mr-2"></i></span>
-            <span data-icon="timer" class="hidden"><i class="fa-solid fa-hourglass text-blue-500 mr-2"></i></span>
-            ${gameTitle}
-        </th>
-        <td class="px-6 py-4 truncate">
-            ${platformIcons}
-        </td>
-        <td class="px-6 py-4 truncate">
-            ${backupSize}
-        </td>
-        <td class="px-6 py-4 truncate newest-backup-time">
-            ${newestBackupTime}
-        </td>
-        <td class="px-6 py-4 truncate text-center">
-            <button class="dropdown-menu-button inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 hover:bg-transparent focus:outline-hidden dark:text-white"
-                type="button">
-                <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 16 3">
-                    <path
-                        d="M2 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.041 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM14 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z" />
-                </svg>
-            </button>
-        </td>
-    `;
-    return row;
-}
-
 function setupBackupTabButtons() {
     const backupButton = document.getElementById('backup-button');
     const backupIcon = document.getElementById('backup-icon');
@@ -207,9 +171,6 @@ function setupBackupTabButtons() {
         backupText.textContent = await window.i18n.translate('main.backup_in_progress');
 
         await performBackup();
-        selectedGames.forEach(async wikiId => {
-            await updateNewestBackupTime('backup', wikiId);
-        });
         document.querySelector('#backup-summary-done').classList.remove('hidden');
 
         // Re-enable the button and revert to the original state
@@ -220,6 +181,32 @@ function setupBackupTabButtons() {
         backupButton.setAttribute('data-i18n', 'main.backup_selected');
         backupText.textContent = await window.i18n.translate('main.backup_selected');
         window.api.send('update-status', 'backuping', false);
+
+        // Update table rows in background
+        (async () => {
+            window.api.send('update-status', 'updating_backup', true);
+            window.api.send('update-status', 'updating_restore', true);
+            backupButton.disabled = true;
+            backupButton.classList.add('cursor-not-allowed');
+            backupIcon.classList.remove('fa-arrow-right-long');
+            backupIcon.innerHTML = spinner;
+            backupButton.setAttribute('data-i18n', 'main.updating_backup');
+            backupText.textContent = await window.i18n.translate('main.updating_backup');
+
+            for (const wikiId of selectedGames) {
+                await addOrUpdateTableRow('backup', wikiId);
+                await addOrUpdateTableRow('restore', wikiId);
+            }
+
+            backupButton.disabled = false;
+            backupButton.classList.remove('cursor-not-allowed');
+            backupIcon.innerHTML = '';
+            backupIcon.classList.add('fa-arrow-right-long');
+            backupButton.setAttribute('data-i18n', 'main.backup_selected');
+            backupText.textContent = await window.i18n.translate('main.backup_selected');
+            window.api.send('update-status', 'updating_backup', false);
+            window.api.send('update-status', 'updating_restore', false);
+        })();
     });
 
     document.getElementById('update-database').addEventListener('click', async () => {
@@ -260,7 +247,6 @@ async function performBackup() {
 
         updateProgress(backupProgressId, backupProgressTitle, 'end');
         showBackupSummary(backupCount, backupFailed, errors, backupSize);
-        await updateRestoreTable(true);
     }
 }
 

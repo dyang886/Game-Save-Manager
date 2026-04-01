@@ -29,7 +29,9 @@ let status = {
     migrating: false,
     updating_db: false,
     exporting: false,
-    importing: false
+    importing: false,
+    updating_backup: false,
+    updating_restore: false
 }
 
 // Menu settings

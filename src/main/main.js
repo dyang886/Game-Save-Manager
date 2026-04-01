@@ -13,7 +13,7 @@ const moment = require('moment');
 const { pinyin } = require('pinyin');
 
 const {
-    createMainWindow, getMainWin, getNewestBackup, getStatus, updateStatus, checkAppUpdate, exportBackups,
+    createMainWindow, getMainWin, getStatus, updateStatus, checkAppUpdate, exportBackups,
     importBackups, browseLocalSave, deleteLocalSave, osKeyMap, loadSettings, saveSettings, getSettings,
     moveFilesWithProgress, getCurrentVersion, getLatestVersion, updateApp
 } = require('./global');
@@ -196,10 +196,6 @@ ipcMain.handle('select-path', async (event, fileType) => {
     return null;
 });
 
-ipcMain.handle('get-newest-backup-time', (event, wiki_page_id) => {
-    return getNewestBackup(wiki_page_id);
-});
-
 // Sort objects using object.titleToSort
 ipcMain.handle('sort-games', (event, games) => {
     const gamesWithSortedTitles = games.map((game) => {
@@ -287,8 +283,8 @@ ipcMain.handle('get-icon-map', async () => {
     };
 });
 
-ipcMain.handle('fetch-backup-table-data', async (event, ignoreUninstalled) => {
-    const { games, errors } = await getGameDataFromDB(ignoreUninstalled);
+ipcMain.handle('fetch-backup-table-data', async (event, ignoreUninstalled, wikiId = null) => {
+    const { games, errors } = await getGameDataFromDB(ignoreUninstalled, wikiId);
 
     if (errors.length > 0) {
         getMainWin().webContents.send('show-alert', 'modal', i18next.t('alert.backup_process_error_display'), errors);

@@ -168,26 +168,7 @@ function setupSearchFilter(tabName) {
     });
 }
 
-export async function updateNewestBackupTime(tabName, wikiId) {
-    const tableBody = document.querySelector(`#${tabName} tbody`);
-    const row = tableBody.querySelector(`tr[data-wiki-id="${wikiId}"]`);
-    const newestBackupTime = await window.api.invoke('get-newest-backup-time', wikiId);
 
-    if (row) {
-        const newestBackupCell = row.querySelector('.newest-backup-time');
-        if (newestBackupCell) {
-            newestBackupCell.textContent = newestBackupTime;
-        }
-
-        const dataMap = tabName === 'backup' ? backupTableDataMap : restoreTableDataMap;
-
-        const gameData = dataMap.get(wikiId);
-        if (gameData) {
-            gameData.latest_backup = newestBackupTime;
-            dataMap.set(wikiId, gameData);
-        }
-    }
-}
 
 export function setIcon(row, iconName, show) {
     const titleCell = row.querySelector('th[scope="row"]');
@@ -207,6 +188,198 @@ export function formatSize(sizeInBytes) {
     if (sizeInBytes === 0) return '0 B';
     const i = Math.floor(Math.log(sizeInBytes) / Math.log(1024));
     return (sizeInBytes / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'KB', 'MB', 'GB', 'TB'][i];
+}
+
+const platformOrder = ['Custom', 'Steam', 'Ubisoft', 'EA', 'Epic', 'GOG', 'Xbox', 'Blizzard'];
+
+export function createBackupTableRow(gameTitle, platformIcons, backupSize, newestBackupTime, wikiPageId) {
+    const row = document.createElement('tr');
+    row.setAttribute('data-wiki-id', wikiPageId);
+    row.classList.add('bg-white', 'border-b', 'dark:bg-gray-800', 'dark:border-gray-700', 'hover:bg-gray-50', 'dark:hover:bg-gray-600');
+    row.innerHTML = `
+        <td class="py-4 pl-4">
+            <div class="flex items-center">
+                <input type="checkbox" class="row-checkbox w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:outline-hidden dark:bg-gray-700 dark:border-gray-600">
+                <label class="sr-only">checkbox</label>
+            </div>
+        </td>
+        <th scope="row" class="pr-6 py-4 truncate font-medium text-gray-900 whitespace-nowrap dark:text-white">
+            <span data-icon="pin" class="hidden"><i class="fa-solid fa-thumbtack text-red-500 mr-2"></i></span>
+            <span data-icon="star" class="hidden"><i class="fa-solid fa-star text-yellow-500 mr-2"></i></span>
+            <span data-icon="timer" class="hidden"><i class="fa-solid fa-hourglass text-blue-500 mr-2"></i></span>
+            ${gameTitle}
+        </th>
+        <td class="px-6 py-4 truncate">
+            ${platformIcons}
+        </td>
+        <td class="px-6 py-4 truncate backup-size">
+            ${backupSize}
+        </td>
+        <td class="px-6 py-4 truncate newest-backup-time">
+            ${newestBackupTime}
+        </td>
+        <td class="px-6 py-4 truncate text-center">
+            <button class="dropdown-menu-button inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 hover:bg-transparent focus:outline-hidden dark:text-white"
+                type="button">
+                <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 16 3">
+                    <path
+                        d="M2 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.041 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM14 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z" />
+                </svg>
+            </button>
+        </td>
+    `;
+    return row;
+}
+
+export function createRestoreTableRow(gameTitle, backupCount, backupSize, newestBackupTime, wikiPageId) {
+    const row = document.createElement('tr');
+    row.setAttribute('data-wiki-id', wikiPageId);
+    row.classList.add('bg-white', 'border-b', 'dark:bg-gray-800', 'dark:border-gray-700', 'hover:bg-gray-50', 'dark:hover:bg-gray-600');
+    row.innerHTML = `
+        <td class="py-4 pl-4">
+            <div class="flex items-center">
+                <input type="checkbox" class="row-checkbox w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:outline-hidden dark:bg-gray-700 dark:border-gray-600">
+                <label class="sr-only">checkbox</label>
+            </div>
+        </td>
+        <th scope="row" class="pr-6 py-4 truncate font-medium text-gray-900 whitespace-nowrap dark:text-white">
+            <span data-icon="pin" class="hidden"><i class="fa-solid fa-thumbtack text-red-500 mr-2"></i></span>
+            <span data-icon="star" class="hidden"><i class="fa-solid fa-star text-yellow-500 mr-2"></i></span>
+            <span data-icon="timer" class="hidden"><i class="fa-solid fa-hourglass text-blue-500 mr-2"></i></span>
+            ${gameTitle}
+        </th>
+        <td class="px-6 py-4 truncate backup-count">
+            ${backupCount}
+        </td>
+        <td class="px-6 py-4 truncate backup-size">
+            ${backupSize}
+        </td>
+        <td class="px-6 py-4 truncate newest-backup-time">
+            ${newestBackupTime}
+        </td>
+        <td class="px-6 py-4 truncate text-center">
+            <button class="dropdown-menu-button inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 hover:bg-transparent focus:outline-hidden dark:text-white"
+                type="button">
+                <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 16 3">
+                    <path
+                        d="M2 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.041 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM14 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z" />
+                </svg>
+            </button>
+        </td>
+    `;
+    return row;
+}
+
+export async function addOrUpdateTableRow(tabName, wikiId) {
+    let gameData;
+    if (tabName === 'backup') {
+        const games = await window.api.invoke('fetch-backup-table-data', null, wikiId);
+        gameData = games && games.length > 0 ? games[0] : null;
+    } else {
+        const games = await window.api.invoke('fetch-restore-table-data', wikiId);
+        gameData = games && games.length > 0 ? games[0] : null;
+    }
+    if (!gameData) return;
+
+    const dataMap = tabName === 'backup' ? window.backupTableDataMap : window.restoreTableDataMap;
+    dataMap.set(wikiId, gameData);
+
+    const existingRow = document.querySelector(`#${tabName} tbody tr[data-wiki-id="${wikiId}"]`);
+
+    if (existingRow) {
+        // Update existing row cells
+        const sizeCell = existingRow.querySelector('.backup-size');
+        if (sizeCell) sizeCell.textContent = formatSize(gameData.backup_size);
+        const timeCell = existingRow.querySelector('.newest-backup-time');
+        if (timeCell) timeCell.textContent = gameData.latest_backup;
+        if (tabName === 'restore') {
+            const countCell = existingRow.querySelector('.backup-count');
+            if (countCell) countCell.textContent = gameData.backups.length;
+        }
+    } else {
+        // Create and append new row
+        const settings = await window.api.invoke('get-settings');
+        let gameTitle = gameData.title;
+        if (gameData.zh_CN && settings.language === 'zh_CN') {
+            gameTitle = gameData.zh_CN;
+        }
+        if (!gameTitle) return;
+
+        let row;
+        if (tabName === 'backup') {
+            const iconMap = await window.api.invoke('get-icon-map');
+            const sortedPlatforms = platformOrder.filter(platform => (gameData.platform || []).includes(platform));
+            const platformIcons = sortedPlatforms.map(platform => getPlatformIcon(platform, iconMap)).join(' ');
+            row = createBackupTableRow(gameTitle, platformIcons, formatSize(gameData.backup_size), gameData.latest_backup, wikiId);
+
+            const restoreGameData = window.restoreTableDataMap && window.restoreTableDataMap.get(wikiId);
+            const hasPermanent = restoreGameData && restoreGameData.backups && restoreGameData.backups.some(b => b.is_permanent);
+            if (hasPermanent) setIcon(row, 'star', true);
+        } else {
+            row = createRestoreTableRow(gameTitle, gameData.backups.length, formatSize(gameData.backup_size), gameData.latest_backup, wikiId);
+
+            const hasPermanent = gameData.backups.some(b => b.is_permanent);
+            if (hasPermanent) setIcon(row, 'star', true);
+        }
+
+        const pinnedGamesWikiIds = settings.pinnedGames || [];
+        const isPinned = pinnedGamesWikiIds.includes(wikiId.toString());
+        if (isPinned) {
+            setIcon(row, 'pin', true);
+        }
+
+        // Insert row in sorted position
+        const tableBody = document.querySelector(`#${tabName} tbody`);
+        const siblingRows = Array.from(tableBody.querySelectorAll('tr'))
+            .filter(r => {
+                const pinned = !r.querySelector('span[data-icon="pin"].hidden');
+                return isPinned ? pinned : !pinned;
+            })
+            .concat({ getAttribute: () => wikiId.toString(), querySelector: () => ({ textContent: gameTitle }) })
+            .map(r => ({
+                wikiId: r.getAttribute('data-wiki-id'),
+                titleToSort: r.querySelector('th[scope="row"]').textContent.trim()
+            }));
+
+        const sorted = await window.api.invoke('sort-games', siblingRows);
+        const targetIndex = sorted.findIndex(g => g.wikiId === wikiId.toString());
+
+        if (isPinned) {
+            // Insert among pinned rows
+            if (targetIndex === 0) {
+                tableBody.insertBefore(row, tableBody.firstChild);
+            } else {
+                const prevRow = tableBody.querySelector(`tr[data-wiki-id="${sorted[targetIndex - 1].wikiId}"]`);
+                tableBody.insertBefore(row, prevRow.nextSibling);
+            }
+        } else {
+            // Insert among unpinned rows
+            if (targetIndex === 0) {
+                const lastPinnedRow = Array.from(tableBody.querySelectorAll('tr'))
+                    .reverse()
+                    .find(r => !r.querySelector('span[data-icon="pin"].hidden'));
+                if (lastPinnedRow) {
+                    tableBody.insertBefore(row, lastPinnedRow.nextSibling);
+                } else {
+                    tableBody.insertBefore(row, tableBody.firstChild);
+                }
+            } else {
+                const prevRow = tableBody.querySelector(`tr[data-wiki-id="${sorted[targetIndex - 1].wikiId}"]`);
+                tableBody.insertBefore(row, prevRow.nextSibling);
+            }
+        }
+    }
+}
+
+// Helper function to remove a game row from a tab's table and clean up its data map
+function removeTableRow(tabName, wikiId) {
+    const row = document.querySelector(`#${tabName} tbody tr[data-wiki-id="${wikiId}"]`);
+    if (row) {
+        row.remove();
+    }
+    const dataMap = tabName === 'backup' ? window.backupTableDataMap : window.restoreTableDataMap;
+    dataMap.delete(wikiId);
+    updateSelectedCountAndSize(tabName);
 }
 
 async function createDropdownMenu(wikiPageId) {
@@ -446,7 +619,7 @@ export async function updateSelectedCountAndSize(tabName) {
     let total_size = 0;
     let total_selected = 0;
 
-    const dataMap = tabName === 'backup' ? backupTableDataMap : restoreTableDataMap;
+    const dataMap = tabName === 'backup' ? window.backupTableDataMap : window.restoreTableDataMap;
 
     selectedWikiIds.forEach(wikiId => {
         const gameData = dataMap.get(wikiId);
@@ -550,11 +723,18 @@ function attachRenameButtonListener(renameBtn) {
 export async function showManageBackupsModal(wikiId) {
     const gamesList = await window.api.invoke('fetch-restore-table-data', wikiId);
 
-    // Extract the single game from the returned array
-    const gameData = gamesList && gamesList.length > 0 ? gamesList[0] : null;
-    if (!gameData) {
-        showAlert('warning', await window.i18n.translate('alert.no_backups_found'));
-        return;
+    // Extract the single game from the returned array, fall back to backupTableDataMap if no backups exist
+    const gameData = gamesList && gamesList.length > 0
+        ? gamesList[0]
+        : { backups: [], latest_backup: '-', title: '', zh_CN: '' };
+
+    // If no restore data, use backupTableDataMap for game info
+    if (!gamesList || gamesList.length === 0) {
+        const backupData = window.backupTableDataMap.get(wikiId);
+        if (backupData) {
+            gameData.title = backupData.title;
+            gameData.zh_CN = backupData.zh_CN;
+        }
     }
 
     const modal = document.getElementById('modal-manage-backups');
@@ -578,7 +758,7 @@ export async function showManageBackupsModal(wikiId) {
     const newestBackupLabel = await window.i18n.translate('main.newest_backup_time');
     const backupCountLabel = await window.i18n.translate('main.backup_count');
     headerInfo.innerHTML = `
-        <p><span class="font-medium">${newestBackupLabel}:</span> ${latestBackup}</p>
+        <p><span class="font-medium">${newestBackupLabel}:</span> <span class="newest-backup-value">${latestBackup}</span></p>
         <p><span class="font-medium">${backupCountLabel}:</span> <span class="backup-count-value">${backupCount}</span></p>
     `;
 
@@ -738,6 +918,7 @@ export async function showManageBackupsModal(wikiId) {
 
         const success = await window.api.invoke('confirm-delete-local-save', resolvedPaths);
         if (success) {
+            removeTableRow('backup', wikiId);
             showAlert('success', await window.i18n.translate('alert.local_save_deleted'));
         }
     });
@@ -838,7 +1019,33 @@ export async function showManageBackupsModal(wikiId) {
                 row.remove();
                 const countElement = headerInfo.querySelector('.backup-count-value');
                 const currentCount = parseInt(countElement.textContent);
-                countElement.textContent = currentCount - 1;
+                const newCount = currentCount - 1;
+                countElement.textContent = newCount;
+
+                // Update newest backup date in modal header
+                const newestBackupElement = headerInfo.querySelector('.newest-backup-value');
+                const remainingDates = Array.from(modalContent.querySelectorAll('.permanent-backup-btn'))
+                    .map(b => b.dataset.backupDate)
+                    .sort((a, b) => b.localeCompare(a));
+                if (remainingDates.length > 0) {
+                    const formatted = remainingDates[0].replace(/(\d{4})-(\d{1,2})-(\d{1,2})_(\d{1,2})-(\d{1,2})/, (match, year, month, day, hour, minute) => {
+                        return `${year}/${String(month).padStart(2, '0')}/${String(day).padStart(2, '0')} ${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+                    });
+                    newestBackupElement.textContent = formatted;
+                }
+
+                if (newCount === 0) {
+                    // If all backups are deleted, remove the row from the restore table
+                    removeTableRow('restore', wikiId);
+                } else {
+                    // Update restore tab row
+                    await addOrUpdateTableRow('restore', wikiId);
+                    updateSelectedCountAndSize('restore');
+                }
+
+                // Update backup tab row
+                await addOrUpdateTableRow('backup', wikiId);
+                updateSelectedCountAndSize('backup');
             }
         });
     });
@@ -944,5 +1151,13 @@ async function restoreBackupInstance(backupDate, gameData) {
         restoreButton.disabled = false;
         restoreButton.classList.remove('cursor-not-allowed');
         window.api.send('update-status', 'restoring', false);
+
+        // Update backup tab entry in background
+        const wikiId = gameData.wiki_page_id;
+        (async () => {
+            window.api.send('update-status', 'updating_backup', true);
+            await addOrUpdateTableRow('backup', wikiId);
+            window.api.send('update-status', 'updating_backup', false);
+        })();
     }
 }

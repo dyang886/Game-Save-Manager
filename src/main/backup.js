@@ -17,7 +17,7 @@ const WinReg = require('winreg');
 
 const {
     getMainWin, getStatus, updateStatus, getSignedDownloadUrl, getGameDisplayName,
-    calculateDirectorySize,ensureWritable, getNewestBackup, fsOriginalCopyFolder,
+    calculateDirectorySize, ensureWritable, getNewestBackup, fsOriginalCopyFolder,
     placeholder_mapping, osKeyMap, getSettings, saveSettings
 } = require('./global');
 const { getGameData, getAllUserIds } = require('./gameData');
@@ -61,7 +61,37 @@ const execPromise = util.promisify(exec);
 //     backup_size: 414799
 // }
 
-async function getGameDataFromDB(ignoreUninstalled = false) {
+// Helper: parse common fields on a DB row
+function parseDbRow(row) {
+    row.wiki_page_id = row.wiki_page_id.toString();
+    row.platform = JSON.parse(row.platform);
+    row.save_location = JSON.parse(row.save_location);
+    row.latest_backup = getNewestBackup(row.wiki_page_id);
+}
+
+// Helper: find and set install_path from game install directories, returns true if found
+function findInstallPath(row, gameInstallPaths) {
+    if (row.install_folder) {
+        for (const installPath of gameInstallPaths) {
+            const potentialPath = path.join(installPath, row.install_folder);
+            if (fsOriginal.existsSync(potentialPath)) {
+                row.install_path = potentialPath;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+// Helper: process game and push to array if it has valid resolved paths
+async function processAndPushGame(row, games) {
+    const processed = await process_game(row);
+    if (processed.resolved_paths.length !== 0) {
+        games.push(processed);
+    }
+}
+
+async function getGameDataFromDB(ignoreUninstalled = false, wikiId = null) {
     const games = [];
     const errors = [];
     const dbPath = path.join(app.getPath("userData"), "GSM Database", "database.db");
@@ -80,6 +110,53 @@ async function getGameDataFromDB(ignoreUninstalled = false) {
     }
 
     const db = new sqlite3.Database(dbPath, sqlite3.OPEN_READONLY);
+    const gameInstallPaths = getSettings().gameInstalls;
+
+    // If specific wikiId is provided, fetch only that game
+    if (wikiId) {
+        try {
+            // 1. Check database
+            const rows = await new Promise((resolve, reject) => {
+                db.all("SELECT * FROM games WHERE wiki_page_id = ?", [wikiId], (err, rows) => {
+                    if (err) reject(err);
+                    else resolve(rows);
+                });
+            });
+
+            if (rows && rows.length > 0) {
+                const row = rows[0];
+                parseDbRow(row);
+                const isInstalled = findInstallPath(row, gameInstallPaths);
+
+                if (!isInstalled) {
+                    if (ignoreUninstalled || !getSettings().saveUninstalledGames) {
+                        return { games, errors };
+                    }
+                    const uninstalledWikiIds = (getSettings().uninstalledGames || []).map(String);
+                    if (!uninstalledWikiIds.includes(row.wiki_page_id)) {
+                        return { games, errors };
+                    }
+                }
+
+                await processAndPushGame(row, games);
+            } else {
+                // 2. Fallback to checking custom games
+                const customJsonPath = path.join(getSettings().backupPath, 'custom_entries.json');
+                if (fs.existsSync(customJsonPath)) {
+                    const { customGames, customGameErrors } = await processCustomEntries(customJsonPath, gameInstallPaths, wikiId);
+                    games.push(...customGames);
+                    errors.push(...customGameErrors);
+                }
+            }
+        } catch (error) {
+            console.error(`Error fetching single game data for ${wikiId}: ${error.stack}`);
+            errors.push(`${i18next.t('alert.backup_process_error_db', { game_name: wikiId })}: ${error.message}`);
+        } finally {
+            db.close();
+        }
+        return { games, errors };
+    }
+
     let stmtInstallFolder;
     const processedInstallPaths = new Set();
 
@@ -113,16 +190,9 @@ async function getGameDataFromDB(ignoreUninstalled = false) {
                         if (rows && rows.length > 0) {
                             for (const row of rows) {
                                 try {
-                                    row.wiki_page_id = row.wiki_page_id.toString();
-                                    row.platform = JSON.parse(row.platform);
-                                    row.save_location = JSON.parse(row.save_location);
+                                    parseDbRow(row);
                                     row.install_path = path.join(installPath, dir);
-                                    row.latest_backup = getNewestBackup(row.wiki_page_id);
-
-                                    const processed_game = await process_game(row);
-                                    if (processed_game.resolved_paths.length !== 0) {
-                                        games.push(processed_game);
-                                    }
+                                    await processAndPushGame(row, games);
 
                                 } catch (err) {
                                     console.error(`Error processing installed game ${getGameDisplayName(row)}: ${err.stack}`);
@@ -155,15 +225,8 @@ async function getGameDataFromDB(ignoreUninstalled = false) {
                     if (rows && rows.length > 0) {
                         for (const row of rows) {
                             try {
-                                row.wiki_page_id = row.wiki_page_id.toString();
-                                row.platform = JSON.parse(row.platform);
-                                row.save_location = JSON.parse(row.save_location);
-                                row.latest_backup = getNewestBackup(row.wiki_page_id);
-
-                                const processed_game = await process_game(row);
-                                if (processed_game.resolved_paths.length !== 0) {
-                                    games.push(processed_game);
-                                }
+                                parseDbRow(row);
+                                await processAndPushGame(row, games);
 
                             } catch (err) {
                                 console.error(`Error processing uninstalled game ${getGameDisplayName(row)}: ${err.stack}`);
@@ -238,15 +301,8 @@ async function getAllGameDataFromDB() {
 
             for (const row of rows) {
                 try {
-                    row.wiki_page_id = row.wiki_page_id.toString();
-                    row.platform = JSON.parse(row.platform);
-                    row.save_location = JSON.parse(row.save_location);
-                    row.latest_backup = getNewestBackup(row.wiki_page_id);
-
-                    const processed_game = await process_game(row);
-                    if (processed_game.resolved_paths.length !== 0) {
-                        games.push(processed_game);
-                    }
+                    parseDbRow(row);
+                    await processAndPushGame(row, games);
 
                 } catch (err) {
                     console.error(`Error processing database game ${getGameDisplayName(row)}: ${err.stack}`);
@@ -280,33 +336,25 @@ async function getAllGameDataFromDB() {
     }
 }
 
-async function processCustomEntries(customJsonPath, gameInstallPaths) {
+async function processCustomEntries(customJsonPath, gameInstallPaths, targetWikiId = null) {
     const customGames = [];
     const customGameErrors = [];
 
     const customEntries = JSON.parse(fs.readFileSync(customJsonPath, 'utf-8'));
-    for (let customEntry of customEntries) {
-        try {
-            if (customEntry.install_folder) {
-                for (const installPath of gameInstallPaths) {
-                    const potentialPath = path.join(installPath, customEntry.install_folder);
-                    if (fsOriginal.existsSync(potentialPath)) {
-                        customEntry.install_path = potentialPath;
-                        break;
-                    }
-                }
-            }
+    const entriesToProcess = targetWikiId
+        ? customEntries.filter(e => e.wiki_page_id === targetWikiId)
+        : customEntries;
 
+    for (let customEntry of entriesToProcess) {
+        try {
+            findInstallPath(customEntry, gameInstallPaths);
             customEntry.platform = ['Custom'];
             customEntry.latest_backup = getNewestBackup(customEntry.wiki_page_id);
             for (const plat in customEntry.save_location) {
                 customEntry.save_location[plat] = customEntry.save_location[plat].map(entry => entry.template);
             }
 
-            const processed_game = await process_game(customEntry);
-            if (processed_game.resolved_paths.length !== 0) {
-                customGames.push(processed_game);
-            }
+            await processAndPushGame(customEntry, customGames);
         } catch (err) {
             console.error(`Error processing custom game ${customEntry.title}: ${err.stack}`);
             customGameErrors.push(`${i18next.t('alert.backup_process_error_custom', { game_name: customEntry.title })}: ${err.message}`);
