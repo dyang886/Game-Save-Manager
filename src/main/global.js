@@ -483,6 +483,7 @@ async function exportBackups(count, exportPath, wikiIds = null) {
             }
 
             // For each game folder, select the most recent backup instances
+            // Permanent backups are always included regardless of count
             for (const gameId of gameFolders) {
                 const gameFolderPath = path.join(sourcePath, gameId);
                 let backups = fsOriginal.readdirSync(gameFolderPath).filter(item => {
@@ -490,12 +491,26 @@ async function exportBackups(count, exportPath, wikiIds = null) {
                     return fsOriginal.lstatSync(fullPath).isDirectory();
                 });
 
-                backups.sort((a, b) => { return b.localeCompare(a); });
-                backups = backups.slice(0, count);
+                const permanentBackups = [];
+                const nonPermanentBackups = [];
+                for (const backup of backups) {
+                    const infoPath = path.join(gameFolderPath, backup, 'backup_info.json');
+                    if (fsOriginal.existsSync(infoPath)) {
+                        const info = fse.readJsonSync(infoPath);
+                        if (info.is_permanent) {
+                            permanentBackups.push(backup);
+                            continue;
+                        }
+                    }
+                    nonPermanentBackups.push(backup);
+                }
 
-                backups.forEach(backupFolder => {
+                nonPermanentBackups.sort((a, b) => b.localeCompare(a));
+                const selected = nonPermanentBackups.slice(0, count);
+
+                for (const backupFolder of [...permanentBackups, ...selected]) {
                     itemsToArchive.push(path.join(gameId, backupFolder));
-                });
+                }
             }
 
             const timestamp = moment().format('YYYY-MM-DD_HH-mm');
