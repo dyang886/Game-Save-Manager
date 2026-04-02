@@ -78,6 +78,37 @@
                 </div>
 
                 <div class="p-4 md:p-5">
+                    <label data-i18n="alert.export_scope"
+                        class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
+                        <span class="text-content">Export scope</span>
+                    </label>
+                    <div class="flex flex-col gap-2 mb-4">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="radio" name="export-scope" value="all" checked
+                                class="w-4 h-4 text-blue-600 dark:text-blue-500 bg-gray-100 dark:bg-gray-700 dark:border-gray-600">
+                            <span data-i18n="alert.export_all_games"
+                                class="ms-2 text-sm text-gray-900 dark:text-gray-300">
+                                <span class="text-content">All games</span>
+                            </span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="radio" name="export-scope" value="backup"
+                                class="w-4 h-4 text-blue-600 dark:text-blue-500 bg-gray-100 dark:bg-gray-700 dark:border-gray-600">
+                            <span data-i18n="alert.export_selected_backup"
+                                class="ms-2 text-sm text-gray-900 dark:text-gray-300">
+                                <span class="text-content">Selected games from backup table</span>
+                            </span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="radio" name="export-scope" value="restore"
+                                class="w-4 h-4 text-blue-600 dark:text-blue-500 bg-gray-100 dark:bg-gray-700 dark:border-gray-600">
+                            <span data-i18n="alert.export_selected_restore"
+                                class="ms-2 text-sm text-gray-900 dark:text-gray-300">
+                                <span class="text-content">Selected games from restore table</span>
+                            </span>
+                        </label>
+                    </div>
+
                     <label for="modal-export-count" data-i18n="alert.export_count"
                         class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
                         <span class="text-content">Number of exports per game (ordered from newest to oldest)</span>

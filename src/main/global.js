@@ -447,7 +447,7 @@ function fsOriginalCopyFolder(source, target) {
     }
 }
 
-async function exportBackups(count, exportPath) {
+async function exportBackups(count, exportPath, wikiIds = null) {
     const progressId = 'export';
     const progressTitle = i18next.t('alert.exporting');
     const sourcePath = settings.backupPath;
@@ -471,10 +471,16 @@ async function exportBackups(count, exportPath) {
             }
 
             const items = fsOriginal.readdirSync(sourcePath);
-            const gameFolders = items.filter(item => {
+            let gameFolders = items.filter(item => {
                 const fullPath = path.join(sourcePath, item);
                 return fsOriginal.lstatSync(fullPath).isDirectory();
             });
+
+            // Filter to selected games if wikiIds provided
+            if (wikiIds && wikiIds.length > 0) {
+                const wikiIdSet = new Set(wikiIds.map(String));
+                gameFolders = gameFolders.filter(folder => wikiIdSet.has(folder));
+            }
 
             // For each game folder, select the most recent backup instances
             for (const gameId of gameFolders) {

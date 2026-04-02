@@ -413,8 +413,8 @@ ipcMain.handle('update-database', async () => {
     return;
 });
 
-ipcMain.on('export-backups', (event, count, exportPath) => {
-    exportBackups(count, exportPath);
+ipcMain.on('export-backups', (event, count, exportPath, wikiIds) => {
+    exportBackups(count, exportPath, wikiIds);
 });
 
 ipcMain.on('import-backups', (event, gsmPath) => {

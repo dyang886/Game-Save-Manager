@@ -271,7 +271,23 @@ async function exportConfirm() {
     if (start) {
         const count = document.getElementById('modal-export-count').value;
         const exportPath = document.getElementById('modal-export-path').value;
-        window.api.send("export-backups", count, exportPath);
+        const scope = document.querySelector('input[name="export-scope"]:checked').value;
+
+        let wikiIds = null;
+        if (scope !== 'all') {
+            const table = document.querySelector(`#${scope}`);
+            const selectedRows = table.querySelectorAll('.row-checkbox:checked');
+            wikiIds = Array.from(selectedRows).map(checkbox => {
+                return checkbox.closest('tr').getAttribute('data-wiki-id').trim();
+            });
+            if (wikiIds.length === 0) {
+                showAlert('warning', await window.i18n.translate('alert.no_games_selected'));
+                closeExportModal();
+                return;
+            }
+        }
+
+        window.api.send("export-backups", count, exportPath, wikiIds);
     }
     closeExportModal();
 }
