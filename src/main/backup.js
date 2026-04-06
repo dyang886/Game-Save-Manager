@@ -556,6 +556,17 @@ async function fillPathUid(templatedPath, basePath, placeholderMappings) {
 
     // 1. If there's no uid placeholder, just handle wildcards
     if (!basePath.includes('{{p|uid}}')) {
+        // --- SMART DETECTION FOR SUBDIRECTORIES ---
+        const pathParts = path.parse(basePath);
+        if (pathParts.base.includes('*')) {
+            const subdirectoryPath = path.join(pathParts.dir, '*', pathParts.base);
+            const subDirFiles = tryGlobAndReturnPaths(subdirectoryPath);
+            if (subDirFiles && subDirFiles.length > 0) {
+                return subDirFiles;
+            }
+        }
+        // --- END SMART DETECTION ---
+
         const result = tryGlobAndReturnPaths(basePath);
         return result || [];
     }
