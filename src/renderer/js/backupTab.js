@@ -98,6 +98,9 @@ async function populateBackupTable(data, iconMap) {
     );
 
     // Append rows to the table body
+    const autoBackupState = await window.api.invoke('get-auto-backup-state');
+    const autoBackupSet = new Set(Object.keys(autoBackupState));
+
     const appendRowsToTable = (games, isPinned) => {
         games.forEach((game) => {
             const wikiId = game.wiki_page_id;
@@ -135,6 +138,11 @@ async function populateBackupTable(data, iconMap) {
             const hasPermamentBackup = restoreGameData && restoreGameData.backups && restoreGameData.backups.some(backup => backup.is_permanent);
             if (hasPermamentBackup) {
                 setIcon(row, 'star', true);
+            }
+
+            // Check if auto backup is active
+            if (autoBackupSet.has(wikiId.toString())) {
+                setIcon(row, 'timer', true);
             }
 
             tableBody.appendChild(row);

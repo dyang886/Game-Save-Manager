@@ -63,7 +63,7 @@
         <input type="number" id="max-backups" aria-describedby="helper-text-explanation"
             class="mb-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-hidden block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
             min="1" max="1000" />
-        
+
         <!-- Auto app update -->
         <div class="flex items-center mb-4" data-i18n="settings.auto_app_update">
             <input id="auto-app-update" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 rounded-sm dark:ring-offset-gray-800 dark:bg-gray-700">
@@ -80,6 +80,14 @@
         <div class="flex items-center mb-4" data-i18n="settings.save_uninstalled_games">
             <input id="save-uninstalled-games" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 rounded-sm dark:ring-offset-gray-800 dark:bg-gray-700">
             <label for="save-uninstalled-games" class="select-none ms-2 text-sm font-medium text-gray-900 dark:text-gray-300 text-content">Save and display uninstalled games after full database scan</label>
+        </div>
+
+        <!-- Backup scope hint -->
+        <div class="flex items-center mb-4">
+            <i class="fa-solid fa-users text-gray-400 dark:text-gray-500 w-4 h-4 text-center"></i>
+            <span data-i18n="settings.backup_scope_hint" class="ms-2 text-sm text-gray-500 dark:text-gray-400">
+                <span class="text-content select-none">To configure backup scope (current account / all accounts), go to Options → View Account IDs</span>
+            </span>
         </div>
 
         <!-- Game Install Locations -->

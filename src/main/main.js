@@ -20,6 +20,7 @@ const {
 const { getGameData, initializeGameData, detectGamePaths, getAllUserIds } = require('./gameData');
 const { getGameDataFromDB, getAllGameDataFromDB, backupGame, updateDatabase } = require('./backup');
 const { getGameDataForRestore, restoreGame } = require("./restore");
+const { startAutoBackup, stopAutoBackup, getAutoBackupState, restoreAutoBackups, stopAllAutoBackups } = require('./autoBackup');
 
 
 // Setup hot reload for development
@@ -51,6 +52,10 @@ if (!gotTheLock) {
         }
     });
 
+    app.on('will-quit', () => {
+        stopAllAutoBackups();
+    });
+
     if (process.platform === 'win32') {
         const gsmPath = process.argv.find(arg => arg.toLowerCase().endsWith('.gsmr'));
         if (gsmPath) {
@@ -77,6 +82,8 @@ app.whenReady().then(async () => {
     if (getSettings().autoAppUpdate) {
         checkAppUpdate();
     }
+
+    await restoreAutoBackups();
 
     getMainWin().webContents.once('did-finish-load', () => {
         if (pendingGSMPath) {
@@ -435,4 +442,17 @@ ipcMain.handle('start-scan-full', async () => {
 
 ipcMain.on('update-app', (event, latest_version) => {
     updateApp(latest_version);
+});
+
+// Auto backup IPC handlers
+ipcMain.handle('start-auto-backup', async (event, wikiId, mode, intervalMinutes) => {
+    await startAutoBackup(wikiId, mode, intervalMinutes);
+});
+
+ipcMain.handle('stop-auto-backup', (event, wikiId) => {
+    return stopAutoBackup(wikiId, true);
+});
+
+ipcMain.handle('get-auto-backup-state', () => {
+    return getAutoBackupState();
 });

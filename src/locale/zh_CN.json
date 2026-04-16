@@ -18,7 +18,8 @@
         "save-settings-success": "设置保存成功",
         "auto_app_update": "自动检查软件更新",
         "auto_db_update": "自动更新数据库",
-        "save_uninstalled_games": "显示未安装的游戏（需完整数据库扫描）"
+        "save_uninstalled_games": "显示未安装的游戏（需完整数据库扫描）",
+        "backup_scope_hint": "如需设置备份范围，请前往 选项 → 查看账户 ID"
     },
     "about": {
         "title": "关于",
@@ -67,6 +68,21 @@
         "total_restore_size": "总还原大小：{{size}}",
         "backup_count": "备份个数",
         "manage_backups": "管理备份",
+        "auto_backup": "自动备份",
+        "auto_backup_enable": "启用",
+        "auto_backup_disable": "停用",
+        "auto_backup_mode": "自动备份模式",
+        "auto_backup_mode_interval": "定时备份",
+        "auto_backup_mode_interval_detail": "定时备份（{{minutes}} 分钟）",
+        "auto_backup_mode_watcher": "存档文件变更时备份",
+        "auto_backup_interval_minutes": "间隔（分钟）",
+        "auto_backup_status_active": "自动备份运行中",
+        "auto_backup_status_inactive": "自动备份未启用",
+        "auto_backup_enabled": "自动备份已启用",
+        "auto_backup_disabled": "自动备份已停用",
+        "auto_backup_summary": "自动备份：共执行 {{total}} 次，失败 {{failed}} 次",
+        "auto_backup_backups_performed": "已执行 {{count}} 次备份",
+        "auto_backup_failures": "{{count}} 次失败",
         "action": "操作",
         "restore_selected": "还原选中的游戏",
         "update_database": "更新数据库",
@@ -206,6 +222,7 @@
         "delete_partial_failure": "部分项目无法删除",
         "delete_failed": "删除数据失败",
         "local_save_deleted": "已成功删除本地存档",
-        "wait_for_backup_loading": "请等待备份列表加载完成"
+        "wait_for_backup_loading": "请等待备份列表加载完成",
+        "auto_backup_game_not_found": "未找到自动备份的游戏数据"
     }
 }

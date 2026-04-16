@@ -21,7 +21,7 @@ let aboutWin;
 let settings;
 let writeQueue = Promise.resolve();
 
-const appVersion = "2.2.0-beta.1";
+const appVersion = "2.2.0-beta.2";
 let status = {
     backuping: false,
     scanning_full: false,
@@ -889,7 +889,8 @@ const loadSettings = () => {
         saveUninstalledGames: true,
         gameInstalls: 'uninitialized',
         pinnedGames: [],
-        uninstalledGames: []
+        uninstalledGames: [],
+        autoBackupGames: {}
     };
 
     fs.mkdirSync(path.dirname(settingsPath), { recursive: true });

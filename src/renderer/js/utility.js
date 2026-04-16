@@ -229,6 +229,8 @@ function showExportModal() {
 
     if (!modalOverlay.classList.contains('hidden')) return;
 
+    wrapNumberInput(modalExportCountInput);
+
     window.api.invoke('get-settings').then((settings) => {
         if (settings) {
             modalExportCountInput.max = settings.maxBackups;
@@ -438,24 +440,20 @@ function showAccountModal() {
 
                 <div class="border-t border-gray-300 dark:border-gray-600 pt-4">
                     <h4 class="font-semibold text-gray-900 dark:text-white mb-3 text-content" data-i18n="alert.backup_scope"></h4>
-                    <div class="space-y-3">
-                        <div class="flex items-center">
+                    <div class="flex flex-col gap-2">
+                        <label class="flex items-center cursor-pointer">
                             <input id="backup-scope-current" type="radio" name="backup-scope" 
                                 ${!isBackupAllAccounts ? 'checked' : ''}
                                 class="w-4 h-4 text-blue-600 dark:text-blue-500 bg-gray-100 dark:bg-gray-700 dark:border-gray-600">
-                            <label for="backup-scope-current" class="ms-2 text-sm text-gray-900 dark:text-gray-300">
-                                <span class="font-medium text-content" data-i18n="alert.current_account_only"></span>
-                            </label>
-                        </div>
+                            <span class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300 text-content" data-i18n="alert.current_account_only"></span>
+                        </label>
 
-                        <div class="flex items-center mt-4">
+                        <label class="flex items-center cursor-pointer">
                             <input id="backup-scope-all" type="radio" name="backup-scope" 
                                 ${isBackupAllAccounts ? 'checked' : ''}
                                 class="w-4 h-4 text-blue-600 dark:text-blue-500 bg-gray-100 dark:bg-gray-700 dark:border-gray-600">
-                            <label for="backup-scope-all" class="ms-2 text-sm text-gray-900 dark:text-gray-300">
-                                <span class="font-medium text-content" data-i18n="alert.all_accounts"></span>
-                            </label>
-                        </div>
+                            <span class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300 text-content" data-i18n="alert.all_accounts"></span>
+                        </label>
                     </div>
                 </div>
 
@@ -506,6 +504,61 @@ function showAccountModal() {
         modal.classList.add('flex');
         modal.classList.remove('hidden');
         modalOverlay.classList.remove('hidden');
+    });
+}
+
+/**
+ * Wrap a number input with custom increment/decrement controls.
+ * Hides native spinners (via CSS) and adds styled chevron buttons.
+ * @param {HTMLInputElement} input - The input[type="number"] element to wrap
+ */
+export function wrapNumberInput(input) {
+    if (!input || input.type !== 'number' || input.dataset.wrapped) return;
+    input.dataset.wrapped = 'true';
+
+    const min = input.min !== '' ? parseInt(input.min, 10) : null;
+    const max = input.max !== '' ? parseInt(input.max, 10) : null;
+
+    // Create wrapper
+    const wrapper = document.createElement('div');
+    wrapper.className = 'relative inline-flex items-center w-full';
+
+    // Transfer margin classes from input to wrapper
+    for (const cls of [...input.classList]) {
+        if (cls.startsWith('mb-') || cls.startsWith('mt-') || cls.startsWith('my-')) {
+            wrapper.classList.add(cls);
+            input.classList.remove(cls);
+        }
+    }
+
+    input.parentNode.insertBefore(wrapper, input);
+    wrapper.appendChild(input);
+    input.classList.add('pr-8');
+
+    // Create controls
+    const controls = document.createElement('div');
+    controls.className = 'absolute right-0 top-0 bottom-0 flex flex-col w-7';
+    const btnClass = 'flex-1 flex items-center justify-center cursor-pointer text-gray-400 dark:text-gray-400 text-[0.6rem] hover:text-gray-800 dark:hover:text-white active:scale-125 transition-all duration-150';
+    controls.innerHTML = `
+        <button type="button" tabindex="-1" data-action="increment" class="${btnClass} items-end pb-0.5 rounded-tr-lg">
+            <i class="fa-solid fa-chevron-up"></i>
+        </button>
+        <button type="button" tabindex="-1" data-action="decrement" class="${btnClass} items-start pt-0.5 rounded-br-lg">
+            <i class="fa-solid fa-chevron-down"></i>
+        </button>
+    `;
+    wrapper.appendChild(controls);
+
+    // Button handlers
+    controls.querySelectorAll('button[data-action]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const current = parseInt(input.value, 10) || 0;
+            let next = btn.dataset.action === 'increment' ? current + 1 : current - 1;
+            if (min !== null && next < min) next = min;
+            if (max !== null && next > max) next = max;
+            input.value = next;
+            input.dispatchEvent(new Event('input'));
+        });
     });
 }
 

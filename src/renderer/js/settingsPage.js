@@ -1,4 +1,4 @@
-import { updateTranslations, showAlert, operationStartCheck } from './utility.js';
+import { updateTranslations, showAlert, operationStartCheck, wrapNumberInput } from './utility.js';
 
 window.api.receive('apply-language', () => {
     updateTranslations(document);
@@ -17,6 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const gamePathsContainer = document.getElementById('game-paths-container');
     const addNewPathButton = document.getElementById('add-new-path');
     const saveSettingsButton = document.getElementById('save-settings');
+
+    wrapNumberInput(maxBackupsInput);
 
     window.api.invoke('get-settings').then((settings) => {
         if (settings) {

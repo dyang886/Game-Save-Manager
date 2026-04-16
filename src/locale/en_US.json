@@ -18,7 +18,8 @@
         "save-settings-success": "Successfully saved settings",
         "auto_app_update": "Check software update automatically",
         "auto_db_update": "Update database automatically",
-        "save_uninstalled_games": "Display uninstalled games (needs full database scan)"
+        "save_uninstalled_games": "Display uninstalled games (needs full database scan)",
+        "backup_scope_hint": "To configure backup scope, go to Options → View Account IDs"
     },
     "about": {
         "title": "About",
@@ -67,6 +68,21 @@
         "total_restore_size": "Total restore size: {{size}}",
         "backup_count": "Number of Backups",
         "manage_backups": "Manage Backups",
+        "auto_backup": "Auto Backup",
+        "auto_backup_enable": "Enable",
+        "auto_backup_disable": "Disable",
+        "auto_backup_mode": "Auto Backup Mode",
+        "auto_backup_mode_interval": "Backup at regular intervals",
+        "auto_backup_mode_interval_detail": "Backup at regular intervals ({{minutes}} min)",
+        "auto_backup_mode_watcher": "Backup when save files change",
+        "auto_backup_interval_minutes": "Interval (minutes)",
+        "auto_backup_status_active": "Auto backup is active",
+        "auto_backup_status_inactive": "Auto backup is not active",
+        "auto_backup_enabled": "Auto backup enabled",
+        "auto_backup_disabled": "Auto backup disabled",
+        "auto_backup_summary": "Auto backup: {{total}} backup(s) performed, {{failed}} failed",
+        "auto_backup_backups_performed": "{{count}} backup(s) performed",
+        "auto_backup_failures": "{{count}} failure(s)",
         "action": "Action",
         "restore_selected": "Restore Selected Games",
         "update_database": "Update Database",
@@ -206,6 +222,7 @@
         "delete_partial_failure": "Some items could not be deleted",
         "delete_failed": "Failed to delete data",
         "local_save_deleted": "Local save data deleted successfully",
-        "wait_for_backup_loading": "Please wait for the backup tab to finish loading"
+        "wait_for_backup_loading": "Please wait for the backup tab to finish loading",
+        "auto_backup_game_not_found": "Game data not found for auto backup"
     }
 }
