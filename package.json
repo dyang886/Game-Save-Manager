@@ -28,7 +28,7 @@
     ],
     "extraFiles": [
       {
-        "from": "../gamezoneofficial.com/GSM/database.db",
+        "from": "../Automation/GSM/database.db",
         "to": "./database/database.db"
       }
     ]
@@ -39,6 +39,7 @@
     "7zip-bin": "^5.2.0",
     "axios": "^1.9.0",
     "bytenode": "^1.5.7",
+    "chokidar": "^3.6.0",
     "fs-extra": "^11.2.0",
     "glob": "^11.0.2",
     "i18next": "^23.12.2",
@@ -59,7 +60,6 @@
     "@herberttn/bytenode-webpack-plugin": "^2.3.1",
     "@tailwindcss/cli": "^4.1.8",
     "babel-loader": "^10.0.0",
-    "chokidar": "^3.6.0",
     "concurrently": "^9.1.2",
     "copy-webpack-plugin": "^13.0.0",
     "cross-env": "^7.0.3",

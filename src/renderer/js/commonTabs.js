@@ -1,6 +1,6 @@
 import { showAlert, updateTranslations } from './utility.js';
 import { checkAndWarnUnsavedChanges } from './customTab.js';
-import { showManageBackupsModal, showAutoBackupModal } from './gameModals.js';
+import { showManageBackupsModal, showAutoBackupModal } from './modalDisplay.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     updateTranslations(document);
@@ -225,7 +225,7 @@ export function createBackupTableRow(gameTitle, platformIcons, backupSize, newes
         <th scope="row" class="pr-6 py-4 truncate font-medium text-gray-900 whitespace-nowrap dark:text-white">
             <span data-icon="pin" class="hidden"><i class="fa-solid fa-thumbtack text-red-500 mr-2"></i></span>
             <span data-icon="star" class="hidden"><i class="fa-solid fa-star text-yellow-500 mr-2"></i></span>
-            <span data-icon="timer" class="hidden"><i class="fa-solid fa-hourglass text-blue-500 mr-2"></i></span>
+            <span data-icon="timer" class="hidden"><i class="fa-solid fa-clock-rotate-left text-green-500 mr-2"></i></span>
             ${gameTitle}
         </th>
         <td class="px-6 py-4 truncate">
@@ -264,7 +264,7 @@ export function createRestoreTableRow(gameTitle, backupCount, backupSize, newest
         <th scope="row" class="pr-6 py-4 truncate font-medium text-gray-900 whitespace-nowrap dark:text-white">
             <span data-icon="pin" class="hidden"><i class="fa-solid fa-thumbtack text-red-500 mr-2"></i></span>
             <span data-icon="star" class="hidden"><i class="fa-solid fa-star text-yellow-500 mr-2"></i></span>
-            <span data-icon="timer" class="hidden"><i class="fa-solid fa-hourglass text-blue-500 mr-2"></i></span>
+            <span data-icon="timer" class="hidden"><i class="fa-solid fa-clock-rotate-left text-green-500 mr-2"></i></span>
             ${gameTitle}
         </th>
         <td class="px-6 py-4 truncate backup-count">

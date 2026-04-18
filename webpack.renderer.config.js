@@ -12,9 +12,9 @@ module.exports = {
     target: 'electron-renderer',
     devtool: isProduction ? false : 'source-map',
     entry: {
-        index: './src/renderer/js/index-main.js',
-        settings: './src/renderer/js/settings-main.js',
-        about: './src/renderer/js/about-main.js',
+        index: './src/renderer/index.entry.js',
+        settings: './src/renderer/settings.entry.js',
+        about: './src/renderer/about.entry.js',
     },
     output: {
         path: path.resolve(__dirname, 'dist/out/renderer'),
