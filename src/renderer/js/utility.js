@@ -284,22 +284,26 @@ async function exportConfirm() {
             });
             if (wikiIds.length === 0) {
                 showAlert('warning', await window.i18n.translate('alert.no_games_selected'));
-                closeExportModal();
+                await closeExportModal();
                 return;
             }
         }
 
         window.api.send("export-backups", count, exportPath, wikiIds);
     }
-    closeExportModal();
+    await closeExportModal();
 }
 
-function closeExportModal() {
+async function closeExportModal() {
     const modal = document.getElementById('modal-export');
     const modalOverlay = document.getElementById('modal-overlay');
     const modalExportPathInput = document.getElementById('modal-export-path');
 
-    window.api.send('save-settings', 'exportPath', modalExportPathInput.value);
+    const saved = await window.api.invoke('save-settings', 'exportPath', modalExportPathInput.value);
+    if (!saved) {
+        showAlert('warning', await window.i18n.translate('settings.save-settings-error'));
+    }
+
     modal.classList.add('hidden');
     modal.classList.remove('flex');
     modalOverlay.classList.add('hidden');
@@ -473,9 +477,19 @@ function showAccountModal() {
             modalOverlay.classList.add('hidden');
         };
 
-        const handleConfirm = () => {
+        const handleConfirm = async () => {
             const isAllAccountsSelected = document.getElementById('backup-scope-all').checked;
-            window.api.send('save-settings', 'backupAllAccounts', isAllAccountsSelected);
+            if (isAllAccountsSelected === isBackupAllAccounts) {
+                handleClose();
+                return;
+            }
+
+            const saved = await window.api.invoke('save-settings', 'backupAllAccounts', isAllAccountsSelected);
+            if (!saved) {
+                showAlert('warning', await window.i18n.translate('settings.save-settings-error'));
+                return;
+            }
+
             window.api.send('update-backup-table');
             handleClose();
         };

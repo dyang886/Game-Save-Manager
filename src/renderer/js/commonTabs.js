@@ -177,6 +177,90 @@ export function hideLoadingIndicator(tabName) {
     }
 }
 
+const tableUpdateStates = new Map();
+
+function getTableUpdateState(tabName) {
+    if (!tableUpdateStates.has(tabName)) {
+        tableUpdateStates.set(tabName, {
+            running: false,
+            promise: null,
+            fullUpdatePending: false,
+            loaderRequested: false,
+            loadTable: null,
+            rowActions: new Map()
+        });
+    }
+    return tableUpdateStates.get(tabName);
+}
+
+// Serialize full table updates. Requests received during a load are coalesced
+// into one trailing load, followed by the latest queued action for each row.
+async function processTableUpdates(tabName, state) {
+    let loaderVisible = false;
+    window.api.send('update-status', `updating_${tabName}`, true);
+
+    try {
+        while (state.fullUpdatePending || state.rowActions.size > 0) {
+            if (state.fullUpdatePending) {
+                state.fullUpdatePending = false;
+
+                if (state.loaderRequested) {
+                    if (!loaderVisible) {
+                        await showLoadingIndicator(tabName);
+                        loaderVisible = true;
+                    }
+                    state.loaderRequested = false;
+                }
+
+                await state.loadTable();
+                continue;
+            }
+
+            const rowActions = Array.from(state.rowActions.values());
+            state.rowActions.clear();
+            for (const action of rowActions) {
+                if (action.type === 'remove') {
+                    performRemoveTableRow(tabName, action.wikiId);
+                } else {
+                    await performAddOrUpdateTableRow(tabName, action.wikiId);
+                }
+            }
+        }
+    } finally {
+        if (loaderVisible) {
+            hideLoadingIndicator(tabName);
+        }
+        window.api.send('update-status', `updating_${tabName}`, false);
+    }
+}
+
+export function queueFullTableUpdate(tabName, loader, loadTable) {
+    const state = getTableUpdateState(tabName);
+    state.fullUpdatePending = true;
+    state.loaderRequested ||= Boolean(loader);
+    state.loadTable = loadTable;
+
+    if (!state.running) {
+        state.running = true;
+        state.promise = processTableUpdates(tabName, state)
+            .catch(error => {
+                console.error(`Error updating ${tabName} table:`, error);
+            })
+            .finally(() => {
+                state.running = false;
+                state.promise = null;
+
+                // A request cannot normally arrive between the final queue
+                // check and cleanup, but restart defensively if one did.
+                if (state.fullUpdatePending || state.rowActions.size > 0) {
+                    queueFullTableUpdate(tabName, state.loaderRequested, state.loadTable);
+                }
+            });
+    }
+
+    return state.promise;
+}
+
 // Function to set up the search filter for the table
 function setupSearchFilter(tabName) {
     const searchInput = document.getElementById(`${tabName}-search`);
@@ -308,7 +392,7 @@ export function createRestoreTableRow(gameTitle, backupCount, backupSize, newest
     return row;
 }
 
-export async function addOrUpdateTableRow(tabName, wikiId) {
+async function performAddOrUpdateTableRow(tabName, wikiId) {
     let gameData;
     if (tabName === 'backup') {
         const games = await window.api.invoke('fetch-backup-table-data', null, wikiId);
@@ -420,8 +504,18 @@ export async function addOrUpdateTableRow(tabName, wikiId) {
     }
 }
 
+export async function addOrUpdateTableRow(tabName, wikiId) {
+    const state = getTableUpdateState(tabName);
+    if (state.running) {
+        state.rowActions.set(wikiId.toString(), { type: 'update', wikiId });
+        return state.promise;
+    }
+
+    return performAddOrUpdateTableRow(tabName, wikiId);
+}
+
 // Helper function to remove a game row from a tab's table and clean up its data map
-export function removeTableRow(tabName, wikiId) {
+function performRemoveTableRow(tabName, wikiId) {
     const row = document.querySelector(`#${tabName} tbody tr[data-wiki-id="${wikiId}"]`);
     if (row) {
         row.remove();
@@ -437,6 +531,16 @@ export function removeTableRow(tabName, wikiId) {
     }
 
     updateSelectedCountAndSize(tabName);
+}
+
+export function removeTableRow(tabName, wikiId) {
+    const state = getTableUpdateState(tabName);
+    if (state.running) {
+        state.rowActions.set(wikiId.toString(), { type: 'remove', wikiId });
+        return;
+    }
+
+    performRemoveTableRow(tabName, wikiId);
 }
 
 async function createDropdownMenu(wikiPageId, tabName) {
@@ -525,11 +629,15 @@ function setDropDownAction() {
         if (actionElement && actionElement.dataset.action === 'pin-on-top') {
             const wikiId = actionElement.dataset.id;
             if (wikiId) {
-                window.api.invoke('get-settings').then((settings) => {
+                window.api.invoke('get-settings').then(async (settings) => {
                     if (settings) {
                         let pinned_games_wiki_ids = new Set(settings['pinnedGames']);
                         pinned_games_wiki_ids.add(wikiId);
-                        window.api.send('save-settings', 'pinnedGames', Array.from(pinned_games_wiki_ids));
+                        const saved = await window.api.invoke('save-settings', 'pinnedGames', Array.from(pinned_games_wiki_ids));
+                        if (!saved) {
+                            showAlert('warning', await window.i18n.translate('settings.save-settings-error'));
+                            return;
+                        }
                         pinGameOnTop('backup', wikiId);
                         pinGameOnTop('restore', wikiId);
                     }
@@ -541,11 +649,15 @@ function setDropDownAction() {
         if (actionElement && actionElement.dataset.action === 'unpin') {
             const wikiId = actionElement.dataset.id;
             if (wikiId) {
-                window.api.invoke('get-settings').then((settings) => {
+                window.api.invoke('get-settings').then(async (settings) => {
                     if (settings) {
                         let pinned_games_wiki_ids = new Set(settings['pinnedGames']);
                         pinned_games_wiki_ids.delete(wikiId);
-                        window.api.send('save-settings', 'pinnedGames', Array.from(pinned_games_wiki_ids));
+                        const saved = await window.api.invoke('save-settings', 'pinnedGames', Array.from(pinned_games_wiki_ids));
+                        if (!saved) {
+                            showAlert('warning', await window.i18n.translate('settings.save-settings-error'));
+                            return;
+                        }
                         unpinGameFromTop('backup', wikiId);
                         unpinGameFromTop('restore', wikiId);
                     }
@@ -587,7 +699,11 @@ function setDropDownAction() {
                     if (settings) {
                         let hidden_games_wiki_ids = new Set(settings['hiddenGames']);
                         hidden_games_wiki_ids.add(wikiId);
-                        window.api.send('save-settings', 'hiddenGames', Array.from(hidden_games_wiki_ids));
+                        const saved = await window.api.invoke('save-settings', 'hiddenGames', Array.from(hidden_games_wiki_ids));
+                        if (!saved) {
+                            showAlert('warning', await window.i18n.translate('settings.save-settings-error'));
+                            return;
+                        }
                         removeTableRow('backup', wikiId);
                         removeTableRow('restore', wikiId);
                         showAlert('success', await window.i18n.translate('alert.game_hidden'));

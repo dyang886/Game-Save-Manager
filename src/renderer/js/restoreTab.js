@@ -1,5 +1,5 @@
 import { showAlert, showInfoModal, updateProgress, operationStartCheck } from './utility.js';
-import { spinner, showLoadingIndicator, hideLoadingIndicator, createRestoreTableRow, addOrUpdateTableRow, formatSize, updateSelectedCountAndSize, setupSelectAllCheckbox, getSelectedWikiIds, setIcon } from './commonTabs.js';
+import { spinner, queueFullTableUpdate, createRestoreTableRow, addOrUpdateTableRow, formatSize, updateSelectedCountAndSize, setupSelectAllCheckbox, getSelectedWikiIds, setIcon } from './commonTabs.js';
 
 const restoreTableDataMap = new Map();
 window.restoreTableDataMap = restoreTableDataMap;
@@ -13,20 +13,12 @@ window.api.receive('update-restore-table', () => {
     updateRestoreTable(true);
 });
 
-async function updateRestoreTable(loader) {
-    window.api.send('update-status', 'updating_restore', true);
-    if (loader) {
-        await showLoadingIndicator('restore');
-    }
-
-    const gameData = await window.api.invoke('fetch-restore-table-data');
-    await populateRestoreTable(gameData);
-    updateSelectedCountAndSize('restore');
-
-    if (loader) {
-        hideLoadingIndicator('restore');
-    }
-    window.api.send('update-status', 'updating_restore', false);
+function updateRestoreTable(loader) {
+    return queueFullTableUpdate('restore', loader, async () => {
+        const gameData = await window.api.invoke('fetch-restore-table-data');
+        await populateRestoreTable(gameData);
+        updateSelectedCountAndSize('restore');
+    });
 }
 window.updateRestoreTable = updateRestoreTable;
 

@@ -42,12 +42,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Event listeners for changes
-    themeSelect.addEventListener('change', (event) => {
-        window.api.send('save-settings', 'theme', event.target.value);
+    themeSelect.addEventListener('change', async (event) => {
+        const saved = await window.api.invoke('save-settings', 'theme', event.target.value);
+        if (!saved) {
+            showAlert('warning', await window.i18n.translate('settings.save-settings-error'));
+        }
     });
 
-    languageSelect.addEventListener('change', (event) => {
-        window.api.send('save-settings', 'language', event.target.value);
+    languageSelect.addEventListener('change', async (event) => {
+        const saved = await window.api.invoke('save-settings', 'language', event.target.value);
+        if (!saved) {
+            showAlert('warning', await window.i18n.translate('settings.save-settings-error'));
+        }
     });
 
     backupPathButton.addEventListener('click', async () => {
@@ -90,12 +96,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 return sortedArr1.every((value, index) => value === sortedArr2[index]);
             };
 
+            const settingsUpdates = {
+                maxBackups: maxBackupsInput.value,
+                launchAtStartup: launchAtStartupCheckbox.checked,
+                autoAppUpdate: autoAppUpdateCheckbox.checked,
+                autoDbUpdate: autoDbUpdateCheckbox.checked
+            };
+
             if (!areArraysEqual(previousSettings.gameInstalls, newGameInstallPaths)) {
-                window.api.send('save-settings', 'gameInstalls', newGameInstallPaths);
+                settingsUpdates.gameInstalls = newGameInstallPaths;
             }
 
             if (previousSettings.saveUninstalledGames !== saveUninstalledCheckbox.checked) {
-                window.api.send('save-settings', 'saveUninstalledGames', saveUninstalledCheckbox.checked);
+                settingsUpdates.saveUninstalledGames = saveUninstalledCheckbox.checked;
             }
 
             // Check if backup path changed
@@ -104,11 +117,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.api.send('migrate-backups', newBackupPath);
             }
 
-            window.api.send('save-settings', 'maxBackups', maxBackupsInput.value);
-            window.api.send('save-settings', 'launchAtStartup', launchAtStartupCheckbox.checked);
-            window.api.send('save-settings', 'autoAppUpdate', autoAppUpdateCheckbox.checked);
-            window.api.send('save-settings', 'autoDbUpdate', autoDbUpdateCheckbox.checked);
-            showAlert('success', await window.i18n.translate('settings.save-settings-success'));
+            const saved = await window.api.invoke('save-settings', settingsUpdates);
+            const alertType = saved ? 'success' : 'warning';
+            const messageKey = saved
+                ? 'settings.save-settings-success'
+                : 'settings.save-settings-error';
+            showAlert(alertType, await window.i18n.translate(messageKey));
         }
     });
 

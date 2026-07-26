@@ -36,9 +36,9 @@ function setupCustomPage() {
         }
     });
 
-    saveAllButton.addEventListener('click', () => {
-        const start = operationStartCheck('save-custom');
-        if (start) saveEntriesToJson(saveAllButton);
+    saveAllButton.addEventListener('click', async () => {
+        const start = await operationStartCheck('save-custom');
+        if (start) await saveEntriesToJson(saveAllButton);
     });
 
     placeholderButton.addEventListener('click', () => {

@@ -22,7 +22,7 @@ const WATCHER_COOLDOWN_MS = 10000; // 10 seconds cooldown between backups
  */
 async function startAutoBackup(wikiId, mode, intervalMinutes) {
     // Stop any existing auto backup for this game first
-    stopAutoBackup(wikiId, false);
+    await stopAutoBackup(wikiId, false);
 
     const entry = {
         mode,
@@ -49,7 +49,7 @@ async function startAutoBackup(wikiId, mode, intervalMinutes) {
     const settings = getSettings();
     const autoBackupGames = settings.autoBackupGames || {};
     autoBackupGames[wikiId] = { mode, intervalMinutes: mode === 'interval' ? intervalMinutes : null };
-    saveSettings('autoBackupGames', autoBackupGames);
+    await saveSettings('autoBackupGames', autoBackupGames);
 
     // Notify renderer to update timer icon
     const win = getMainWin();
@@ -62,9 +62,9 @@ async function startAutoBackup(wikiId, mode, intervalMinutes) {
  * Stop auto backup for a game
  * @param {string} wikiId
  * @param {boolean} showSummary - whether to show disable summary
- * @returns {object|null} - logs if showSummary is true
+ * @returns {Promise<object|null>} - logs if showSummary is true
  */
-function stopAutoBackup(wikiId, showSummary = true) {
+async function stopAutoBackup(wikiId, showSummary = true) {
     const entry = activeAutoBackups.get(wikiId);
     if (!entry) return null;
 
@@ -76,7 +76,7 @@ function stopAutoBackup(wikiId, showSummary = true) {
 
     // Close watcher
     if (entry.watcher) {
-        entry.watcher.close();
+        await entry.watcher.close();
         entry.watcher = null;
     }
 
@@ -94,7 +94,7 @@ function stopAutoBackup(wikiId, showSummary = true) {
     const settings = getSettings();
     const autoBackupGames = settings.autoBackupGames || {};
     delete autoBackupGames[wikiId];
-    saveSettings('autoBackupGames', autoBackupGames);
+    await saveSettings('autoBackupGames', autoBackupGames);
 
     // Notify renderer to update timer icon
     const win = getMainWin();
@@ -164,6 +164,28 @@ async function setupFileWatcher(wikiId, entry) {
         entry.watcher = watcher;
     } catch (error) {
         console.error(`Error setting up file watcher for ${wikiId}:`, error.message);
+    }
+}
+
+/**
+ * Rebuild active watcher paths after settings that affect path resolution change.
+ */
+async function refreshAutoBackupWatchers() {
+    for (const [wikiId, entry] of activeAutoBackups) {
+        if (entry.mode !== 'watcher') continue;
+
+        if (entry.watcher) {
+            await entry.watcher.close();
+            entry.watcher = null;
+        }
+
+        if (watcherCooldowns.has(wikiId)) {
+            clearTimeout(watcherCooldowns.get(wikiId));
+            watcherCooldowns.delete(wikiId);
+        }
+        pendingWatcherBackups.delete(wikiId);
+
+        await setupFileWatcher(wikiId, entry);
     }
 }
 
@@ -290,5 +312,6 @@ module.exports = {
     stopAutoBackup,
     getAutoBackupState,
     restoreAutoBackups,
+    refreshAutoBackupWatchers,
     stopAllAutoBackups
 };

@@ -1,5 +1,5 @@
 import { showAlert, showInfoModal, updateProgress, operationStartCheck } from './utility.js';
-import { spinner, showLoadingIndicator, hideLoadingIndicator, createBackupTableRow, addOrUpdateTableRow, getPlatformIcon, formatSize, updateSelectedCountAndSize, setupSelectAllCheckbox, getSelectedWikiIds, setIcon } from './commonTabs.js';
+import { spinner, queueFullTableUpdate, createBackupTableRow, addOrUpdateTableRow, getPlatformIcon, formatSize, updateSelectedCountAndSize, setupSelectAllCheckbox, getSelectedWikiIds, setIcon } from './commonTabs.js';
 
 const backupTableDataMap = new Map();
 window.backupTableDataMap = backupTableDataMap;
@@ -21,45 +21,33 @@ window.api.receive('update-backup-table', () => {
 window.api.receive('scan-full', async () => {
     const start = await operationStartCheck('scan-full');
     if (start) {
-        const iconMap = await window.api.invoke('get-icon-map');
         const fullScanGameData = await window.api.invoke('start-scan-full');
 
         if (fullScanGameData) {
-            window.api.send('update-status', 'updating_backup', true);
-            await showLoadingIndicator('backup');
-            let normalScanGameData = await window.api.invoke('fetch-backup-table-data', true);
+            const normalScanGameData = await window.api.invoke('fetch-backup-table-data', true);
 
             const allIds = new Set(fullScanGameData.map(game => game.wiki_page_id));
             const installedGameIds = new Set(normalScanGameData.map(game => game.wiki_page_id));
             const uninstalledGameIds = [...allIds].filter(id => !installedGameIds.has(id));
             if (uninstalledGameIds.length > 0) {
-                window.api.send('save-settings', 'uninstalledGames', uninstalledGameIds);
+                const saved = await window.api.invoke('save-settings', 'uninstalledGames', uninstalledGameIds);
+                if (!saved) {
+                    showAlert('warning', await window.i18n.translate('settings.save-settings-error'));
+                }
             }
 
-            normalScanGameData = await window.api.invoke('fetch-backup-table-data');
-            await populateBackupTable(normalScanGameData, iconMap);
-            updateSelectedCountAndSize('backup');
-            hideLoadingIndicator('backup');
-            window.api.send('update-status', 'updating_backup', false);
+            await updateBackupTable(true);
         }
     }
 });
 
-export async function updateBackupTable(loader) {
-    window.api.send('update-status', 'updating_backup', true);
-    if (loader) {
-        await showLoadingIndicator('backup');
-    }
-
-    const iconMap = await window.api.invoke('get-icon-map');
-    const gameData = await window.api.invoke('fetch-backup-table-data');
-    await populateBackupTable(gameData, iconMap);
-    updateSelectedCountAndSize('backup');
-
-    if (loader) {
-        hideLoadingIndicator('backup');
-    }
-    window.api.send('update-status', 'updating_backup', false);
+function updateBackupTable(loader) {
+    return queueFullTableUpdate('backup', loader, async () => {
+        const iconMap = await window.api.invoke('get-icon-map');
+        const gameData = await window.api.invoke('fetch-backup-table-data');
+        await populateBackupTable(gameData, iconMap);
+        updateSelectedCountAndSize('backup');
+    });
 }
 
 // Function to populate backup table
@@ -221,7 +209,10 @@ function setupBackupTabButtons() {
     });
 
     document.getElementById('update-database').addEventListener('click', async () => {
-        await updateDatabase();
+        const updated = await updateDatabase();
+        if (updated) {
+            await updateBackupTable(true);
+        }
     });
 }
 
@@ -302,7 +293,7 @@ async function updateDatabase() {
     const updateButtonIcon = document.getElementById('update-database-icon');
     const updateButtonText = document.getElementById('update-database-text');
 
-    if (updateButton.disabled) return;
+    if (updateButton.disabled) return false;
 
     const start = await operationStartCheck('update-db');
     if (start) {
@@ -323,6 +314,8 @@ async function updateDatabase() {
         updateButtonIcon.classList.add('fa-rotate');
         updateButton.setAttribute('data-i18n', 'main.update_database');
         updateButtonText.textContent = await window.i18n.translate('main.update_database');
-        updateBackupTable(true);
+        return true;
     }
+
+    return false;
 }

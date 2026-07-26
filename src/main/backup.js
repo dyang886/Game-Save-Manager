@@ -213,7 +213,7 @@ async function getGameDataFromDB(ignoreUninstalled = false, wikiId = null) {
                 const processedWikiIds = new Set(games.map(game => game.wiki_page_id));
                 const remainingUninstalledWikiIds = uninstalledWikiIds.filter(id => !processedWikiIds.has(id));
                 if (JSON.stringify([...remainingUninstalledWikiIds].sort()) !== JSON.stringify([...uninstalledWikiIds].sort())) {
-                    saveSettings('uninstalledGames', remainingUninstalledWikiIds);
+                    await saveSettings('uninstalledGames', remainingUninstalledWikiIds);
                 }
 
                 for (const wikiId of remainingUninstalledWikiIds) {
@@ -487,6 +487,8 @@ function getWinRegHive(hive) {
         case 'HKEY_CURRENT_USER': return WinReg.HKCU;
         case 'HKEY_LOCAL_MACHINE': return WinReg.HKLM;
         case 'HKEY_CLASSES_ROOT': return WinReg.HKCR;
+        case 'HKEY_USERS': return WinReg.HKU;
+        case 'HKEY_CURRENT_CONFIG': return WinReg.HKCC;
         default: {
             console.warn(`Invalid registry hive: ${hive}`);
             return null;
@@ -497,9 +499,44 @@ function getWinRegHive(hive) {
 function parseRegistryPath(registryPath) {
     const parts = registryPath.split('\\');
     const hive = parts.shift();
-    const key = '\\' + parts.join('\\');
+    const key = parts.length > 0 ? '\\' + parts.join('\\') : '';
 
     return { hive, key };
+}
+
+function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+// Helper function to generate all combinations of UIDs for a given number of {{p|uid}}
+function generateUidCombinations(count, allUids) {
+    if (count === 0) return [[]];
+    if (count === 1) return allUids.map(uid => [uid]);
+
+    const smaller = generateUidCombinations(count - 1, allUids);
+    const result = [];
+    for (const combo of smaller) {
+        for (const uid of allUids) {
+            result.push([...combo, uid]);
+        }
+    }
+    return result;
+}
+
+// Helper function to reconstruct the final template from resolved placeholder mappings
+function createFinalTemplate(resolvedPath, placeholderMappings) {
+    let finalTemplate = resolvedPath.replace(/\\/g, '/');
+    const sortedMappings = Object.entries(placeholderMappings)
+        .sort((a, b) => b[1].length - a[1].length);
+
+    for (const [placeholder, resolvedValue] of sortedMappings) {
+        const normalizedValue = resolvedValue.replace(/\\/g, '/');
+        const escapedValue = escapeRegExp(normalizedValue);
+        const regex = new RegExp(escapedValue, 'gi');
+        finalTemplate = finalTemplate.replace(regex, placeholder);
+    }
+
+    return finalTemplate;
 }
 
 async function resolveTemplatedBackupPath(templatedPath, gameInstallPath, isRegistry = false) {
@@ -538,13 +575,9 @@ async function resolveTemplatedBackupPath(templatedPath, gameInstallPath, isRegi
         return [];
     }
 
-    // If it's a registry path, return directly without uid/wildcard processing
     if (isRegistry) {
-        return [{
-            template: templatedPath,
-            finalTemplate: basePath,
-            resolved: basePath
-        }];
+        // Registry paths require registry-key enumeration rather than filesystem globbing.
+        return await fillRegistryPathUid(templatedPath, basePath, placeholderMappings);
     }
 
     // For file paths, pass to fillPathUid to handle uid and wildcards
@@ -552,40 +585,6 @@ async function resolveTemplatedBackupPath(templatedPath, gameInstallPath, isRegi
 }
 
 async function fillPathUid(templatedPath, basePath, placeholderMappings) {
-    function escapeRegExp(string) {
-        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    }
-    // Helper function to create finalTemplate by reversing placeholder mappings
-    function createFinalTemplate(resolvedPath) {
-        let finalTemplate = resolvedPath.replace(/\\/g, '/');
-        const sortedMappings = Object.entries(placeholderMappings)
-            .sort((a, b) => b[1].length - a[1].length);
-
-        for (const [placeholder, resolvedValue] of sortedMappings) {
-            const normalizedValue = resolvedValue.replace(/\\/g, '/');
-            const escapedValue = escapeRegExp(normalizedValue);
-            const regex = new RegExp(escapedValue, 'gi');
-            finalTemplate = finalTemplate.replace(regex, placeholder);
-        }
-
-        return finalTemplate;
-    }
-
-    // Helper function to generate all combinations of UIDs for a given number of {{p|uid}}
-    function generateUidCombinations(count, allUids) {
-        if (count === 0) return [[]];
-        if (count === 1) return allUids.map(uid => [uid]);
-
-        const smaller = generateUidCombinations(count - 1, allUids);
-        const result = [];
-        for (const combo of smaller) {
-            for (const uid of allUids) {
-                result.push([...combo, uid]);
-            }
-        }
-        return result;
-    }
-
     // Helper function to try glob on a path and return valid paths
     function tryGlobAndReturnPaths(testPath) {
         const files = glob.sync(testPath.replace(/\\/g, '/'));
@@ -594,11 +593,27 @@ async function fillPathUid(templatedPath, basePath, placeholderMappings) {
                 .filter(filePath => fsOriginal.existsSync(filePath))
                 .map(filePath => ({
                     template: templatedPath,
-                    finalTemplate: createFinalTemplate(filePath),
+                    finalTemplate: createFinalTemplate(filePath, placeholderMappings),
                     resolved: filePath
                 }));
         }
         return null;
+    }
+
+    // Find the latest modified path
+    async function findLatestModifiedPath(paths) {
+        let latestPath = null;
+        let latestTime = 0;
+
+        for (const filePath of paths) {
+            const stats = fsOriginal.statSync(filePath);
+            if (stats.mtimeMs > latestTime) {
+                latestTime = stats.mtimeMs;
+                latestPath = filePath;
+            }
+        }
+
+        return latestPath;
     }
 
     // 1. If there's no uid placeholder, just handle wildcards
@@ -607,7 +622,7 @@ async function fillPathUid(templatedPath, basePath, placeholderMappings) {
         return result || [];
     }
 
-    // For all accounts backup, skip context-aware and known UID matching, go directly to wildcards
+    // 2. For all accounts, skip context-aware and known UID matching and use wildcards
     if (getSettings().backupAllAccounts) {
         const wildcardPath = basePath.replace(/\{\{p\|uid\}\}/gi, '*');
         const result = tryGlobAndReturnPaths(wildcardPath);
@@ -633,18 +648,18 @@ async function fillPathUid(templatedPath, basePath, placeholderMappings) {
     const steamUid = getGameData().currentSteamUserId3;
     const ubisoftUid = getGameData().currentUbisoftUserId;
 
-    // 2. Apply context-aware replacements
+    // 3. Apply platform-specific current-account replacements
     let contextAwarePath = basePath;
     contextAwarePath = applyContextReplacement(contextAwarePath, `${steamPath}/userdata/{{p|uid}}`, steamUid);
     contextAwarePath = applyContextReplacement(contextAwarePath, `${ubisoftPath}/savegames/{{p|uid}}`, ubisoftUid);
 
-    // If both placeholders are context-aware, try glob directly
+    // If all placeholders are context-aware, try glob directly
     if (!contextAwarePath.includes('{{p|uid}}')) {
         const result = tryGlobAndReturnPaths(contextAwarePath);
         return result || [];
     }
 
-    // 3. Count and guess remaining {{p|uid}} placeholders
+    // 4. Count and try known current-account IDs for remaining {{p|uid}} placeholders
     const uidMatches = contextAwarePath.match(/\{\{p\|uid\}\}/gi);
     const uidCount = uidMatches ? uidMatches.length : 0;
 
@@ -658,7 +673,7 @@ async function fillPathUid(templatedPath, basePath, placeholderMappings) {
     for (const uidCombo of uidCombinations) {
         let testPath = contextAwarePath;
 
-        // Replace each {{p|uid}} with the corresponding uid from the combination
+        // Replace each {{p|uid}} with the corresponding UID from the combination
         let uidIndex = 0;
         testPath = testPath.replace(/\{\{p\|uid\}\}/gi, () => {
             const uid = uidCombo[uidIndex];
@@ -672,7 +687,7 @@ async function fillPathUid(templatedPath, basePath, placeholderMappings) {
         }
     }
 
-    // 4. Final fallback: wildcard matching for uid
+    // 5. Final fallback: select the newest wildcard match for UID
     const wildcardPath = basePath.replace(/\{\{p\|uid\}\}/gi, '*');
     const wildcardResolvedPaths = glob.sync(wildcardPath.replace(/\\/g, '/'));
 
@@ -683,25 +698,139 @@ async function fillPathUid(templatedPath, basePath, placeholderMappings) {
     const latestPath = await findLatestModifiedPath(wildcardResolvedPaths);
     return [{
         template: templatedPath,
-        finalTemplate: createFinalTemplate(latestPath),
+        finalTemplate: createFinalTemplate(latestPath, placeholderMappings),
         resolved: latestPath
     }];
 }
 
-// Find the latest modified path
-async function findLatestModifiedPath(paths) {
-    let latestPath = null;
-    let latestTime = 0;
+async function fillRegistryPathUid(templatedPath, basePath, placeholderMappings) {
+    function registryKeyExists(registryPath) {
+        const { hive, key } = parseRegistryPath(registryPath);
+        const winRegHive = getWinRegHive(hive);
+        if (!winRegHive) return Promise.resolve(false);
 
-    for (const filePath of paths) {
-        const stats = fsOriginal.statSync(filePath);
-        if (stats.mtimeMs > latestTime) {
-            latestTime = stats.mtimeMs;
-            latestPath = filePath;
+        const registryKey = new WinReg({
+            hive: winRegHive,
+            key
+        });
+
+        return new Promise(resolve => {
+            registryKey.keyExists((err, exists) => {
+                resolve(!err && exists);
+            });
+        });
+    }
+
+    function getRegistryChildNames(registryPath) {
+        const { hive, key } = parseRegistryPath(registryPath);
+        const winRegHive = getWinRegHive(hive);
+        if (!winRegHive) return Promise.resolve([]);
+
+        const registryKey = new WinReg({
+            hive: winRegHive,
+            key
+        });
+
+        return new Promise(resolve => {
+            registryKey.keys((err, subKeys) => {
+                if (err || !subKeys) {
+                    resolve([]);
+                    return;
+                }
+
+                const parentSegments = key.split('\\').filter(Boolean);
+                const childNames = subKeys
+                    .map(subKey => subKey.key.split('\\').filter(Boolean))
+                    .filter(segments => segments.length === parentSegments.length + 1)
+                    .map(segments => segments[segments.length - 1]);
+
+                resolve([...new Set(childNames)].sort((a, b) => a.localeCompare(b)));
+            });
+        });
+    }
+
+    async function expandUidWildcards(registryPath) {
+        const { hive, key } = parseRegistryPath(registryPath);
+        const segments = key.split('\\').filter(Boolean);
+        const uidSegmentIndex = segments.findIndex(segment => /\{\{p\|uid\}\}/i.test(segment));
+
+        if (uidSegmentIndex === -1) {
+            return [registryPath];
+        }
+
+        const parentSegments = segments.slice(0, uidSegmentIndex);
+        const parentPath = parentSegments.length > 0
+            ? `${hive}\\${parentSegments.join('\\')}`
+            : hive;
+        const childNames = await getRegistryChildNames(parentPath);
+        const uidSegmentPattern = new RegExp(
+            `^${segments[uidSegmentIndex]
+                .split(/\{\{p\|uid\}\}/i)
+                .map(escapeRegExp)
+                .join('(.+)')}$`,
+            'i'
+        );
+        const expandedPaths = [];
+
+        for (const childName of childNames) {
+            if (!uidSegmentPattern.test(childName)) continue;
+
+            const candidateSegments = [...segments];
+            candidateSegments[uidSegmentIndex] = childName;
+            const candidatePath = `${hive}\\${candidateSegments.join('\\')}`;
+            expandedPaths.push(...await expandUidWildcards(candidatePath));
+        }
+
+        return expandedPaths;
+    }
+
+    const toResolvedPathObj = resolvedPath => ({
+        template: templatedPath,
+        finalTemplate: createFinalTemplate(resolvedPath, placeholderMappings),
+        resolved: resolvedPath
+    });
+
+    // 1. If there's no uid placeholder, return the concrete registry path
+    if (!basePath.includes('{{p|uid}}')) {
+        return [toResolvedPathObj(basePath)];
+    }
+
+    // 2. For all accounts, enumerate and return every matching registry key
+    if (getSettings().backupAllAccounts) {
+        const expandedPaths = await expandUidWildcards(basePath);
+        const existingPaths = [];
+        for (const registryPath of expandedPaths) {
+            if (await registryKeyExists(registryPath)) {
+                existingPaths.push(toResolvedPathObj(registryPath));
+            }
+        }
+        return existingPaths;
+    }
+
+    // 3. Try known current-account IDs
+    const uidMatches = basePath.match(/\{\{p\|uid\}\}/gi);
+    const uidCount = uidMatches ? uidMatches.length : 0;
+    const uidValues = Object.values(getAllUserIds())
+        .filter(uid => uid && uid !== 'N/A' && uid !== null && uid !== undefined);
+    const uidCombinations = generateUidCombinations(uidCount, uidValues);
+
+    for (const uidCombo of uidCombinations) {
+        let uidIndex = 0;
+        const candidatePath = basePath.replace(/\{\{p\|uid\}\}/gi, () => uidCombo[uidIndex++]);
+        if (await registryKeyExists(candidatePath)) {
+            return [toResolvedPathObj(candidatePath)];
         }
     }
 
-    return latestPath;
+    // 4. Fall back to the first wildcard match
+    const expandedPaths = await expandUidWildcards(basePath);
+    for (const registryPath of expandedPaths) {
+        if (await registryKeyExists(registryPath)) {
+            return [toResolvedPathObj(registryPath)];
+        }
+    }
+
+    return [];
 }
 
 async function backupGame(gameObj) {

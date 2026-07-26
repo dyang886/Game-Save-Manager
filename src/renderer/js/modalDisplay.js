@@ -754,7 +754,11 @@ export async function showHiddenGamesModal() {
                 if (idx !== -1) {
                     hiddenWikiIds.splice(idx, 1);
                 }
-                window.api.send('save-settings', 'hiddenGames', [...hiddenWikiIds]);
+                const saved = await window.api.invoke('save-settings', 'hiddenGames', [...hiddenWikiIds]);
+                if (!saved) {
+                    showAlert('warning', await window.i18n.translate('settings.save-settings-error'));
+                    return;
+                }
 
                 // Insert the game back into the backup/restore tables in sorted
                 // position (no full reload needed). Restore must go first: the

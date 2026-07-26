@@ -20,7 +20,10 @@ const {
 const { getGameData, initializeGameData, detectGamePaths, getAllUserIds } = require('./gameData');
 const { getGameDataFromDB, getAllGameDataFromDB, getGameTitlesByIds, backupGame, updateDatabase } = require('./backup');
 const { getGameDataForRestore, restoreGame } = require("./restore");
-const { startAutoBackup, stopAutoBackup, getAutoBackupState, restoreAutoBackups, stopAllAutoBackups } = require('./autoBackup');
+const {
+    startAutoBackup, stopAutoBackup, getAutoBackupState, restoreAutoBackups,
+    refreshAutoBackupWatchers, stopAllAutoBackups
+} = require('./autoBackup');
 
 
 // Setup hot reload for development
@@ -36,24 +39,6 @@ if (process.env.NODE_ENV === 'development' || !process.env.NODE_ENV) {
 app.commandLine.appendSwitch("lang", "en");
 const gotTheLock = app.requestSingleInstanceLock();
 let pendingGSMPath = null;
-
-function setLaunchAtStartup(enabled) {
-    if (!app.isPackaged || (process.platform !== 'win32' && process.platform !== 'darwin')) {
-        return;
-    }
-
-    const loginItemSettings = {
-        openAtLogin: Boolean(enabled)
-    };
-
-    if (process.platform === 'win32') {
-        loginItemSettings.path = process.execPath;
-        loginItemSettings.args = [];
-        loginItemSettings.name = 'Game Save Manager';
-    }
-
-    app.setLoginItemSettings(loginItemSettings);
-}
 
 if (!gotTheLock) {
     app.quit();
@@ -86,13 +71,12 @@ app.whenReady().then(async () => {
     app.setAsDefaultProtocolClient('gamesavemanager');
 
     loadSettings();
-    setLaunchAtStartup(getSettings().launchAtStartup);
     await initializeI18next(getSettings().language);
     await initializeGameData();
 
     if (getSettings().gameInstalls === 'uninitialized') {
         await detectGamePaths();
-        saveSettings('gameInstalls', getGameData().detectedGamePaths);
+        await saveSettings('gameInstalls', getGameData().detectedGamePaths);
     }
 
     await createMainWindow();
@@ -136,11 +120,17 @@ ipcMain.handle("translate", async (event, key, options) => {
     return i18next.t(key, options);
 });
 
-ipcMain.on('save-settings', async (event, key, value) => {
-    if (key === 'launchAtStartup') {
-        setLaunchAtStartup(value);
+ipcMain.handle('save-settings', async (event, keyOrUpdates, value) => {
+    const changedKeys = await saveSettings(keyOrUpdates, value);
+    if (changedKeys === null) {
+        return false;
     }
-    saveSettings(key, value);
+
+    if (changedKeys.includes('backupAllAccounts')) {
+        await refreshAutoBackupWatchers();
+    }
+
+    return true;
 });
 
 ipcMain.on("load-theme", (event) => {
@@ -478,8 +468,8 @@ ipcMain.handle('start-auto-backup', async (event, wikiId, mode, intervalMinutes)
     await startAutoBackup(wikiId, mode, intervalMinutes);
 });
 
-ipcMain.handle('stop-auto-backup', (event, wikiId) => {
-    return stopAutoBackup(wikiId, true);
+ipcMain.handle('stop-auto-backup', async (event, wikiId) => {
+    return await stopAutoBackup(wikiId, true);
 });
 
 ipcMain.handle('get-auto-backup-state', () => {

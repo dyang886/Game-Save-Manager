@@ -861,6 +861,24 @@ const osKeyMap = {
 // ======================================================================
 // Settings
 // ======================================================================
+function setLaunchAtStartup(enabled) {
+    if (!app.isPackaged || (process.platform !== 'win32' && process.platform !== 'darwin')) {
+        return;
+    }
+
+    const loginItemSettings = {
+        openAtLogin: Boolean(enabled)
+    };
+
+    if (process.platform === 'win32') {
+        loginItemSettings.path = process.execPath;
+        loginItemSettings.args = [];
+        loginItemSettings.name = 'Game Save Manager';
+    }
+
+    app.setLoginItemSettings(loginItemSettings);
+}
+
 const loadSettings = () => {
     const userDataPath = app.getPath("userData");
     const appDataPath = app.getPath("appData");
@@ -911,50 +929,64 @@ const loadSettings = () => {
     }
 };
 
-function saveSettings(key, value) {
+async function saveSettings(keyOrUpdates, value) {
     const userDataPath = app.getPath('userData');
     const settingsPath = path.join(userDataPath, 'GSM Settings', 'settings.json');
 
-    settings[key] = value;
+    const updates = keyOrUpdates && typeof keyOrUpdates === 'object' && !Array.isArray(keyOrUpdates)
+        ? keyOrUpdates
+        : { [keyOrUpdates]: value };
+    const updatedKeys = Object.keys(updates);
+    const changedKeys = updatedKeys.filter((key) => !Object.is(settings[key], updates[key]));
 
-    // Queue the write operation to prevent simultaneous writes
-    writeQueue = writeQueue.then(() => {
-        return new Promise((resolve, reject) => {
-            fs.writeFile(settingsPath, JSON.stringify(settings), (writeErr) => {
-                if (writeErr) {
-                    console.error('Error saving settings:', writeErr);
-                    reject(writeErr);
-                } else {
-                    console.log(`Settings updated successfully: ${key}: ${value}`);
+    for (const [key, newValue] of Object.entries(updates)) {
+        settings[key] = newValue;
+    }
 
-                    if (key === 'theme') {
-                        BrowserWindow.getAllWindows().forEach((window) => {
-                            window.webContents.send('apply-theme', value);
-                        });
-                    }
+    const settingsSnapshot = JSON.stringify(settings);
 
-                    if (key === 'gameInstalls' || key === 'saveUninstalledGames') {
-                        win.webContents.send('update-backup-table');
-                    }
+    // Queue the complete settings transaction to prevent simultaneous writes and effects
+    const saveOperation = writeQueue.then(async () => {
+        await fs.promises.writeFile(settingsPath, settingsSnapshot);
+        console.log(`Settings updated successfully: ${JSON.stringify(updates)}`);
 
-                    if (key === 'language') {
-                        i18next.changeLanguage(value).then(() => {
-                            BrowserWindow.getAllWindows().forEach((window) => {
-                                window.webContents.send('apply-language');
-                            });
-                            const menu = Menu.buildFromTemplate(initializeMenu());
-                            Menu.setApplicationMenu(menu);
-                            resolve();
-                        }).catch(reject);
-                    } else {
-                        resolve();
-                    }
-                }
+        if (changedKeys.includes('launchAtStartup')) {
+            setLaunchAtStartup(updates.launchAtStartup);
+        }
+
+        if (changedKeys.includes('theme')) {
+            BrowserWindow.getAllWindows().forEach((window) => {
+                window.webContents.send('apply-theme', updates.theme);
             });
-        });
-    }).catch((err) => {
-        console.error('Error in write queue:', err);
+        }
+
+        if (
+            changedKeys.some((key) => key === 'gameInstalls' || key === 'saveUninstalledGames')
+            && win && !win.isDestroyed()
+        ) {
+            win.webContents.send('update-backup-table');
+        }
+
+        if (changedKeys.includes('language')) {
+            await i18next.changeLanguage(updates.language);
+            BrowserWindow.getAllWindows().forEach((window) => {
+                window.webContents.send('apply-language');
+            });
+            const menu = Menu.buildFromTemplate(initializeMenu());
+            Menu.setApplicationMenu(menu);
+        }
+
+        return true;
     });
+
+    const queuedSave = saveOperation.catch((err) => {
+        console.error('Error in write queue:', err);
+        return false;
+    });
+    writeQueue = queuedSave;
+
+    const saved = await queuedSave;
+    return saved ? changedKeys : null;
 }
 
 async function moveFilesWithProgress(sourceDir, destinationDir) {
@@ -1021,7 +1053,7 @@ async function moveFilesWithProgress(sourceDir, destinationDir) {
             win.webContents.send('show-alert', 'success', i18next.t('alert.backup_migration_success'));
         }
     }
-    saveSettings('backupPath', destinationDir);
+    await saveSettings('backupPath', destinationDir);
     win.webContents.send('update-restore-table');
     status.migrating = false;
 }
