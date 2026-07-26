@@ -884,18 +884,18 @@ const loadSettings = () => {
     const appDataPath = app.getPath("appData");
     const settingsPath = path.join(userDataPath, "GSM Settings", "settings.json");
 
-    const locale_mapping = {
-        'en-US': 'en_US',
-        'zh-Hans-CN': 'zh_CN',
-        'zh-Hans-SG': 'zh_CN',
-        'zh-Hant-HK': 'zh_TW',
-        'zh-Hant-MO': 'zh_TW',
-        'zh-Hant-TW': 'zh_TW',
+    const mapSupportedLanguage = (language) => {
+        const locale = new Intl.Locale(language).maximize();
+        if (locale.language === 'en') return 'en_US';
+        if (locale.language === 'zh') return locale.script === 'Hant' ? 'zh_TW' : 'zh_CN';
+        return null;
     };
 
-    const systemLocale = app.getLocale();
-    console.log(`Current locale: ${systemLocale}; Preferred languages: ${app.getPreferredSystemLanguages()}`);
-    const detectedLanguage = locale_mapping[systemLocale] || 'en_US';
+    const preferredLanguages = app.getPreferredSystemLanguages();
+    console.log(`Preferred languages: ${preferredLanguages}`);
+    const detectedLanguage = preferredLanguages
+        .map(mapSupportedLanguage)
+        .find(Boolean) || 'en_US';
 
     // Default settings
     const defaultSettings = {
