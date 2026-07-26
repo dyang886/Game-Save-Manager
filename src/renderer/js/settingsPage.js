@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const backupPathInput = document.getElementById('backup-path');
     const backupPathButton = document.getElementById('select-path');
     const maxBackupsInput = document.getElementById('max-backups');
+    const launchAtStartupCheckbox = document.getElementById('launch-at-startup');
     const autoAppUpdateCheckbox = document.getElementById('auto-app-update');
     const autoDbUpdateCheckbox = document.getElementById('auto-db-update');
     const saveUninstalledCheckbox = document.getElementById('save-uninstalled-games');
@@ -26,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
             languageSelect.value = settings.language;
             backupPathInput.value = settings.backupPath;
             maxBackupsInput.value = settings.maxBackups;
+            launchAtStartupCheckbox.checked = settings.launchAtStartup;
             autoAppUpdateCheckbox.checked = settings.autoAppUpdate;
             autoDbUpdateCheckbox.checked = settings.autoDbUpdate;
             saveUninstalledCheckbox.checked = settings.saveUninstalledGames;
@@ -103,6 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             window.api.send('save-settings', 'maxBackups', maxBackupsInput.value);
+            window.api.send('save-settings', 'launchAtStartup', launchAtStartupCheckbox.checked);
             window.api.send('save-settings', 'autoAppUpdate', autoAppUpdateCheckbox.checked);
             window.api.send('save-settings', 'autoDbUpdate', autoDbUpdateCheckbox.checked);
             showAlert('success', await window.i18n.translate('settings.save-settings-success'));

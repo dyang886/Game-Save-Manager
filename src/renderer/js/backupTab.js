@@ -82,11 +82,11 @@ async function populateBackupTable(data, iconMap) {
         data
             .filter(game => !hiddenGamesWikiIds.includes(game.wiki_page_id.toString()))
             .map(async (game) => {
-            const titleToSort = settings.language === 'zh_CN'
-                ? game.zh_CN || game.title
-                : game.title;
-            return { ...game, titleToSort };
-        })
+                const titleToSort = settings.language === 'zh_CN'
+                    ? game.zh_CN || game.title
+                    : game.title;
+                return { ...game, titleToSort };
+            })
     );
 
     // Split and sort pinned and unpinned games

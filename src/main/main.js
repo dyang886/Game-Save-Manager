@@ -37,6 +37,24 @@ app.commandLine.appendSwitch("lang", "en");
 const gotTheLock = app.requestSingleInstanceLock();
 let pendingGSMPath = null;
 
+function setLaunchAtStartup(enabled) {
+    if (!app.isPackaged || (process.platform !== 'win32' && process.platform !== 'darwin')) {
+        return;
+    }
+
+    const loginItemSettings = {
+        openAtLogin: Boolean(enabled)
+    };
+
+    if (process.platform === 'win32') {
+        loginItemSettings.path = process.execPath;
+        loginItemSettings.args = [];
+        loginItemSettings.name = 'Game Save Manager';
+    }
+
+    app.setLoginItemSettings(loginItemSettings);
+}
+
 if (!gotTheLock) {
     app.quit();
 } else {
@@ -68,6 +86,7 @@ app.whenReady().then(async () => {
     app.setAsDefaultProtocolClient('gamesavemanager');
 
     loadSettings();
+    setLaunchAtStartup(getSettings().launchAtStartup);
     await initializeI18next(getSettings().language);
     await initializeGameData();
 
@@ -118,6 +137,9 @@ ipcMain.handle("translate", async (event, key, options) => {
 });
 
 ipcMain.on('save-settings', async (event, key, value) => {
+    if (key === 'launchAtStartup') {
+        setLaunchAtStartup(value);
+    }
     saveSettings(key, value);
 });
 

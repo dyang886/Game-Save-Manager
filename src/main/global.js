@@ -886,6 +886,7 @@ const loadSettings = () => {
         backupPath: path.join(appDataPath, "GSM Backups"),
         exportPath: "",
         maxBackups: 5,
+        launchAtStartup: false,
         autoAppUpdate: true,
         autoDbUpdate: false,
         backupAllAccounts: false,

@@ -97,7 +97,9 @@ async function getGameDataFromDB(ignoreUninstalled = false, wikiId = null) {
     const dbPath = path.join(app.getPath("userData"), "GSM Database", "database.db");
 
     if (!fs.existsSync(dbPath)) {
-        const installedDbPath = path.join('./database', 'database.db');
+        const installedDbPath = app.isPackaged
+            ? path.join(path.dirname(app.getPath('exe')), 'database', 'database.db')
+            : path.join('./database', 'database.db');
         if (!fs.existsSync(installedDbPath)) {
             dialog.showErrorBox(
                 i18next.t('alert.missing_database_file'),
@@ -268,7 +270,9 @@ async function getAllGameDataFromDB() {
 
     if (!getStatus().scanning_full) {
         if (!fs.existsSync(dbPath)) {
-            const installedDbPath = path.join('./database', 'database.db');
+            const installedDbPath = app.isPackaged
+                ? path.join(path.dirname(app.getPath('exe')), 'database', 'database.db')
+                : path.join('./database', 'database.db');
             if (!fs.existsSync(installedDbPath)) {
                 dialog.showErrorBox(
                     i18next.t('alert.missing_database_file'),
