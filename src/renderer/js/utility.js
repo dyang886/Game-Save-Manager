@@ -419,12 +419,12 @@ function showAccountModal() {
             for (const [platform, id] of Object.entries(accountData)) {
                 if (id && id !== 'N/A' && id !== null) {
                     const platformKeys = {
-                        steamId64: 'alert.steam_user_id64',
-                        steamId3: 'alert.steam_user_id3',
-                        ubisoftId: 'alert.ubisoft_user_id',
-                        epicId: 'alert.epic_user_id',
-                        xboxId: 'alert.xbox_user_id',
-                        rockStarId: 'alert.rockstar_user_id'
+                        steamId64: 'alert.steam_64_bit_id',
+                        steamAccountId: 'alert.steam_account_id',
+                        ubisoftAccountId: 'alert.ubisoft_account_id',
+                        epicAccountId: 'alert.epic_account_id',
+                        xboxAccountId: 'alert.xbox_account_id',
+                        rockstarAccountId: 'alert.rockstar_account_id'
                     };
                     contentHTML += `
                         <div class="flex justify-between items-center text-sm">

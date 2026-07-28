@@ -31,7 +31,7 @@ Messed up a dialogue choice? Corrupted a save file? GSM keeps a rolling history 
 Moving to a new PC? GSM lets you export your entire save history into a single `.gsmr` archive. Import it on your new machine, and GSM will smartly merge the backups, combining existing history with the imported files effortlessly.
 
 ### Account Awareness
-GSM intelligently detects User IDs for platforms like Steam, Ubisoft, Epic, Xbox, and Rockstar. This allows you to back up specific accounts individually or create global backups encompassing all accounts on the system.
+GSM intelligently detects Account IDs for platforms like Steam, Ubisoft, Epic, Xbox, and Rockstar. This allows you to back up specific accounts individually or create global backups encompassing all accounts on the system.
 
 ### Support the Unsupported
 Playing a niche indie game or a heavily modded title? Use the **Custom Games** tab to manually add any folder, file, or registry key to the backup system. Utilize **Smart Placeholders** (like `%AppData%` or your `%UserProfile%`) to ensure your custom backups work seamlessly on any PC.

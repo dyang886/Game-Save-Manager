@@ -10,6 +10,7 @@ const axios = require('axios');
 const fse = require('fs-extra');
 const i18next = require('i18next');
 const moment = require('moment');
+const semver = require('semver');
 const Seven = require('node-7z');
 const sevenBin = require('7zip-bin');
 
@@ -21,7 +22,7 @@ let aboutWin;
 let settings;
 let writeQueue = Promise.resolve();
 
-const appVersion = "2.2.0";
+const appVersion = "2.2.0-beta.4";
 let status = {
     backuping: false,
     scanning_full: false,
@@ -240,12 +241,21 @@ async function getLatestVersion(appName) {
 
         const data = response.data;
         const latestVersion = data.latest_version;
-        if (latestVersion) {
-            return latestVersion;
-        } else {
+        if (!latestVersion) {
             console.error(`Error: 'latest_version' not found in response. Response: ${JSON.stringify(data)}`);
             return null;
         }
+
+        const normalizedVersion = typeof latestVersion === 'string'
+            ? semver.valid(latestVersion.trim())
+            : null;
+
+        if (!normalizedVersion) {
+            console.error(`Error: Invalid latest version '${latestVersion}' received from server.`);
+            return null;
+        }
+
+        return normalizedVersion;
     } catch (error) {
         console.error(`Error retrieving latest version: ${error.message}`);
         return null;
@@ -255,8 +265,14 @@ async function getLatestVersion(appName) {
 async function checkAppUpdate() {
     try {
         const latestVersion = await getLatestVersion('GSM');
+        const currentVersion = semver.valid(appVersion);
 
-        if (latestVersion > appVersion) {
+        if (!currentVersion) {
+            console.error(`Error: Invalid current app version '${appVersion}'.`);
+            return;
+        }
+
+        if (latestVersion && semver.gt(latestVersion, currentVersion)) {
             showNotification(
                 "app",
                 i18next.t('alert.update_available'),
@@ -950,7 +966,7 @@ async function saveSettings(keyOrUpdates, value) {
         await fs.promises.writeFile(settingsPath, settingsSnapshot);
         console.log(`Settings updated successfully: ${JSON.stringify(updates)}`);
 
-        if (changedKeys.includes('launchAtStartup')) {
+        if (updatedKeys.includes('launchAtStartup')) {
             setLaunchAtStartup(updates.launchAtStartup);
         }
 

@@ -9,7 +9,7 @@ const vdf = require('vdf-parser');
 const WinReg = require('winreg');
 const yaml = require('js-yaml');
 
-const STEAM_ID64_BASE = 76561197960265728n;
+const STEAM_ACCOUNT_ID_MASK = 0xFFFFFFFFn;
 
 class GameData {
     constructor() {
@@ -18,16 +18,16 @@ class GameData {
         this.eaPath = null;
         this.battleNetPath = null;
 
-        this.currentSteamUserId64 = null;
-        this.currentSteamUserId3 = null;
+        this.currentSteamId64 = null;
+        this.currentSteamAccountId = null;
         this.currentSteamAccountName = null;
         this.currentSteamUserName = null;
-        this.currentUbisoftUserId = null;
-        this.currentEpicUserId = null;
-        this.currentXboxUserId = null;
-        this.currentRockStarUserId = null;
-        this.currentGogUserId = null;
-        this.currentEAUserId = null;
+        this.currentUbisoftAccountId = null;
+        this.currentEpicAccountId = null;
+        this.currentXboxAccountId = null;
+        this.currentRockstarAccountId = null;
+        this.currentGogAccountId = null;
+        this.currentEAAccountId = null;
 
         this.detectedGamePaths = [];
         this.detectedSteamGameIds = [];
@@ -81,27 +81,27 @@ class GameData {
                 'InstallLocation'
             );
 
-            // Get current logged in user ids
-            await this.getCurrentUserIds();
+            // Get current logged-in account IDs
+            await this.getCurrentAccountIds();
         }
 
         console.log(
             'Steam account name: ' + this.currentSteamAccountName + '\n' +
             'Steam user name: ' + this.currentSteamUserName + '\n' +
-            'Steam id64: ' + this.currentSteamUserId64 + '\n' +
-            'Steam id3: ' + this.currentSteamUserId3 + '\n' +
-            'Ubisoft user id: ' + this.currentUbisoftUserId + '\n' +
-            'Xbox user id: ' + this.currentXboxUserId + '\n' +
-            'Epic user id: ' + this.currentEpicUserId + '\n' +
-            'Rockstar user id: ' + this.currentRockStarUserId + '\n' +
-            'GOG user id: ' + this.currentGogUserId + '\n' +
-            'EA user id: ' + this.currentEAUserId
+            'Steam 64-bit ID: ' + this.currentSteamId64 + '\n' +
+            'Steam account ID: ' + this.currentSteamAccountId + '\n' +
+            'Ubisoft account ID: ' + this.currentUbisoftAccountId + '\n' +
+            'Xbox account ID: ' + this.currentXboxAccountId + '\n' +
+            'Epic account ID: ' + this.currentEpicAccountId + '\n' +
+            'Rockstar account ID: ' + this.currentRockstarAccountId + '\n' +
+            'GOG account ID: ' + this.currentGogAccountId + '\n' +
+            'EA account ID: ' + this.currentEAAccountId
         );
     }
 
-    async getCurrentUserIds() {
+    async getCurrentAccountIds() {
         if (this.steamPath) {
-            // Get the current Steam user's IDs and names
+            // Get the current Steam account's IDs and names
             const loginUsersPath = path.join(this.steamPath, 'config', 'loginusers.vdf');
             if (fs.existsSync(loginUsersPath)) {
                 try {
@@ -109,13 +109,13 @@ class GameData {
                     const parsedData = vdf.parse(vdfContent);
 
                     if (parsedData.users) {
-                        for (const userId64 in parsedData.users) {
-                            const userData = parsedData.users[userId64];
-                            if (Number(userData.AutoLogin) === 1) {
-                                this.currentSteamUserId64 = userId64;
-                                this.currentSteamUserId3 = (BigInt(userId64) - STEAM_ID64_BASE).toString();
-                                this.currentSteamAccountName = userData.AccountName;
-                                this.currentSteamUserName = userData.PersonaName;
+                        for (const steamId64 in parsedData.users) {
+                            const accountData = parsedData.users[steamId64];
+                            if (Number(accountData.AutoLogin) === 1) {
+                                this.currentSteamId64 = steamId64;
+                                this.currentSteamAccountId = (BigInt(steamId64) & STEAM_ACCOUNT_ID_MASK).toString();
+                                this.currentSteamAccountName = accountData.AccountName;
+                                this.currentSteamUserName = accountData.PersonaName;
                                 break;
                             }
                         }
@@ -132,35 +132,35 @@ class GameData {
             console.log('Steam not installed');
         }
 
-        // Get current Ubisoft user id
+        // Get current Ubisoft account ID
         const saveGamesPath = path.join(this.ubisoftPath, 'savegames');
         if (fs.existsSync(saveGamesPath)) {
             try {
-                const userFolders = fs.readdirSync(saveGamesPath, { withFileTypes: true })
+                const accountFolders = fs.readdirSync(saveGamesPath, { withFileTypes: true })
                     .filter(dirent => dirent.isDirectory())
                     .map(dirent => dirent.name);
 
-                let latestUserId = null;
+                let latestAccountId = null;
                 let latestTime = 0;
 
-                for (const userId of userFolders) {
-                    const userFolderPath = path.join(saveGamesPath, userId);
-                    const userFolderTime = getLatestModificationTime(userFolderPath);
+                for (const accountId of accountFolders) {
+                    const accountFolderPath = path.join(saveGamesPath, accountId);
+                    const accountFolderTime = getLatestModificationTime(accountFolderPath);
 
-                    if (userFolderTime > latestTime) {
-                        latestTime = userFolderTime;
-                        latestUserId = userId;
+                    if (accountFolderTime > latestTime) {
+                        latestTime = accountFolderTime;
+                        latestAccountId = accountId;
                     }
                 }
-                this.currentUbisoftUserId = latestUserId;
+                this.currentUbisoftAccountId = latestAccountId;
             } catch (e) {
                 console.log('Error reading or parsing Ubisoft savegames directory:', e);
             }
         } else {
-            console.log(`No Ubisoft users found at: ${saveGamesPath}`);
+            console.log(`No Ubisoft accounts found at: ${saveGamesPath}`);
         }
 
-        // Get current Epic user id
+        // Get current Epic account ID
         const epicDataPath = path.join(
             process.env.LOCALAPPDATA || path.join(process.env.USERPROFILE || os.homedir(), 'AppData', 'Local'),
             'EpicGamesLauncher', 'Saved', 'Data'
@@ -171,7 +171,7 @@ class GameData {
                     .filter(dirent => dirent.isFile())
                     .map(dirent => dirent.name);
 
-                let latestUserId = null;
+                let latestAccountId = null;
                 let latestTime = 0;
 
                 for (const fileName of files) {
@@ -183,11 +183,11 @@ class GameData {
                         // remove 'OC_' prefix if present and remove .dat extension
                         const idMatch = fileName.match(/^(?:OC_)?([a-f0-9]+)\.dat$/i);
                         if (idMatch) {
-                            latestUserId = idMatch[1];
+                            latestAccountId = idMatch[1];
                         }
                     }
                 }
-                this.currentEpicUserId = latestUserId;
+                this.currentEpicAccountId = latestAccountId;
             } catch (e) {
                 console.log('Error reading or parsing Epic user data directory:', e);
             }
@@ -195,50 +195,50 @@ class GameData {
             console.log(`No Epic user data found at: ${epicDataPath}`);
         }
 
-        // Get current Xbox user id
-        this.currentXboxUserId = await this.getRegistryValue(
+        // Get current Xbox account ID
+        this.currentXboxAccountId = await this.getRegistryValue(
             WinReg.HKCU,
             '\\Software\\Microsoft\\XboxLive',
             'Xuid'
         );
 
-        // Get current RockStar user id
+        // Get current Rockstar account ID
         const rStarProfilePath = path.join(process.env.USERPROFILE || os.homedir(), "Documents\\Rockstar Games\\Social Club\\Profiles");
         if (fs.existsSync(rStarProfilePath)) {
             try {
-                const userFolders = fs.readdirSync(rStarProfilePath, { withFileTypes: true })
+                const accountFolders = fs.readdirSync(rStarProfilePath, { withFileTypes: true })
                     .filter(dirent => dirent.isDirectory())
                     .map(dirent => dirent.name);
 
-                let latestUserId = null;
+                let latestAccountId = null;
                 let latestTime = 0;
 
-                for (const userId of userFolders) {
-                    const userFolderPath = path.join(rStarProfilePath, userId);
-                    const userFolderTime = getLatestModificationTime(userFolderPath);
+                for (const accountId of accountFolders) {
+                    const accountFolderPath = path.join(rStarProfilePath, accountId);
+                    const accountFolderTime = getLatestModificationTime(accountFolderPath);
 
-                    if (userFolderTime > latestTime) {
-                        latestTime = userFolderTime;
-                        latestUserId = userId;
+                    if (accountFolderTime > latestTime) {
+                        latestTime = accountFolderTime;
+                        latestAccountId = accountId;
                     }
                 }
-                this.currentRockStarUserId = latestUserId;
+                this.currentRockstarAccountId = latestAccountId;
             } catch (e) {
                 console.log('Error reading or parsing Rockstar savegames directory:', e);
             }
         } else {
-            console.log(`No Rockstar users found at: ${rStarProfilePath}`);
+            console.log(`No Rockstar accounts found at: ${rStarProfilePath}`);
         }
 
-        // --- Normally unused ids ---
-        // Gog user id
-        this.currentGogUserId = await this.getRegistryValue(
+        // --- Normally unused IDs ---
+        // GOG account ID
+        this.currentGogAccountId = await this.getRegistryValue(
             WinReg.HKCU,
             '\\Software\\GOG.com\\Galaxy\\settings',
             'userId'
         );
 
-        // EA user id
+        // EA account ID
         const eaSettingsPattern = path.join(
             process.env.LOCALAPPDATA || path.join(process.env.USERPROFILE || os.homedir(), 'AppData', 'Local'),
             'Electronic Arts', 'EA Desktop', 'user_*.ini'
@@ -246,21 +246,21 @@ class GameData {
         const eaFiles = glob.sync(eaSettingsPattern.replace(/\\/g, '/'));
         if (eaFiles.length > 0) {
             const fileName = path.basename(eaFiles[0]);
-            const userIdMatch = fileName.match(/user_(.+)\.ini/);
-            if (userIdMatch) {
-                this.currentEAUserId = userIdMatch[1];
+            const accountIdMatch = fileName.match(/user_(.+)\.ini/);
+            if (accountIdMatch) {
+                this.currentEAAccountId = accountIdMatch[1];
             }
         }
     }
 
-    getAllUserIds() {
+    getAllAccountIds() {
         return {
-            steamId64: this.currentSteamUserId64,
-            steamId3: this.currentSteamUserId3,
-            ubisoftId: this.currentUbisoftUserId,
-            epicId: this.currentEpicUserId,
-            xboxId: this.currentXboxUserId,
-            rockStarId: this.currentRockStarUserId,
+            steamId64: this.currentSteamId64,
+            steamAccountId: this.currentSteamAccountId,
+            ubisoftAccountId: this.currentUbisoftAccountId,
+            epicAccountId: this.currentEpicAccountId,
+            xboxAccountId: this.currentXboxAccountId,
+            rockstarAccountId: this.currentRockstarAccountId,
         };
     }
 
@@ -474,6 +474,6 @@ module.exports = {
     getGameData: () => gameData,
     initializeGameData: async () => await gameData.initialize(),
     detectGamePaths: async () => await gameData.detectGamePaths(),
-    getAllUserIds: () => gameData.getAllUserIds(),
+    getAllAccountIds: () => gameData.getAllAccountIds(),
     getLatestModificationTime
 };

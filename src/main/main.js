@@ -17,7 +17,7 @@ const {
     importBackups, browseLocalSave, deleteLocalSave, osKeyMap, loadSettings, saveSettings, getSettings,
     moveFilesWithProgress, getCurrentVersion, getLatestVersion, updateApp
 } = require('./global');
-const { getGameData, initializeGameData, detectGamePaths, getAllUserIds } = require('./gameData');
+const { getGameData, initializeGameData, detectGamePaths, getAllAccountIds } = require('./gameData');
 const { getGameDataFromDB, getAllGameDataFromDB, getGameTitlesByIds, backupGame, updateDatabase } = require('./backup');
 const { getGameDataForRestore, restoreGame } = require("./restore");
 const {
@@ -278,7 +278,7 @@ ipcMain.handle('load-custom-entries', async () => {
 });
 
 ipcMain.handle('get-account-data', () => {
-    return getAllUserIds();
+    return getAllAccountIds();
 });
 
 ipcMain.handle('get-platform', () => {

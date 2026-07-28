@@ -20,7 +20,7 @@ const {
     calculateDirectorySize, ensureWritable, getNewestBackup, fsOriginalCopyFolder,
     placeholder_mapping, osKeyMap, getSettings, saveSettings
 } = require('./global');
-const { getGameData, getAllUserIds } = require('./gameData');
+const { getGameData, getAllAccountIds } = require('./gameData');
 
 const execPromise = util.promisify(exec);
 
@@ -645,13 +645,13 @@ async function fillPathUid(templatedPath, basePath, placeholderMappings) {
 
     const steamPath = getGameData().steamPath;
     const ubisoftPath = getGameData().ubisoftPath;
-    const steamUid = getGameData().currentSteamUserId3;
-    const ubisoftUid = getGameData().currentUbisoftUserId;
+    const steamAccountId = getGameData().currentSteamAccountId;
+    const ubisoftAccountId = getGameData().currentUbisoftAccountId;
 
     // 3. Apply platform-specific current-account replacements
     let contextAwarePath = basePath;
-    contextAwarePath = applyContextReplacement(contextAwarePath, `${steamPath}/userdata/{{p|uid}}`, steamUid);
-    contextAwarePath = applyContextReplacement(contextAwarePath, `${ubisoftPath}/savegames/{{p|uid}}`, ubisoftUid);
+    contextAwarePath = applyContextReplacement(contextAwarePath, `${steamPath}/userdata/{{p|uid}}`, steamAccountId);
+    contextAwarePath = applyContextReplacement(contextAwarePath, `${ubisoftPath}/savegames/{{p|uid}}`, ubisoftAccountId);
 
     // If all placeholders are context-aware, try glob directly
     if (!contextAwarePath.includes('{{p|uid}}')) {
@@ -667,7 +667,7 @@ async function fillPathUid(templatedPath, basePath, placeholderMappings) {
         return [];
     }
 
-    const uidValues = Object.values(getAllUserIds()).filter(uid => uid && uid !== 'N/A' && uid !== null && uid !== undefined);
+    const uidValues = Object.values(getAllAccountIds()).filter(uid => uid && uid !== 'N/A' && uid !== null && uid !== undefined);
     const uidCombinations = generateUidCombinations(uidCount, uidValues);
 
     for (const uidCombo of uidCombinations) {
@@ -810,7 +810,7 @@ async function fillRegistryPathUid(templatedPath, basePath, placeholderMappings)
     // 3. Try known current-account IDs
     const uidMatches = basePath.match(/\{\{p\|uid\}\}/gi);
     const uidCount = uidMatches ? uidMatches.length : 0;
-    const uidValues = Object.values(getAllUserIds())
+    const uidValues = Object.values(getAllAccountIds())
         .filter(uid => uid && uid !== 'N/A' && uid !== null && uid !== undefined);
     const uidCombinations = generateUidCombinations(uidCount, uidValues);
 
