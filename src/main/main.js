@@ -15,7 +15,8 @@ const { pinyin } = require('pinyin');
 const {
     createMainWindow, getMainWin, getStatus, updateStatus, checkAppUpdate, exportBackups,
     importBackups, browseLocalSave, deleteLocalSave, osKeyMap, loadSettings, saveSettings, getSettings,
-    moveFilesWithProgress, getCurrentVersion, getLatestVersion, updateApp
+    moveFilesWithProgress, getCurrentVersion, getLatestVersion, updateApp,
+    startVersionPing, stopVersionPing
 } = require('./global');
 const { getGameData, initializeGameData, detectGamePaths, getAllAccountIds } = require('./gameData');
 const { getGameDataFromDB, getAllGameDataFromDB, getGameTitlesByIds, backupGame, updateDatabase } = require('./backup');
@@ -57,6 +58,7 @@ if (!gotTheLock) {
 
     app.on('will-quit', () => {
         stopAllAutoBackups();
+        stopVersionPing();
     });
 
     if (process.platform === 'win32') {
@@ -74,6 +76,10 @@ app.whenReady().then(async () => {
     await initializeI18next(getSettings().language);
     await initializeGameData();
 
+    if (!getSettings().uid) {
+        await saveSettings('uid', randomUUID());
+    }
+
     if (getSettings().gameInstalls === 'uninitialized') {
         await detectGamePaths();
         await saveSettings('gameInstalls', getGameData().detectedGamePaths);
@@ -85,6 +91,7 @@ app.whenReady().then(async () => {
     if (getSettings().autoAppUpdate) {
         checkAppUpdate();
     }
+    startVersionPing();
 
     await restoreAutoBackups();
 

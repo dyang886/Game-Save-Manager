@@ -22,7 +22,7 @@ let aboutWin;
 let settings;
 let writeQueue = Promise.resolve();
 
-const appVersion = "2.2.0-beta.4";
+const appVersion = app.getVersion();
 let status = {
     backuping: false,
     scanning_full: false,
@@ -185,6 +185,16 @@ function resource_path(resource_name) {
     }
 }
 
+function getClientParams() {
+    return {
+        'app': 'GSM',
+        'uid': settings?.uid,
+        'appVersion': appVersion,
+        'platform': process.platform,
+        'language': settings?.language
+    };
+}
+
 async function getSignedDownloadUrl(filePathOnS3) {
     if (!SIGNED_URL_DOWNLOAD_ENDPOINT || !CLIENT_API_KEY) {
         console.error("Error: API Gateway endpoint or Client API Key is not configured.");
@@ -195,7 +205,8 @@ async function getSignedDownloadUrl(filePathOnS3) {
         'x-api-key': CLIENT_API_KEY
     };
     const params = {
-        'filePath': filePathOnS3
+        'filePath': filePathOnS3,
+        ...getClientParams()
     };
 
     try {
@@ -229,7 +240,8 @@ async function getLatestVersion(appName) {
         'x-api-key': CLIENT_API_KEY
     };
     const params = {
-        'appName': appName
+        'appName': appName,
+        ...getClientParams()
     };
 
     try {
@@ -289,6 +301,33 @@ async function checkAppUpdate() {
             i18next.t('alert.update_check_failed'),
             i18next.t('alert.update_check_failed_text')
         );
+    }
+}
+
+const VERSION_PING_INTERVAL_MS = 60 * 60 * 1000;
+let versionPingTimer = null;
+
+function startVersionPing() {
+    if (versionPingTimer) {
+        return;
+    }
+
+    if (!settings.autoAppUpdate) {
+        getLatestVersion('GSM').catch(() => { });
+    }
+
+    versionPingTimer = setInterval(() => {
+        getLatestVersion('GSM').catch(() => { });
+    }, VERSION_PING_INTERVAL_MS);
+
+    // Never let the ping alone hold the process open at quit
+    versionPingTimer.unref();
+}
+
+function stopVersionPing() {
+    if (versionPingTimer) {
+        clearInterval(versionPingTimer);
+        versionPingTimer = null;
     }
 }
 
@@ -917,6 +956,7 @@ const loadSettings = () => {
     const defaultSettings = {
         theme: 'dark',
         language: detectedLanguage,
+        uid: null,
         backupPath: path.join(appDataPath, "GSM Backups"),
         exportPath: "",
         maxBackups: 5,
@@ -1084,6 +1124,8 @@ module.exports = {
     getCurrentVersion: () => appVersion,
     getLatestVersion,
     checkAppUpdate,
+    startVersionPing,
+    stopVersionPing,
     updateApp,
     getGameDisplayName,
     calculateDirectorySize,
