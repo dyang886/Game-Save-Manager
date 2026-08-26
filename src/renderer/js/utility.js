@@ -277,6 +277,7 @@ async function exportConfirm() {
 
         let wikiIds = null;
         if (scope !== 'all') {
+            // Use selections from the restore table -- the only one whose rows are guaranteed to have backups
             const table = document.querySelector(`#${scope}`);
             const selectedRows = table.querySelectorAll('.row-checkbox:checked');
             wikiIds = Array.from(selectedRows).map(checkbox => {

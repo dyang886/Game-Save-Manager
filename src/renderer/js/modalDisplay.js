@@ -717,11 +717,11 @@ export async function showHiddenGamesModal() {
 
         const rowsHtml = sortedGames.map(game => `
             <tr class="bg-white border-b dark:bg-[#2d3748] dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-600" data-wiki-id="${game.wikiId}">
-                <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">${game.displayTitle}</td>
-                <td class="px-6 py-3">${game.backupCount}</td>
-                <td class="px-6 py-3">${game.latestBackup}</td>
-                <td class="px-6 py-3 text-center">
-                    <button type="button" class="unhide-game-btn inline-flex items-center px-3 py-1 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors duration-150 dark:bg-blue-700 dark:hover:bg-blue-600" data-id="${game.wikiId}">
+                <td class="px-4 py-3 font-medium break-words text-gray-900 dark:text-white">${game.displayTitle}</td>
+                <td class="px-4 py-3 whitespace-nowrap">${game.backupCount}</td>
+                <td class="px-4 py-3 whitespace-nowrap">${game.latestBackup}</td>
+                <td class="px-4 py-3 text-center">
+                    <button type="button" class="unhide-game-btn inline-flex items-center whitespace-nowrap px-3 py-1 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors duration-150 dark:bg-blue-700 dark:hover:bg-blue-600" data-id="${game.wikiId}">
                         <i class="fa-solid fa-eye mr-1"></i>
                         ${unhideLabel}
                     </button>
@@ -731,13 +731,13 @@ export async function showHiddenGamesModal() {
 
         modalContent.innerHTML = `
             <div class="overflow-x-auto">
-                <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <table class="w-full table-fixed text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-800 dark:text-gray-200">
                         <tr>
                             <th scope="col" class="px-4 py-3 rounded-tl-lg">${gameNameLabel}</th>
-                            <th scope="col" class="px-6 py-3">${backupCountLabel}</th>
-                            <th scope="col" class="px-6 py-3">${newestBackupLabel}</th>
-                            <th scope="col" class="px-6 py-3 text-center rounded-tr-lg">${actionLabel}</th>
+                            <th scope="col" class="px-4 py-3 w-44 whitespace-nowrap">${backupCountLabel}</th>
+                            <th scope="col" class="px-4 py-3 w-44 whitespace-nowrap">${newestBackupLabel}</th>
+                            <th scope="col" class="px-4 py-3 w-36 whitespace-nowrap text-center rounded-tr-lg">${actionLabel}</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -9,9 +9,9 @@ document.addEventListener('DOMContentLoaded', () => {
 function setupCustomPage() {
     const addGameButton = document.querySelector('#custom-add-game');
     const saveAllButton = document.querySelector('#custom-save-all');
-    const placeholderButton = document.querySelector('#custom-view-placeholder');
-    const placeholderGuide = document.querySelector('#placeholder-guide');
-    const placeholderGuideClose = document.querySelector('#placeholder-guide-close');
+    const pathSyntaxButton = document.querySelector('#custom-view-path-syntax');
+    const pathSyntaxGuide = document.querySelector('#path-syntax-guide');
+    const pathSyntaxGuideClose = document.querySelector('#path-syntax-guide-close');
     const modalOverlay = document.getElementById('modal-overlay');
 
     addGameButton.addEventListener('click', async () => {
@@ -41,12 +41,12 @@ function setupCustomPage() {
         if (start) await saveEntriesToJson(saveAllButton);
     });
 
-    placeholderButton.addEventListener('click', () => {
+    pathSyntaxButton.addEventListener('click', () => {
         modalOverlay.classList.remove('hidden');
-        placeholderGuide.classList.remove('hidden');
+        pathSyntaxGuide.classList.remove('hidden');
     });
 
-    placeholderGuide.addEventListener('click', (event) => {
+    pathSyntaxGuide.addEventListener('click', (event) => {
         if (event.target.matches('i.fa-copy')) {
             const icon = event.target;
             const placeholderText = icon.parentElement.textContent.trim();
@@ -67,9 +67,9 @@ function setupCustomPage() {
         }
     });
 
-    placeholderGuideClose.addEventListener('click', () => {
+    pathSyntaxGuideClose.addEventListener('click', () => {
         modalOverlay.classList.add('hidden');
-        placeholderGuide.classList.add('hidden');
+        pathSyntaxGuide.classList.add('hidden');
     });
 
     loadEntriesFromJson();

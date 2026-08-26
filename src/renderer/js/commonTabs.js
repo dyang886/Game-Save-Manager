@@ -325,7 +325,7 @@ export function createBackupTableRow(gameTitle, platformIcons, backupSize, newes
                 <label class="sr-only">checkbox</label>
             </div>
         </td>
-        <th scope="row" class="pr-6 py-4 truncate font-medium text-gray-900 whitespace-nowrap dark:text-white">
+        <th scope="row" class="pr-6 py-4 break-words font-medium text-gray-900 dark:text-white">
             <span data-icon="pin" class="hidden"><i class="fa-solid fa-thumbtack text-red-500 mr-2"></i></span>
             <span data-icon="star" class="hidden"><i class="fa-solid fa-star text-yellow-500 mr-2"></i></span>
             <span data-icon="timer" class="hidden"><i class="fa-solid fa-clock-rotate-left text-green-500 mr-2"></i></span>
@@ -364,7 +364,7 @@ export function createRestoreTableRow(gameTitle, backupCount, backupSize, newest
                 <label class="sr-only">checkbox</label>
             </div>
         </td>
-        <th scope="row" class="pr-6 py-4 truncate font-medium text-gray-900 whitespace-nowrap dark:text-white">
+        <th scope="row" class="pr-6 py-4 break-words font-medium text-gray-900 dark:text-white">
             <span data-icon="pin" class="hidden"><i class="fa-solid fa-thumbtack text-red-500 mr-2"></i></span>
             <span data-icon="star" class="hidden"><i class="fa-solid fa-star text-yellow-500 mr-2"></i></span>
             <span data-icon="timer" class="hidden"><i class="fa-solid fa-clock-rotate-left text-green-500 mr-2"></i></span>

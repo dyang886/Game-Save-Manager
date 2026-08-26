@@ -508,6 +508,11 @@ function escapeRegExp(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+// Only * and ? are allowed as wildcards
+function toGlobPattern(resolvedPath) {
+    return resolvedPath.replace(/\\/g, '/').replace(/[[\]{}()!+@|]/g, '\\$&');
+}
+
 // Helper function to generate all combinations of UIDs for a given number of {{p|uid}}
 function generateUidCombinations(count, allUids) {
     if (count === 0) return [[]];
@@ -587,7 +592,7 @@ async function resolveTemplatedBackupPath(templatedPath, gameInstallPath, isRegi
 async function fillPathUid(templatedPath, basePath, placeholderMappings) {
     // Helper function to try glob on a path and return valid paths
     function tryGlobAndReturnPaths(testPath) {
-        const files = glob.sync(testPath.replace(/\\/g, '/'));
+        const files = glob.sync(toGlobPattern(testPath));
         if (files.length > 0) {
             return files
                 .filter(filePath => fsOriginal.existsSync(filePath))
@@ -689,7 +694,7 @@ async function fillPathUid(templatedPath, basePath, placeholderMappings) {
 
     // 5. Final fallback: select the newest wildcard match for UID
     const wildcardPath = basePath.replace(/\{\{p\|uid\}\}/gi, '*');
-    const wildcardResolvedPaths = glob.sync(wildcardPath.replace(/\\/g, '/'));
+    const wildcardResolvedPaths = glob.sync(toGlobPattern(wildcardPath));
 
     if (wildcardResolvedPaths.length === 0) {
         return [];
