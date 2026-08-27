@@ -1,7 +1,6 @@
 // webpack.preload.config.js
 const path = require('path');
 
-const { BytenodeWebpackPlugin } = require('@herberttn/bytenode-webpack-plugin');
 const nodeExternals = require('webpack-node-externals');
 
 const isProduction = process.env.NODE_ENV === 'production';
@@ -31,12 +30,6 @@ module.exports = {
             },
         ],
     },
-
-    plugins: [
-        isProduction && new BytenodeWebpackPlugin({
-            compileForElectron: true,
-        }),
-    ].filter(Boolean),
 
     node: {
         __dirname: false,

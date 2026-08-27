@@ -397,10 +397,13 @@ export function createRestoreTableRow(gameTitle, backupCount, backupSize, newest
 // --- Column sorting ---
 
 const DEFAULT_SORT = { key: 'title', direction: 'asc' };
+const SORT_COALESCE_MS = 200;
 const sortState = {
     backup: { ...DEFAULT_SORT },
     restore: { ...DEFAULT_SORT },
 };
+const pendingSorts = { backup: null, restore: null };
+const sortRuns = { backup: 0, restore: 0 };
 
 // Raw values from the data maps, not the cells; null sorts last.
 const sortValueGetters = {
@@ -484,10 +487,15 @@ async function applyTableSort(tabName) {
     const tableBody = document.querySelector(`#${tabName} tbody`);
     if (!tableBody) return;
 
+    const run = ++sortRuns[tabName];
     const entries = getSortEntries(tabName);
     // Ranked once for the whole table; every column uses it to break ties.
     const ranked = await window.api.invoke('sort-games',
         entries.map(entry => ({ wikiId: entry.wikiId, titleToSort: entry.titleToSort })));
+
+    // A newer sort started while this one waited, so its result is already stale.
+    if (run !== sortRuns[tabName]) return;
+
     const titleRank = new Map(ranked.map((game, index) => [game.wikiId, index]));
     const byTitle = (a, b) => titleRank.get(a.wikiId) - titleRank.get(b.wikiId);
 
@@ -502,11 +510,37 @@ async function applyTableSort(tabName) {
     updateSortIndicators(tabName);
 }
 
-// A freshly populated table is already title-ascending; only a custom sort needs re-applying.
-export async function applyTableSortIfCustom(tabName) {
-    const { key, direction } = sortState[tabName];
-    if (key === DEFAULT_SORT.key && direction === DEFAULT_SORT.direction) return;
-    await applyTableSort(tabName);
+// The one ordering entry point; coalesced unless the caller needs it on screen now.
+export function sortTable(tabName, { immediate = false } = {}) {
+    // Never rejects, so callers cannot leave the table half-ordered or hang waiting.
+    const runSort = () => applyTableSort(tabName)
+        .catch(error => console.error(`Error sorting ${tabName} table: ${error.message}`));
+
+    const queued = pendingSorts[tabName];
+
+    if (immediate) {
+        pendingSorts[tabName] = null;
+        const done = runSort();
+        if (queued) {
+            clearTimeout(queued.timer);
+            done.then(queued.resolve);
+        }
+        return done;
+    }
+
+    const pending = queued || {};
+    if (!queued) {
+        pending.promise = new Promise(resolve => { pending.resolve = resolve; });
+        pendingSorts[tabName] = pending;
+    }
+
+    clearTimeout(pending.timer);
+    pending.timer = setTimeout(() => {
+        pendingSorts[tabName] = null;
+        runSort().then(pending.resolve);
+    }, SORT_COALESCE_MS);
+
+    return pending.promise;
 }
 
 function setupTableSorting(tabName) {
@@ -517,7 +551,7 @@ function setupTableSorting(tabName) {
             // Re-clicking the active column flips it; a new column starts ascending.
             state.direction = state.key === key && state.direction === 'asc' ? 'desc' : 'asc';
             state.key = key;
-            await applyTableSort(tabName);
+            await sortTable(tabName, { immediate: true });
         });
     });
 
@@ -535,13 +569,16 @@ async function performAddOrUpdateTableRow(tabName, wikiId) {
     }
     if (!gameData) return;
 
+    const settings = await window.api.invoke('get-settings');
+    // Stored alongside the row data so sorting never has to read it back off the DOM.
+    gameData.titleToSort = settings.language === 'zh_CN' ? gameData.zh_CN || gameData.title : gameData.title;
+
     const dataMap = tabName === 'backup' ? window.backupTableDataMap : window.restoreTableDataMap;
     dataMap.set(wikiId, gameData);
 
     const existingRow = document.querySelector(`#${tabName} tbody tr[data-wiki-id="${wikiId}"]`);
 
     if (existingRow) {
-        // Update existing row cells
         const sizeCell = existingRow.querySelector('.backup-size');
         if (sizeCell) sizeCell.textContent = formatSize(gameData.backup_size);
         const timeCell = existingRow.querySelector('.newest-backup-time');
@@ -551,17 +588,11 @@ async function performAddOrUpdateTableRow(tabName, wikiId) {
             if (countCell) countCell.textContent = gameData.backups.length;
         }
     } else {
-        // Create and append new row
-        const settings = await window.api.invoke('get-settings');
-
         // Don't re-add a row for a hidden game (e.g. triggered by auto backup)
         const hiddenGamesWikiIds = settings.hiddenGames || [];
         if (hiddenGamesWikiIds.includes(wikiId.toString())) return;
 
-        let gameTitle = gameData.title;
-        if (gameData.zh_CN && settings.language === 'zh_CN') {
-            gameTitle = gameData.zh_CN;
-        }
+        const gameTitle = gameData.titleToSort;
         if (!gameTitle) return;
 
         let row;
@@ -587,55 +618,17 @@ async function performAddOrUpdateTableRow(tabName, wikiId) {
             setIcon(row, 'pin', true);
         }
 
-        // Check if auto backup is active
         const autoBackupState = await window.api.invoke('get-auto-backup-state');
         if (autoBackupState[wikiId.toString()]) {
             setIcon(row, 'timer', true);
         }
 
-        // Insert row in sorted position
-        const tableBody = document.querySelector(`#${tabName} tbody`);
-        const siblingRows = Array.from(tableBody.querySelectorAll('tr'))
-            .filter(r => {
-                const pinned = !r.querySelector('span[data-icon="pin"].hidden');
-                return isPinned ? pinned : !pinned;
-            })
-            .concat({ getAttribute: () => wikiId.toString(), querySelector: () => ({ textContent: gameTitle }) })
-            .map(r => ({
-                wikiId: r.getAttribute('data-wiki-id'),
-                titleToSort: r.querySelector('th[scope="row"]').textContent.trim()
-            }));
-
-        const sorted = await window.api.invoke('sort-games', siblingRows);
-        const targetIndex = sorted.findIndex(g => g.wikiId === wikiId.toString());
-
-        if (isPinned) {
-            // Insert among pinned rows
-            if (targetIndex === 0) {
-                tableBody.insertBefore(row, tableBody.firstChild);
-            } else {
-                const prevRow = tableBody.querySelector(`tr[data-wiki-id="${sorted[targetIndex - 1].wikiId}"]`);
-                tableBody.insertBefore(row, prevRow.nextSibling);
-            }
-        } else {
-            // Insert among unpinned rows
-            if (targetIndex === 0) {
-                const lastPinnedRow = Array.from(tableBody.querySelectorAll('tr'))
-                    .reverse()
-                    .find(r => !r.querySelector('span[data-icon="pin"].hidden'));
-                if (lastPinnedRow) {
-                    tableBody.insertBefore(row, lastPinnedRow.nextSibling);
-                } else {
-                    tableBody.insertBefore(row, tableBody.firstChild);
-                }
-            } else {
-                const prevRow = tableBody.querySelector(`tr[data-wiki-id="${sorted[targetIndex - 1].wikiId}"]`);
-                tableBody.insertBefore(row, prevRow.nextSibling);
-            }
-        }
+        // Appended anywhere; sortTable() puts it in place.
+        document.querySelector(`#${tabName} tbody`).appendChild(row);
     }
 
-    await applyTableSortIfCustom(tabName);
+    // Not awaited: waiting here would stall each row instead of batching them.
+    sortTable(tabName);
 }
 
 export async function addOrUpdateTableRow(tabName, wikiId) {
@@ -752,11 +745,11 @@ async function handleRowMenuAction({ action, id, url }) {
             }
 
             if (action === 'pin-on-top') {
-                pinGameOnTop('backup', id);
-                pinGameOnTop('restore', id);
+                setGamePinned('backup', id, true);
+                setGamePinned('restore', id, true);
             } else {
-                unpinGameFromTop('backup', id);
-                unpinGameFromTop('restore', id);
+                setGamePinned('backup', id, false);
+                setGamePinned('restore', id, false);
             }
             return;
         }
@@ -848,74 +841,14 @@ function setupRowMenu() {
     });
 }
 
-async function pinGameOnTop(tabName, wikiId) {
-    const tableBody = document.querySelector(`#${tabName} tbody`);
-    const rowToMove = tableBody.querySelector(`tr[data-wiki-id="${wikiId}"]`);
+// Pinned rows are a group the sorter already understands, so flipping the icon is
+// the whole operation.
+async function setGamePinned(tabName, wikiId, pinned) {
+    const row = document.querySelector(`#${tabName} tbody tr[data-wiki-id="${wikiId}"]`);
+    if (!row) return;
 
-    if (rowToMove) {
-        tableBody.removeChild(rowToMove);
-        setIcon(rowToMove, 'pin', true);
-
-        const pinnedGames = Array.from(tableBody.querySelectorAll('tr'))
-            .filter(row => !row.querySelector('span[data-icon="pin"].hidden'))
-            .concat(rowToMove)
-            .map(row => ({
-                wikiId: row.getAttribute('data-wiki-id'),
-                titleToSort: row.querySelector('th[scope="row"]').textContent.trim()
-            }));
-
-        const sortedPinnedGames = await window.api.invoke('sort-games', pinnedGames);
-        const targetIndex = sortedPinnedGames.findIndex(game => game.wikiId === wikiId);
-
-        if (targetIndex === 0) {
-            tableBody.insertBefore(rowToMove, tableBody.firstChild);
-        } else {
-            const previousRowId = sortedPinnedGames[targetIndex - 1].wikiId;
-            const previousRow = tableBody.querySelector(`tr[data-wiki-id="${previousRowId}"]`);
-            tableBody.insertBefore(rowToMove, previousRow.nextSibling);
-        }
-    }
-
-    await applyTableSortIfCustom(tabName);
-}
-
-async function unpinGameFromTop(tabName, wikiId) {
-    const tableBody = document.querySelector(`#${tabName} tbody`);
-    const rowToMove = tableBody.querySelector(`tr[data-wiki-id="${wikiId}"]`);
-
-    if (rowToMove) {
-        setIcon(rowToMove, 'pin', false);
-        tableBody.removeChild(rowToMove);
-
-        const unpinnedGames = Array.from(tableBody.querySelectorAll('tr'))
-            .filter(row => row.querySelector('span[data-icon="pin"].hidden'))
-            .concat(rowToMove)
-            .map(row => ({
-                wikiId: row.getAttribute('data-wiki-id'),
-                titleToSort: row.querySelector('th[scope="row"]').textContent.trim()
-            }));
-
-        const sortedUnpinnedGames = await window.api.invoke('sort-games', unpinnedGames);
-        const targetIndex = sortedUnpinnedGames.findIndex(game => game.wikiId === wikiId);
-
-        const lastPinnedRow = Array.from(tableBody.querySelectorAll('tr'))
-            .reverse()
-            .find(row => !row.querySelector('span[data-icon="pin"].hidden'));
-
-        if (targetIndex === 0) {
-            if (lastPinnedRow) {
-                tableBody.insertBefore(rowToMove, lastPinnedRow.nextSibling);
-            } else {
-                tableBody.insertBefore(rowToMove, tableBody.firstChild);
-            }
-        } else {
-            const previousRowId = sortedUnpinnedGames[targetIndex - 1].wikiId;
-            const previousRow = tableBody.querySelector(`tr[data-wiki-id="${previousRowId}"]`);
-            tableBody.insertBefore(rowToMove, previousRow.nextSibling);
-        }
-    }
-
-    await applyTableSortIfCustom(tabName);
+    setIcon(row, 'pin', pinned);
+    await sortTable(tabName, { immediate: true });
 }
 
 // Function to update the count and size display

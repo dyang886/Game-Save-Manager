@@ -1,5 +1,5 @@
 import { showAlert, showInfoModal, updateProgress, operationStartCheck } from './utility.js';
-import { spinner, queueFullTableUpdate, createRestoreTableRow, addOrUpdateTableRow, formatSize, updateSelectedCountAndSize, setupSelectAllCheckbox, getSelectedWikiIds, setIcon, applyTableSortIfCustom } from './commonTabs.js';
+import { spinner, queueFullTableUpdate, createRestoreTableRow, addOrUpdateTableRow, formatSize, updateSelectedCountAndSize, setupSelectAllCheckbox, getSelectedWikiIds, setIcon, sortTable } from './commonTabs.js';
 
 const restoreTableDataMap = new Map();
 window.restoreTableDataMap = restoreTableDataMap;
@@ -36,27 +36,17 @@ async function populateRestoreTable(data) {
     tableBody.innerHTML = '';
     restoreTableDataMap.clear();
 
-    const gamesWithTitleToSort = await Promise.all(
-        data
-            .filter(game => !hiddenGamesWikiIds.includes(game.wiki_page_id.toString()))
-            .map(async (game) => {
-                const titleToSort = settings.language === 'zh_CN'
-                    ? game.zh_CN || game.title
-                    : game.title;
-                return { ...game, titleToSort };
-            })
-    );
+    const games = data
+        .filter(game => !hiddenGamesWikiIds.includes(game.wiki_page_id.toString()))
+        .map(game => ({
+            ...game,
+            titleToSort: settings.language === 'zh_CN' ? game.zh_CN || game.title : game.title,
+        }));
 
-    // Split and sort pinned and unpinned games
-    const pinnedGames = await window.api.invoke(
-        'sort-games',
-        gamesWithTitleToSort.filter(game => pinnedGamesWikiIds.includes(game.wiki_page_id.toString()))
-    );
-
-    const otherGames = await window.api.invoke(
-        'sort-games',
-        gamesWithTitleToSort.filter(game => !pinnedGamesWikiIds.includes(game.wiki_page_id.toString()))
-    );
+    // Only to flag pinned rows; sortTable() decides the order.
+    const isPinnedGame = (game) => pinnedGamesWikiIds.includes(game.wiki_page_id.toString());
+    const pinnedGames = games.filter(isPinnedGame);
+    const otherGames = games.filter(game => !isPinnedGame(game));
 
     // Append rows to the table body
     const autoBackupState = await window.api.invoke('get-auto-backup-state');
@@ -112,7 +102,7 @@ async function populateRestoreTable(data) {
     appendRowsToTable(otherGames, false);
 
     setupSelectAllCheckbox('restore', selectAllCheckbox);
-    await applyTableSortIfCustom('restore');
+    await sortTable('restore', { immediate: true });
 }
 
 function setupRestoreButton() {
