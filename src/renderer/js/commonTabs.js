@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeTabs();
     setupSearchFilter('backup');
     setupSearchFilter('restore');
-    setDropDownAction();
+    setupRowMenu();
 });
 
 window.api.receive('apply-language', () => {
@@ -341,7 +341,7 @@ export function createBackupTableRow(gameTitle, platformIcons, backupSize, newes
             ${newestBackupTime}
         </td>
         <td class="px-6 py-4 truncate text-center">
-            <button class="dropdown-menu-button inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 hover:bg-transparent focus:outline-hidden dark:text-white"
+            <button class="row-menu-button inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 hover:bg-transparent focus:outline-hidden dark:text-white"
                 type="button">
                 <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 16 3">
                     <path
@@ -380,7 +380,7 @@ export function createRestoreTableRow(gameTitle, backupCount, backupSize, newest
             ${newestBackupTime}
         </td>
         <td class="px-6 py-4 truncate text-center">
-            <button class="dropdown-menu-button inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 hover:bg-transparent focus:outline-hidden dark:text-white"
+            <button class="row-menu-button inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 hover:bg-transparent focus:outline-hidden dark:text-white"
                 type="button">
                 <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 16 3">
                     <path
@@ -543,224 +543,174 @@ export function removeTableRow(tabName, wikiId) {
     performRemoveTableRow(tabName, wikiId);
 }
 
-async function createDropdownMenu(wikiPageId, tabName) {
-    let action = 'pin-on-top';
-    let i18nKey = 'main.pin_on_top';
-
+// Labels are translated here; the menu window owns no i18n of its own.
+async function buildRowMenuItems(wikiPageId, tabName) {
     const settings = await window.api.invoke('get-settings');
-    if (settings && settings.pinnedGames.includes(wikiPageId.toString())) {
-        action = 'unpin';
-        i18nKey = 'main.unpin';
-    }
+    const isPinned = settings && settings.pinnedGames.includes(wikiPageId.toString());
     const isCustomGame = wikiPageId.includes('-');
-    const wikiUrl = !isCustomGame ? `https://www.pcgamingwiki.com/wiki/index.php?curid=${wikiPageId}` : "none";
 
-    const dropdownMenu = document.createElement('div');
-    dropdownMenu.className = 'bg-white rounded-lg shadow-sm w-48 dark:bg-gray-700 absolute hidden animate-fadeInShift';
-    dropdownMenu.innerHTML = `
-        <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
-            <li>
-                <a href="#" data-action="${action}" data-id="${wikiPageId}" data-i18n="${i18nKey}"
-                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                    <span class="text-content"></span>
-                </a>
-            </li>
-            <li>
-                <a href="#" data-action="manage-backups" data-id="${wikiPageId}" data-i18n="main.manage_backups"
-                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                    <span class="text-content">Manage Backups</span>
-                </a>
-            </li>
-            ${tabName !== 'restore' ? `<li>
-                <a href="#" data-action="auto-backup" data-id="${wikiPageId}" data-i18n="main.auto_backup"
-                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                    <span class="text-content"></span>
-                </a>
-            </li>` : ''}
-            <li>
-                <a href="#" data-action="open-wiki" data-url="${wikiUrl}" data-i18n="main.view_wiki"
-                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                    <span class="text-content">View on PCGamingWiki</span>
-                </a>
-            </li>
-            ${!isCustomGame ? `<li>
-                <a href="#" data-action="hide" data-id="${wikiPageId}" data-i18n="main.hide"
-                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                    <span class="text-content">Hide</span>
-                </a>
-            </li>` : ''}
-        </ul>
-    `;
-    dropdownMenu.querySelectorAll('.text-content').forEach(async (span) => {
-        span.textContent = await window.i18n.translate(span.parentElement.getAttribute('data-i18n'));
-    })
-    document.body.appendChild(dropdownMenu);
-    return dropdownMenu;
-}
+    const items = [
+        isPinned
+            ? { action: 'unpin', icon: 'thumbtack-slash', i18n: 'main.unpin', id: wikiPageId }
+            : { action: 'pin-on-top', icon: 'thumbtack', i18n: 'main.pin_on_top', id: wikiPageId },
+        { action: 'manage-backups', icon: 'box-archive', i18n: 'main.manage_backups', id: wikiPageId },
+    ];
 
-function positionDropdownMenu(button, dropdownMenu) {
-    const buttonRect = button.getBoundingClientRect();
-    const dropdownLeft = buttonRect.left + window.scrollX - buttonRect.width * 2;
-    const dropdownTop = buttonRect.bottom + window.scrollY;
-
-    dropdownMenu.style.top = `${dropdownTop}px`;
-    dropdownMenu.style.left = `${dropdownLeft}px`;
-    dropdownMenu.classList.remove('hidden');
-}
-
-function setDropDownAction() {
-    let activeDropdownMenu = null;
-    let lastButtonClicked = null;
-
-    function removeDropDown() {
-        activeDropdownMenu.remove();
-        activeDropdownMenu = null;
-        lastButtonClicked = null;
+    // Auto backup targets a live save location, which the restore tab lacks.
+    if (tabName !== 'restore') {
+        items.push({ action: 'auto-backup', icon: 'clock-rotate-left', i18n: 'main.auto_backup', id: wikiPageId });
     }
 
-    document.addEventListener('click', async (event) => {
-        const button = event.target.closest('.dropdown-menu-button');
+    items.push({
+        action: 'open-wiki',
+        icon: 'arrow-up-right-from-square',
+        i18n: 'main.view_wiki',
+        url: !isCustomGame ? `https://www.pcgamingwiki.com/wiki/index.php?curid=${wikiPageId}` : 'none',
+    });
 
-        // Handle actions in the dropdown menu
-        let actionElement = event.target;
-        if (actionElement.tagName === 'SPAN') {
-            actionElement = actionElement.closest('a');
-        }
-        if (actionElement && actionElement.dataset.action === 'pin-on-top') {
-            const wikiId = actionElement.dataset.id;
-            if (wikiId) {
-                window.api.invoke('get-settings').then(async (settings) => {
-                    if (settings) {
-                        let pinned_games_wiki_ids = new Set(settings['pinnedGames']);
-                        pinned_games_wiki_ids.add(wikiId);
-                        const saved = await window.api.invoke('save-settings', 'pinnedGames', Array.from(pinned_games_wiki_ids));
-                        if (!saved) {
-                            showAlert('warning', await window.i18n.translate('settings.save-settings-error'));
-                            return;
-                        }
-                        pinGameOnTop('backup', wikiId);
-                        pinGameOnTop('restore', wikiId);
-                    }
-                });
+    // Hiding a custom entry would strand it: no list to bring it back from.
+    if (!isCustomGame) {
+        items.push({ action: 'hide', icon: 'eye-slash', i18n: 'main.hide', id: wikiPageId, danger: true });
+    }
+
+    return Promise.all(items.map(async (item) => ({
+        action: item.action,
+        icon: item.icon,
+        label: await window.i18n.translate(item.i18n),
+        id: item.id || null,
+        url: item.url || null,
+        danger: Boolean(item.danger),
+    })));
+}
+
+async function openRowMenu(button) {
+    const wikiPageId = button.closest('tr').getAttribute('data-wiki-id');
+    const tabName = button.closest('#backup, #restore, #custom')?.id || 'backup';
+    const rect = button.getBoundingClientRect();
+
+    window.api.send('show-row-menu', {
+        items: await buildRowMenuItems(wikiPageId, tabName),
+        // Window-relative; main converts to screen coords and picks the direction.
+        anchor: { x: rect.left, y: rect.top, width: rect.width, height: rect.height },
+        theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light',
+    });
+}
+
+async function handleRowMenuAction({ action, id, url }) {
+    switch (action) {
+        case 'pin-on-top':
+        case 'unpin': {
+            if (!id) return;
+            const settings = await window.api.invoke('get-settings');
+            if (!settings) return;
+
+            const pinnedGames = new Set(settings['pinnedGames']);
+            if (action === 'pin-on-top') {
+                pinnedGames.add(id);
+            } else {
+                pinnedGames.delete(id);
             }
-            removeDropDown();
+
+            const saved = await window.api.invoke('save-settings', 'pinnedGames', Array.from(pinnedGames));
+            if (!saved) {
+                showAlert('warning', await window.i18n.translate('settings.save-settings-error'));
+                return;
+            }
+
+            if (action === 'pin-on-top') {
+                pinGameOnTop('backup', id);
+                pinGameOnTop('restore', id);
+            } else {
+                unpinGameFromTop('backup', id);
+                unpinGameFromTop('restore', id);
+            }
             return;
         }
-        if (actionElement && actionElement.dataset.action === 'unpin') {
-            const wikiId = actionElement.dataset.id;
-            if (wikiId) {
-                window.api.invoke('get-settings').then(async (settings) => {
-                    if (settings) {
-                        let pinned_games_wiki_ids = new Set(settings['pinnedGames']);
-                        pinned_games_wiki_ids.delete(wikiId);
-                        const saved = await window.api.invoke('save-settings', 'pinnedGames', Array.from(pinned_games_wiki_ids));
-                        if (!saved) {
-                            showAlert('warning', await window.i18n.translate('settings.save-settings-error'));
-                            return;
-                        }
-                        unpinGameFromTop('backup', wikiId);
-                        unpinGameFromTop('restore', wikiId);
-                    }
-                });
-            }
-            removeDropDown();
+
+        case 'manage-backups':
+            if (id) showManageBackupsModal(id);
             return;
-        }
-        if (actionElement && actionElement.dataset.action === 'open-wiki') {
-            const wikiUrl = actionElement.dataset.url;
-            if (wikiUrl && wikiUrl !== 'none') {
-                window.api.invoke('open-url', wikiUrl);
+
+        case 'auto-backup':
+            if (id) showAutoBackupModal(id);
+            return;
+
+        case 'open-wiki':
+            if (url && url !== 'none') {
+                window.api.invoke('open-url', url);
             } else {
                 showAlert('warning', await window.i18n.translate('alert.no_wiki_url'));
             }
-            removeDropDown();
             return;
-        }
-        if (actionElement && actionElement.dataset.action === 'manage-backups') {
-            const wikiId = actionElement.dataset.id;
-            if (wikiId) {
-                showManageBackupsModal(wikiId);
+
+        case 'hide': {
+            if (!id) return;
+            const settings = await window.api.invoke('get-settings');
+            if (!settings) return;
+
+            const hiddenGames = new Set(settings['hiddenGames']);
+            hiddenGames.add(id);
+            const saved = await window.api.invoke('save-settings', 'hiddenGames', Array.from(hiddenGames));
+            if (!saved) {
+                showAlert('warning', await window.i18n.translate('settings.save-settings-error'));
+                return;
             }
-            removeDropDown();
-            return;
-        }
-        if (actionElement && actionElement.dataset.action === 'auto-backup') {
-            const wikiId = actionElement.dataset.id;
-            if (wikiId) {
-                showAutoBackupModal(wikiId);
+
+            removeTableRow('backup', id);
+            removeTableRow('restore', id);
+            showAlert('success', await window.i18n.translate('alert.game_hidden'));
+
+            // A hidden game can no longer be managed, so stop its auto backup.
+            const autoBackupLogs = await window.api.invoke('stop-auto-backup', id);
+            if (autoBackupLogs) {
+                await showAutoBackupSummary(autoBackupLogs);
             }
-            removeDropDown();
             return;
         }
-        if (actionElement && actionElement.dataset.action === 'hide') {
-            const wikiId = actionElement.dataset.id;
-            if (wikiId) {
-                window.api.invoke('get-settings').then(async (settings) => {
-                    if (settings) {
-                        let hidden_games_wiki_ids = new Set(settings['hiddenGames']);
-                        hidden_games_wiki_ids.add(wikiId);
-                        const saved = await window.api.invoke('save-settings', 'hiddenGames', Array.from(hidden_games_wiki_ids));
-                        if (!saved) {
-                            showAlert('warning', await window.i18n.translate('settings.save-settings-error'));
-                            return;
-                        }
-                        removeTableRow('backup', wikiId);
-                        removeTableRow('restore', wikiId);
-                        showAlert('success', await window.i18n.translate('alert.game_hidden'));
+    }
+}
 
-                        // A hidden game can't be managed in the list, so terminate any
-                        // active auto backup for it. stop-auto-backup returns the logs
-                        // array if it was running, or null if it wasn't. When it was
-                        // running, show the normal disable summary (same as the auto
-                        // backup modal), which already conveys that it was stopped.
-                        const autoBackupLogs = await window.api.invoke('stop-auto-backup', wikiId);
-                        if (autoBackupLogs) {
-                            await showAutoBackupSummary(autoBackupLogs);
-                        }
-                    }
-                });
-            }
-            removeDropDown();
-            return;
-        }
+function setupRowMenu() {
+    // The menu is a separate window; only the opening button needs tracking.
+    let openForButton = null;
 
-        // If clicking outside any dropdown, remove the active one
-        if (!button && activeDropdownMenu) {
-            removeDropDown();
-            return;
-        }
+    const closeMenu = () => {
+        if (!openForButton) return;
+        openForButton = null;
+        window.api.send('hide-row-menu');
+    };
 
-        // If clicking the same button, toggle the dropdown visibility
-        if (button === lastButtonClicked && activeDropdownMenu) {
-            removeDropDown();
-            return;
-        }
-
-        // If clicking a different button or first time clicking
-        if (button) {
-            const wikiPageId = button.closest('tr').getAttribute('data-wiki-id');
-            const tabName = button.closest('#backup, #restore, #custom')?.id || 'backup';
-
-            if (activeDropdownMenu) {
-                activeDropdownMenu.remove();
-            }
-            const dropdownMenu = await createDropdownMenu(wikiPageId, tabName);
-            positionDropdownMenu(button, dropdownMenu);
-            activeDropdownMenu = dropdownMenu;
-            lastButtonClicked = button;
-        }
+    window.api.receive('row-menu-action', (action) => {
+        openForButton = null;
+        handleRowMenuAction(action);
     });
 
-    // Close dropdown on scroll
-    document.querySelector('#backup .table-container').addEventListener('scroll', () => {
-        if (activeDropdownMenu) {
-            removeDropDown();
+    document.addEventListener('click', async (event) => {
+        const button = event.target.closest('.row-menu-button');
+
+        if (!button) {
+            closeMenu();
+            return;
         }
+        if (button === openForButton) {
+            closeMenu();
+            return;
+        }
+
+        openForButton = button;
+        await openRowMenu(button);
     });
-    document.querySelector('#restore .table-container').addEventListener('scroll', () => {
-        if (activeDropdownMenu) {
-            removeDropDown();
-        }
+
+    // A separate window cannot ride along with the row, so dismiss on any move.
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') closeMenu();
+    });
+    window.addEventListener('resize', closeMenu);
+    window.addEventListener('blur', closeMenu);
+    document.querySelector('#backup .table-container').addEventListener('scroll', closeMenu);
+    document.querySelector('#restore .table-container').addEventListener('scroll', closeMenu);
+    document.querySelectorAll('#main-tab button[role="tab"]').forEach((tab) => {
+        tab.addEventListener('click', closeMenu);
     });
 }
 

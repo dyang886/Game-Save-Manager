@@ -15,6 +15,7 @@ module.exports = {
         index: './src/renderer/index.entry.js',
         settings: './src/renderer/settings.entry.js',
         about: './src/renderer/about.entry.js',
+        menu: './src/renderer/menu.entry.js',
     },
     output: {
         path: path.resolve(__dirname, 'dist/out/renderer'),
@@ -57,6 +58,11 @@ module.exports = {
             template: './src/renderer/about.html',
             filename: 'about.html',
             chunks: ['about'],
+        }),
+        new HtmlWebpackPlugin({
+            template: './src/renderer/menu.html',
+            filename: 'menu.html',
+            chunks: ['menu'],
         }),
 
         new MiniCssExtractPlugin({
