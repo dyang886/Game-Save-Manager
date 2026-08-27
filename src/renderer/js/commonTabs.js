@@ -8,6 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
     setupSearchFilter('backup');
     setupSearchFilter('restore');
     setupRowMenu();
+    setupTableSorting('backup');
+    setupTableSorting('restore');
 });
 
 window.api.receive('apply-language', () => {
@@ -122,7 +124,7 @@ const loader = `
     <span class="text-content pl-3 text-gray-900 dark:text-white">Loading...</span>
 `;
 
-export async function showLoadingIndicator(tabName) {
+async function showLoadingIndicator(tabName) {
     const loadingContainer = document.getElementById(`${tabName}-loading`);
     const actionSummary = document.querySelector(`#${tabName}-summary`);
     const contentContainer = document.getElementById(`${tabName}-content`);
@@ -158,7 +160,7 @@ export async function showLoadingIndicator(tabName) {
     }
 }
 
-export function hideLoadingIndicator(tabName) {
+function hideLoadingIndicator(tabName) {
     const loadingContainer = document.getElementById(`${tabName}-loading`);
     const contentContainer = document.getElementById(`${tabName}-content`);
     const actionButton = document.getElementById(`${tabName}-button`);
@@ -312,7 +314,7 @@ export function formatSize(sizeInBytes) {
     return (sizeInBytes / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'KB', 'MB', 'GB', 'TB'][i];
 }
 
-const platformOrder = ['Custom', 'Steam', 'Ubisoft', 'EA', 'Epic', 'GOG', 'Xbox', 'Blizzard'];
+export const platformOrder = ['Custom', 'Steam', 'Epic', 'GOG', 'Xbox', 'EA', 'Ubisoft', 'Blizzard'];
 
 export function createBackupTableRow(gameTitle, platformIcons, backupSize, newestBackupTime, wikiPageId) {
     const row = document.createElement('tr');
@@ -390,6 +392,136 @@ export function createRestoreTableRow(gameTitle, backupCount, backupSize, newest
         </td>
     `;
     return row;
+}
+
+// --- Column sorting ---
+
+const DEFAULT_SORT = { key: 'title', direction: 'asc' };
+const sortState = {
+    backup: { ...DEFAULT_SORT },
+    restore: { ...DEFAULT_SORT },
+};
+
+// Raw values from the data maps, not the cells; null sorts last.
+const sortValueGetters = {
+    size: (game) => Number(game && game.backup_size) || 0,
+    count: (game) => (game && Array.isArray(game.backups) ? game.backups.length : 0),
+    // Zero-padded YYYY/MM/DD HH:mm compares correctly as plain text.
+    time: (game) => (/^\d{4}\/\d{2}\/\d{2}/.test(game && game.latest_backup || '') ? game.latest_backup : null),
+    platform: (game) => {
+        const ranks = ((game && game.platform) || [])
+            .map(platform => platformOrder.indexOf(platform))
+            .filter(rank => rank >= 0)
+            .sort((a, b) => a - b);
+        return ranks.length ? ranks.map(rank => String(rank).padStart(2, '0')).join(',') : null;
+    },
+};
+
+function getSortEntries(tabName) {
+    const dataMap = tabName === 'backup' ? window.backupTableDataMap : window.restoreTableDataMap;
+    return Array.from(document.querySelectorAll(`#${tabName} tbody tr`)).map(row => {
+        const wikiId = row.getAttribute('data-wiki-id');
+        const game = dataMap && dataMap.get(wikiId);
+        const titleCell = row.querySelector('th[scope="row"]');
+        return {
+            row,
+            wikiId,
+            game,
+            pinned: !row.querySelector('span[data-icon="pin"].hidden'),
+            titleToSort: (game && game.titleToSort) || (titleCell ? titleCell.textContent.trim() : ''),
+        };
+    });
+}
+
+function orderEntries(entries, { key, direction }, byTitle) {
+    const sign = direction === 'desc' ? -1 : 1;
+
+    if (key === 'title') {
+        return [...entries].sort((a, b) => byTitle(a, b) * sign);
+    }
+
+    const getValue = sortValueGetters[key] || (() => null);
+    const withValue = [];
+    const withoutValue = [];
+    entries.forEach(entry => {
+        const value = getValue(entry.game);
+        (value === null || value === undefined ? withoutValue : withValue).push({ ...entry, value });
+    });
+
+    // Direction flips the column only; ties stay alphabetical in both directions.
+    withValue.sort((a, b) => {
+        const primary = typeof a.value === 'number' && typeof b.value === 'number'
+            ? a.value - b.value
+            : String(a.value).localeCompare(String(b.value));
+        return (primary * sign) || byTitle(a, b);
+    });
+    withoutValue.sort(byTitle);
+
+    return [...withValue, ...withoutValue];
+}
+
+function updateSortIndicators(tabName) {
+    const { key, direction } = sortState[tabName];
+
+    document.querySelectorAll(`#${tabName} th[data-sort-key]`).forEach(header => {
+        const active = header.dataset.sortKey === key;
+        const ascending = active && direction === 'asc';
+        header.setAttribute('aria-sort', active ? (ascending ? 'ascending' : 'descending') : 'none');
+
+        const indicator = header.querySelector('.sort-indicator');
+        if (!indicator) return;
+        indicator.classList.toggle('fa-sort', !active);
+        indicator.classList.toggle('fa-sort-up', ascending);
+        indicator.classList.toggle('fa-sort-down', active && !ascending);
+        indicator.classList.toggle('text-gray-300', !active);
+        indicator.classList.toggle('dark:text-gray-500', !active);
+        indicator.classList.toggle('text-blue-600', active);
+        indicator.classList.toggle('dark:text-blue-500', active);
+    });
+}
+
+async function applyTableSort(tabName) {
+    const tableBody = document.querySelector(`#${tabName} tbody`);
+    if (!tableBody) return;
+
+    const entries = getSortEntries(tabName);
+    // Ranked once for the whole table; every column uses it to break ties.
+    const ranked = await window.api.invoke('sort-games',
+        entries.map(entry => ({ wikiId: entry.wikiId, titleToSort: entry.titleToSort })));
+    const titleRank = new Map(ranked.map((game, index) => [game.wikiId, index]));
+    const byTitle = (a, b) => titleRank.get(a.wikiId) - titleRank.get(b.wikiId);
+
+    // Pinned games stay grouped on top; the sort applies within each group.
+    const state = sortState[tabName];
+    const ordered = [
+        ...orderEntries(entries.filter(entry => entry.pinned), state, byTitle),
+        ...orderEntries(entries.filter(entry => !entry.pinned), state, byTitle),
+    ];
+
+    tableBody.append(...ordered.map(entry => entry.row));
+    updateSortIndicators(tabName);
+}
+
+// A freshly populated table is already title-ascending; only a custom sort needs re-applying.
+export async function applyTableSortIfCustom(tabName) {
+    const { key, direction } = sortState[tabName];
+    if (key === DEFAULT_SORT.key && direction === DEFAULT_SORT.direction) return;
+    await applyTableSort(tabName);
+}
+
+function setupTableSorting(tabName) {
+    document.querySelectorAll(`#${tabName} th[data-sort-key] .sort-header`).forEach(button => {
+        button.addEventListener('click', async () => {
+            const state = sortState[tabName];
+            const key = button.closest('th').dataset.sortKey;
+            // Re-clicking the active column flips it; a new column starts ascending.
+            state.direction = state.key === key && state.direction === 'asc' ? 'desc' : 'asc';
+            state.key = key;
+            await applyTableSort(tabName);
+        });
+    });
+
+    updateSortIndicators(tabName);
 }
 
 async function performAddOrUpdateTableRow(tabName, wikiId) {
@@ -502,6 +634,8 @@ async function performAddOrUpdateTableRow(tabName, wikiId) {
             }
         }
     }
+
+    await applyTableSortIfCustom(tabName);
 }
 
 export async function addOrUpdateTableRow(tabName, wikiId) {
@@ -741,6 +875,8 @@ async function pinGameOnTop(tabName, wikiId) {
             tableBody.insertBefore(rowToMove, previousRow.nextSibling);
         }
     }
+
+    await applyTableSortIfCustom(tabName);
 }
 
 async function unpinGameFromTop(tabName, wikiId) {
@@ -778,6 +914,8 @@ async function unpinGameFromTop(tabName, wikiId) {
             tableBody.insertBefore(rowToMove, previousRow.nextSibling);
         }
     }
+
+    await applyTableSortIfCustom(tabName);
 }
 
 // Function to update the count and size display

@@ -1,5 +1,5 @@
 import { showAlert, showInfoModal, updateProgress, operationStartCheck } from './utility.js';
-import { spinner, queueFullTableUpdate, createBackupTableRow, addOrUpdateTableRow, getPlatformIcon, formatSize, updateSelectedCountAndSize, setupSelectAllCheckbox, getSelectedWikiIds, setIcon } from './commonTabs.js';
+import { spinner, queueFullTableUpdate, createBackupTableRow, addOrUpdateTableRow, getPlatformIcon, formatSize, updateSelectedCountAndSize, setupSelectAllCheckbox, getSelectedWikiIds, setIcon, platformOrder, applyTableSortIfCustom } from './commonTabs.js';
 
 const backupTableDataMap = new Map();
 window.backupTableDataMap = backupTableDataMap;
@@ -60,8 +60,6 @@ async function populateBackupTable(data, iconMap) {
     const pinnedGamesWikiIds = settings.pinnedGames || [];
     const hiddenGamesWikiIds = settings.hiddenGames || [];
     const selectedWikiIds = getSelectedWikiIds('backup');
-
-    const platformOrder = ['Custom', 'Steam', 'Ubisoft', 'EA', 'Epic', 'GOG', 'Xbox', 'Blizzard'];
 
     tableBody.innerHTML = '';
     backupTableDataMap.clear();
@@ -144,6 +142,7 @@ async function populateBackupTable(data, iconMap) {
     appendRowsToTable(otherGames, false);
 
     setupSelectAllCheckbox('backup', selectAllCheckbox);
+    await applyTableSortIfCustom('backup');
 }
 
 function setupBackupTabButtons() {

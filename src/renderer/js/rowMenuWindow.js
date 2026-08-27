@@ -5,10 +5,6 @@ const itemList = document.getElementById('row-menu-items');
 
 let currentToken = 0;
 
-function applyTheme(theme) {
-    document.documentElement.classList.toggle('dark', theme === 'dark');
-}
-
 function createItem(item) {
     const li = document.createElement('li');
 
@@ -63,7 +59,7 @@ async function measureAndReport(token) {
 
 function render(payload) {
     currentToken = payload.token;
-    applyTheme(payload.theme);
+    document.documentElement.classList.toggle('dark', payload.theme === 'dark');
 
     itemList.replaceChildren(...(payload.items || []).map(createItem));
     measureAndReport(payload.token);

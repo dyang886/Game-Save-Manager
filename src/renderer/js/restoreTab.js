@@ -1,5 +1,5 @@
 import { showAlert, showInfoModal, updateProgress, operationStartCheck } from './utility.js';
-import { spinner, queueFullTableUpdate, createRestoreTableRow, addOrUpdateTableRow, formatSize, updateSelectedCountAndSize, setupSelectAllCheckbox, getSelectedWikiIds, setIcon } from './commonTabs.js';
+import { spinner, queueFullTableUpdate, createRestoreTableRow, addOrUpdateTableRow, formatSize, updateSelectedCountAndSize, setupSelectAllCheckbox, getSelectedWikiIds, setIcon, applyTableSortIfCustom } from './commonTabs.js';
 
 const restoreTableDataMap = new Map();
 window.restoreTableDataMap = restoreTableDataMap;
@@ -112,6 +112,7 @@ async function populateRestoreTable(data) {
     appendRowsToTable(otherGames, false);
 
     setupSelectAllCheckbox('restore', selectAllCheckbox);
+    await applyTableSortIfCustom('restore');
 }
 
 function setupRestoreButton() {
@@ -217,7 +218,7 @@ async function performRestore() {
     }
 }
 
-export function showRestoreSummary(restoreCount, restoreFailed, errors, restoreSize) {
+function showRestoreSummary(restoreCount, restoreFailed, errors, restoreSize) {
     const restoreSummary = document.querySelector('#restore-summary');
     const restoreContent = document.querySelector('#restore-content');
     const restoreFailedContainer = document.querySelector('#restore-summary-total-failed-container');

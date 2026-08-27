@@ -14,15 +14,22 @@ const semver = require('semver');
 const Seven = require('node-7z');
 const sevenBin = require('7zip-bin');
 
-const { SIGNED_URL_DOWNLOAD_ENDPOINT, VERSION_CHECKER_ENDPOINT, CLIENT_API_KEY } = require('./secret_config')
+const {
+    SIGNED_URL_DOWNLOAD_ENDPOINT = '',
+    VERSION_CHECKER_ENDPOINT = '',
+    CLIENT_API_KEY = '',
+    signedGet = () => { throw new Error('Request signing is unavailable in this build'); },
+} = require('./secret_config');
 
 let win;
 let settingsWin;
 let aboutWin;
 let settings;
 let writeQueue = Promise.resolve();
+let updatingApp = false;
 
 const appVersion = app.getVersion();
+const API_TIMEOUT = 15000;  // every API call
 let status = {
     backuping: false,
     scanning_full: false,
@@ -185,36 +192,14 @@ function resource_path(resource_name) {
     }
 }
 
-function getClientParams() {
-    return {
-        'app': 'GSM',
-        'uid': settings?.uid,
-        'appVersion': appVersion,
-        'platform': process.platform,
-        'language': settings?.language
-    };
-}
-
 async function getSignedDownloadUrl(filePathOnS3) {
     if (!SIGNED_URL_DOWNLOAD_ENDPOINT || !CLIENT_API_KEY) {
         console.error("Error: API Gateway endpoint or Client API Key is not configured.");
         return null;
     }
 
-    const headers = {
-        'x-api-key': CLIENT_API_KEY
-    };
-    const params = {
-        'filePath': filePathOnS3,
-        ...getClientParams()
-    };
-
     try {
-        const response = await axios.get(SIGNED_URL_DOWNLOAD_ENDPOINT, {
-            headers: headers,
-            params: params,
-            timeout: 15000 // 15 seconds
-        });
+        const response = await signedGet(SIGNED_URL_DOWNLOAD_ENDPOINT, { 'filePath': filePathOnS3 }, API_TIMEOUT);
 
         const data = response.data;
         const signedUrl = data.signedUrl;
@@ -236,20 +221,8 @@ async function getLatestVersion(appName) {
         return null;
     }
 
-    const headers = {
-        'x-api-key': CLIENT_API_KEY
-    };
-    const params = {
-        'appName': appName,
-        ...getClientParams()
-    };
-
     try {
-        const response = await axios.get(VERSION_CHECKER_ENDPOINT, {
-            headers: headers,
-            params: params,
-            timeout: 15000 // 15 seconds
-        });
+        const response = await signedGet(VERSION_CHECKER_ENDPOINT, { 'appName': appName }, API_TIMEOUT);
 
         const data = response.data;
         const latestVersion = data.latest_version;
@@ -380,17 +353,43 @@ function showNotification(type, title, body, latest_version = 0) {
     }
 }
 
-function updateApp(latest_version) {
+async function updateApp(latest_version) {
+    if (updatingApp) return;
+    updatingApp = true;
+
     const updaterPath = path.join(path.dirname(app.getPath('exe')), 'Updater.exe');
     const s3Path = `GSM/Game Save Manager Setup ${latest_version}.exe`;
 
+    // Released on every outcome, so a closed updater cannot wedge the app.
+    const releaseUpdate = () => {
+        updatingApp = false;
+        aboutWin?.webContents.send('app-update-ended');
+    };
+
+    // The updater cannot sign its own requests, so it is handed a ready signed URL.
+    const signedUrl = await getSignedDownloadUrl(s3Path);
+    if (!signedUrl) {
+        releaseUpdate();
+        win?.webContents.send('show-alert', 'error', i18next.t('alert.app_update_failed'));
+        return;
+    }
+
     try {
-        const argsLine = `--pid ${process.pid} --s3-path "${s3Path}" --theme ${settings.theme} --language ${settings.language}`;
-        spawn('powershell.exe', ['-NoProfile', '-Command',
-            `Start-Process -FilePath '${updaterPath}' -ArgumentList '${argsLine}' -Verb RunAs`
+        const escape = (value) => String(value).replace(/'/g, "''");
+        const argsLine = `--pid ${process.pid} --s3-path "${escape(s3Path)}" --url "${escape(signedUrl)}"`
+            + ` --theme ${escape(settings.theme)} --language ${escape(settings.language)}`;
+        const launcher = spawn('powershell.exe', ['-NoProfile', '-Command',
+            `Start-Process -FilePath '${escape(updaterPath)}' -ArgumentList '${argsLine}' -Verb RunAs -Wait`
         ], { stdio: 'ignore' });
+
+        launcher.once('close', releaseUpdate);
+        launcher.once('error', (error) => {
+            console.error('An error occurred while trying to spawn the updater process:', error);
+            releaseUpdate();
+        });
     } catch (error) {
         console.error('An error occurred while trying to spawn the updater process:', error);
+        releaseUpdate();
     }
 }
 
@@ -956,7 +955,6 @@ const loadSettings = () => {
     const defaultSettings = {
         theme: 'dark',
         language: detectedLanguage,
-        uid: null,
         backupPath: path.join(appDataPath, "GSM Backups"),
         exportPath: "",
         maxBackups: 5,
@@ -1117,7 +1115,6 @@ async function moveFilesWithProgress(sourceDir, destinationDir) {
 module.exports = {
     createMainWindow,
     getMainWin: () => win,
-    getSettingsWin: () => settingsWin,
     getStatus: () => status,
     updateStatus,
     getSignedDownloadUrl,

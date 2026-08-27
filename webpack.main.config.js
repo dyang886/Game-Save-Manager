@@ -1,4 +1,5 @@
 // webpack.main.config.js
+const fs = require('fs');
 const path = require('path');
 
 const { BytenodeWebpackPlugin } = require('@herberttn/bytenode-webpack-plugin');
@@ -7,12 +8,18 @@ const nodeExternals = require('webpack-node-externals');
 const WebpackObfuscator = require('webpack-obfuscator');
 
 const isProduction = process.env.NODE_ENV === 'production';
+const hasSecretConfig = fs.existsSync(path.resolve(__dirname, 'src/main/secret_config.js'));
 
 module.exports = {
     mode: isProduction ? 'production' : 'development',
     target: 'electron-main',
     devtool: isProduction ? false : 'source-map',
     entry: { main: './src/main/main.js' },
+    resolve: {
+        alias: hasSecretConfig ? {} : {
+            [path.resolve(__dirname, 'src/main/secret_config')]: false,
+        },
+    },
     externals: [nodeExternals()],
     output: {
         path: path.resolve(__dirname, 'dist/out/main'),

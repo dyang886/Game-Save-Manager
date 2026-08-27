@@ -27,9 +27,20 @@ document.addEventListener('DOMContentLoaded', () => {
             latestVersionSpan.style.color = 'green';
 
             updateButton.classList.remove('hidden');
+
+            const setBusy = (busy) => {
+                updateButton.disabled = busy;
+                updateButton.classList.toggle('cursor-not-allowed', busy);
+                updateButton.classList.toggle('opacity-60', busy);
+            };
+
             updateButton.addEventListener('click', () => {
+                if (updateButton.disabled) return;
+                // Blocked until the updater exits or the attempt fails
+                setBusy(true);
                 window.api.send('update-app', latestVersion);
             });
+            window.api.receive('app-update-ended', () => setBusy(false));
         }
     };
 
