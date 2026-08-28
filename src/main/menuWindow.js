@@ -1,8 +1,7 @@
 const { BrowserWindow, screen } = require('electron');
 const path = require('path');
 
-// The row menus live in their own window so they are never clipped by the app
-// window, which a DOM menu cannot avoid (body computes to overflow:hidden).
+// Row menus get their own window so the app window cannot clip them
 
 const PARKED_BOUNDS = { x: -10000, y: -10000, width: 1, height: 1 };
 const ANCHOR_GAP = 6;
@@ -19,10 +18,16 @@ let visible = false;
 // Bumped on every show and dismiss so a late measurement is seen as stale.
 let placementToken = 0;
 
+// ======================================================================
+// Geometry
+// ======================================================================
 function clamp(value, min, max) {
     return Math.min(Math.max(value, min), max);
 }
 
+// ======================================================================
+// Window lifecycle
+// ======================================================================
 function createMenuWindow(parent) {
     const win = new BrowserWindow({
         ...PARKED_BOUNDS,
@@ -100,6 +105,9 @@ function ensureMenuWindow(parent) {
     return menuWindow;
 }
 
+// ======================================================================
+// Row menu
+// ======================================================================
 function showRowMenu(parent, payload) {
     const anchor = payload && payload.anchor;
     if (!parent || parent.isDestroyed() || !anchor) return;
@@ -197,8 +205,7 @@ function hideRowMenu() {
     if (!menuWindow || menuWindow.isDestroyed()) return;
     if (!visible) return;
 
-    // Parked rather than hidden: a hidden window produces no frames, which stalls
-    // the renderer's measure-then-place handshake.
+    // Parked, not hidden: a hidden window produces no frames, stalling the measure handshake
     menuWindow.setOpacity(0);
     menuWindow.setBounds(PARKED_BOUNDS, false);
     visible = false;

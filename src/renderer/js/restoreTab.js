@@ -1,5 +1,5 @@
 import { showAlert, showInfoModal, updateProgress, operationStartCheck } from './utility.js';
-import { spinner, queueFullTableUpdate, createRestoreTableRow, addOrUpdateTableRow, formatSize, updateSelectedCountAndSize, setupSelectAllCheckbox, getSelectedWikiIds, setIcon, sortTable } from './commonTabs.js';
+import { spinner, queueFullTableUpdate, createRestoreTableRow, addOrUpdateTableRow, formatSize, updateSelectedCountAndSize, setupSelectAllCheckbox, getSelectedWikiIds, setIcon, sortTable, rowTime } from './commonTabs.js';
 
 const restoreTableDataMap = new Map();
 window.restoreTableDataMap = restoreTableDataMap;
@@ -13,6 +13,9 @@ window.api.receive('update-restore-table', () => {
     updateRestoreTable(true);
 });
 
+// ======================================================================
+// Table
+// ======================================================================
 function updateRestoreTable(loader) {
     return queueFullTableUpdate('restore', loader, async () => {
         const gameData = await window.api.invoke('fetch-restore-table-data');
@@ -68,7 +71,7 @@ async function populateRestoreTable(data) {
             const backupCount = game.backups.length;
             const backupSize = formatSize(game.backup_size);
 
-            let row = createRestoreTableRow(gameTitle, backupCount, backupSize, game.latest_backup, game.wiki_page_id);
+            let row = createRestoreTableRow(gameTitle, backupCount, backupSize, rowTime(game), game.wiki_page_id);
 
             // Check if selected
             if (selectedWikiIds.includes(wikiId)) {
@@ -105,6 +108,9 @@ async function populateRestoreTable(data) {
     await sortTable('restore', { immediate: true });
 }
 
+// ======================================================================
+// Restoring
+// ======================================================================
 function setupRestoreButton() {
     const restoreButton = document.getElementById('restore-button');
     const restoreIcon = document.getElementById('restore-icon');

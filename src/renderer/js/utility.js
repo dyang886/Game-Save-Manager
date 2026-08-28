@@ -24,6 +24,9 @@ window.api.receive('view_account_ids', () => {
     showAccountModal();
 });
 
+// ======================================================================
+// Translations and theme
+// ======================================================================
 export async function updateTranslations(container) {
     container.querySelectorAll("[data-i18n]").forEach(async (el) => {
         const key = el.getAttribute("data-i18n");
@@ -58,6 +61,9 @@ function changeTheme(theme) {
     }
 }
 
+// ======================================================================
+// Alerts and modals
+// ======================================================================
 export async function showAlert(type, message, modalContent) {
     const alertContainer = document.getElementById('alert-container');
 
@@ -219,6 +225,9 @@ export async function showInfoModal(modalTitle, modalContent, style = 'ok') {
     });
 }
 
+// ======================================================================
+// Export and import
+// ======================================================================
 // Export modal
 function showExportModal() {
     const modal = document.getElementById('modal-export');
@@ -277,7 +286,7 @@ async function exportConfirm() {
 
         let wikiIds = null;
         if (scope !== 'all') {
-            // Use selections from the restore table -- the only one whose rows are guaranteed to have backups
+            // The restore table is the only one whose rows are guaranteed to have backups
             const table = document.querySelector(`#${scope}`);
             const selectedRows = table.querySelectorAll('.row-checkbox:checked');
             wikiIds = Array.from(selectedRows).map(checkbox => {
@@ -356,6 +365,9 @@ function closeImportModal() {
     modalOverlay.classList.add('hidden');
 }
 
+// ======================================================================
+// Progress
+// ======================================================================
 export function updateProgress(progressId, progressTitle, percentage) {
     const progressContainer = document.getElementById('progress-container');
 
@@ -388,6 +400,9 @@ export function updateProgress(progressId, progressTitle, percentage) {
     progressPercentage.innerText = `${percentage}%`;
 }
 
+// ======================================================================
+// Account details
+// ======================================================================
 function showAccountModal() {
     const modal = document.getElementById('modal-info');
     const modalOverlay = document.getElementById('modal-overlay');
@@ -522,11 +537,10 @@ function showAccountModal() {
     });
 }
 
-/**
- * Wrap a number input with custom increment/decrement controls.
- * Hides native spinners (via CSS) and adds styled chevron buttons.
- * @param {HTMLInputElement} input - The input[type="number"] element to wrap
- */
+// ======================================================================
+// Inputs and guards
+// ======================================================================
+// Replaces the native spinners with styled chevron buttons
 export function wrapNumberInput(input) {
     if (!input || input.type !== 'number' || input.dataset.wrapped) return;
     input.dataset.wrapped = 'true';
@@ -580,8 +594,7 @@ export function wrapNumberInput(input) {
 export async function operationStartCheck(operation) {
     const status = await window.api.invoke('get-status');
 
-    // Define contradicting operations
-    // Each operation lists status flags that must be false before it can start.
+    // Each operation lists the status flags that must be false before it can start
     const statusChecks = {
         'backup': {
             restoring: 'alert.wait_for_restore',

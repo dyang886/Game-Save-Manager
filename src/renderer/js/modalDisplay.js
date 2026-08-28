@@ -1,6 +1,9 @@
 import { showAlert, updateProgress, operationStartCheck, wrapNumberInput } from './utility.js';
 import { setIcon, formatSize, addOrUpdateTableRow, removeTableRow, updateSelectedCountAndSize } from './commonTabs.js';
 
+// ======================================================================
+// Backup management
+// ======================================================================
 // Helper function for Backup Management Modal to update backup date display
 function updateBackupDateDisplay(backupDateDisplay, backupDate, customName, isPermanent) {
     const formattedDate = backupDate.replace(/(\d{4})-(\d{1,2})-(\d{1,2})_(\d{1,2})-(\d{1,2})/, (match, year, month, day, hour, minute) => {
@@ -41,9 +44,10 @@ function attachRenameButtonListener(renameBtn) {
 }
 
 export async function showManageBackupsModal(wikiId) {
-    const gamesList = await window.api.invoke('fetch-restore-table-data', wikiId);
+    // The only view that shows every backup's size, so the only one asking for them all
+    const gamesList = await window.api.invoke('fetch-restore-table-data', wikiId, true);
 
-    // Extract the single game from the returned array, fall back to backupTableDataMap if no backups exist
+    // Falls back to backupTableDataMap when the game has no backups yet
     const gameData = gamesList && gamesList.length > 0
         ? gamesList[0]
         : { backups: [], latest_backup: '-', title: '', zh_CN: '' };
@@ -110,7 +114,7 @@ export async function showManageBackupsModal(wikiId) {
             const permanentIcon = backup.is_permanent ? '<i class="fa-solid fa-star text-yellow-500 mr-2"></i>' : '';
             const renameIcon = backup.is_permanent ? `<button type="button" class="rename-backup-btn text-gray-400 hover:text-blue-500 transition-colors duration-150 ml-2" data-backup-date="${backup.date}"><i class="fa-solid fa-pencil"></i></button>` : '';
 
-            // Display logic: if permanent and has custom name, show custom name with date below; otherwise just show date
+            // A permanent backup with a custom name shows it above the date
             let dateDisplay;
             if (backup.is_permanent && backup.custom_name) {
                 dateDisplay = `${permanentIcon}<div class="flex flex-col"><span class="backup-custom-name font-medium">${backup.custom_name}</span><span class="text-xs text-gray-500 dark:text-gray-400">${formattedDate}</span></div>${renameIcon}`;
@@ -199,7 +203,7 @@ export async function showManageBackupsModal(wikiId) {
 
     // Add event listeners to 'browse local save' button
     document.getElementById('modal-browse-local-save').addEventListener('click', async () => {
-        // Check 1: make sure we have valid backupTableDataMap (backup tab finished loading)
+        // Check 1: the backup tab has finished loading
         const backupLoaderContainer = document.getElementById('backup-loading');
         const isBackupLoading = backupLoaderContainer && !backupLoaderContainer.classList.contains('hidden') && backupLoaderContainer.querySelector('[data-loader-active="true"]');
         if (isBackupLoading) {
@@ -299,7 +303,7 @@ export async function showManageBackupsModal(wikiId) {
                 if (restoreTableRow) {
                     setIcon(restoreTableRow, 'star', hasAnyPermanentBackup);
                 }
-                // Update restoreTableDataMap with the new permanent status so backup tab has the latest data
+                // Keep restoreTableDataMap current so the backup tab stars the right rows
                 const restoreGameData = window.restoreTableDataMap.get(wikiId);
                 if (restoreGameData) {
                     const backupToUpdate = restoreGameData.backups.find(b => b.date === backupDate);
@@ -445,8 +449,10 @@ function closeManageBackupsModal() {
     modalOverlay.classList.add('hidden');
 }
 
-// Show the auto-backup disable summary alert based on the collected logs.
-// `logs` is the array returned by the 'stop-auto-backup' IPC (empty/null if none).
+// ======================================================================
+// Auto backup
+// ======================================================================
+// `logs` is what stop-auto-backup returned, empty or null when there was nothing
 export async function showAutoBackupSummary(logs) {
     if (logs && logs.length > 0) {
         const failCount = logs.filter(l => !l.success).length;
@@ -623,8 +629,7 @@ export async function showAutoBackupModal(wikiId) {
     confirmButton.parentNode.replaceChild(newConfirmButton, confirmButton);
     newConfirmButton.addEventListener('click', handleConfirm);
 
-    // Tag the modal with the game it's showing so live auto-backup updates can
-    // target it while it stays open
+    // Tagged with its game so live auto-backup updates can find it while open
     modal.dataset.wikiId = String(wikiId);
 
     modal.classList.add('flex');
@@ -632,8 +637,7 @@ export async function showAutoBackupModal(wikiId) {
     modalOverlay.classList.remove('hidden');
 }
 
-// Live-update the auto-backup modal's "backups performed"/failures counts while
-// it stays open. No-op unless the modal is open for the given game.
+// Updates the open modal's counts; a no-op unless it is open for this game
 export async function refreshAutoBackupModalStatus(wikiId) {
     const modal = document.getElementById('modal-auto-backup');
     if (!modal || modal.classList.contains('hidden')) return;
@@ -660,6 +664,9 @@ export async function refreshAutoBackupModalStatus(wikiId) {
     }
 }
 
+// ======================================================================
+// Hidden games
+// ======================================================================
 export async function showHiddenGamesModal() {
     const modal = document.getElementById('modal-hidden-games');
     const modalOverlay = document.getElementById('modal-overlay');
@@ -717,7 +724,7 @@ export async function showHiddenGamesModal() {
 
         const rowsHtml = sortedGames.map(game => `
             <tr class="bg-white border-b dark:bg-[#2d3748] dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-600" data-wiki-id="${game.wikiId}">
-                <td class="px-4 py-3 font-medium break-words text-gray-900 dark:text-white">${game.displayTitle}</td>
+                <td class="px-4 py-3 font-medium wrap-break-word text-gray-900 dark:text-white">${game.displayTitle}</td>
                 <td class="px-4 py-3 whitespace-nowrap">${game.backupCount}</td>
                 <td class="px-4 py-3 whitespace-nowrap">${game.latestBackup}</td>
                 <td class="px-4 py-3 text-center">
@@ -760,10 +767,7 @@ export async function showHiddenGamesModal() {
                     return;
                 }
 
-                // Insert the game back into the backup/restore tables in sorted
-                // position (no full reload needed). Restore must go first: the
-                // backup row reads permanent-backup state from restoreTableDataMap
-                // to show the star icon, so that map has to be populated already.
+                // Restore first: the backup row reads permanent state from restoreTableDataMap
                 await addOrUpdateTableRow('restore', wikiId);
                 await addOrUpdateTableRow('backup', wikiId);
                 updateSelectedCountAndSize('backup');
@@ -792,6 +796,9 @@ export async function showHiddenGamesModal() {
     modalOverlay.classList.remove('hidden');
 }
 
+// ======================================================================
+// Restoring one backup
+// ======================================================================
 async function restoreBackupInstance(backupDate, gameData) {
     const start = await operationStartCheck('restore');
 

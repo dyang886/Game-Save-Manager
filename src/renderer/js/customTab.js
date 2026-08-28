@@ -6,6 +6,9 @@ document.addEventListener('DOMContentLoaded', () => {
     setupCustomPage();
 });
 
+// ======================================================================
+// Page setup
+// ======================================================================
 function setupCustomPage() {
     const addGameButton = document.querySelector('#custom-add-game');
     const saveAllButton = document.querySelector('#custom-save-all');
@@ -131,6 +134,9 @@ async function getCurrentEntries() {
     return entriesArray;
 }
 
+// ======================================================================
+// Entries
+// ======================================================================
 // Function to toggle entry expanded/collapsed state
 function toggleEntry(clickedEntry) {
     const allEntries = document.querySelectorAll('.custom-entry');
@@ -204,7 +210,7 @@ function createCustomEntry() {
 function createCollapsedRow() {
     return `
         <div class="collapsed-row flex items-center gap-2 mb-3 px-5">
-            <select class="custom-backup-type-dropdown flex-shrink-0 w-24 bg-white border border-gray-300 text-gray-900 text-sm rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+            <select class="custom-backup-type-dropdown shrink-0 w-24 bg-white border border-gray-300 text-gray-900 text-sm rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                 <option value="file" data-i18n="custom.file" class="text-content">File</option>
                 <option value="folder" data-i18n="custom.folder" class="text-content">Folder</option>
                 <option value="registry" data-i18n="custom.registry" class="text-content">Registry</option>
@@ -213,11 +219,11 @@ function createCollapsedRow() {
             <input type="text" class="custom-path-select-input flex-1 bg-white border border-gray-300 text-gray-900 text-sm rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                 data-i18n-placeholder="settings.select_path" placeholder="Select a path">
 
-            <button type="button" class="custom-path-select-button flex-shrink-0 text-white bg-blue-600 hover:bg-blue-700 focus:outline-none font-medium rounded-md text-sm px-3 py-2 transition-colors duration-150 dark:bg-blue-700 dark:hover:bg-blue-600">
+            <button type="button" class="custom-path-select-button shrink-0 text-white bg-blue-600 hover:bg-blue-700 focus:outline-none font-medium rounded-md text-sm px-3 py-2 transition-colors duration-150 dark:bg-blue-700 dark:hover:bg-blue-600">
                 <i class="fa-solid fa-ellipsis"></i>
             </button>
 
-            <button type="button" class="custom-delete-collapsed-row flex-shrink-0 text-white bg-red-600 hover:bg-red-700 focus:outline-none font-medium rounded-md text-sm px-3 py-2 transition-colors duration-150 dark:bg-red-700 dark:hover:bg-red-600">
+            <button type="button" class="custom-delete-collapsed-row shrink-0 text-white bg-red-600 hover:bg-red-700 focus:outline-none font-medium rounded-md text-sm px-3 py-2 transition-colors duration-150 dark:bg-red-700 dark:hover:bg-red-600">
                 <i class="fa-solid fa-trash"></i>
             </button>
         </div>
@@ -379,6 +385,9 @@ async function addTemplate(renameTitleFocus = true, wikiId = null) {
     }
 }
 
+// ======================================================================
+// Persistence
+// ======================================================================
 async function saveEntriesToJson(saveAllButton) {
     saveAllButton.disabled = true;
     saveAllButton.classList.add('cursor-not-allowed');

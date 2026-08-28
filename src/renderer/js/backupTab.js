@@ -1,5 +1,5 @@
 import { showAlert, showInfoModal, updateProgress, operationStartCheck } from './utility.js';
-import { spinner, queueFullTableUpdate, createBackupTableRow, addOrUpdateTableRow, getPlatformIcon, formatSize, updateSelectedCountAndSize, setupSelectAllCheckbox, getSelectedWikiIds, setIcon, platformOrder, sortTable } from './commonTabs.js';
+import { spinner, queueFullTableUpdate, createBackupTableRow, addOrUpdateTableRow, getPlatformIcon, formatSize, updateSelectedCountAndSize, setupSelectAllCheckbox, getSelectedWikiIds, setIcon, platformOrder, sortTable, rowTime } from './commonTabs.js';
 
 const backupTableDataMap = new Map();
 window.backupTableDataMap = backupTableDataMap;
@@ -41,6 +41,9 @@ window.api.receive('scan-full', async () => {
     }
 });
 
+// ======================================================================
+// Table
+// ======================================================================
 function updateBackupTable(loader) {
     return queueFullTableUpdate('backup', loader, async () => {
         const iconMap = await window.api.invoke('get-icon-map');
@@ -97,7 +100,7 @@ async function populateBackupTable(data, iconMap) {
             const platformIcons = sortedPlatforms.map(platform => getPlatformIcon(platform, iconMap)).join(' ');
             const backupSize = formatSize(game.backup_size);
 
-            let row = createBackupTableRow(gameTitle, platformIcons, backupSize, game.latest_backup, game.wiki_page_id);
+            let row = createBackupTableRow(gameTitle, platformIcons, backupSize, rowTime(game), game.wiki_page_id);
 
             // Check if selected
             if (selectedWikiIds.includes(wikiId)) {
@@ -112,7 +115,7 @@ async function populateBackupTable(data, iconMap) {
                 setIcon(row, 'pin', true);
             }
 
-            // Check if any backup is permanent by looking at restore table data which has is_permanent
+            // Permanent state lives on the restore data, not here
             const restoreGameData = window.restoreTableDataMap && window.restoreTableDataMap.get(wikiId);
             const hasPermamentBackup = restoreGameData && restoreGameData.backups && restoreGameData.backups.some(backup => backup.is_permanent);
             if (hasPermamentBackup) {
@@ -135,6 +138,9 @@ async function populateBackupTable(data, iconMap) {
     await sortTable('backup', { immediate: true });
 }
 
+// ======================================================================
+// Backing up
+// ======================================================================
 function setupBackupTabButtons() {
     const backupButton = document.getElementById('backup-button');
     const backupIcon = document.getElementById('backup-icon');
@@ -277,6 +283,9 @@ function showBackupSummary(backupCount, backupFailed, errors, backupSize) {
     });
 }
 
+// ======================================================================
+// Database
+// ======================================================================
 async function updateDatabase() {
     const updateButton = document.getElementById('update-database');
     const updateButtonIcon = document.getElementById('update-database-icon');

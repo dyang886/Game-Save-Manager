@@ -45,8 +45,7 @@ async function measureAndReport(token) {
         left: parseFloat(bodyStyle.paddingLeft) || 0,
     };
 
-    // Measured synchronously: while parked off-screen no frames are produced,
-    // so a requestAnimationFrame callback would never fire.
+    // Measured synchronously: parked off-screen, requestAnimationFrame would never fire
     const rect = menuRoot.getBoundingClientRect();
 
     window.api.send('row-menu-measured', {

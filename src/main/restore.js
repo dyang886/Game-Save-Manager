@@ -5,14 +5,14 @@ const fsOriginal = require('original-fs');
 const path = require('path');
 const util = require('util');
 
-const fse = require('fs-extra');
 const i18next = require('i18next');
 const moment = require('moment');
 
-const { getGameData, getLatestModificationTime } = require('./gameData');
+const { resolvePlaceholder } = require('./gameData');
 const {
-    getGameDisplayName, calculateDirectorySize, ensureWritable, fsOriginalCopyFolder,
-    placeholder_mapping, getSettings
+    getGameDisplayName, mapConcurrent, calculateDirectorySize, readJsonFile, writeJsonFile,
+    ensureWritable, fsOriginalCopyFolder,
+    findGameInstallPath, getLatestModificationTime, getSettings
 } = require('./global');
 
 const execPromise = util.promisify(exec);
@@ -48,7 +48,30 @@ const execPromise = util.promisify(exec);
 //     ]
 // }
 
-async function fetchBackups(wikiIdFolderPath, wikiId, errors) {
+// ======================================================================
+// Backup discovery
+// ======================================================================
+// A backup folder never changes once written, so its size is recorded on first sight
+async function resolveBackupSize(backupFolderPath, backup) {
+    if (Number.isFinite(backup.backup_size)) return;
+
+    backup.backup_size = await calculateDirectorySize(backupFolderPath);
+
+    const configFilePath = path.join(backupFolderPath, 'backup_info.json');
+    const tempPath = `${configFilePath}.tmp`;
+
+    try {
+        // Written aside then renamed, as a torn write would cost the backup its only index
+        const backupConfig = await readJsonFile(configFilePath);
+        await writeJsonFile(tempPath, { ...backupConfig, backup_size: backup.backup_size });
+        await fsOriginal.promises.rename(tempPath, configFilePath);
+    } catch (error) {
+        console.error(`Could not record backup size at ${backupFolderPath}: ${error.message}`);
+        await fsOriginal.promises.rm(tempPath, { force: true }).catch(() => { });
+    }
+}
+
+async function fetchBackups(wikiIdFolderPath, wikiId, errors, sizeAllBackups = false) {
     const backups = [];
 
     try {
@@ -56,37 +79,41 @@ async function fetchBackups(wikiIdFolderPath, wikiId, errors) {
         const stats = fsOriginal.statSync(wikiIdFolderPath);
         if (!stats.isDirectory()) return null;
 
+        // Configs only; sizes are resolved below, and only where one is actually needed
         const backupFolders = fsOriginal.readdirSync(wikiIdFolderPath);
-        for (const backupFolder of backupFolders) {
-            const backupFolderPath = path.join(wikiIdFolderPath, backupFolder);
-            const configFilePath = path.join(backupFolderPath, 'backup_info.json');
-            const backupSize = calculateDirectorySize(backupFolderPath);
-
-            if (fsOriginal.existsSync(configFilePath)) {
-                try {
-                    const backupConfig = await fse.readJson(configFilePath);
-                    backups.push({
-                        date: backupFolder,  // Backup folder name is the date (YYYY-MM-DD_HH-mm)
-                        title: backupConfig.title,
-                        zh_CN: backupConfig.zh_CN,
-                        backup_size: backupSize,
-                        backup_paths: backupConfig.backup_paths,
-                        is_permanent: backupConfig.is_permanent || false,
-                        custom_name: backupConfig.custom_name || ''
-                    });
-
-                } catch (err) {
-                    console.error(`Error reading backup config file at ${configFilePath}: ${err.stack}`);
-                    errors.push(`${i18next.t('alert.restore_process_error_config', { config_path: configFilePath })}: ${err.message}`);
-                }
+        const folderResults = await Promise.all(backupFolders.map(async (backupFolder) => {
+            const configFilePath = path.join(wikiIdFolderPath, backupFolder, 'backup_info.json');
+            if (!fsOriginal.existsSync(configFilePath)) {
+                return null;
             }
-        }
+
+            const backupConfig = await readJsonFile(configFilePath).catch(err => {
+                console.error(`Error reading backup config file at ${configFilePath}: ${err.stack}`);
+                errors.push(`${i18next.t('alert.restore_process_error_config', { config_path: configFilePath })}: ${err.message}`);
+                return null;
+            });
+
+            return backupConfig && {
+                date: backupFolder,  // Backup folder name is the date (YYYY-MM-DD_HH-mm)
+                title: backupConfig.title,
+                zh_CN: backupConfig.zh_CN,
+                backup_size: backupConfig.backup_size ?? null,
+                backup_paths: backupConfig.backup_paths,
+                is_permanent: backupConfig.is_permanent || false,
+                custom_name: backupConfig.custom_name || ''
+            };
+        }));
+        backups.push(...folderResults.filter(Boolean));
 
         if (backups.length === 0) return null;
 
         // Sort by date and get the latest
         const latestBackup = backups.sort((a, b) => b.date.localeCompare(a.date))[0];
         const latestBackupFormatted = moment(latestBackup.date, 'YYYY-MM-DD_HH-mm').format('YYYY/MM/DD HH:mm');
+
+        // The table shows only the latest backup's size; the rest wait until the modal asks
+        await Promise.all((sizeAllBackups ? backups : [latestBackup])
+            .map(backup => resolveBackupSize(path.join(wikiIdFolderPath, backup.date), backup)));
 
         return {
             wiki_page_id: wikiId,
@@ -104,7 +131,7 @@ async function fetchBackups(wikiIdFolderPath, wikiId, errors) {
     }
 }
 
-async function getGameDataForRestore(wikiId = null) {
+async function getGameDataForRestore(wikiId = null, sizeAllBackups = false) {
     const backupPath = getSettings().backupPath;
     fsOriginal.mkdirSync(backupPath, { recursive: true });
 
@@ -113,7 +140,7 @@ async function getGameDataForRestore(wikiId = null) {
     // If specific wikiId is provided, fetch only that game
     if (wikiId) {
         const wikiIdFolderPath = path.join(backupPath, wikiId.toString());
-        const gameData = await fetchBackups(wikiIdFolderPath, wikiId, errors);
+        const gameData = await fetchBackups(wikiIdFolderPath, wikiId, errors, sizeAllBackups);
 
         return {
             games: gameData ? [gameData] : [],
@@ -123,20 +150,16 @@ async function getGameDataForRestore(wikiId = null) {
 
     // Otherwise fetch all games
     const gameFolders = fsOriginal.readdirSync(backupPath);
-    const games = [];
+    const gameData = await mapConcurrent(gameFolders, (gameFolder) =>
+        fetchBackups(path.join(backupPath, gameFolder), gameFolder, errors)
+    );
 
-    for (const gameFolder of gameFolders) {
-        const wikiIdFolderPath = path.join(backupPath, gameFolder);
-        const gameData = await fetchBackups(wikiIdFolderPath, gameFolder, errors);
-
-        if (gameData) {
-            games.push(gameData);
-        }
-    }
-
-    return { games, errors };
+    return { games: gameData.filter(Boolean), errors };
 }
 
+// ======================================================================
+// Restoring
+// ======================================================================
 async function restoreGame(gameObj, userActionForAll) {
     let localActionForAll = userActionForAll;
     const pathsToCheck = [];
@@ -190,15 +213,15 @@ async function restoreGame(gameObj, userActionForAll) {
 
         // Proceed with restoring all paths based on user's decision
         for (const { sourcePath, destinationPath, backupType } of pathsToCheck) {
-            ensureWritable(destinationPath);
+            await ensureWritable(destinationPath);
 
             if (backupType === 'folder') {
                 fsOriginal.mkdirSync(destinationPath, { recursive: true });
-                fsOriginalCopyFolder(sourcePath, destinationPath);
+                await fsOriginalCopyFolder(sourcePath, destinationPath);
 
             } else if (backupType === 'file') {
                 fsOriginal.mkdirSync(path.dirname(destinationPath), { recursive: true });
-                fsOriginal.copyFileSync(path.join(sourcePath, path.basename(destinationPath)), destinationPath);
+                await fsOriginal.promises.copyFile(path.join(sourcePath, path.basename(destinationPath)), destinationPath);
 
             } else if (backupType === 'reg') {
                 const registryFilePath = path.join(sourcePath, 'registry_backup.reg');
@@ -232,8 +255,8 @@ async function shouldSkip(pathsToCheck, gameDisplayName, userActionForAll) {
 
     // Loop through each source-destination pair to find the latest modification times
     for (const { sourcePath, destinationPath } of pathsToCheck) {
-        const srcModTime = getLatestModificationTime(sourcePath);
-        const destModTime = getLatestModificationTime(destinationPath);
+        const srcModTime = await getLatestModificationTime(sourcePath);
+        const destModTime = await getLatestModificationTime(destinationPath);
 
         if (srcModTime > latestSourceModTime) {
             latestSourceModTime = srcModTime;
@@ -277,40 +300,15 @@ async function shouldSkip(pathsToCheck, gameDisplayName, userActionForAll) {
     return { skip: false, actionForAll: null };
 }
 
+// ======================================================================
+// Path resolution
+// ======================================================================
+// An unresolved {{p|game}} leaves a relative path, which reads as "not installed"
 function resolveTemplatedRestorePath(templatedPath, installFolder) {
-    let basePath = templatedPath.replace(/\{\{p\|[^\}]+\}\}/gi, match => {
-        const normalizedMatch = match.toLowerCase().replace(/\\/g, '/');
+    const gameInstallPath = findGameInstallPath(installFolder) || 'gameNotInstalled';
 
-        if (normalizedMatch === '{{p|game}}') {
-            return getGameInstallPath(installFolder);
-        } else if (normalizedMatch === '{{p|steam}}') {
-            return getGameData().steamPath;
-        } else if (normalizedMatch === '{{p|uplay}}' || normalizedMatch === '{{p|ubisoftconnect}}') {
-            return getGameData().ubisoftPath;
-        }
-
-        return placeholder_mapping[normalizedMatch] || match;
-    });
-
-    return basePath;
-}
-
-function getGameInstallPath(installFolder) {
-    const gameInstallPaths = getSettings().gameInstalls;
-
-    for (const installPath of gameInstallPaths) {
-        const directories = fsOriginal.readdirSync(installPath, { withFileTypes: true })
-            .filter(dirent => dirent.isDirectory())
-            .map(dirent => dirent.name);
-
-        for (const dir of directories) {
-            if (dir === installFolder) {
-                return path.join(installPath, dir);
-            }
-        }
-    }
-
-    return 'gameNotInstalled';
+    return templatedPath.replace(/\{\{p\|[^\}]+\}\}/gi, match =>
+        resolvePlaceholder(match.toLowerCase().replace(/\\/g, '/'), gameInstallPath) || match);
 }
 
 module.exports = {

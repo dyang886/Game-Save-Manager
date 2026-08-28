@@ -1,16 +1,19 @@
 const fs = require('fs');
-const fsOriginal = require('original-fs');
 const os = require('os');
 const path = require('path');
 
 const glob = require('glob');
-const moment = require('moment');
 const vdf = require('vdf-parser');
-const WinReg = require('winreg');
 const yaml = require('js-yaml');
+
+const { getRegistryValue } = require('./registry');
+const { getLatestModificationTime, placeholder_mapping } = require('./global');
 
 const STEAM_ACCOUNT_ID_MASK = 0xFFFFFFFFn;
 
+// ======================================================================
+// Game data
+// ======================================================================
 class GameData {
     constructor() {
         this.steamPath = null;
@@ -33,53 +36,19 @@ class GameData {
         this.detectedSteamGameIds = [];
     }
 
-    getRegistryValue(hive, key, valueName) {
-        return new Promise((resolve, reject) => {
-            const regKey = new WinReg({
-                hive: hive,
-                key: key
-            });
-
-            regKey.get(valueName, (err, item) => {
-                if (err) {
-                    console.log(`Error reading registry key: ${key}`, err.message);
-                    resolve('');
-                } else {
-                    resolve(item.value);
-                }
-            });
-        });
-    }
-
     async initialize() {
         if (process.platform === 'win32') {
             // Query Steam install path
-            this.steamPath = await this.getRegistryValue(
-                WinReg.HKLM,
-                '\\SOFTWARE\\WOW6432Node\\Valve\\Steam',
-                'InstallPath'
-            );
+            this.steamPath = getRegistryValue('HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\Valve\\Steam', 'InstallPath');
 
             // Query Ubisoft install path
-            this.ubisoftPath = await this.getRegistryValue(
-                WinReg.HKLM,
-                '\\SOFTWARE\\WOW6432Node\\Ubisoft\\Launcher',
-                'InstallDir'
-            );
+            this.ubisoftPath = getRegistryValue('HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\Ubisoft\\Launcher', 'InstallDir');
 
             // Query EA install path
-            this.eaPath = await this.getRegistryValue(
-                WinReg.HKLM,
-                '\\SOFTWARE\\WOW6432Node\\Electronic Arts\\EA Desktop',
-                'InstallLocation'
-            );
+            this.eaPath = getRegistryValue('HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\Electronic Arts\\EA Desktop', 'InstallLocation');
 
             // Query Battle.net install path
-            this.battleNetPath = await this.getRegistryValue(
-                WinReg.HKLM,
-                '\\SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Battle.net',
-                'InstallLocation'
-            );
+            this.battleNetPath = getRegistryValue('HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Battle.net', 'InstallLocation');
 
             // Get current logged-in account IDs
             await this.getCurrentAccountIds();
@@ -145,7 +114,7 @@ class GameData {
 
                 for (const accountId of accountFolders) {
                     const accountFolderPath = path.join(saveGamesPath, accountId);
-                    const accountFolderTime = getLatestModificationTime(accountFolderPath);
+                    const accountFolderTime = await getLatestModificationTime(accountFolderPath);
 
                     if (accountFolderTime > latestTime) {
                         latestTime = accountFolderTime;
@@ -176,7 +145,7 @@ class GameData {
 
                 for (const fileName of files) {
                     const filePath = path.join(epicDataPath, fileName);
-                    const fileModTime = getLatestModificationTime(filePath);
+                    const fileModTime = await getLatestModificationTime(filePath);
 
                     if (fileModTime > latestTime) {
                         latestTime = fileModTime;
@@ -196,11 +165,7 @@ class GameData {
         }
 
         // Get current Xbox account ID
-        this.currentXboxAccountId = await this.getRegistryValue(
-            WinReg.HKCU,
-            '\\Software\\Microsoft\\XboxLive',
-            'Xuid'
-        );
+        this.currentXboxAccountId = getRegistryValue('HKEY_CURRENT_USER\\Software\\Microsoft\\XboxLive', 'Xuid');
 
         // Get current Rockstar account ID
         const rStarProfilePath = path.join(process.env.USERPROFILE || os.homedir(), "Documents\\Rockstar Games\\Social Club\\Profiles");
@@ -215,7 +180,7 @@ class GameData {
 
                 for (const accountId of accountFolders) {
                     const accountFolderPath = path.join(rStarProfilePath, accountId);
-                    const accountFolderTime = getLatestModificationTime(accountFolderPath);
+                    const accountFolderTime = await getLatestModificationTime(accountFolderPath);
 
                     if (accountFolderTime > latestTime) {
                         latestTime = accountFolderTime;
@@ -231,12 +196,7 @@ class GameData {
         }
 
         // --- Normally unused IDs ---
-        // GOG account ID
-        this.currentGogAccountId = await this.getRegistryValue(
-            WinReg.HKCU,
-            '\\Software\\GOG.com\\Galaxy\\settings',
-            'userId'
-        );
+        this.currentGogAccountId = getRegistryValue('HKEY_CURRENT_USER\\Software\\GOG.com\\Galaxy\\settings', 'userId');
 
         // EA account ID
         const eaSettingsPattern = path.join(
@@ -289,7 +249,7 @@ class GameData {
                                 }
                             }
 
-                            // Add the first Steam IDs under "apps" to detectedSteamGameIds
+                            // The first Steam IDs under "apps"
                             if (folder.apps) {
                                 const appIds = Object.keys(folder.apps);
                                 this.detectedSteamGameIds.push(...appIds);
@@ -432,48 +392,24 @@ class GameData {
     }
 }
 
-function getLatestModificationTime(directory) {
-    if (!fsOriginal.existsSync(directory)) {
-        return new Date(0);
-    }
+let gameData = new GameData();
 
-    const stats = fsOriginal.statSync(directory);
-
-    if (stats.isDirectory()) {
-        const files = fsOriginal.readdirSync(directory);
-        let latestModTime = new Date(0);
-
-        for (const file of files) {
-            const fullPath = path.join(directory, file);
-            const fileStats = fsOriginal.statSync(fullPath);
-
-            if (fileStats.isDirectory()) {
-                // Recursively check subdirectories
-                const subDirModTime = getLatestModificationTime(fullPath);
-                if (subDirModTime > latestModTime) {
-                    latestModTime = subDirModTime;
-                }
-            } else {
-                // Consider file modification time
-                const fileModTime = moment(fileStats.mtime).seconds(0).milliseconds(0).toDate();
-                if (fileModTime > latestModTime) {
-                    latestModTime = fileModTime;
-                }
-            }
-        }
-        return latestModTime;
-
-    } else {
-        return moment(stats.mtime).seconds(0).milliseconds(0).toDate();
+// The placeholder table both resolvers share; {{p|uid}} is left to the caller
+function resolvePlaceholder(normalizedMatch, gameInstallPath) {
+    // Always a resolved string or null, so an uninstalled launcher cannot leak into a path
+    switch (normalizedMatch) {
+        case '{{p|game}}': return gameInstallPath || null;
+        case '{{p|steam}}': return gameData.steamPath || null;
+        case '{{p|uplay}}':
+        case '{{p|ubisoftconnect}}': return gameData.ubisoftPath || null;
+        default: return placeholder_mapping[normalizedMatch] || null;
     }
 }
-
-let gameData = new GameData();
 
 module.exports = {
     getGameData: () => gameData,
     initializeGameData: async () => await gameData.initialize(),
     detectGamePaths: async () => await gameData.detectGamePaths(),
     getAllAccountIds: () => gameData.getAllAccountIds(),
-    getLatestModificationTime
+    resolvePlaceholder
 };

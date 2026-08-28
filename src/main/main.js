@@ -6,7 +6,6 @@ const fsOriginal = require('original-fs');
 const os = require('os');
 const path = require('path');
 
-const fse = require('fs-extra');
 const i18next = require('i18next');
 const Backend = require('i18next-fs-backend');
 const moment = require('moment');
@@ -14,7 +13,8 @@ const { pinyin } = require('pinyin');
 
 const {
     createMainWindow, getMainWin, getStatus, updateStatus, checkAppUpdate, exportBackups,
-    importBackups, browseLocalSave, deleteLocalSave, osKeyMap, loadSettings, saveSettings, getSettings,
+    importBackups, browseLocalSave, deleteLocalSave, readJsonFile, writeJsonFile,
+    osKeyMap, loadSettings, saveSettings, getSettings,
     moveFilesWithProgress, getCurrentVersion, getLatestVersion, updateApp,
     startVersionPing, stopVersionPing
 } = require('./global');
@@ -122,8 +122,9 @@ const initializeI18next = (language) => {
 };
 
 // ======================================================================
-// Listeners
+// Settings and dialogs
 // ======================================================================
+
 ipcMain.handle("translate", async (event, key, options) => {
     return i18next.t(key, options);
 });
@@ -223,6 +224,10 @@ ipcMain.handle('select-path', async (event, fileType) => {
     return null;
 });
 
+// ======================================================================
+// Games and custom entries
+// ======================================================================
+
 // Sort objects using object.titleToSort
 ipcMain.handle('sort-games', (event, games) => {
     const gamesWithSortedTitles = games.map((game) => {
@@ -250,12 +255,12 @@ ipcMain.handle('save-custom-entries', async (event, jsonObj) => {
         const filePath = path.join(getSettings().backupPath, "custom_entries.json");
         let currentData = {};
 
-        if (fs.existsSync(filePath)) {
-            currentData = await fse.readJson(filePath);
+        if (fsOriginal.existsSync(filePath)) {
+            currentData = await readJsonFile(filePath);
         }
 
         if (JSON.stringify(currentData) !== JSON.stringify(jsonObj)) {
-            await fse.writeJson(filePath, jsonObj, { spaces: 4 });
+            await writeJsonFile(filePath, jsonObj);
             getMainWin().webContents.send('show-alert', 'success', i18next.t('alert.save_custom_success'));
             getMainWin().webContents.send('update-backup-table');
         }
@@ -270,12 +275,12 @@ ipcMain.handle('load-custom-entries', async () => {
     try {
         const filePath = path.join(getSettings().backupPath, "custom_entries.json");
 
-        const fileExists = await fse.pathExists(filePath);
+        const fileExists = fsOriginal.existsSync(filePath);
         if (!fileExists) {
             return [];
         }
 
-        const jsonData = await fse.readJson(filePath);
+        const jsonData = await readJsonFile(filePath);
         return jsonData;
 
     } catch (error) {
@@ -296,6 +301,10 @@ ipcMain.handle('get-platform', () => {
 ipcMain.handle('get-uuid', () => {
     return randomUUID();
 });
+
+// ======================================================================
+// Table data
+// ======================================================================
 
 ipcMain.handle('get-icon-map', async () => {
     return {
@@ -328,8 +337,8 @@ ipcMain.handle('backup-game', async (event, gameObj) => {
     return await backupGame(gameObj);
 });
 
-ipcMain.handle('fetch-restore-table-data', async (event, wikiId = null) => {
-    const { games, errors } = await getGameDataForRestore(wikiId);
+ipcMain.handle('fetch-restore-table-data', async (event, wikiId = null, sizeAllBackups = false) => {
+    const { games, errors } = await getGameDataForRestore(wikiId, sizeAllBackups);
 
     if (errors.length > 0) {
         getMainWin().webContents.send('show-alert', 'modal', i18next.t('alert.restore_process_error_display'), errors);
@@ -342,12 +351,14 @@ ipcMain.handle('restore-game', async (event, gameObj, userActionForAll) => {
     return await restoreGame(gameObj, userActionForAll);
 });
 
-// Look up game display names by wiki id (needed for hidden games that may have
-// no backups / be uninstalled). Backup size and date come from the existing
-// 'fetch-restore-table-data' handler instead.
+// Names by wiki id, for hidden games that may have no backups or be uninstalled
 ipcMain.handle('get-game-titles', async (event, wikiIds) => {
     return await getGameTitlesByIds(wikiIds);
 });
+
+// ======================================================================
+// Backup management
+// ======================================================================
 
 ipcMain.handle('confirm-delete-backup', async (event, wikiId, backupDate) => {
     try {
@@ -390,9 +401,9 @@ ipcMain.handle('update-backup-info', async (event, wikiId, backupDate, key, valu
             throw new Error('Backup config file not found');
         }
 
-        const backupConfig = await fse.readJson(configFilePath);
+        const backupConfig = await readJsonFile(configFilePath);
         backupConfig[key] = value;
-        await fse.writeJson(configFilePath, backupConfig, { spaces: 4 });
+        await writeJsonFile(configFilePath, backupConfig);
 
         return true;
 
@@ -434,6 +445,10 @@ ipcMain.on('update-status', (event, statusKey, statusValue) => {
     updateStatus(statusKey, statusValue);
 });
 
+// ======================================================================
+// Versions and transfers
+// ======================================================================
+
 ipcMain.handle('get-current-version', () => {
     return getCurrentVersion();
 });
@@ -471,6 +486,10 @@ ipcMain.on('update-app', (event, latest_version) => {
     updateApp(latest_version);
 });
 
+// ======================================================================
+// Auto backup
+// ======================================================================
+
 // Auto backup IPC handlers
 ipcMain.handle('start-auto-backup', async (event, wikiId, mode, intervalMinutes) => {
     await startAutoBackup(wikiId, mode, intervalMinutes);
@@ -483,6 +502,10 @@ ipcMain.handle('stop-auto-backup', async (event, wikiId) => {
 ipcMain.handle('get-auto-backup-state', () => {
     return getAutoBackupState();
 });
+
+// ======================================================================
+// Row menu
+// ======================================================================
 
 // Floating row menu: the renderer builds the items, main owns only placement.
 ipcMain.on('show-row-menu', (event, payload) => {

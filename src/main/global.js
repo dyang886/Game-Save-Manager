@@ -6,8 +6,6 @@ const os = require('os');
 const path = require('path');
 const { exec, spawn } = require('child_process');
 
-const axios = require('axios');
-const fse = require('fs-extra');
 const i18next = require('i18next');
 const moment = require('moment');
 const semver = require('semver');
@@ -42,6 +40,10 @@ let status = {
     updating_restore: false
 }
 
+
+// ======================================================================
+// Windows and menu
+// ======================================================================
 // Menu settings
 const initializeMenu = () => {
     return [
@@ -184,6 +186,10 @@ const createMainWindow = async () => {
     });
 };
 
+
+// ======================================================================
+// Updates and notifications
+// ======================================================================
 function resource_path(resource_name) {
     if (!app.isPackaged) {
         return path.join(__dirname, "../assets_export", resource_name);
@@ -278,6 +284,7 @@ async function checkAppUpdate() {
 }
 
 const VERSION_PING_INTERVAL_MS = 60 * 60 * 1000;
+
 let versionPingTimer = null;
 
 function startVersionPing() {
@@ -393,6 +400,14 @@ async function updateApp(latest_version) {
     }
 }
 
+
+// ======================================================================
+// Status and display
+// ======================================================================
+function updateStatus(statusKey, statusValue) {
+    status[statusKey] = statusValue;
+}
+
 function getGameDisplayName(gameObj) {
     if (settings.language === "en_US") {
         return gameObj.title;
@@ -401,59 +416,105 @@ function getGameDisplayName(gameObj) {
     }
 }
 
-// Calculates the total size of a directory or file
-function calculateDirectorySize(directoryPath, ignoreConfig = true) {
-    let totalSize = 0;
 
-    try {
-        if (fsOriginal.statSync(directoryPath).isDirectory()) {
-            const files = fsOriginal.readdirSync(directoryPath);
-            files.forEach(file => {
-                if (ignoreConfig && file === 'backup_info.json') {
-                    return;
-                }
-                const filePath = path.join(directoryPath, file);
-                if (fsOriginal.statSync(filePath).isDirectory()) {
-                    totalSize += calculateDirectorySize(filePath);
-                } else {
-                    totalSize += fsOriginal.statSync(filePath).size;
-                }
-            });
+// ======================================================================
+// Filesystem
+// ======================================================================
+// Population is I/O bound; past ~16 the disk and registry are saturated and gain nothing
+const IO_CONCURRENCY = 16;
 
-        } else {
-            totalSize += fsOriginal.statSync(directoryPath).size;
+// Runs worker over items at most IO_CONCURRENCY at a time, keeping input order.
+async function mapConcurrent(items, worker, limit = IO_CONCURRENCY) {
+    const results = new Array(items.length);
+    let next = 0;
+
+    const runners = Array.from({ length: Math.min(limit, items.length) }, async () => {
+        while (next < items.length) {
+            const index = next++;
+            results[index] = await worker(items[index], index);
         }
+    });
 
-    } catch (error) {
-        console.error(`Error calculating directory size for ${directoryPath}:`, error);
-    }
-
-    return totalSize;
+    await Promise.all(runners);
+    return results;
 }
 
-// Ensure all files under a path have writable permission
-function ensureWritable(pathToCheck) {
-    if (!fsOriginal.existsSync(pathToCheck)) {
+// The one recursive walk: sizing already stats every file, so the newest file time is free
+const EMPTY_WALK = { size: 0, modifiedMs: 0 };
+
+async function walkDirectory(directoryPath, ignoreConfig = true) {
+    try {
+        const stats = await fsOriginal.promises.stat(directoryPath);
+        if (!stats.isDirectory()) {
+            return { size: stats.size, modifiedMs: stats.mtimeMs };
+        }
+
+        const entries = await fsOriginal.promises.readdir(directoryPath, { withFileTypes: true });
+        const walked = await Promise.all(entries.map(async (entry) => {
+            if (ignoreConfig && entry.name === 'backup_info.json') {
+                return EMPTY_WALK;
+            }
+            const entryPath = path.join(directoryPath, entry.name);
+            if (entry.isDirectory()) {
+                return walkDirectory(entryPath);
+            }
+            const fileStats = await fsOriginal.promises.stat(entryPath);
+            return { size: fileStats.size, modifiedMs: fileStats.mtimeMs };
+        }));
+
+        return walked.reduce((total, entry) => ({
+            size: total.size + entry.size,
+            modifiedMs: Math.max(total.modifiedMs, entry.modifiedMs),
+        }), EMPTY_WALK);
+
+    } catch (error) {
+        // A missing path is a normal answer of zero, so callers need no existence check
+        if (error.code !== 'ENOENT') {
+            console.error(`Error walking ${directoryPath}:`, error);
+        }
+        return EMPTY_WALK;
+    }
+}
+
+async function calculateDirectorySize(directoryPath, ignoreConfig = true) {
+    return (await walkDirectory(directoryPath, ignoreConfig)).size;
+}
+
+// Backup-tree JSON, on original-fs; the trailing newline matches what fs-extra wrote
+async function readJsonFile(filePath) {
+    return JSON.parse(await fsOriginal.promises.readFile(filePath, 'utf8'));
+}
+
+async function writeJsonFile(filePath, data) {
+    await fsOriginal.promises.writeFile(filePath, JSON.stringify(data, null, 4) + '\n');
+}
+
+// Rounded to the minute, so equal-minute folders tie instead of flapping
+async function getLatestModificationTime(directoryPath) {
+    const { modifiedMs } = await walkDirectory(directoryPath);
+    return moment(modifiedMs).seconds(0).milliseconds(0).toDate();
+}
+
+// Async like the copy: it walks the whole save before one is taken
+async function ensureWritable(pathToCheck) {
+    let stats;
+    try {
+        stats = await fsOriginal.promises.stat(pathToCheck);
+    } catch {
         return;
     }
 
-    const stats = fsOriginal.statSync(pathToCheck);
-
     if (stats.isDirectory()) {
-        const items = fsOriginal.readdirSync(pathToCheck);
-
-        for (const item of items) {
-            const fullPath = path.join(pathToCheck, item);
-            ensureWritable(fullPath);
+        const entries = await fsOriginal.promises.readdir(pathToCheck, { withFileTypes: true });
+        for (const entry of entries) {
+            await ensureWritable(path.join(pathToCheck, entry.name));
         }
 
-    } else {
-        if (!(stats.mode & 0o200)) {
-            fsOriginal.chmod(pathToCheck, 0o666, (err) => {
-                if (err) {
-                    throw (`Error changing permissions for ${pathToCheck}:`, err);
-                }
-            });
+    } else if (!(stats.mode & 0o200)) {
+        try {
+            await fsOriginal.promises.chmod(pathToCheck, 0o666);
+        } catch (error) {
+            console.error(`Error changing permissions for ${pathToCheck}: ${error.message}`);
         }
     }
 }
@@ -461,14 +522,15 @@ function ensureWritable(pathToCheck) {
 function getNewestBackup(wiki_page_id) {
     const backupDir = path.join(settings.backupPath, wiki_page_id.toString());
 
-    if (!fsOriginal.existsSync(backupDir)) {
+    // One readdir answers both "does it exist" and "what type is each entry"
+    let backups = [];
+    try {
+        backups = fsOriginal.readdirSync(backupDir, { withFileTypes: true })
+            .filter(dirent => dirent.isDirectory())
+            .map(dirent => dirent.name);
+    } catch {
         return i18next.t('main.no_backups');
     }
-
-    const backups = fsOriginal.readdirSync(backupDir).filter(file => {
-        const fullPath = path.join(backupDir, file);
-        return fsOriginal.statSync(fullPath).isDirectory();
-    });
 
     if (backups.length === 0) {
         return i18next.t('main.no_backups');
@@ -481,29 +543,28 @@ function getNewestBackup(wiki_page_id) {
     return moment(latestBackup, 'YYYY-MM-DD_HH-mm').format('YYYY/MM/DD HH:mm');
 }
 
-function updateStatus(statusKey, statusValue) {
-    status[statusKey] = statusValue;
-}
+// Async: a sync copy holds the event loop for its whole duration, freezing the window
+async function fsOriginalCopyFolder(source, target) {
+    await fsOriginal.promises.mkdir(target, { recursive: true });
 
-function fsOriginalCopyFolder(source, target) {
-    fsOriginal.mkdirSync(target, { recursive: true });
+    const entries = await fsOriginal.promises.readdir(source, { withFileTypes: true });
 
-    const items = fsOriginal.readdirSync(source);
+    for (const entry of entries) {
+        const sourcePath = path.join(source, entry.name);
+        const destinationPath = path.join(target, entry.name);
 
-    for (const item of items) {
-        const sourcePath = path.join(source, item);
-        const destinationPath = path.join(target, item);
-
-        const stats = fsOriginal.statSync(sourcePath);
-
-        if (stats.isDirectory()) {
-            fsOriginalCopyFolder(sourcePath, destinationPath);
+        if (entry.isDirectory()) {
+            await fsOriginalCopyFolder(sourcePath, destinationPath);
         } else {
-            fsOriginal.copyFileSync(sourcePath, destinationPath);
+            await fsOriginal.promises.copyFile(sourcePath, destinationPath);
         }
     }
 }
 
+
+// ======================================================================
+// Export and import
+// ======================================================================
 async function exportBackups(count, exportPath, wikiIds = null) {
     const progressId = 'export';
     const progressTitle = i18next.t('alert.exporting');
@@ -539,8 +600,7 @@ async function exportBackups(count, exportPath, wikiIds = null) {
                 gameFolders = gameFolders.filter(folder => wikiIdSet.has(folder));
             }
 
-            // For each game folder, select the most recent backup instances
-            // Permanent backups are always included regardless of count
+            // Newest backup instances per game, plus every permanent one regardless of count
             for (const gameId of gameFolders) {
                 const gameFolderPath = path.join(sourcePath, gameId);
                 let backups = fsOriginal.readdirSync(gameFolderPath).filter(item => {
@@ -553,7 +613,7 @@ async function exportBackups(count, exportPath, wikiIds = null) {
                 for (const backup of backups) {
                     const infoPath = path.join(gameFolderPath, backup, 'backup_info.json');
                     if (fsOriginal.existsSync(infoPath)) {
-                        const info = fse.readJsonSync(infoPath);
+                        const info = await readJsonFile(infoPath);
                         if (info.is_permanent) {
                             permanentBackups.push(backup);
                             continue;
@@ -692,14 +752,14 @@ async function importBackups(gsmPath) {
                         return fsOriginal.lstatSync(subPath).isDirectory();
                     });
 
-                    // For each backup instance folder, skip if the same folder exists in destination
-                    backupFolders.forEach(backupFolder => {
+                    // Skip any backup instance the destination already has
+                    for (const backupFolder of backupFolders) {
                         const srcBackupPath = path.join(itemPath, backupFolder);
                         const destBackupPath = path.join(destGameFolder, backupFolder);
                         if (!fsOriginal.existsSync(destBackupPath)) {
-                            fsOriginalCopyFolder(srcBackupPath, destBackupPath);
+                            await fsOriginalCopyFolder(srcBackupPath, destBackupPath);
                         }
-                    });
+                    }
                 }
 
                 processedBackups++;
@@ -726,6 +786,10 @@ async function importBackups(gsmPath) {
     }
 }
 
+
+// ======================================================================
+// Local saves
+// ======================================================================
 async function openRegistryAtKey(keyPath) {
     // Set the "LastKey" preference in Regedit so it opens where we want
     const safeKey = keyPath.replace(/^HKEY_/, 'Computer\\HKEY_');
@@ -879,6 +943,10 @@ async function deleteLocalSave(resolvedPaths) {
     }
 }
 
+
+// ======================================================================
+// Path resolution
+// ======================================================================
 const placeholder_mapping = {
     // Windows
     '{{p|username}}': os.userInfo().username,
@@ -911,6 +979,18 @@ const osKeyMap = {
     darwin: 'mac',
     linux: 'linux'
 };
+
+// The install root holding this folder, or null; existsSync matches case like Windows
+function findGameInstallPath(installFolder) {
+    if (!installFolder) return null;
+
+    for (const installPath of settings.gameInstalls) {
+        const potentialPath = path.join(installPath, installFolder);
+        if (fsOriginal.existsSync(potentialPath)) return potentialPath;
+    }
+    return null;
+}
+
 
 // ======================================================================
 // Settings
@@ -1060,7 +1140,7 @@ async function moveFilesWithProgress(sourceDir, destinationDir) {
                 const destPath = path.join(destDir, item.name);
 
                 if (item.isDirectory()) {
-                    fse.ensureDirSync(destPath);
+                    await fsOriginal.promises.mkdir(destPath, { recursive: true });
                     await moveAndTrackProgress(srcPath, destPath);
                 } else {
                     const fileStats = fsOriginal.statSync(srcPath);
@@ -1094,7 +1174,7 @@ async function moveFilesWithProgress(sourceDir, destinationDir) {
     };
 
     if (fsOriginal.existsSync(sourceDir)) {
-        totalSize = calculateDirectorySize(sourceDir, false);
+        totalSize = await calculateDirectorySize(sourceDir, false);
 
         win.webContents.send('update-progress', progressId, progressTitle, 'start');
         await moveAndTrackProgress(sourceDir, destinationDir);
@@ -1112,6 +1192,7 @@ async function moveFilesWithProgress(sourceDir, destinationDir) {
     status.migrating = false;
 }
 
+
 module.exports = {
     createMainWindow,
     getMainWin: () => win,
@@ -1125,7 +1206,12 @@ module.exports = {
     stopVersionPing,
     updateApp,
     getGameDisplayName,
+    mapConcurrent,
     calculateDirectorySize,
+    readJsonFile,
+    writeJsonFile,
+    walkDirectory,
+    getLatestModificationTime,
     ensureWritable,
     getNewestBackup,
     fsOriginalCopyFolder,
@@ -1134,6 +1220,7 @@ module.exports = {
     browseLocalSave,
     deleteLocalSave,
     placeholder_mapping,
+    findGameInstallPath,
     osKeyMap,
     loadSettings,
     saveSettings,

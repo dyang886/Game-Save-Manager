@@ -43,6 +43,9 @@ window.api.receive('auto-backup-performed', async (wikiId) => {
     await refreshAutoBackupModalStatus(wikiId);
 });
 
+// ======================================================================
+// Tabs
+// ======================================================================
 export const spinner = `
     <svg aria-hidden="true" role="status" class="inline w-4 h-4 text-white animate-spin"
         viewBox="0 0 100 101" fill="none">
@@ -179,6 +182,9 @@ function hideLoadingIndicator(tabName) {
     }
 }
 
+// ======================================================================
+// Table updates
+// ======================================================================
 const tableUpdateStates = new Map();
 
 function getTableUpdateState(tabName) {
@@ -195,8 +201,7 @@ function getTableUpdateState(tabName) {
     return tableUpdateStates.get(tabName);
 }
 
-// Serialize full table updates. Requests received during a load are coalesced
-// into one trailing load, followed by the latest queued action for each row.
+// Reloads coalesce into one trailing load, then the latest queued action per row
 async function processTableUpdates(tabName, state) {
     let loaderVisible = false;
     window.api.send('update-status', `updating_${tabName}`, true);
@@ -252,8 +257,7 @@ export function queueFullTableUpdate(tabName, loader, loadTable) {
                 state.running = false;
                 state.promise = null;
 
-                // A request cannot normally arrive between the final queue
-                // check and cleanup, but restart defensively if one did.
+                // Defensive: a request should not land between the final check and cleanup
                 if (state.fullUpdatePending || state.rowActions.size > 0) {
                     queueFullTableUpdate(tabName, state.loaderRequested, state.loadTable);
                 }
@@ -263,6 +267,9 @@ export function queueFullTableUpdate(tabName, loader, loadTable) {
     return state.promise;
 }
 
+// ======================================================================
+// Search and rows
+// ======================================================================
 // Function to set up the search filter for the table
 function setupSearchFilter(tabName) {
     const searchInput = document.getElementById(`${tabName}-search`);
@@ -274,9 +281,7 @@ function setupSearchFilter(tabName) {
         const dataMap = tabName === 'backup' ? window.backupTableDataMap : window.restoreTableDataMap;
 
         rows.forEach(row => {
-            // Match against both English and Chinese names, regardless of the
-            // displayed language. Fall back to the visible cell text if the
-            // game data isn't available in the data map.
+            // Matches either language, falling back to the cell text when the map has no game
             const gameData = dataMap && dataMap.get(row.getAttribute('data-wiki-id'));
             const searchTargets = [];
             if (gameData) {
@@ -327,7 +332,7 @@ export function createBackupTableRow(gameTitle, platformIcons, backupSize, newes
                 <label class="sr-only">checkbox</label>
             </div>
         </td>
-        <th scope="row" class="pr-6 py-4 break-words font-medium text-gray-900 dark:text-white">
+        <th scope="row" class="pr-6 py-4 wrap-break-words font-medium text-gray-900 dark:text-white">
             <span data-icon="pin" class="hidden"><i class="fa-solid fa-thumbtack text-red-500 mr-2"></i></span>
             <span data-icon="star" class="hidden"><i class="fa-solid fa-star text-yellow-500 mr-2"></i></span>
             <span data-icon="timer" class="hidden"><i class="fa-solid fa-clock-rotate-left text-green-500 mr-2"></i></span>
@@ -366,7 +371,7 @@ export function createRestoreTableRow(gameTitle, backupCount, backupSize, newest
                 <label class="sr-only">checkbox</label>
             </div>
         </td>
-        <th scope="row" class="pr-6 py-4 break-words font-medium text-gray-900 dark:text-white">
+        <th scope="row" class="pr-6 py-4 wrap-break-words font-medium text-gray-900 dark:text-white">
             <span data-icon="pin" class="hidden"><i class="fa-solid fa-thumbtack text-red-500 mr-2"></i></span>
             <span data-icon="star" class="hidden"><i class="fa-solid fa-star text-yellow-500 mr-2"></i></span>
             <span data-icon="timer" class="hidden"><i class="fa-solid fa-clock-rotate-left text-green-500 mr-2"></i></span>
@@ -396,6 +401,9 @@ export function createRestoreTableRow(gameTitle, backupCount, backupSize, newest
 
 // --- Column sorting ---
 
+// ======================================================================
+// Sorting
+// ======================================================================
 const DEFAULT_SORT = { key: 'title', direction: 'asc' };
 const SORT_COALESCE_MS = 200;
 const sortState = {
@@ -405,12 +413,15 @@ const sortState = {
 const pendingSorts = { backup: null, restore: null };
 const sortRuns = { backup: 0, restore: 0 };
 
+// The time each tab shows: backup rows date the save files, restore rows date the backup.
+export const rowTime = (game) => (game && (game.latest_modified || game.latest_backup)) || '';
+
 // Raw values from the data maps, not the cells; null sorts last.
 const sortValueGetters = {
     size: (game) => Number(game && game.backup_size) || 0,
     count: (game) => (game && Array.isArray(game.backups) ? game.backups.length : 0),
     // Zero-padded YYYY/MM/DD HH:mm compares correctly as plain text.
-    time: (game) => (/^\d{4}\/\d{2}\/\d{2}/.test(game && game.latest_backup || '') ? game.latest_backup : null),
+    time: (game) => (/^\d{4}\/\d{2}\/\d{2}/.test(rowTime(game)) ? rowTime(game) : null),
     platform: (game) => {
         const ranks = ((game && game.platform) || [])
             .map(platform => platformOrder.indexOf(platform))
@@ -558,6 +569,9 @@ function setupTableSorting(tabName) {
     updateSortIndicators(tabName);
 }
 
+// ======================================================================
+// Row add and remove
+// ======================================================================
 async function performAddOrUpdateTableRow(tabName, wikiId) {
     let gameData;
     if (tabName === 'backup') {
@@ -582,7 +596,7 @@ async function performAddOrUpdateTableRow(tabName, wikiId) {
         const sizeCell = existingRow.querySelector('.backup-size');
         if (sizeCell) sizeCell.textContent = formatSize(gameData.backup_size);
         const timeCell = existingRow.querySelector('.newest-backup-time');
-        if (timeCell) timeCell.textContent = gameData.latest_backup;
+        if (timeCell) timeCell.textContent = rowTime(gameData);
         if (tabName === 'restore') {
             const countCell = existingRow.querySelector('.backup-count');
             if (countCell) countCell.textContent = gameData.backups.length;
@@ -600,13 +614,13 @@ async function performAddOrUpdateTableRow(tabName, wikiId) {
             const iconMap = await window.api.invoke('get-icon-map');
             const sortedPlatforms = platformOrder.filter(platform => (gameData.platform || []).includes(platform));
             const platformIcons = sortedPlatforms.map(platform => getPlatformIcon(platform, iconMap)).join(' ');
-            row = createBackupTableRow(gameTitle, platformIcons, formatSize(gameData.backup_size), gameData.latest_backup, wikiId);
+            row = createBackupTableRow(gameTitle, platformIcons, formatSize(gameData.backup_size), rowTime(gameData), wikiId);
 
             const restoreGameData = window.restoreTableDataMap && window.restoreTableDataMap.get(wikiId);
             const hasPermanent = restoreGameData && restoreGameData.backups && restoreGameData.backups.some(b => b.is_permanent);
             if (hasPermanent) setIcon(row, 'star', true);
         } else {
-            row = createRestoreTableRow(gameTitle, gameData.backups.length, formatSize(gameData.backup_size), gameData.latest_backup, wikiId);
+            row = createRestoreTableRow(gameTitle, gameData.backups.length, formatSize(gameData.backup_size), rowTime(gameData), wikiId);
 
             const hasPermanent = gameData.backups.some(b => b.is_permanent);
             if (hasPermanent) setIcon(row, 'star', true);
@@ -670,6 +684,9 @@ export function removeTableRow(tabName, wikiId) {
     performRemoveTableRow(tabName, wikiId);
 }
 
+// ======================================================================
+// Row menu
+// ======================================================================
 // Labels are translated here; the menu window owns no i18n of its own.
 async function buildRowMenuItems(wikiPageId, tabName) {
     const settings = await window.api.invoke('get-settings');
@@ -841,8 +858,7 @@ function setupRowMenu() {
     });
 }
 
-// Pinned rows are a group the sorter already understands, so flipping the icon is
-// the whole operation.
+// The sorter already groups pinned rows, so flipping the icon is the whole operation
 async function setGamePinned(tabName, wikiId, pinned) {
     const row = document.querySelector(`#${tabName} tbody tr[data-wiki-id="${wikiId}"]`);
     if (!row) return;
@@ -851,6 +867,9 @@ async function setGamePinned(tabName, wikiId, pinned) {
     await sortTable(tabName, { immediate: true });
 }
 
+// ======================================================================
+// Selection
+// ======================================================================
 // Function to update the count and size display
 export async function updateSelectedCountAndSize(tabName) {
     const selectedCountWidget = document.querySelector(`#${tabName}-selected-count`);

@@ -6,20 +6,18 @@ const moment = require('moment');
 const { getSettings, saveSettings, getMainWin } = require('./global');
 const { getGameDataFromDB, backupGame } = require('./backup');
 
-// Active auto-backup entries: Map<wikiId, { mode, intervalMinutes, timer?, watcher?, logs[] }>
+// Map<wikiId, { mode, intervalMinutes, timer?, watcher?, logs[] }>
 const activeAutoBackups = new Map();
 
-// Cooldown tracking for file watchers - throttle pattern (backup immediately, then cooldown)
+// Watcher throttle: back up immediately, then wait out the cooldown
 const watcherCooldowns = new Map();
 const pendingWatcherBackups = new Set(); // Track changes that occurred during cooldown
 const WATCHER_COOLDOWN_MS = 10000; // 10 seconds cooldown between backups
 
-/**
- * Start auto backup for a game
- * @param {string} wikiId
- * @param {string} mode - 'interval' or 'watcher'
- * @param {number} intervalMinutes - only used for 'interval' mode
- */
+// ======================================================================
+// Starting and stopping
+// ======================================================================
+// Start auto backup for a game
 async function startAutoBackup(wikiId, mode, intervalMinutes) {
     // Stop any existing auto backup for this game first
     await stopAutoBackup(wikiId, false);
@@ -58,12 +56,7 @@ async function startAutoBackup(wikiId, mode, intervalMinutes) {
     }
 }
 
-/**
- * Stop auto backup for a game
- * @param {string} wikiId
- * @param {boolean} showSummary - whether to show disable summary
- * @returns {Promise<object|null>} - logs if showSummary is true
- */
+// Stop auto backup for a game
 async function stopAutoBackup(wikiId, showSummary = true) {
     const entry = activeAutoBackups.get(wikiId);
     if (!entry) return null;
@@ -108,9 +101,10 @@ async function stopAutoBackup(wikiId, showSummary = true) {
     return null;
 }
 
-/**
- * Set up file watcher for a game's save paths
- */
+// ======================================================================
+// Watching for changes
+// ======================================================================
+// Set up file watcher for a game's save paths
 async function setupFileWatcher(wikiId, entry) {
     try {
         const { games } = await getGameDataFromDB(false, wikiId);
@@ -133,6 +127,8 @@ async function setupFileWatcher(wikiId, entry) {
         const watcher = chokidar.watch(pathsToWatch, {
             persistent: true,
             ignoreInitial: true,
+            // patched fs never reports a .asar change, so only interval mode covers those
+            ignored: (watchedPath) => /\.asar[\\/]/i.test(watchedPath),   // it would walk in as a folder
             awaitWriteFinish: {
                 stabilityThreshold: 2000,
                 pollInterval: 500
@@ -167,9 +163,7 @@ async function setupFileWatcher(wikiId, entry) {
     }
 }
 
-/**
- * Rebuild active watcher paths after settings that affect path resolution change.
- */
+// Rebuild active watcher paths after settings that affect path resolution change.
 async function refreshAutoBackupWatchers() {
     for (const [wikiId, entry] of activeAutoBackups) {
         if (entry.mode !== 'watcher') continue;
@@ -189,9 +183,7 @@ async function refreshAutoBackupWatchers() {
     }
 }
 
-/**
- * Perform a silent backup (no UI summary)
- */
+// Perform a silent backup (no UI summary)
 async function performSilentBackup(wikiId) {
     const entry = activeAutoBackups.get(wikiId);
     if (!entry) return;
@@ -254,10 +246,10 @@ async function performSilentBackup(wikiId) {
     }
 }
 
-/**
- * Get serializable state of all active auto backups
- * @returns {Object} - { [wikiId]: { mode, intervalMinutes, logCount, failCount } }
- */
+// ======================================================================
+// State
+// ======================================================================
+// Get serializable state of all active auto backups
 function getAutoBackupState() {
     const state = {};
     for (const [wikiId, entry] of activeAutoBackups) {
@@ -271,9 +263,7 @@ function getAutoBackupState() {
     return state;
 }
 
-/**
- * Restore auto backups from settings on app start
- */
+// Restore auto backups from settings on app start
 async function restoreAutoBackups() {
     const settings = getSettings();
     const autoBackupGames = settings.autoBackupGames || {};
@@ -287,9 +277,7 @@ async function restoreAutoBackups() {
     }
 }
 
-/**
- * Stop all auto backups (for app quit) - cleanup only, preserves settings
- */
+// Stop all auto backups (for app quit) - cleanup only, preserves settings
 function stopAllAutoBackups() {
     for (const [wikiId, entry] of activeAutoBackups) {
         if (entry.timer) {
