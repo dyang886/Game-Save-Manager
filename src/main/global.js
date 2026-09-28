@@ -409,11 +409,10 @@ function updateStatus(statusKey, statusValue) {
 }
 
 function getGameDisplayName(gameObj) {
-    if (settings.language === "en_US") {
-        return gameObj.title;
-    } else if (settings.language === "zh_CN") {
+    if (settings.language === "zh_CN") {
         return gameObj.zh_CN || gameObj.title;
     }
+    return gameObj.title;
 }
 
 
@@ -1021,6 +1020,7 @@ const loadSettings = () => {
     const mapSupportedLanguage = (language) => {
         const locale = new Intl.Locale(language).maximize();
         if (locale.language === 'en') return 'en_US';
+        if (locale.language === 'pt' && locale.region === 'BR') return 'pt_BR';
         if (locale.language === 'zh') return locale.script === 'Hant' ? 'zh_TW' : 'zh_CN';
         return null;
     };
