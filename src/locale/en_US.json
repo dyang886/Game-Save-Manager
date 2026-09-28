@@ -149,7 +149,7 @@
         "backup_process_error_db": "Error processing database game {{game_name}}",
         "backup_process_error_custom": "Error processing custom game {{game_name}}",
         "backup_process_error_display": "Error processing data for backup table display",
-        "backup_game_error": "Error during restore for game {{game_name}}",
+        "backup_game_error": "Error during backup for game {{game_name}}",
         "restore_process_error_config": "Error reading backup config file at {{config_path}}",
         "restore_process_error_path": "Error processing {{backup_path}} for restore table display",
         "restore_process_error_display": "Error processing data for restore table display",

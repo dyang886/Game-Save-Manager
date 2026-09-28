@@ -1,6 +1,6 @@
 {
   "name": "game-save-manager",
-  "version": "2.2.1",
+  "version": "2.2.2-beta.1",
   "description": "Easily backup and restore your game saves anytime",
   "main": "dist/out/main/main.js",
   "scripts": {
@@ -18,7 +18,15 @@
     "productName": "Game Save Manager",
     "copyright": "Copyright © 2024-2026 Yongcan Yang",
     "files": [
-      "dist/out/**/*"
+      "dist/out/**/*",
+      "!**/*.{js,cjs,mjs}.map",
+      "!**/node_modules/pinyin/lib/esm/**",
+      "!**/node_modules/pinyin/lib/umd/**",
+      "!**/node_modules/7zip-bin/linux/**",
+      "!**/node_modules/7zip-bin/mac/**",
+      "!**/node_modules/native-reg/prebuilds/win32-arm64/**",
+      "!**/node_modules/native-reg/prebuilds/win32-ia32/**",
+      "!**/node_modules/{node-gyp,prebuild-install,node-abi,make-fetch-happen,undici}/**"
     ],
     "extraResources": [
       {
@@ -31,6 +39,12 @@
         "from": "../Automation/GSM/database.db",
         "to": "./database/database.db"
       }
+    ],
+    "electronLanguages": [
+      "en-US",
+      "pt-BR",
+      "zh-CN",
+      "zh-TW"
     ]
   },
   "author": "Yongcan Yang",
