@@ -74,6 +74,7 @@ export async function showAlert(type, message, modalContent) {
         warning: 'text-yellow-800 bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300',
         modal: 'text-red-800 bg-red-50 dark:bg-gray-800 dark:text-red-400',
     };
+    if (!Object.prototype.hasOwnProperty.call(alertClasses, type)) type = 'info';
 
     const iconPaths = {
         info: 'M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z',
@@ -94,7 +95,7 @@ export async function showAlert(type, message, modalContent) {
         </svg>
         <span class="sr-only">${type.charAt(0).toUpperCase() + type.slice(1)}</span>
         <div class="ms-3 text-sm font-medium">
-            <span class="text-content">${message}</span>
+            <span class="text-content alert-message"></span>
         </div>
     `;
 
@@ -132,6 +133,7 @@ export async function showAlert(type, message, modalContent) {
         });
     }
 
+    alertElement.querySelector('.alert-message').textContent = message;
     alertContainer.appendChild(alertElement);
     updateTranslations(alertElement);
 
@@ -161,15 +163,21 @@ export async function showInfoModal(modalTitle, modalContent, style = 'ok') {
         if (Array.isArray(modalContent)) {
             const contentElements = modalContent.map(item => {
                 if (Array.isArray(item)) {
-                    // Nested array becomes a list
-                    const listItems = item.map(listItem => `<li>${listItem}</li>`).join('');
-                    return `<ul class="list-disc list-inside ml-3">${listItems}</ul>`;
+                    const list = document.createElement('ul');
+                    list.className = 'list-disc list-inside ml-3';
+                    for (const listItem of item) {
+                        const entry = document.createElement('li');
+                        entry.textContent = listItem;
+                        list.append(entry);
+                    }
+                    return list;
                 } else {
-                    // String becomes a paragraph
-                    return `<p>${item}</p>`;
+                    const paragraph = document.createElement('p');
+                    paragraph.textContent = item;
+                    return paragraph;
                 }
-            }).join('');
-            modalContentElement.innerHTML = contentElements;
+            });
+            modalContentElement.replaceChildren(...contentElements);
         } else {
             modalContentElement.textContent = modalContent;
         }
@@ -377,14 +385,17 @@ export function updateProgress(progressId, progressTitle, percentage) {
         progressElement.className = "ml-auto max-w-max p-4 mb-2 rounded-lg bg-blue-50 dark:bg-gray-800 animate-fadeIn";
         progressElement.innerHTML = `
             <div class="flex justify-between mb-1 text-sm font-medium text-blue-700 dark:text-white">
-                <span>${progressTitle}</span>
-                <span id="${progressId}-percentage">0%</span>
+                <span class="progress-title"></span>
+                <span class="progress-percentage">0%</span>
             </div>
             <div class="w-60 bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                <div id="${progressId}-bar" class="bg-blue-600 w-0 h-2.5 rounded-full"></div>
+                <div class="progress-bar bg-blue-600 w-0 h-2.5 rounded-full"></div>
             </div>
         `;
 
+        progressElement.querySelector('.progress-title').textContent = progressTitle;
+        progressElement.querySelector('.progress-percentage').id = `${progressId}-percentage`;
+        progressElement.querySelector('.progress-bar').id = `${progressId}-bar`;
         progressContainer.appendChild(progressElement);
         return;
 
@@ -396,6 +407,8 @@ export function updateProgress(progressId, progressTitle, percentage) {
 
     const progressBar = document.getElementById(`${progressId}-bar`);
     const progressPercentage = document.getElementById(`${progressId}-percentage`);
+    if (!progressBar || !progressPercentage) return;
+    percentage = Math.max(0, Math.min(100, Number(percentage) || 0));
     progressBar.style.width = `${percentage}%`;
     progressPercentage.innerText = `${percentage}%`;
 }

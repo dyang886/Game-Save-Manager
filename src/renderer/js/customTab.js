@@ -392,34 +392,15 @@ async function saveEntriesToJson(saveAllButton) {
     saveAllButton.disabled = true;
     saveAllButton.classList.add('cursor-not-allowed');
 
-    const entriesArray = await getCurrentEntries();
-    const titleSet = new Set();
-    const duplicateTitles = [];
-
-    // Check for duplicate names
-    entriesArray.forEach(entry => {
-        if (titleSet.has(entry.title)) {
-            duplicateTitles.push(entry.title);
-        } else {
-            titleSet.add(entry.title);
-        }
-    });
-
-    // Show warning if duplicate names found
-    if (duplicateTitles.length > 0) {
-        const title = await window.i18n.translate('custom.duplicate_names_title');
-        const message = await window.i18n.translate('custom.duplicate_names_message');
-        const content = [message, duplicateTitles];
-        await showInfoModal(title, content);
+    try {
+        const entriesArray = await getCurrentEntries();
+        // UUIDs identify custom games; independent devices can use the same display name.
+        const saved = await window.api.invoke('save-custom-entries', entriesArray);
+        if (saved === true) lastSavedEntries = entriesArray;
+    } finally {
         saveAllButton.disabled = false;
         saveAllButton.classList.remove('cursor-not-allowed');
-        return;
     }
-
-    await window.api.invoke('save-custom-entries', entriesArray);
-    lastSavedEntries = entriesArray;
-    saveAllButton.disabled = false;
-    saveAllButton.classList.remove('cursor-not-allowed');
 }
 
 async function loadEntriesFromJson() {

@@ -62,6 +62,7 @@ function initializeTabs() {
         { id: 'backup', triggerEl: document.querySelector('#backup-tab'), targetEl: document.querySelector('#backup') },
         { id: 'restore', triggerEl: document.querySelector('#restore-tab'), targetEl: document.querySelector('#restore') },
         { id: 'custom', triggerEl: document.querySelector('#custom-tab'), targetEl: document.querySelector('#custom') },
+        { id: 'cloud', triggerEl: document.querySelector('#cloud-tab'), targetEl: document.querySelector('#cloud') },
     ];
 
     const options = {
@@ -107,10 +108,12 @@ function showTab(tab, tabElements, options) {
             t.triggerEl.classList.add(...options.activeClasses.split(' '));
             t.triggerEl.classList.remove(...options.inactiveClasses.split(' '));
             t.targetEl.classList.remove('hidden');
+            t.triggerEl.setAttribute('aria-selected', 'true');
         } else {
             t.triggerEl.classList.remove(...options.activeClasses.split(' '));
             t.triggerEl.classList.add(...options.inactiveClasses.split(' '));
             t.targetEl.classList.add('hidden');
+            t.triggerEl.setAttribute('aria-selected', 'false');
         }
     });
 
@@ -336,7 +339,7 @@ export function createBackupTableRow(gameTitle, platformIcons, backupSize, newes
             <span data-icon="pin" class="hidden"><i class="fa-solid fa-thumbtack text-red-500 mr-2"></i></span>
             <span data-icon="star" class="hidden"><i class="fa-solid fa-star text-yellow-500 mr-2"></i></span>
             <span data-icon="timer" class="hidden"><i class="fa-solid fa-clock-rotate-left text-green-500 mr-2"></i></span>
-            ${gameTitle}
+            <span class="game-title-text"></span>
         </th>
         <td class="px-6 py-4 truncate">
             ${platformIcons}
@@ -345,7 +348,6 @@ export function createBackupTableRow(gameTitle, platformIcons, backupSize, newes
             ${backupSize}
         </td>
         <td class="px-6 py-4 truncate newest-backup-time">
-            ${newestBackupTime}
         </td>
         <td class="px-6 py-4 truncate text-center">
             <button class="row-menu-button inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 hover:bg-transparent focus:outline-hidden dark:text-white"
@@ -357,6 +359,8 @@ export function createBackupTableRow(gameTitle, platformIcons, backupSize, newes
             </button>
         </td>
     `;
+    row.querySelector('.game-title-text').textContent = gameTitle;
+    row.querySelector('.newest-backup-time').textContent = newestBackupTime;
     return row;
 }
 
@@ -375,7 +379,7 @@ export function createRestoreTableRow(gameTitle, backupCount, backupSize, newest
             <span data-icon="pin" class="hidden"><i class="fa-solid fa-thumbtack text-red-500 mr-2"></i></span>
             <span data-icon="star" class="hidden"><i class="fa-solid fa-star text-yellow-500 mr-2"></i></span>
             <span data-icon="timer" class="hidden"><i class="fa-solid fa-clock-rotate-left text-green-500 mr-2"></i></span>
-            ${gameTitle}
+            <span class="game-title-text"></span>
         </th>
         <td class="px-6 py-4 truncate backup-count">
             ${backupCount}
@@ -384,7 +388,6 @@ export function createRestoreTableRow(gameTitle, backupCount, backupSize, newest
             ${backupSize}
         </td>
         <td class="px-6 py-4 truncate newest-backup-time">
-            ${newestBackupTime}
         </td>
         <td class="px-6 py-4 truncate text-center">
             <button class="row-menu-button inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 hover:bg-transparent focus:outline-hidden dark:text-white"
@@ -396,6 +399,8 @@ export function createRestoreTableRow(gameTitle, backupCount, backupSize, newest
             </button>
         </td>
     `;
+    row.querySelector('.game-title-text').textContent = gameTitle;
+    row.querySelector('.newest-backup-time').textContent = newestBackupTime;
     return row;
 }
 
@@ -593,6 +598,8 @@ async function performAddOrUpdateTableRow(tabName, wikiId) {
     const existingRow = document.querySelector(`#${tabName} tbody tr[data-wiki-id="${wikiId}"]`);
 
     if (existingRow) {
+        const titleCell = existingRow.querySelector('.game-title-text');
+        if (titleCell) titleCell.textContent = gameData.titleToSort;
         const sizeCell = existingRow.querySelector('.backup-size');
         if (sizeCell) sizeCell.textContent = formatSize(gameData.backup_size);
         const timeCell = existingRow.querySelector('.newest-backup-time');
