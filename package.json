@@ -17,6 +17,10 @@
     "appId": "com.yyc.game-save-manager",
     "productName": "Game Save Manager",
     "copyright": "Copyright © 2024-2026 Yongcan Yang",
+    "asarUnpack": [
+      "**/*.node",
+      "**/7zip-bin/win/**"
+    ],
     "files": [
       "dist/out/**/*",
       "!**/*.{js,cjs,mjs}.map",
@@ -50,6 +54,8 @@
   "author": "Yongcan Yang",
   "license": "GPL-3.0-only",
   "dependencies": {
+    "@aws-sdk/client-s3": "3.1146.0",
+    "@smithy/node-http-handler": "4.12.1",
     "7zip-bin": "^5.2.0",
     "axios": "^1.20.0",
     "bytenode": "^1.6.0",
@@ -64,9 +70,11 @@
     "native-reg": "^1.1.1",
     "node-7z": "^3.0.0",
     "pinyin": "^4.0.0",
+    "proxy-agent": "8.0.2",
     "semver": "^7.8.5",
     "sqlite3": "^6.0.1",
-    "vdf-parser": "^1.2.1"
+    "vdf-parser": "^1.2.1",
+    "webdav": "5.11.0"
   },
   "devDependencies": {
     "@babel/core": "^8.0.1",
