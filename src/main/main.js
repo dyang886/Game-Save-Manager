@@ -20,12 +20,14 @@ const {
 } = require('./global');
 const { getGameData, initializeGameData, detectGamePaths, getAllAccountIds } = require('./gameData');
 const { getGameDataFromDB, getAllGameDataFromDB, getGameTitlesByIds, backupGame, updateDatabase } = require('./backup');
-const { getGameDataForRestore, restoreGame } = require("./restore");
+const { getGameDataForRestore, restoreGame, restoreSnapshot } = require("./restore");
 const {
     startAutoBackup, stopAutoBackup, getAutoBackupState, restoreAutoBackups,
     refreshAutoBackupWatchers, stopAllAutoBackups
 } = require('./autoBackup');
 const { showRowMenu, placeAndShowRowMenu, hideRowMenu } = require('./menuWindow');
+const snapshotStore = require('./snapshotStore');
+const backupCoordinator = require('./backupCoordinator');
 
 
 // Setup hot reload for development
@@ -348,8 +350,38 @@ ipcMain.handle('fetch-restore-table-data', async (event, wikiId = null, sizeAllB
 });
 
 ipcMain.handle('restore-game', async (event, gameObj, userActionForAll) => {
-    return await restoreGame(gameObj, userActionForAll);
+    let result = await restoreGame(gameObj, userActionForAll);
+    const mappings = {};
+    let confirmRegistry = false;
+    // Legacy imports also use the same explicit local mapping and protected restore.
+    for (let attempt = 0; attempt < 3 && ['PATH_MAPPING_REQUIRED', 'REGISTRY_CONFIRMATION_REQUIRED'].includes(result.code); attempt++) {
+        for (const entry of result.mappingsRequired || []) {
+            const destination = await chooseRestoreDestination(entry);
+            if (!destination) return { ...result, code: 'SKIPPED' };
+            mappings[entry.folder] = destination;
+        }
+        if (result.registryTargets) {
+            const response = await dialog.showMessageBox(getMainWin(), { type: 'warning', title: i18next.t('alert.save_conflict'),
+                message: result.registryTargets.map(entry => entry.key).join('\n'), buttons: [i18next.t('alert.yes'), i18next.t('alert.no')], defaultId: 1, cancelId: 1 });
+            if (response.response !== 0) return { ...result, code: 'SKIPPED' };
+            confirmRegistry = true;
+        }
+        result = await restoreSnapshot({ gameId: String(gameObj.wiki_page_id), folder: gameObj.folder || gameObj.backups?.[0]?.date,
+            mappings, confirmRegistry, userActionForAll });
+    }
+    return result;
 });
+
+async function chooseRestoreDestination(entry) {
+    if (entry.type === 'reg') return null;
+    const title = `${i18next.t('settings.select_path')} — ${entry.folder || entry.folder_name}`;
+    if (entry.type === 'file') {
+        const result = await dialog.showSaveDialog(getMainWin(), { title, defaultPath: path.basename(entry.template || 'save.dat') });
+        return result.canceled ? null : result.filePath;
+    }
+    const result = await dialog.showOpenDialog(getMainWin(), { title, properties: ['openDirectory', 'createDirectory'] });
+    return result.canceled ? null : result.filePaths[0];
+}
 
 // Names by wiki id, for hidden games that may have no backups or be uninstalled
 ipcMain.handle('get-game-titles', async (event, wikiIds) => {
@@ -362,8 +394,8 @@ ipcMain.handle('get-game-titles', async (event, wikiIds) => {
 
 ipcMain.handle('confirm-delete-backup', async (event, wikiId, backupDate) => {
     try {
-        const backupPath = path.join(getSettings().backupPath, wikiId.toString(), backupDate);
-        const formattedDate = moment(backupDate, 'YYYY-MM-DD_HH-mm').format('YYYY/MM/DD HH:mm');
+        const snapshot = await snapshotStore.readSnapshot(getSettings().backupPath, wikiId, backupDate);
+        const formattedDate = moment(snapshot.createdAt).format('YYYY/MM/DD HH:mm');
 
         const confirmTitle = i18next.t('alert.confirm_delete_backup_title');
         const baseMessage = i18next.t('alert.confirm_delete_backup_message');
@@ -380,8 +412,14 @@ ipcMain.handle('confirm-delete-backup', async (event, wikiId, backupDate) => {
 
         // If user clicked "Yes"
         if (response.response === 0) {
-            fsOriginal.rmSync(backupPath, { recursive: true, force: true });
-            return true;
+            return backupCoordinator.withGameLock(wikiId, async () => {
+                const current = await snapshotStore.readSnapshot(getSettings().backupPath, wikiId, backupDate);
+                if (backupCoordinator.isProtected(current.path) || (current.metadata.cloudUploadIntent && current.metadata.cloudUploadIntent.state !== 'completed')) {
+                    throw new Error('This snapshot is still needed by an upload or export. Complete or cancel that task before deleting it.');
+                }
+                await fsOriginal.promises.rm(current.path, { recursive: true, force: true });
+                return true;
+            });
         }
 
         return false;
@@ -395,16 +433,12 @@ ipcMain.handle('confirm-delete-backup', async (event, wikiId, backupDate) => {
 
 ipcMain.handle('update-backup-info', async (event, wikiId, backupDate, key, value) => {
     try {
-        const configFilePath = path.join(getSettings().backupPath, wikiId.toString(), backupDate, 'backup_info.json');
-
-        if (!fsOriginal.existsSync(configFilePath)) {
-            throw new Error('Backup config file not found');
-        }
-
-        const backupConfig = await readJsonFile(configFilePath);
-        backupConfig[key] = value;
-        await writeJsonFile(configFilePath, backupConfig);
-
+        if (!['custom_name', 'is_permanent'].includes(key) || (key === 'is_permanent' ? typeof value !== 'boolean' : typeof value !== 'string' || value.length > 1000)) throw new Error('Invalid backup metadata update');
+        await backupCoordinator.withGameLock(wikiId, async () => {
+            let snapshot = await snapshotStore.readSnapshot(getSettings().backupPath, wikiId, backupDate);
+            snapshot = await snapshotStore.ensureIdentity(snapshot);
+            await snapshotStore.updateMetadata(snapshot, metadata => ({ ...metadata, [key]: value }));
+        });
         return true;
 
     } catch (error) {

@@ -9,8 +9,9 @@ const { exec, spawn } = require('child_process');
 const i18next = require('i18next');
 const moment = require('moment');
 const semver = require('semver');
-const Seven = require('node-7z');
-const sevenBin = require('7zip-bin');
+const snapshotStore = require('./snapshotStore');
+const coordinator = require('./backupCoordinator');
+const archive = require('./archive');
 
 const {
     SIGNED_URL_DOWNLOAD_ENDPOINT = '',
@@ -525,8 +526,13 @@ function getNewestBackup(wiki_page_id) {
     let backups = [];
     try {
         backups = fsOriginal.readdirSync(backupDir, { withFileTypes: true })
-            .filter(dirent => dirent.isDirectory())
-            .map(dirent => dirent.name);
+            .filter(dirent => dirent.isDirectory() && !dirent.name.startsWith('.'))
+            .flatMap(dirent => {
+                try {
+                    const metadata = JSON.parse(fsOriginal.readFileSync(path.join(backupDir, dirent.name, 'backup_info.json'), 'utf8'));
+                    return [snapshotStore.normalizeMetadata(metadata, String(wiki_page_id), dirent.name)];
+                } catch { return []; }
+            });
     } catch {
         return i18next.t('main.no_backups');
     }
@@ -535,11 +541,8 @@ function getNewestBackup(wiki_page_id) {
         return i18next.t('main.no_backups');
     }
 
-    const latestBackup = backups.sort((a, b) => {
-        return b.localeCompare(a);
-    })[0];
-
-    return moment(latestBackup, 'YYYY-MM-DD_HH-mm').format('YYYY/MM/DD HH:mm');
+    const latestBackup = backups.sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt))[0];
+    return moment(latestBackup.createdAt).format('YYYY/MM/DD HH:mm');
 }
 
 // Async: a sync copy holds the event loop for its whole duration, freezing the window
@@ -568,6 +571,7 @@ async function exportBackups(count, exportPath, wikiIds = null) {
     const progressId = 'export';
     const progressTitle = i18next.t('alert.exporting');
     const sourcePath = settings.backupPath;
+    const releases = [];
 
     try {
         if (!exportPath) {
@@ -587,11 +591,8 @@ async function exportBackups(count, exportPath, wikiIds = null) {
                 itemsToArchive.push('custom_entries.json');
             }
 
-            const items = fsOriginal.readdirSync(sourcePath);
-            let gameFolders = items.filter(item => {
-                const fullPath = path.join(sourcePath, item);
-                return fsOriginal.lstatSync(fullPath).isDirectory();
-            });
+            const allSnapshots = await snapshotStore.listSnapshots(sourcePath);
+            let gameFolders = [...new Set(allSnapshots.map(snapshot => snapshot.gameId))];
 
             // Filter to selected games if wikiIds provided
             if (wikiIds && wikiIds.length > 0) {
@@ -601,62 +602,23 @@ async function exportBackups(count, exportPath, wikiIds = null) {
 
             // Newest backup instances per game, plus every permanent one regardless of count
             for (const gameId of gameFolders) {
-                const gameFolderPath = path.join(sourcePath, gameId);
-                let backups = fsOriginal.readdirSync(gameFolderPath).filter(item => {
-                    const fullPath = path.join(gameFolderPath, item);
-                    return fsOriginal.lstatSync(fullPath).isDirectory();
-                });
-
-                const permanentBackups = [];
-                const nonPermanentBackups = [];
-                for (const backup of backups) {
-                    const infoPath = path.join(gameFolderPath, backup, 'backup_info.json');
-                    if (fsOriginal.existsSync(infoPath)) {
-                        const info = await readJsonFile(infoPath);
-                        if (info.is_permanent) {
-                            permanentBackups.push(backup);
-                            continue;
-                        }
+                await coordinator.withGameLock(gameId, async () => {
+                    const backups = await snapshotStore.listSnapshots(sourcePath, gameId);
+                    const selected = [...backups.filter(s => s.metadata.is_permanent), ...backups.filter(s => !s.metadata.is_permanent).slice(0, count)];
+                    for (let snapshot of selected) {
+                        snapshot = await snapshotStore.ensureIdentity(snapshot);
+                        releases.push(coordinator.protectSnapshot(snapshot.path));
+                        itemsToArchive.push(`${gameId}/${snapshot.folder}`);
                     }
-                    nonPermanentBackups.push(backup);
-                }
-
-                nonPermanentBackups.sort((a, b) => b.localeCompare(a));
-                const selected = nonPermanentBackups.slice(0, count);
-
-                for (const backupFolder of [...permanentBackups, ...selected]) {
-                    itemsToArchive.push(path.join(gameId, backupFolder));
-                }
+                });
             }
 
-            const timestamp = moment().format('YYYY-MM-DD_HH-mm');
+            const timestamp = moment().format('YYYY-MM-DD_HH-mm-ss-SSS');
             const finalFileName = `GSMBackup-${timestamp}.gsmr`;
             const finalDestPath = path.join(exportPath, finalFileName);
 
-            const sevenOptions = {
-                yes: true,
-                recursive: true,
-                $bin: sevenBin.path7za.replace('app.asar', 'app.asar.unpacked'),
-                $progress: true,
-                $raw: []
-            };
-
-            const originalCwd = process.cwd();
-            process.chdir(sourcePath);
-            const archiveStream = Seven.add(finalDestPath, itemsToArchive, sevenOptions);
-
-            archiveStream.on('progress', (progress) => {
-                if (progress.percent) {
-                    win.webContents.send('update-progress', progressId, progressTitle, Math.floor(progress.percent));
-                }
-            });
-
-            await new Promise((resolve, reject) => {
-                archiveStream.on('end', resolve);
-                archiveStream.on('error', reject);
-            });
-
-            process.chdir(originalCwd);
+            if (!itemsToArchive.length) throw new Error('No complete snapshots to export');
+            await archive.createArchive(sourcePath, itemsToArchive, finalDestPath);
             win.webContents.send('update-progress', progressId, progressTitle, 'end');
             win.webContents.send('show-alert', 'success', i18next.t('alert.export_success'));
             status.exporting = false;
@@ -667,6 +629,8 @@ async function exportBackups(count, exportPath, wikiIds = null) {
         win.webContents.send('show-alert', 'modal', i18next.t('alert.error_during_export'), error.message);
         win.webContents.send('update-progress', progressId, progressTitle, 'end');
         status.exporting = false;
+    } finally {
+        releases.forEach(release => release());
     }
 }
 
@@ -674,6 +638,7 @@ async function importBackups(gsmPath) {
     const progressId = 'import';
     const progressTitle = i18next.t('alert.importing');
     const destinationPath = settings.backupPath;
+    let tempExtractPath;
 
     try {
         if (!status.importing) {
@@ -681,59 +646,36 @@ async function importBackups(gsmPath) {
             win.webContents.send('update-progress', progressId, progressTitle, 'start');
 
             // 1. Extract the GSMR file to a temporary directory
-            const tempExtractPath = fsOriginal.mkdtempSync(path.join(os.tmpdir(), 'GSMImportTemp-'));
-            const sevenOptions = {
-                yes: true,
-                recursive: true,
-                $bin: sevenBin.path7za.replace('app.asar', 'app.asar.unpacked'),
-                $progress: true,
-                $raw: []
-            };
-
-            const extractStream = Seven.extractFull(gsmPath, tempExtractPath, sevenOptions);
-
-            extractStream.on('progress', (progress) => {
-                if (progress.percent) {
-                    const overallProgress = Math.floor(progress.percent * 0.5);
-                    win.webContents.send('update-progress', progressId, progressTitle, Math.floor(overallProgress));
-                }
-            });
-
-            await new Promise((resolve, reject) => {
-                extractStream.on('end', resolve);
-                extractStream.on('error', reject);
-            });
+            tempExtractPath = fsOriginal.mkdtempSync(path.join(os.tmpdir(), 'GSMImportTemp-'));
+            await archive.extractArchive(gsmPath, tempExtractPath, { onProgress: (done, total) => {
+                win.webContents.send('update-progress', progressId, progressTitle, total ? Math.floor(done / total * 50) : 0);
+            } });
 
             const extractedItems = fsOriginal.readdirSync(tempExtractPath);
 
             // 2. Process the custom_entries.json file if present
             if (extractedItems.includes('custom_entries.json')) {
                 const importedJsonPath = path.join(tempExtractPath, 'custom_entries.json');
-                let importedEntries = [];
-                try {
-                    importedEntries = JSON.parse(fsOriginal.readFileSync(importedJsonPath, 'utf8'));
-                } catch (e) {
-                    console.error("Error parsing imported custom_entries.json:", e);
-                }
+                if (fsOriginal.statSync(importedJsonPath).size > 4 * 1024 * 1024) throw new Error('Custom definitions exceed limit');
+                const importedEntries = JSON.parse(fsOriginal.readFileSync(importedJsonPath, 'utf8'));
+                if (!Array.isArray(importedEntries)) throw new Error('Invalid custom definitions');
 
                 const destinationJsonPath = path.join(destinationPath, 'custom_entries.json');
                 let destinationEntries = [];
                 if (fsOriginal.existsSync(destinationJsonPath)) {
-                    try {
-                        destinationEntries = JSON.parse(fsOriginal.readFileSync(destinationJsonPath, 'utf8'));
-                    } catch (e) {
-                        console.error("Error parsing destination custom_entries.json:", e);
-                    }
+                    destinationEntries = JSON.parse(fsOriginal.readFileSync(destinationJsonPath, 'utf8'));
+                    if (!Array.isArray(destinationEntries)) throw new Error('Invalid existing custom definitions');
                 }
 
                 // Append only those entries that do not already exist (by wiki_page_id)
                 importedEntries.forEach(imported => {
+                    snapshotStore.validateGameId(imported.wiki_page_id);
                     const exists = destinationEntries.some(dest => dest.wiki_page_id === imported.wiki_page_id);
                     if (!exists) {
                         destinationEntries.push(imported);
                     }
                 });
-                fsOriginal.writeFileSync(destinationJsonPath, JSON.stringify(destinationEntries, null, 2), 'utf8');
+                await snapshotStore.atomicWriteJson(destinationJsonPath, destinationEntries);
             }
 
             // 3. Process game backup folders
@@ -744,20 +686,17 @@ async function importBackups(gsmPath) {
                 const itemPath = path.join(tempExtractPath, item);
                 if (fsOriginal.lstatSync(itemPath).isDirectory()) {
                     const gameId = item;
-                    const destGameFolder = path.join(destinationPath, gameId);
+                    snapshotStore.validateGameId(gameId);
 
                     const backupFolders = fsOriginal.readdirSync(itemPath).filter(sub => {
                         const subPath = path.join(itemPath, sub);
                         return fsOriginal.lstatSync(subPath).isDirectory();
                     });
 
-                    // Skip any backup instance the destination already has
                     for (const backupFolder of backupFolders) {
-                        const srcBackupPath = path.join(itemPath, backupFolder);
-                        const destBackupPath = path.join(destGameFolder, backupFolder);
-                        if (!fsOriginal.existsSync(destBackupPath)) {
-                            await fsOriginalCopyFolder(srcBackupPath, destBackupPath);
-                        }
+                        const snapshot = await snapshotStore.readSnapshot(tempExtractPath, gameId, backupFolder);
+                        const result = await snapshotStore.importSnapshot(destinationPath, snapshot.path, { ...snapshot.metadata, gameId });
+                        if (result.conflict) throw new Error(`Snapshot identity conflict; preserved in ${result.quarantinedPath}`);
                     }
                 }
 
@@ -770,7 +709,6 @@ async function importBackups(gsmPath) {
             win.webContents.send('show-alert', 'success', i18next.t('alert.import_success'));
             status.importing = false;
 
-            await fsOriginal.promises.rm(tempExtractPath, { recursive: true });
         }
 
     } catch (error) {
@@ -779,6 +717,7 @@ async function importBackups(gsmPath) {
         status.importing = false;
 
     } finally {
+        if (tempExtractPath) await fsOriginal.promises.rm(tempExtractPath, { recursive: true, force: true }).catch(() => {});
         win.webContents.send('update-progress', progressId, progressTitle, 'end');
         win.webContents.send('update-backup-table');
         win.webContents.send('update-restore-table');
