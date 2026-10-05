@@ -11,6 +11,7 @@ const moment = require('moment');
 const semver = require('semver');
 const snapshotStore = require('./snapshotStore');
 const coordinator = require('./backupCoordinator');
+const customGameStore = require('./customGameStore');
 const archive = require('./archive');
 const { validateSettingsUpdates, publicSettings } = require('./settingsValidation');
 
@@ -661,22 +662,14 @@ async function importBackups(gsmPath) {
                 const importedEntries = JSON.parse(fsOriginal.readFileSync(importedJsonPath, 'utf8'));
                 if (!Array.isArray(importedEntries)) throw new Error('Invalid custom definitions');
 
-                const destinationJsonPath = path.join(destinationPath, 'custom_entries.json');
-                let destinationEntries = [];
-                if (fsOriginal.existsSync(destinationJsonPath)) {
-                    destinationEntries = JSON.parse(fsOriginal.readFileSync(destinationJsonPath, 'utf8'));
-                    if (!Array.isArray(destinationEntries)) throw new Error('Invalid existing custom definitions');
-                }
-
-                // Append only those entries that do not already exist (by wiki_page_id)
-                importedEntries.forEach(imported => {
-                    snapshotStore.validateGameId(imported.wiki_page_id);
-                    const exists = destinationEntries.some(dest => dest.wiki_page_id === imported.wiki_page_id);
-                    if (!exists) {
-                        destinationEntries.push(imported);
+                await customGameStore.updateCustomEntries(destinationPath, destinationEntries => {
+                    // Preserve existing local definitions when IDs are already known.
+                    for (const imported of importedEntries) {
+                        const id = snapshotStore.validateGameId(imported.wiki_page_id);
+                        if (!destinationEntries.some(entry => entry.wiki_page_id.toLowerCase() === id.toLowerCase())) destinationEntries.push(imported);
                     }
+                    return destinationEntries;
                 });
-                await snapshotStore.atomicWriteJson(destinationJsonPath, destinationEntries);
             }
 
             // 3. Process game backup folders
@@ -1066,72 +1059,55 @@ async function saveSettings(keyOrUpdates, value) {
 }
 
 async function moveFilesWithProgress(sourceDir, destinationDir) {
-    let totalSize = 0;
-    let movedSize = 0;
-    let errors = [];
-    status.migrating = true;
+    const { migrateBackupLibrary } = require('./backupMigration');
     const progressId = 'migrate-backups';
     const progressTitle = i18next.t('alert.migrate_backups');
-
-    const moveAndTrackProgress = async (srcDir, destDir) => {
-        try {
-            const items = fsOriginal.readdirSync(srcDir, { withFileTypes: true });
-
-            for (const item of items) {
-                const srcPath = path.join(srcDir, item.name);
-                const destPath = path.join(destDir, item.name);
-
-                if (item.isDirectory()) {
-                    await fsOriginal.promises.mkdir(destPath, { recursive: true });
-                    await moveAndTrackProgress(srcPath, destPath);
-                } else {
-                    const fileStats = fsOriginal.statSync(srcPath);
-                    const readStream = fsOriginal.createReadStream(srcPath);
-                    const writeStream = fsOriginal.createWriteStream(destPath);
-
-                    readStream.on('data', (chunk) => {
-                        movedSize += chunk.length;
-                        const progressPercentage = Math.round((movedSize / totalSize) * 100);
-                        win.webContents.send('update-progress', progressId, progressTitle, progressPercentage);
-                    });
-
-                    await new Promise((resolve, reject) => {
-                        readStream.pipe(writeStream);
-                        readStream.on('error', reject);
-                        writeStream.on('error', reject);
-                        writeStream.on('finish', () => {
-                            fsOriginal.promises.utimes(destPath, fileStats.atime, fileStats.mtime)
-                                .then(() => fsOriginal.promises.rm(srcPath))
-                                .then(resolve)
-                                .catch(reject);
-                        });
-                    });
-                }
-            }
-            await fsOriginal.promises.rm(srcDir, { recursive: true });
-
-        } catch (err) {
-            errors.push(`Error moving file or directory: ${err.message}`);
-        }
+    const notify = (channel, ...args) => {
+        try { if (win && !win.isDestroyed()) win.webContents.send(channel, ...args); }
+        catch { /* Closing a window cannot invalidate the verified migration. */ }
     };
-
-    if (fsOriginal.existsSync(sourceDir)) {
-        totalSize = await calculateDirectorySize(sourceDir, false);
-
-        win.webContents.send('update-progress', progressId, progressTitle, 'start');
-        await moveAndTrackProgress(sourceDir, destinationDir);
-        win.webContents.send('update-progress', progressId, progressTitle, 'end');
-
-        if (errors.length > 0) {
-            console.log(errors);
-            win.webContents.send('show-alert', 'modal', i18next.t('alert.error_during_backup_migration'), errors);
-        } else {
-            win.webContents.send('show-alert', 'success', i18next.t('alert.backup_migration_success'));
-        }
+    status.migrating = true;
+    notify('update-progress', progressId, progressTitle, 'start');
+    try {
+        const result = await migrateBackupLibrary(sourceDir, destinationDir, {
+            onProgress: ({ stage, completedBytes, totalBytes }) => {
+                const fraction = totalBytes ? completedBytes / totalBytes : 1;
+                const progress = stage === 'copying' ? fraction * 45 : stage === 'verifying' ? 45 + fraction * 50 : 98;
+                notify('update-progress', progressId, progressTitle, Math.round(progress));
+            },
+            activate: async destination => {
+                const previousPath = settings.backupPath;
+                try {
+                    const saved = await saveSettings('backupPath', destination);
+                    if (saved !== null) return true;
+                } catch (error) {
+                    settings.backupPath = previousPath;
+                    throw error;
+                }
+                // saveSettings changes in-memory settings before disk I/O.
+                settings.backupPath = previousPath;
+                return false;
+            },
+        });
+        notify('show-alert', 'success', i18next.t('alert.backup_migration_success'));
+        notify('show-alert', 'warning', i18next.t('alert.backup_migration_source_retained', {
+            defaultValue: '新备份库已验证并启用。原备份库保留在 {{source}}，确认新位置可用后可手动清理。',
+            source: result.source,
+        }));
+        notify('update-restore-table');
+        notify('update-backup-table');
+        return { success: true, ...result };
+    } catch (error) {
+        const details = [error.message];
+        if (error.destinationCommitted) details.push(i18next.t('alert.backup_migration_setting_failed', {
+            defaultValue: '原备份库仍完整保留；目标目录也保留了已验证副本，但未确认配置切换成功。',
+        }));
+        notify('show-alert', 'modal', i18next.t('alert.error_during_backup_migration'), details);
+        return { success: false, error: error.message, code: error.code, sourceRetained: true, destinationCommitted: !!error.destinationCommitted };
+    } finally {
+        notify('update-progress', progressId, progressTitle, 'end');
+        status.migrating = coordinator.isLibraryBusy();
     }
-    await saveSettings('backupPath', destinationDir);
-    win.webContents.send('update-restore-table');
-    status.migrating = false;
 }
 
 
