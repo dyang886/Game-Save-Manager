@@ -12,6 +12,7 @@ const semver = require('semver');
 const snapshotStore = require('./snapshotStore');
 const coordinator = require('./backupCoordinator');
 const archive = require('./archive');
+const { validateSettingsUpdates, publicSettings } = require('./settingsValidation');
 
 const {
     SIGNED_URL_DOWNLOAD_ENDPOINT = '',
@@ -993,11 +994,12 @@ const loadSettings = () => {
 
     try {
         const data = fs.readFileSync(settingsPath, 'utf8');
-        settings = { ...defaultSettings, ...JSON.parse(data) };
+        settings = { ...defaultSettings, ...publicSettings(JSON.parse(data)) };
 
     } catch (err) {
-        console.error("Error loading settings, using defaults:", err);
-        fs.writeFileSync(settingsPath, JSON.stringify(defaultSettings), 'utf8');
+        console.error('Cannot load settings; using defaults for this session.');
+        if (err.code === 'ENOENT') fs.writeFileSync(settingsPath, JSON.stringify(defaultSettings), 'utf8');
+        else fs.copyFileSync(settingsPath, `${settingsPath}.unreadable-${Date.now()}`);
         settings = defaultSettings;
     }
 };
@@ -1009,6 +1011,7 @@ async function saveSettings(keyOrUpdates, value) {
     const updates = keyOrUpdates && typeof keyOrUpdates === 'object' && !Array.isArray(keyOrUpdates)
         ? keyOrUpdates
         : { [keyOrUpdates]: value };
+    if (!validateSettingsUpdates(updates)) return null;
     const updatedKeys = Object.keys(updates);
     const changedKeys = updatedKeys.filter((key) => !Object.is(settings[key], updates[key]));
 
@@ -1021,7 +1024,7 @@ async function saveSettings(keyOrUpdates, value) {
     // Queue the complete settings transaction to prevent simultaneous writes and effects
     const saveOperation = writeQueue.then(async () => {
         await fs.promises.writeFile(settingsPath, settingsSnapshot);
-        console.log(`Settings updated successfully: ${JSON.stringify(updates)}`);
+        console.log(`Settings updated: ${updatedKeys.join(', ')}`);
 
         if (updatedKeys.includes('launchAtStartup')) {
             setLaunchAtStartup(updates.launchAtStartup);

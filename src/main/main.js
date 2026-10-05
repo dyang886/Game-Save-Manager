@@ -1,10 +1,11 @@
-const { BrowserWindow, app, dialog, ipcMain, shell } = require('electron');
+const { BrowserWindow, app, dialog, ipcMain, shell, safeStorage, session } = require('electron');
 
 const { randomUUID } = require('crypto');
 const fs = require('fs');
 const fsOriginal = require('original-fs');
 const os = require('os');
 const path = require('path');
+const { pathToFileURL } = require('url');
 
 const i18next = require('i18next');
 const Backend = require('i18next-fs-backend');
@@ -28,6 +29,26 @@ const {
 const { showRowMenu, placeAndShowRowMenu, hideRowMenu } = require('./menuWindow');
 const snapshotStore = require('./snapshotStore');
 const backupCoordinator = require('./backupCoordinator');
+const { createCloudService } = require('./cloud/service');
+const { registerCloudIpc, CLOUD_CHANNELS } = require('./cloud/ipc');
+const { publicSettings } = require('./settingsValidation');
+let cloudService;
+let cloudClosed = false;
+let cloudClosing = false;
+const trustedCloudURLs = ['index.html', 'settings.html'].map(file => pathToFileURL(path.join(__dirname, '../renderer', file)).href);
+
+app.on('before-quit', event => {
+    if (!cloudService || cloudClosed) return;
+    event.preventDefault();
+    if (cloudClosing) return;
+    cloudClosing = true;
+    stopAllAutoBackups();
+    cloudService.close().catch(() => {}).finally(() => {
+        require('./archive').cancelAll();
+        cloudClosed = true;
+        app.quit();
+    });
+});
 
 
 // Setup hot reload for development
@@ -88,6 +109,26 @@ app.whenReady().then(async () => {
         await saveSettings('gameInstalls', getGameData().detectedGamePaths);
     }
 
+    try {
+        cloudService = await createCloudService({ userDataPath: app.getPath('userData'), safeStorage,
+            getBackupPath: () => getSettings().backupPath, restoreSnapshot,
+            chooseRestoreMapping: chooseRestoreDestination,
+            resolveProxy: url => session.defaultSession.resolveProxy(url),
+            onUpdate: state => {
+                for (const window of BrowserWindow.getAllWindows()) {
+                    if (!window.isDestroyed() && trustedCloudURLs.includes(window.webContents.getURL())) window.webContents.send('cloud:state', state);
+                }
+            }
+        });
+        registerCloudIpc(ipcMain, cloudService, {
+            getTrustedWebContents: () => BrowserWindow.getAllWindows().map(window => window.webContents),
+            trustedURL: trustedCloudURLs
+        });
+    } catch {
+        // Failure to open the separate cloud store must not prevent local backups.
+        console.error('Cloud storage initialization failed; local backups remain available.');
+        for (const channel of CLOUD_CHANNELS) ipcMain.handle(channel, () => ({ ok: false, error: { code: 'CLOUD_ERROR', message: 'Cloud storage is unavailable.' } }));
+    }
     await createMainWindow();
     app.setAppUserModelId(i18next.t('main.title'));
 
@@ -149,7 +190,7 @@ ipcMain.on("load-theme", (event) => {
 });
 
 ipcMain.handle("get-settings", () => {
-    return getSettings();
+    return publicSettings(getSettings());
 });
 
 ipcMain.handle("get-detected-game-paths", async () => {
