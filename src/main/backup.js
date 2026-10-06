@@ -1,6 +1,6 @@
 const { app, dialog } = require('electron');
 
-const { exec } = require('child_process');
+const { execFile } = require('child_process');
 const fs = require('fs');
 const fsOriginal = require('original-fs');
 const os = require('os');
@@ -16,14 +16,16 @@ const sqlite3 = require('sqlite3');
 
 const {
     getMainWin, getStatus, updateStatus, getSignedDownloadUrl, getGameDisplayName,
-    mapConcurrent, calculateDirectorySize, walkDirectory, readJsonFile, writeJsonFile,
-    ensureWritable, getNewestBackup, fsOriginalCopyFolder,
+    mapConcurrent, calculateDirectorySize, walkDirectory, readJsonFile,
+    getNewestBackup,
     findGameInstallPath, osKeyMap, getSettings, saveSettings
 } = require('./global');
 const { getGameData, getAllAccountIds, resolvePlaceholder } = require('./gameData');
 const { registryKeyExists, getRegistryChildNames, getRegistryExportSize } = require('./registry');
+const snapshotStore = require('./snapshotStore');
+const coordinator = require('./backupCoordinator');
 
-const execPromise = util.promisify(exec);
+const execFilePromise = util.promisify(execFile);
 
 
 // A sample backup game object: {
@@ -820,96 +822,91 @@ async function fillRegistryPathUid(templatedPath, basePath, placeholderMappings)
 // ======================================================================
 // Backing up
 // ======================================================================
-async function backupGame(gameObj) {
-    const gameBackupPath = path.join(getSettings().backupPath, gameObj.wiki_page_id.toString());
-
-    // Create a new backup instance folder based on the current date and time
-    const backupInstanceFolder = moment().format('YYYY-MM-DD_HH-mm');
-    const backupInstancePath = path.join(gameBackupPath, backupInstanceFolder);
-
+// The caller holds the game lock. Restore uses this with the actual preflighted
+// destinations so a protection snapshot never guesses paths from the database.
+async function createBackupSnapshot(gameObj, options = {}) {
+    const root = getSettings().backupPath;
+    const gameId = snapshotStore.validateGameId(gameObj.wiki_page_id);
+    const gameKey = `${/^\d+$/.test(gameId) ? 'pcgw' : 'custom'}:${gameId}`;
+    const identity = snapshotStore.newSnapshotIdentity();
+    const gameBackupPath = path.resolve(root, gameId);
+    const finalPath = snapshotStore.snapshotPath(root, gameId, identity.folder);
+    const stagingPath = path.join(gameBackupPath, `.pending-${identity.snapshotId}`);
+    if (!Array.isArray(gameObj.resolved_paths) || !gameObj.resolved_paths.length) throw new Error('No save paths are available for backup');
+    await snapshotStore.assertNoLinks(gameBackupPath);
+    await fsOriginal.promises.mkdir(gameBackupPath, { recursive: true });
+    const backupConfig = {
+        schemaVersion: 1, minimumReaderVersion: 1, snapshotId: identity.snapshotId,
+        createdAt: identity.createdAt, gameKey, title: gameObj.title,
+        zh_CN: gameObj.zh_CN || null, platform: gameObj.platform || [],
+        accountScope: getAllAccountIds(), backup_paths: [],
+        ...(options.restoreProtection ? { restoreProtection: true, is_permanent: true, custom_name: i18next.t('cloud.restore_protection', { defaultValue: '恢复前保护备份' }), protectsSnapshotId: options.protectsSnapshotId } : {}),
+    };
+    if (!options.skipUpload) {
+        try {
+            const intent = await coordinator.getUploadIntent({ ...gameObj, gameId, gameKey });
+            if (intent) backupConfig.cloudUploadIntent = intent;
+        } catch (error) { backupConfig.cloudEnqueueError = error.message; }
+    }
+    if (gameKey.startsWith('custom:')) {
+        const definitions = await readJsonFile(path.join(root, 'custom_entries.json')).catch(() => []);
+        const entries = Array.isArray(definitions) ? definitions : Object.values(definitions);
+        const definition = entries.find(entry => String(entry.wiki_page_id) === gameId);
+        if (definition) backupConfig.customDefinition = definition;
+    }
+    let committed = false;
     try {
-        const backupConfig = {
-            title: gameObj.title,
-            zh_CN: gameObj.zh_CN || null,
-            backup_paths: []
-        };
-
-        // Iterate over resolved paths and copy files to the backup instance
+        await fsOriginal.promises.mkdir(stagingPath);
         for (const [index, resolvedPathObj] of gameObj.resolved_paths.entries()) {
             const resolvedPath = path.normalize(resolvedPathObj.resolved);
-            const pathFolderName = `path${index + 1}`;
-            const targetPath = path.join(backupInstancePath, pathFolderName);
-            fsOriginal.mkdirSync(targetPath, { recursive: true });
-
-            if (resolvedPathObj['type'] === 'reg') {
-                // Registry backup logic using reg.exe
-                const registryFilePath = path.join(targetPath, 'registry_backup.reg');
-
-                const regExportCommand = `reg export "${resolvedPath}" "${registryFilePath}" /y`;
-                await execPromise(regExportCommand);
-
-                backupConfig.backup_paths.push({
-                    folder_name: pathFolderName,
-                    template: resolvedPathObj.finalTemplate,
-                    type: 'reg',
-                    install_folder: gameObj.install_folder || null
-                });
-
+            const folder_name = `path${index + 1}`;
+            const targetPath = path.join(stagingPath, folder_name);
+            await fsOriginal.promises.mkdir(targetPath);
+            const entry = {
+                folder_name, template: resolvedPathObj.finalTemplate || resolvedPathObj.template || resolvedPath,
+                originalTemplate: resolvedPathObj.template || null,
+                type: resolvedPathObj.type || 'file', install_folder: gameObj.install_folder || null,
+            };
+            if (resolvedPathObj.originalMissing) {
+                entry.originalMissing = true;
+            } else if (resolvedPathObj.type === 'reg') {
+                if (!/^HKEY_(?:CURRENT_USER|LOCAL_MACHINE|CLASSES_ROOT|USERS|CURRENT_CONFIG)\\[^\r\n]+$/i.test(resolvedPath)) throw new Error('Invalid registry save path');
+                await execFilePromise('reg.exe', ['export', resolvedPath, path.join(targetPath, 'registry_backup.reg'), '/y'], { windowsHide: true });
             } else {
-                // File/directory backup logic
-                let dataType = null;
-                await ensureWritable(resolvedPath);
-                const stats = fsOriginal.statSync(resolvedPath);
-
-                if (stats.isDirectory()) {
-                    dataType = 'folder';
-                    await fsOriginalCopyFolder(resolvedPath, targetPath);
+                await snapshotStore.assertNoLinks(resolvedPath);
+                const stats = await fsOriginal.promises.stat(resolvedPath);
+                entry.type = stats.isDirectory() ? 'folder' : 'file';
+                if (entry.type === 'folder') {
+                    if (snapshotStore.inside(resolvedPath, stagingPath, true)) throw new Error('Backup directory cannot be inside a save directory');
+                    await snapshotStore.copyTree(resolvedPath, targetPath);
                 } else {
-                    dataType = 'file';
-                    const targetFilePath = path.join(targetPath, path.basename(resolvedPath));
-                    await fsOriginal.promises.copyFile(resolvedPath, targetFilePath);
+                    entry.file_name = path.basename(resolvedPath);
+                    await snapshotStore.copyTree(resolvedPath, path.join(targetPath, entry.file_name));
                 }
-
-                backupConfig.backup_paths.push({
-                    folder_name: pathFolderName,
-                    template: resolvedPathObj.finalTemplate,
-                    type: dataType,
-                    install_folder: gameObj.install_folder || null
-                });
             }
+            backupConfig.backup_paths.push(entry);
         }
-
-        // Sized before the config exists, so it matches a later walk of this folder
-        backupConfig.backup_size = await calculateDirectorySize(backupInstancePath);
-
-        const configFilePath = path.join(backupInstancePath, 'backup_info.json');
-        await writeJsonFile(configFilePath, backupConfig);
-
-        // Separate permanent and non-permanent backups
-        const nonPermanentBackups = [];
-        for (const backup of (fsOriginal.readdirSync(gameBackupPath)).sort((a, b) => a.localeCompare(b))) {
-            const backupConfigPath = path.join(gameBackupPath, backup, 'backup_info.json');
-            if (fsOriginal.existsSync(backupConfigPath)) {
-                const backupConfig = await readJsonFile(backupConfigPath);
-                if (!backupConfig.is_permanent) {
-                    nonPermanentBackups.push(backup);
-                }
-            } else {
-                // If no config file exists, treat as non-permanent
-                nonPermanentBackups.push(backup);
-            }
+        backupConfig.backup_size = (await snapshotStore.scanTree(stagingPath)).reduce((size, entry) => size + (entry.size || 0), 0);
+        snapshotStore.normalizeMetadata(backupConfig, gameId, identity.folder);
+        await snapshotStore.atomicWriteJson(path.join(stagingPath, 'backup_info.json'), backupConfig);
+        await fsOriginal.promises.rename(stagingPath, finalPath);
+        committed = true;
+        const snapshot = await snapshotStore.readSnapshot(root, gameId, identity.folder);
+        if (!options.skipUpload) {
+            try { await coordinator.notifyCommitted(snapshot); }
+            catch (error) { console.error(`Local snapshot committed; cloud enqueue will retry: ${error.message}`); }
         }
+        try { await coordinator.rotateSnapshots(root, gameId, getSettings().maxBackups); }
+        catch (error) { console.error(`Local snapshot committed; rotation failed: ${error.message}`); }
+        return snapshot;
+    } finally {
+        if (!committed) await fsOriginal.promises.rm(stagingPath, { recursive: true, force: true }).catch(() => {});
+    }
+}
 
-        // If there are more non-permanent backups than allowed, delete the oldest ones
-        const maxBackups = getSettings().maxBackups;
-        if (nonPermanentBackups.length > maxBackups) {
-            const backupsToDelete = nonPermanentBackups.slice(0, nonPermanentBackups.length - maxBackups);
-            for (const backup of backupsToDelete) {
-                const backupToDeletePath = path.join(gameBackupPath, backup);
-                await fsOriginal.promises.rm(backupToDeletePath, { recursive: true, force: true });
-            }
-        }
-
+async function backupGame(gameObj) {
+    try {
+        await coordinator.withGameLock(gameObj.wiki_page_id, () => createBackupSnapshot(gameObj));
     } catch (error) {
         console.error(`Error during backup for game ${getGameDisplayName(gameObj)}: ${error.stack}`);
         return `${i18next.t('alert.backup_game_error', { game_name: getGameDisplayName(gameObj) })}: ${error.message}`;
@@ -924,6 +921,7 @@ module.exports = {
     getAllGameDataFromDB,
     getGameTitlesByIds,
     backupGame,
+    createBackupSnapshot,
     updateDatabase
 };
 

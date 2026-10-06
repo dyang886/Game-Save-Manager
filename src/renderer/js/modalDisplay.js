@@ -1,26 +1,30 @@
 import { showAlert, updateProgress, operationStartCheck, wrapNumberInput } from './utility.js';
 import { setIcon, formatSize, addOrUpdateTableRow, removeTableRow, updateSelectedCountAndSize } from './commonTabs.js';
+import { snapshotDate, snapshotTime } from './cloudPresentation.js';
+import { element, uploadLocalSnapshot } from './cloudShared.js';
 
 // ======================================================================
 // Backup management
 // ======================================================================
 // Helper function for Backup Management Modal to update backup date display
 function updateBackupDateDisplay(backupDateDisplay, backupDate, customName, isPermanent) {
-    const formattedDate = backupDate.replace(/(\d{4})-(\d{1,2})-(\d{1,2})_(\d{1,2})-(\d{1,2})/, (match, year, month, day, hour, minute) => {
-        return `${year}/${String(month).padStart(2, '0')}/${String(day).padStart(2, '0')} ${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
-    });
-
+    const formattedDate = snapshotDate({ createdAt: backupDateDisplay.closest('tr').dataset.createdAt });
+    backupDateDisplay.replaceChildren();
     if (isPermanent) {
-        const permanentIcon = '<i class="fa-solid fa-star text-yellow-500 mr-2"></i>';
-        const renameIcon = `<button type="button" class="rename-backup-btn text-gray-400 hover:text-blue-500 transition-colors duration-150 ml-2" data-backup-date="${backupDate}"><i class="fa-solid fa-pencil"></i></button>`;
-
+        backupDateDisplay.append(element('i', null, 'fa-solid fa-star text-yellow-500 mr-2'));
         if (customName) {
-            backupDateDisplay.innerHTML = `${permanentIcon}<div class="flex flex-col"><span class="backup-custom-name font-medium">${customName}</span><span class="text-xs text-gray-500 dark:text-gray-400">${formattedDate}</span></div>${renameIcon}`;
+            const detail = element('div', null, 'flex flex-col');
+            detail.append(element('span', customName, 'backup-custom-name font-medium'), element('span', formattedDate, 'text-xs text-gray-500 dark:text-gray-400'));
+            backupDateDisplay.append(detail);
         } else {
-            backupDateDisplay.innerHTML = `${permanentIcon}<span class="backup-date-text">${formattedDate}</span>${renameIcon}`;
+            backupDateDisplay.append(element('span', formattedDate, 'backup-date-text'));
         }
+        const rename = element('button', null, 'rename-backup-btn text-gray-400 hover:text-blue-500 transition-colors duration-150 ml-2');
+        rename.type = 'button'; rename.dataset.backupDate = backupDate;
+        rename.append(element('i', null, 'fa-solid fa-pencil'));
+        backupDateDisplay.append(rename);
     } else {
-        backupDateDisplay.innerHTML = `<span class="backup-date-text">${formattedDate}</span>`;
+        backupDateDisplay.append(element('span', formattedDate, 'backup-date-text'));
     }
 }
 
@@ -75,7 +79,7 @@ export async function showManageBackupsModal(wikiId) {
         }
     });
     const backupCount = gameData.backups.length;
-    const latestBackup = gameData.latest_backup;
+    const latestBackup = gameData.backups.length ? snapshotDate([...gameData.backups].sort((a, b) => snapshotTime(b) - snapshotTime(a))[0]) : '—';
     modalTitle.textContent = gameTitle;
 
     // Create header info with translations
@@ -104,25 +108,11 @@ export async function showManageBackupsModal(wikiId) {
             if (a.is_permanent !== b.is_permanent) {
                 return b.is_permanent - a.is_permanent;
             }
-            return b.date.localeCompare(a.date);
+            return snapshotTime(b) - snapshotTime(a);
         })
         .map(backup => {
-            const formattedDate = backup.date.replace(/(\d{4})-(\d{1,2})-(\d{1,2})_(\d{1,2})-(\d{1,2})/, (match, year, month, day, hour, minute) => {
-                return `${year}/${String(month).padStart(2, '0')}/${String(day).padStart(2, '0')} ${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
-            });
             const backupSize = formatSize(backup.backup_size);
-            const permanentIcon = backup.is_permanent ? '<i class="fa-solid fa-star text-yellow-500 mr-2"></i>' : '';
-            const renameIcon = backup.is_permanent ? `<button type="button" class="rename-backup-btn text-gray-400 hover:text-blue-500 transition-colors duration-150 ml-2" data-backup-date="${backup.date}"><i class="fa-solid fa-pencil"></i></button>` : '';
-
-            // A permanent backup with a custom name shows it above the date
-            let dateDisplay;
-            if (backup.is_permanent && backup.custom_name) {
-                dateDisplay = `${permanentIcon}<div class="flex flex-col"><span class="backup-custom-name font-medium">${backup.custom_name}</span><span class="text-xs text-gray-500 dark:text-gray-400">${formattedDate}</span></div>${renameIcon}`;
-            } else {
-                dateDisplay = `${permanentIcon}<span class="backup-date-text">${formattedDate}</span>${renameIcon}`;
-            }
-
-            return `<tr class="bg-white border-b dark:bg-[#2d3748] dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-600" data-custom-name="${backup.custom_name || ''}">
+            return `<tr class="bg-white border-b dark:bg-[#2d3748] dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-600">
                 <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">
                     <div class="flex items-center">
                         <div class="rename-mode hidden items-center bg-white dark:bg-gray-700 rounded-md border border-gray-300 dark:border-gray-600">
@@ -132,22 +122,21 @@ export async function showManageBackupsModal(wikiId) {
                             </button>
                         </div>
                         <div class="backup-date-display flex items-center">
-                            ${dateDisplay}
                         </div>
                     </div>
                 </td>
                 <td class="px-6 py-3">${backupSize}</td>
                 <td class="px-6 py-3 text-center">
                     <div class="flex justify-center gap-2">
-                        <button type="button" class="restore-backup-btn inline-flex items-center px-3 py-1 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors duration-150 dark:bg-blue-700 dark:hover:bg-blue-600" data-backup-date="${backup.date}">
+                        <button type="button" class="restore-backup-btn inline-flex items-center px-3 py-1 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors duration-150 dark:bg-blue-700 dark:hover:bg-blue-600">
                             <i class="fa-solid fa-arrow-left mr-1"></i>
                             ${restoreLabel}
                         </button>
-                        <button type="button" class="permanent-backup-btn inline-flex items-center px-3 py-1 text-sm font-medium text-white bg-yellow-500 hover:bg-yellow-600 rounded-md transition-colors duration-150 dark:bg-yellow-600 dark:hover:bg-yellow-500" data-backup-date="${backup.date}" data-is-permanent="${backup.is_permanent}">
+                        <button type="button" class="permanent-backup-btn inline-flex items-center px-3 py-1 text-sm font-medium text-white bg-yellow-500 hover:bg-yellow-600 rounded-md transition-colors duration-150 dark:bg-yellow-600 dark:hover:bg-yellow-500" data-is-permanent="${backup.is_permanent}">
                             <i class="fa-solid fa-star mr-1"></i>
                             ${backup.is_permanent ? removePermanentLabel : makePermanentLabel}
                         </button>
-                        <button type="button" class="delete-backup-btn inline-flex items-center px-3 py-1 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors duration-150 dark:bg-red-700 dark:hover:bg-red-600" data-backup-date="${backup.date}">
+                        <button type="button" class="delete-backup-btn inline-flex items-center px-3 py-1 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors duration-150 dark:bg-red-700 dark:hover:bg-red-600">
                             <i class="fa-solid fa-trash mr-1"></i>
                             ${deleteLabel}
                         </button>
@@ -195,6 +184,24 @@ export async function showManageBackupsModal(wikiId) {
     `;
 
     modalContent.innerHTML = tableHtml + footerButtonsHtml;
+    for (const [index, row] of Array.from(modalContent.querySelectorAll('tbody tr')).entries()) {
+        const backup = gameData.backups[index];
+        row.dataset.customName = backup.custom_name || '';
+        row.dataset.createdAt = backup.createdAt || backup.backupConfig?.createdAt || '';
+        for (const control of row.querySelectorAll('button')) control.dataset.backupDate = backup.date;
+        updateBackupDateDisplay(row.querySelector('.backup-date-display'), backup.date, backup.custom_name, backup.is_permanent);
+        const upload = element('button', await window.i18n.translate('cloud.upload'), 'cloud-button');
+        upload.type = 'button';
+        upload.addEventListener('click', async () => {
+            try { await uploadLocalSnapshot(wikiId, backup.date); }
+            catch (error) {
+                const status = element('p', error.message, 'cloud-error');
+                status.setAttribute('role', 'alert');
+                row.querySelector('td:last-child').append(status);
+            }
+        });
+        row.querySelector('td:last-child > div').append(upload);
+    }
 
     // Add event listeners to 'open backup folder' button
     document.getElementById('modal-open-backup-folder').addEventListener('click', () => {
@@ -322,9 +329,7 @@ export async function showManageBackupsModal(wikiId) {
                         return bIsPermanent - aIsPermanent;
                     }
                     // Then sort by date (newest first)
-                    const aDate = a.querySelector('.permanent-backup-btn').dataset.backupDate;
-                    const bDate = b.querySelector('.permanent-backup-btn').dataset.backupDate;
-                    return bDate.localeCompare(aDate);
+                    return snapshotTime({ createdAt: b.dataset.createdAt }) - snapshotTime({ createdAt: a.dataset.createdAt });
                 });
                 rows.forEach(row => tbody.appendChild(row));
             }
@@ -348,15 +353,9 @@ export async function showManageBackupsModal(wikiId) {
 
                 // Update newest backup date in modal header
                 const newestBackupElement = headerInfo.querySelector('.newest-backup-value');
-                const remainingDates = Array.from(modalContent.querySelectorAll('.permanent-backup-btn'))
-                    .map(b => b.dataset.backupDate)
-                    .sort((a, b) => b.localeCompare(a));
-                if (remainingDates.length > 0) {
-                    const formatted = remainingDates[0].replace(/(\d{4})-(\d{1,2})-(\d{1,2})_(\d{1,2})-(\d{1,2})/, (match, year, month, day, hour, minute) => {
-                        return `${year}/${String(month).padStart(2, '0')}/${String(day).padStart(2, '0')} ${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
-                    });
-                    newestBackupElement.textContent = formatted;
-                }
+                const remaining = Array.from(modalContent.querySelectorAll('tbody tr'))
+                    .map(item => ({ createdAt: item.dataset.createdAt })).sort((a, b) => snapshotTime(b) - snapshotTime(a));
+                newestBackupElement.textContent = remaining.length ? snapshotDate(remaining[0]) : '—';
 
                 if (newCount === 0) {
                     // If all backups are deleted, remove the row from the restore table
@@ -546,7 +545,7 @@ export async function showAutoBackupModal(wikiId) {
     }
 
     modalContent.innerHTML = `
-        <p class="text-base font-medium text-gray-900 dark:text-white mb-4">${gameTitle}</p>
+        <p class="auto-backup-game-title text-base font-medium text-gray-900 dark:text-white mb-4"></p>
         ${statusHtml}
         <div id="auto-backup-config" class="${isActive ? 'hidden' : ''}">
             <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">${modeLabel}</label>
@@ -570,6 +569,8 @@ export async function showAutoBackupModal(wikiId) {
             </div>
         </div>
     `;
+
+    modalContent.querySelector('.auto-backup-game-title').textContent = gameTitle;
 
     // Toggle interval config visibility based on mode selection
     modalContent.querySelectorAll('input[name="auto-backup-mode"]').forEach(radio => {
@@ -723,12 +724,12 @@ export async function showHiddenGamesModal() {
         const unhideLabel = await window.i18n.translate('main.unhide');
 
         const rowsHtml = sortedGames.map(game => `
-            <tr class="bg-white border-b dark:bg-[#2d3748] dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-600" data-wiki-id="${game.wikiId}">
-                <td class="px-4 py-3 font-medium wrap-break-word text-gray-900 dark:text-white">${game.displayTitle}</td>
+            <tr class="bg-white border-b dark:bg-[#2d3748] dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-600">
+                <td class="hidden-game-title px-4 py-3 font-medium wrap-break-word text-gray-900 dark:text-white"></td>
                 <td class="px-4 py-3 whitespace-nowrap">${game.backupCount}</td>
-                <td class="px-4 py-3 whitespace-nowrap">${game.latestBackup}</td>
+                <td class="hidden-game-date px-4 py-3 whitespace-nowrap"></td>
                 <td class="px-4 py-3 text-center">
-                    <button type="button" class="unhide-game-btn inline-flex items-center whitespace-nowrap px-3 py-1 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors duration-150 dark:bg-blue-700 dark:hover:bg-blue-600" data-id="${game.wikiId}">
+                    <button type="button" class="unhide-game-btn inline-flex items-center whitespace-nowrap px-3 py-1 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors duration-150 dark:bg-blue-700 dark:hover:bg-blue-600">
                         <i class="fa-solid fa-eye mr-1"></i>
                         ${unhideLabel}
                     </button>
@@ -754,6 +755,12 @@ export async function showHiddenGamesModal() {
             </div>
         `;
 
+        for (const [index, row] of Array.from(modalContent.querySelectorAll('tbody tr')).entries()) {
+            row.dataset.wikiId = sortedGames[index].wikiId;
+            row.querySelector('.hidden-game-title').textContent = sortedGames[index].displayTitle;
+            row.querySelector('.hidden-game-date').textContent = sortedGames[index].latestBackup;
+            row.querySelector('.unhide-game-btn').dataset.id = sortedGames[index].wikiId;
+        }
         modalContent.querySelectorAll('.unhide-game-btn').forEach(btn => {
             btn.addEventListener('click', async () => {
                 const wikiId = btn.dataset.id;

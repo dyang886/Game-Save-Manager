@@ -1,10 +1,11 @@
-const { BrowserWindow, app, dialog, ipcMain, shell } = require('electron');
+const { BrowserWindow, app, dialog, ipcMain, shell, safeStorage, session } = require('electron');
 
 const { randomUUID } = require('crypto');
 const fs = require('fs');
 const fsOriginal = require('original-fs');
 const os = require('os');
 const path = require('path');
+const { pathToFileURL } = require('url');
 
 const i18next = require('i18next');
 const Backend = require('i18next-fs-backend');
@@ -20,12 +21,36 @@ const {
 } = require('./global');
 const { getGameData, initializeGameData, detectGamePaths, getAllAccountIds } = require('./gameData');
 const { getGameDataFromDB, getAllGameDataFromDB, getGameTitlesByIds, backupGame, updateDatabase } = require('./backup');
-const { getGameDataForRestore, restoreGame } = require("./restore");
+const { getGameDataForRestore, restoreGame, restoreSnapshot } = require("./restore");
 const {
     startAutoBackup, stopAutoBackup, getAutoBackupState, restoreAutoBackups,
     refreshAutoBackupWatchers, stopAllAutoBackups
 } = require('./autoBackup');
 const { showRowMenu, placeAndShowRowMenu, hideRowMenu } = require('./menuWindow');
+const snapshotStore = require('./snapshotStore');
+const backupCoordinator = require('./backupCoordinator');
+const customGameStore = require('./customGameStore');
+const customEntryBaselines = new WeakMap();
+const { createCloudService } = require('./cloud/service');
+const { registerCloudIpc, CLOUD_CHANNELS } = require('./cloud/ipc');
+const { publicSettings } = require('./settingsValidation');
+let cloudService;
+let cloudClosed = false;
+let cloudClosing = false;
+const trustedCloudURLs = ['index.html', 'settings.html'].map(file => pathToFileURL(path.join(__dirname, '../renderer', file)).href);
+
+app.on('before-quit', event => {
+    if (!cloudService || cloudClosed) return;
+    event.preventDefault();
+    if (cloudClosing) return;
+    cloudClosing = true;
+    stopAllAutoBackups();
+    cloudService.close().catch(() => {}).finally(() => {
+        require('./archive').cancelAll();
+        cloudClosed = true;
+        app.quit();
+    });
+});
 
 
 // Setup hot reload for development
@@ -86,6 +111,26 @@ app.whenReady().then(async () => {
         await saveSettings('gameInstalls', getGameData().detectedGamePaths);
     }
 
+    try {
+        cloudService = await createCloudService({ userDataPath: app.getPath('userData'), safeStorage,
+            getBackupPath: () => getSettings().backupPath, restoreSnapshot,
+            chooseRestoreMapping: chooseRestoreDestination,
+            resolveProxy: url => session.defaultSession.resolveProxy(url),
+            onUpdate: state => {
+                for (const window of BrowserWindow.getAllWindows()) {
+                    if (!window.isDestroyed() && trustedCloudURLs.includes(window.webContents.getURL())) window.webContents.send('cloud:state', state);
+                }
+            }
+        });
+        registerCloudIpc(ipcMain, cloudService, {
+            getTrustedWebContents: () => BrowserWindow.getAllWindows().map(window => window.webContents),
+            trustedURL: trustedCloudURLs
+        });
+    } catch {
+        // Failure to open the separate cloud store must not prevent local backups.
+        console.error('Cloud storage initialization failed; local backups remain available.');
+        for (const channel of CLOUD_CHANNELS) ipcMain.handle(channel, () => ({ ok: false, error: { code: 'CLOUD_ERROR', message: 'Cloud storage is unavailable.' } }));
+    }
     await createMainWindow();
     app.setAppUserModelId(i18next.t('main.title'));
 
@@ -147,7 +192,7 @@ ipcMain.on("load-theme", (event) => {
 });
 
 ipcMain.handle("get-settings", () => {
-    return getSettings();
+    return publicSettings(getSettings());
 });
 
 ipcMain.handle("get-detected-game-paths", async () => {
@@ -252,38 +297,42 @@ ipcMain.handle('sort-games', (event, games) => {
 
 ipcMain.handle('save-custom-entries', async (event, jsonObj) => {
     try {
-        const filePath = path.join(getSettings().backupPath, "custom_entries.json");
-        let currentData = {};
-
-        if (fsOriginal.existsSync(filePath)) {
-            currentData = await readJsonFile(filePath);
-        }
-
-        if (JSON.stringify(currentData) !== JSON.stringify(jsonObj)) {
-            await writeJsonFile(filePath, jsonObj);
+        const { changed } = await backupCoordinator.withLibraryRead(async () => {
+            const root = getSettings().backupPath;
+            const baseline = customEntryBaselines.get(event.sender);
+            const result = await customGameStore.updateCustomEntries(root, entries => {
+                if (!baseline || baseline.root !== root || baseline.json !== JSON.stringify(entries)) {
+                    throw Object.assign(new Error(i18next.t('alert.custom_entries_changed')), { code: 'CUSTOM_ENTRIES_CHANGED' });
+                }
+                return jsonObj;
+            });
+            customEntryBaselines.set(event.sender, { root, json: JSON.stringify(jsonObj) });
+            return result;
+        });
+        if (changed) {
             getMainWin().webContents.send('show-alert', 'success', i18next.t('alert.save_custom_success'));
             getMainWin().webContents.send('update-backup-table');
         }
+        return true;
 
     } catch (error) {
         console.error(`Error saving custom games: ${error.stack}`);
         getMainWin().webContents.send('show-alert', 'modal', i18next.t('alert.save_custom_error'), error.message);
+        return false;
     }
 });
 
-ipcMain.handle('load-custom-entries', async () => {
+ipcMain.handle('load-custom-entries', async event => {
     try {
-        const filePath = path.join(getSettings().backupPath, "custom_entries.json");
-
-        const fileExists = fsOriginal.existsSync(filePath);
-        if (!fileExists) {
-            return [];
-        }
-
-        const jsonData = await readJsonFile(filePath);
-        return jsonData;
+        return await backupCoordinator.withLibraryRead(async () => {
+            const root = getSettings().backupPath;
+            const entries = await customGameStore.readCustomEntries(root);
+            customEntryBaselines.set(event.sender, { root, json: JSON.stringify(entries) });
+            return entries;
+        });
 
     } catch (error) {
+        customEntryBaselines.delete(event.sender);
         console.error(`Error loading custom games: ${error.stack}`);
         getMainWin().webContents.send('show-alert', 'modal', i18next.t('alert.load_custom_error'), error.message);
         return [];
@@ -348,8 +397,38 @@ ipcMain.handle('fetch-restore-table-data', async (event, wikiId = null, sizeAllB
 });
 
 ipcMain.handle('restore-game', async (event, gameObj, userActionForAll) => {
-    return await restoreGame(gameObj, userActionForAll);
+    let result = await restoreGame(gameObj, userActionForAll);
+    const mappings = {};
+    let confirmRegistry = false;
+    // Legacy imports also use the same explicit local mapping and protected restore.
+    for (let attempt = 0; attempt < 3 && ['PATH_MAPPING_REQUIRED', 'REGISTRY_CONFIRMATION_REQUIRED'].includes(result.code); attempt++) {
+        for (const entry of result.mappingsRequired || []) {
+            const destination = await chooseRestoreDestination(entry);
+            if (!destination) return { ...result, code: 'SKIPPED' };
+            mappings[entry.folder] = destination;
+        }
+        if (result.registryTargets) {
+            const response = await dialog.showMessageBox(getMainWin(), { type: 'warning', title: i18next.t('alert.save_conflict'),
+                message: result.registryTargets.map(entry => `${entry.key}${entry.originalMissing ? ` — ${i18next.t('cloud.restore_missing_target')}` : ''}`).join('\n'), buttons: [i18next.t('alert.yes'), i18next.t('alert.no')], defaultId: 1, cancelId: 1 });
+            if (response.response !== 0) return { ...result, code: 'SKIPPED' };
+            confirmRegistry = true;
+        }
+        result = await restoreSnapshot({ gameId: String(gameObj.wiki_page_id), folder: gameObj.folder || gameObj.backups?.[0]?.date,
+            mappings, confirmRegistry, userActionForAll });
+    }
+    return result;
 });
+
+async function chooseRestoreDestination(entry) {
+    if (entry.type === 'reg') return null;
+    const title = `${i18next.t('settings.select_path')} — ${entry.folder || entry.folder_name}${entry.originalMissing ? ` — ${i18next.t('cloud.restore_missing_target')}` : ''}`;
+    if (entry.type === 'file') {
+        const result = await dialog.showSaveDialog(getMainWin(), { title, defaultPath: path.basename(entry.template || 'save.dat') });
+        return result.canceled ? null : result.filePath;
+    }
+    const result = await dialog.showOpenDialog(getMainWin(), { title, properties: ['openDirectory', 'createDirectory'] });
+    return result.canceled ? null : result.filePaths[0];
+}
 
 // Names by wiki id, for hidden games that may have no backups or be uninstalled
 ipcMain.handle('get-game-titles', async (event, wikiIds) => {
@@ -362,8 +441,8 @@ ipcMain.handle('get-game-titles', async (event, wikiIds) => {
 
 ipcMain.handle('confirm-delete-backup', async (event, wikiId, backupDate) => {
     try {
-        const backupPath = path.join(getSettings().backupPath, wikiId.toString(), backupDate);
-        const formattedDate = moment(backupDate, 'YYYY-MM-DD_HH-mm').format('YYYY/MM/DD HH:mm');
+        const snapshot = await snapshotStore.readSnapshot(getSettings().backupPath, wikiId, backupDate);
+        const formattedDate = moment(snapshot.createdAt).format('YYYY/MM/DD HH:mm');
 
         const confirmTitle = i18next.t('alert.confirm_delete_backup_title');
         const baseMessage = i18next.t('alert.confirm_delete_backup_message');
@@ -380,8 +459,23 @@ ipcMain.handle('confirm-delete-backup', async (event, wikiId, backupDate) => {
 
         // If user clicked "Yes"
         if (response.response === 0) {
-            fsOriginal.rmSync(backupPath, { recursive: true, force: true });
-            return true;
+            if (backupCoordinator.isProtected(snapshot.path) && cloudService?.sourceUploadJobs(snapshot.path).length) {
+                const choice = await dialog.showMessageBox(getMainWin(), {
+                    type: 'warning', title: i18next.t('alert.confirm_delete_backup_title'),
+                    message: i18next.t('cloud.cancel_upload_before_delete'),
+                    buttons: [i18next.t('cloud.cancel_upload_and_delete'), i18next.t('cloud.keep_local_version')], defaultId: 1, cancelId: 1
+                });
+                if (choice.response !== 0) return false;
+                await cloudService.cancelSourceUploads(snapshot.path);
+            }
+            return await backupCoordinator.withGameLock(wikiId, async () => {
+                const current = await snapshotStore.readSnapshot(getSettings().backupPath, wikiId, backupDate);
+                if (backupCoordinator.isProtected(current.path) || (current.metadata.cloudUploadIntent && current.metadata.cloudUploadIntent.state !== 'completed')) {
+                    throw new Error('This snapshot is still needed by an upload or export. Complete or cancel that task before deleting it.');
+                }
+                await fsOriginal.promises.rm(current.path, { recursive: true, force: true });
+                return true;
+            });
         }
 
         return false;
@@ -395,16 +489,12 @@ ipcMain.handle('confirm-delete-backup', async (event, wikiId, backupDate) => {
 
 ipcMain.handle('update-backup-info', async (event, wikiId, backupDate, key, value) => {
     try {
-        const configFilePath = path.join(getSettings().backupPath, wikiId.toString(), backupDate, 'backup_info.json');
-
-        if (!fsOriginal.existsSync(configFilePath)) {
-            throw new Error('Backup config file not found');
-        }
-
-        const backupConfig = await readJsonFile(configFilePath);
-        backupConfig[key] = value;
-        await writeJsonFile(configFilePath, backupConfig);
-
+        if (!['custom_name', 'is_permanent'].includes(key) || (key === 'is_permanent' ? typeof value !== 'boolean' : typeof value !== 'string' || value.length > 1000)) throw new Error('Invalid backup metadata update');
+        await backupCoordinator.withGameLock(wikiId, async () => {
+            let snapshot = await snapshotStore.readSnapshot(getSettings().backupPath, wikiId, backupDate);
+            snapshot = await snapshotStore.ensureIdentity(snapshot);
+            await snapshotStore.updateMetadata(snapshot, metadata => ({ ...metadata, [key]: value }));
+        });
         return true;
 
     } catch (error) {
@@ -431,9 +521,15 @@ ipcMain.handle('confirm-delete-local-save', async (event, resolvedPaths) => {
     return await deleteLocalSave(resolvedPaths);
 });
 
-ipcMain.on('migrate-backups', (event, newBackupPath) => {
+ipcMain.on('migrate-backups', async (event, newBackupPath) => {
+    const status = getStatus();
+    const hasCloudJobs = cloudService?.hasUnfinishedJobs();
+    if (hasCloudJobs || status.importing || status.exporting || status.backuping || status.restoring || status.migrating || backupCoordinator.isLibraryBusy?.()) {
+        getMainWin().webContents.send('show-alert', 'warning', i18next.t('cloud.migration_busy'));
+        return;
+    }
     const currentBackupPath = getSettings().backupPath;
-    moveFilesWithProgress(currentBackupPath, newBackupPath);
+    await moveFilesWithProgress(currentBackupPath, newBackupPath);
 });
 
 ipcMain.handle('get-status', () => {
@@ -463,10 +559,12 @@ ipcMain.handle('update-database', async () => {
 });
 
 ipcMain.on('export-backups', (event, count, exportPath, wikiIds) => {
+    if (backupCoordinator.isLibraryBusy?.()) { getMainWin().webContents.send('show-alert', 'warning', i18next.t('cloud.migration_busy')); return; }
     exportBackups(count, exportPath, wikiIds);
 });
 
 ipcMain.on('import-backups', (event, gsmPath) => {
+    if (backupCoordinator.isLibraryBusy?.()) { getMainWin().webContents.send('show-alert', 'warning', i18next.t('cloud.migration_busy')); return; }
     importBackups(gsmPath);
 });
 

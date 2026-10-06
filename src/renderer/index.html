@@ -299,10 +299,19 @@
                     <span class="text-content">Custom Games</span>
                 </button>
             </li>
+            <li role="presentation">
+                <button class="select-none inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
+                    id="cloud-tab" data-tabs-target="#cloud" type="button" role="tab" aria-controls="cloud" aria-selected="false" data-i18n="cloud.tab">
+                    <i class="fa-solid fa-cloud mr-2"></i><span class="text-content">Cloud</span><span id="cloud-tab-status" class="cloud-badge ml-1" hidden></span>
+                </button>
+            </li>
         </ul>
     </div>
 
     <div id="default-tab-content">
+        <section class="hidden" id="cloud" role="tabpanel" aria-labelledby="cloud-tab">
+            <div id="cloud-content" class="cloud-content"></div>
+        </section>
         <!-- Tab 1: Backup -->
         <div class="hidden" id="backup" role="tabpanel" aria-labelledby="backup-tab">
             <div id="backup-loading" role="status" class="flex justify-center" data-i18n="main.loading"></div>

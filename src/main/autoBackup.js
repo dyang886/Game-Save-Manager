@@ -19,6 +19,7 @@ const WATCHER_COOLDOWN_MS = 10000; // 10 seconds cooldown between backups
 // ======================================================================
 // Start auto backup for a game
 async function startAutoBackup(wikiId, mode, intervalMinutes) {
+    wikiId = String(wikiId);
     // Stop any existing auto backup for this game first
     await stopAutoBackup(wikiId, false);
 
@@ -58,6 +59,7 @@ async function startAutoBackup(wikiId, mode, intervalMinutes) {
 
 // Stop auto backup for a game
 async function stopAutoBackup(wikiId, showSummary = true) {
+    wikiId = String(wikiId);
     const entry = activeAutoBackups.get(wikiId);
     if (!entry) return null;
 
@@ -136,6 +138,7 @@ async function setupFileWatcher(wikiId, entry) {
         });
 
         watcher.on('all', (event, filePath) => {
+            if (entry.suspended) return;
             // Throttle: backup immediately on first change, then cooldown
             if (watcherCooldowns.has(wikiId)) {
                 // Mark that changes happened during cooldown
@@ -186,7 +189,7 @@ async function refreshAutoBackupWatchers() {
 // Perform a silent backup (no UI summary)
 async function performSilentBackup(wikiId) {
     const entry = activeAutoBackups.get(wikiId);
-    if (!entry) return;
+    if (!entry || entry.suspended) return;
 
     // Prevent concurrent backups for the same game
     if (entry.backupInProgress) return;
@@ -246,6 +249,32 @@ async function performSilentBackup(wikiId) {
     }
 }
 
+// Leave persisted scheduling untouched while restore holds the per-game lock.
+// Recreating an ignoreInitial watcher discards filesystem events from restore.
+async function pauseAutoBackupForRestore(wikiId) {
+    wikiId = String(wikiId);
+    const entry = activeAutoBackups.get(wikiId);
+    if (!entry) return async () => {};
+    entry.suspended = true;
+    if (watcherCooldowns.has(wikiId)) {
+        clearTimeout(watcherCooldowns.get(wikiId));
+        watcherCooldowns.delete(wikiId);
+    }
+    pendingWatcherBackups.delete(wikiId);
+    if (entry.watcher) {
+        await entry.watcher.close();
+        entry.watcher = null;
+    }
+    let resumed = false;
+    return async () => {
+        if (resumed) return;
+        resumed = true;
+        if (activeAutoBackups.get(wikiId) !== entry) return;
+        try { if (entry.mode === 'watcher') await setupFileWatcher(wikiId, entry); }
+        finally { entry.suspended = false; }
+    };
+}
+
 // ======================================================================
 // State
 // ======================================================================
@@ -301,5 +330,6 @@ module.exports = {
     getAutoBackupState,
     restoreAutoBackups,
     refreshAutoBackupWatchers,
+    pauseAutoBackupForRestore,
     stopAllAutoBackups
 };
